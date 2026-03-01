@@ -14,11 +14,7 @@ interface MarkdownFrontmatter {
     [key: string]: string;
 }
 
-export interface PageModule {
-    frontmatter?: MarkdownFrontmatter;
-    toc?: TocEntry[];
-    default: ComponentType
-}
+
 
 declare module '*.mdx' {
     const defaultType: ComponentType;

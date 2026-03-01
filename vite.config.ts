@@ -7,6 +7,11 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 // https://github.com/altano/npm-packages/blob/main/packages/remark-mdx-toc-with-slugs/src/index.ts
 import remarkMdxToc from '@altano/remark-mdx-toc-with-slugs';
+import {pageModulesPlugin} from "./src/interact/vite-page-modules/vite-plugin-page-modules";
+import path from "node:path";
+
+
+let pagesDir = path.resolve(process.cwd(), 'apps/app/pages');
 
 export default defineConfig({
     publicDir: 'apps/app/public', // default is 'public'
@@ -30,6 +35,7 @@ export default defineConfig({
             },
         }),
         viteRscSsgPlugin(),
+        pageModulesPlugin(pagesDir),
     ],
 })
 

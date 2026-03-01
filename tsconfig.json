@@ -23,10 +23,9 @@
     "jsx": "react-jsx",
     // or "react-jsx" for React 17+
     "outDir": "./dist/typescript",
-    "esModuleInterop": true,
-    "include": [
-      "src/**/*",
-      "src/interact/types/index.d.ts"
-    ]
-  }
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
