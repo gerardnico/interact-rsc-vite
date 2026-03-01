@@ -13,17 +13,12 @@ import {
 import {parseRenderRequest} from '../shared/request'
 import type {RscPayload} from '../shared/types'
 import type {ReactFormState} from 'react-dom/client'
-import {getComponent, getStaticPaths} from "../../pages";
-/**
- * To import module with glob, the path parameter should be static
- * We shoud use a bootstrap script to generate the Main/App file then
- */
-import {Holy} from '../../layout/Holy'
-
+import {getRootComponent, getStaticPaths} from "../../pages";
 
 /**
  * We export it so that static rendering (SSG)
- * can use it to render each page using the build module
+ * can use it to render each page after the build
+ * using the build module
  */
 export {getStaticPaths}
 
@@ -83,14 +78,11 @@ export default async function handler(request: Request): Promise<Response> {
         }
     }
 
-    let component = getComponent(new URL(renderRequest.request.url))
-    let rootComponent = <Holy Component={component}/>;
 
     /**
      * Serialize React VDOM to RSC stream
-     * The root component should return the entire document including the root <html> tag.
-     * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
      */
+    let rootComponent = getRootComponent(new URL(renderRequest.request.url))
     const rscPayload: RscPayload = {
         root: rootComponent,
         formState,
@@ -141,9 +133,7 @@ export async function handleSsg(request: Request): Promise<{
 }> {
 
     const url = new URL(request.url)
-    let component = getComponent(url)
-    let rootComponent = <Holy Component={component}/>;
-
+    let rootComponent = getRootComponent(url)
 
     const rscPayload: RscPayload = {root: rootComponent}
     const rscStream = renderToReadableStream<RscPayload>(rscPayload)

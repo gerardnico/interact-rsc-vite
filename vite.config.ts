@@ -3,7 +3,10 @@ import react from '@vitejs/plugin-react'
 import rsc from '@vitejs/plugin-rsc'
 import viteRscSsgPlugin from "./src/interact/vite-rsc-ssg/vite-rsc-ssg-plugin";
 import {defineConfig} from "vite";
-
+import remarkFrontmatter from 'remark-frontmatter';
+import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
+// https://github.com/altano/npm-packages/blob/main/packages/remark-mdx-toc-with-slugs/src/index.ts
+import remarkMdxToc from '@altano/remark-mdx-toc-with-slugs';
 
 export default defineConfig({
     publicDir: 'apps/app/public', // default is 'public'
@@ -11,7 +14,13 @@ export default defineConfig({
         // You can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
         // to understand how "use client" and "use server" directives are transformed internally.
         // import("vite-plugin-inspect").then(m => m.default()),
-        mdx(),
+        mdx({
+            remarkPlugins: [
+                remarkFrontmatter,
+                remarkMdxFrontmatter, // exports frontmatter as `frontmatter`
+                remarkMdxToc, // exports headings as `toc`
+            ],
+        }),
         react(),
         rsc({
             entries: {

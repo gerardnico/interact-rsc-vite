@@ -1,8 +1,8 @@
 
 /**
- * Holy Layout
+ * Landing Layout
  */
-export default async function Holy({Component}:{Component: React.ComponentType}) {
+export default async function Landing({Component}:{Component: React.ComponentType}) {
 
     return (
         <html lang="en">
@@ -14,7 +14,7 @@ export default async function Holy({Component}:{Component: React.ComponentType})
         <body>
         <header style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
             <h1>
-                <a href="/">Holy</a>
+                <a href="/">Landing</a>
             </h1>
             <span data-testid="timestamp">
             Rendered at {new Date().toISOString()}

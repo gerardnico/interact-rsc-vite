@@ -7,12 +7,14 @@ import path from "path";
 export let pagesDir = "./apps/app/pages"
 
 // @ts-ignore
-import Index from "../../../apps/app/pages/index.mdx"
+import * as Index from "../../../apps/app/pages/index.mdx"
 // @ts-ignore
-import Counter from "../../../apps/app/pages/counter.mdx"
+import * as Counter from "../../../apps/app/pages/counter.mdx"
 // @ts-ignore
-import Yolo from "../../../apps/app/pages/yolo/yolo.mdx"
-import NotFound from "../layout/NotFound"
+import * as Yolo from "../../../apps/app/pages/yolo/yolo.mdx"
+import * as NotFound from "../layout/NotFound"
+import Holy from "../layout/Holy";
+import Landing from "../layout/Landing";
 
 export interface PageFile {
     path: string;
@@ -47,20 +49,58 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
     return results;
 }
 
-export function getComponent(url: URL): React.FC {
+/**
+ * The root component should return the entire document including the root <html> tag.
+ * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
+ */
+export function getRootComponent(url: URL): React.JSX.Element {
 
+
+    let module;
     switch (url.pathname) {
         case "/":
         case "/index":
-            return Index
+            module = Index
+            break
         case "/counter":
-            return Counter
+            module = Counter
+            break
         case "/yolo/yolo":
-            return Counter
+            module = Yolo;
+            break
         default:
             console.log("Not found: " + url.pathname)
-            return NotFound
+            module = NotFound
+            break
     }
+
+    let frontmatter = module?.frontmatter as Record<string, string>;
+    let layout = "holy"
+    if (frontmatter) {
+        let frontMatterLayout = frontmatter?.layout.toLowerCase();
+        if (frontMatterLayout) {
+            layout = frontMatterLayout
+        }
+    }
+
+    let Layout
+    switch (layout) {
+        case "holy": {
+            Layout = Holy
+            break
+        }
+        case "landing": {
+            Layout = Landing
+            break;
+        }
+        default: {
+            Layout = Holy;
+            console.log("Layout not found: " + layout)
+        }
+    }
+
+    return <Layout Component={module.default}/>
+
 }
 
 /**
