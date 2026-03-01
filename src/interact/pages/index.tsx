@@ -6,15 +6,15 @@ import path from "path";
  */
 export let pagesDir = "./apps/app/pages"
 
-// @ts-ignore
-import * as Index from "../../../apps/app/pages/index.mdx"
-// @ts-ignore
-import * as Counter from "../../../apps/app/pages/counter.mdx"
-// @ts-ignore
-import * as Yolo from "../../../apps/app/pages/yolo/yolo.mdx"
-import * as NotFound from "../layout/NotFound"
 import Holy from "../layout/Holy";
 import Landing from "../layout/Landing";
+import * as NotFoundModule from "../layout/NotFound";
+
+/**
+ * Should be statically integrated
+ * (A plugin?)
+ */
+import getModulePage from "../../../apps/app/.interact/module-pages";
 
 export interface PageFile {
     path: string;
@@ -56,33 +56,22 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
 export function getRootComponent(url: URL): React.JSX.Element {
 
 
-    let module;
-    switch (url.pathname) {
-        case "/":
-        case "/index":
-            module = Index
-            break
-        case "/counter":
-            module = Counter
-            break
-        case "/yolo/yolo":
-            module = Yolo;
-            break
-        default:
-            console.log("Not found: " + url.pathname)
-            module = NotFound
-            break
-    }
+    /**
+     * Get a page module
+     */
+    let pageModule = getModulePage({path: url.pathname});
 
-    let frontmatter = module?.frontmatter as Record<string, string>;
+    if (!pageModule) {
+        pageModule = NotFoundModule;
+    }
+    /**
+     * Layout
+     */
     let layout = "holy"
-    if (frontmatter) {
-        let frontMatterLayout = frontmatter?.layout.toLowerCase();
-        if (frontMatterLayout) {
-            layout = frontMatterLayout
-        }
+    let frontMatterLayout = pageModule?.frontmatter?.layout?.toLowerCase();
+    if (frontMatterLayout) {
+        layout = frontMatterLayout
     }
-
     let Layout
     switch (layout) {
         case "holy": {
@@ -99,7 +88,7 @@ export function getRootComponent(url: URL): React.JSX.Element {
         }
     }
 
-    return <Layout Component={module.default}/>
+    return <Layout Component={pageModule.default}/>
 
 }
 

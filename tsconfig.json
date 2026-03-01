@@ -7,14 +7,26 @@
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
-//    "noEmit": true,
+    //    "noEmit": true,
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "target": "ESNext",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["vite/client", "@vitejs/plugin-rsc/types"],
-    "jsx": "react-jsx", // or "react-jsx" for React 17+
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "vite/client",
+      "@vitejs/plugin-rsc/types"
+    ],
+    "jsx": "react-jsx",
+    // or "react-jsx" for React 17+
     "outDir": "./dist/typescript",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "include": [
+      "src/**/*",
+      "src/interact/types/index.d.ts"
+    ]
   }
 }
