@@ -51,5 +51,24 @@ export function pageModulesPlugin(pagesDir: string): Plugin {
             const files = glob.sync('**/*.{mdx,tsx}', { cwd: pagesDir });
             return generatePageModulesCode(pagesDir, files);
         },
+        configureServer(server) {
+            // Watch a specific directory
+            server.watcher.add(pagesDir);
+
+            const invalidate = (file: string) => {
+                if (!file.startsWith(pagesDir + path.sep)) return
+
+                const mod = server.moduleGraph.getModuleById(resolvedVirtualModuleId)
+                if (mod) server.moduleGraph.invalidateModule(mod)
+
+                server.ws.send({ type: 'full-reload', path: '*' })
+            }
+
+            // Trigger on added or deleted file, directory
+            server.watcher.on('add', invalidate)
+            server.watcher.on('unlink', invalidate)
+            server.watcher.on('addDir', invalidate)
+            server.watcher.on('unlinkDir', invalidate)
+        },
     };
 }
