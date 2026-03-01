@@ -1,17 +1,17 @@
-import {getPages} from "../.interact/App";
+import {getPages} from "../../../src/interact/pages";
 
 # Index
 
-<p>Number of Pages: {Object.keys(getPages()).length-1}</p>
+<p>Number of Pages: {Object.keys(getPages()).length - 1}</p>
 <ul>
-    {Object.entries(getPages()).map(([key, value]) => {
-        if(key==="/index"){
+    {Object.entries(getPages()).map(([key, page]) => {
+        if (key.startsWith("/index")) {
             return;
         }
         return (
             <li key={key}>
-                <a href={key} style={{textTransform: 'capitalize'}}>
-                    {(value).title ?? key.slice(1)}
+                <a href={page.path} style={{textTransform: 'capitalize'}}>
+                    {page.name}
                 </a>
             </li>
         )

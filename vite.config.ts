@@ -6,7 +6,7 @@ import {defineConfig} from "vite";
 
 
 export default defineConfig({
-    publicDir: 'examples/app/public', // default is 'public'
+    publicDir: 'apps/app/public', // default is 'public'
     plugins: [
         // You can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
         // to understand how "use client" and "use server" directives are transformed internally.
