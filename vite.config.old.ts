@@ -8,7 +8,7 @@ import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 // https://github.com/altano/npm-packages/blob/main/packages/remark-mdx-toc-with-slugs/src/index.ts
 import remarkMdxToc from '@altano/remark-mdx-toc-with-slugs';
 import pageModulesPlugin from "./src/interact/vite-page-modules/vite-plugin-page-modules";
-import confModulePlugin  from "./src/interact/vite-conf-module/vite-conf-module";
+import confModulePlugin from "./src/interact/vite-conf-module/vite-conf-module";
 import path from "node:path";
 
 let pagesDir = path.resolve(process.cwd(), 'apps/app/pages');
@@ -17,13 +17,10 @@ let pagesDir = path.resolve(process.cwd(), 'apps/app/pages');
 export default defineConfig((configEnv) => {
 
     // with the cli: --mode development
-    let sourceMapConfig = configEnv.mode === 'development';
-    console.log("SourceMap Config: " + sourceMapConfig);
+    console.log(`Interact Started in ${configEnv.mode} mode`)
+
     return {
         publicDir: 'apps/app/public', // default is 'public'
-        build: {
-            sourcemap: sourceMapConfig,
-        },
         plugins: [
             // You can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
             // to understand how "use client" and "use server" directives are transformed internally.

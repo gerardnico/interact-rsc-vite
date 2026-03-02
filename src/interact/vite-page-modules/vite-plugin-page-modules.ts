@@ -57,14 +57,17 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
     let loadedEnv = "";
     return {
         name: 'vite-plugin-page-modules',
+        // ResolveId Hook: https://rollupjs.org/plugin-development/#resolveid
         resolveId(id) {
             if (id === virtualModuleId) {
                 return resolvedVirtualModuleId;
             }
+            return null;
         },
+        // Load Hook: https://rollupjs.org/plugin-development/#load
         async load(id) {
             if (id !== resolvedVirtualModuleId) {
-                return;
+                return null;
             }
             let context = this
             loadedEnv = context.environment.name;
@@ -97,6 +100,8 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
                  * See: https://vite.dev/guide/api-environment#backward-compatibility
                  * where they said: `The server.moduleGraph returns a mixed view of the client and ssr module graphs.`
                  * (ie not rsc then)
+                 *
+                 * See also deprecation: https://vite.dev/changes/per-environment-apis
                  */
                 if (!loadedEnv) {
                     return;

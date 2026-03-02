@@ -4,7 +4,7 @@ import path from "path";
 /**
  * Directory of all pages
  */
-export let pagesDir = "./apps/app/pages"
+export let pagesDir = "pages"
 
 import Holy from "../layout/Holy";
 import Landing from "../layout/Landing";
