@@ -7,7 +7,7 @@ export interface PageModule {
     default: ComponentType
 }
 
-declare module 'virtual:page-modules' {
+declare module 'interact:page-modules' {
 
     /**
      * Look up a page module by route path.

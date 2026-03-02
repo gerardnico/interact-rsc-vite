@@ -10,7 +10,7 @@ import Holy from "../layout/Holy";
 import Landing from "../layout/Landing";
 import * as NotFoundModule from "../layout/NotFound";
 
-import getModulePage from 'virtual:page-modules';
+import getModulePage from 'interact:page-modules';
 
 export interface PageFile {
     path: string;
