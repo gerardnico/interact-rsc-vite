@@ -8,12 +8,14 @@ interface TocEntry {
 }
 
 interface MarkdownFrontmatter {
+    name?: string;
     title?: string;
     description?: string;
     layout?: string;
+    keyWords?:string;
+    robots?:string;
     [key: string]: string;
 }
-
 
 
 declare module '*.mdx' {

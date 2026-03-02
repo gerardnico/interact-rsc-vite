@@ -15,7 +15,8 @@
   "dependencies": {
     "glob": "^13.0.6",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@altano/remark-mdx-toc-with-slugs": "4.0.1",

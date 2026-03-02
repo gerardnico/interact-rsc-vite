@@ -1,15 +1,17 @@
+import type {LayoutProps} from "../types";
 
 /**
  * Landing Layout
  */
-export default async function Landing({Component}:{Component: React.ComponentType}) {
-
+export default async function Landing({pageModule}: LayoutProps) {
+    let Component = pageModule.default
+    let frontmatter = pageModule.frontmatter || {}
     return (
         <html lang="en">
         <head>
             <meta charSet="utf-8"/>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
-            <title>RSC MDX SSG</title>
+            <title>{frontmatter?.title}</title>
         </head>
         <body>
         <header style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>

@@ -48,10 +48,11 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
 /**
  * The root component should return the entire document including the root <html> tag.
  * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
+ * @param normalizedRequest - the request with the URL without the rsc suffix
  */
-export function getRootComponent(url: URL): React.JSX.Element {
+export function getRootComponent(normalizedRequest: Request): React.JSX.Element {
 
-
+    let url = new URL(normalizedRequest.url)
     /**
      * Get a page module
      */
@@ -84,7 +85,7 @@ export function getRootComponent(url: URL): React.JSX.Element {
         }
     }
 
-    return <Layout Component={pageModule.default}/>
+    return <Layout pageModule={pageModule} request={normalizedRequest}/>
 
 }
 

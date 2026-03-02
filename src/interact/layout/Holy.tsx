@@ -1,16 +1,15 @@
+import type {LayoutProps} from "../types";
+import Head from "./Head";
 
 /**
  * Holy Layout
  */
-export default async function Holy({Component}:{Component: React.ComponentType}) {
+export default async function Holy(layoutProps: LayoutProps) {
 
+    let Component = layoutProps.pageModule.default
     return (
-        <html lang="en">
-        <head>
-            <meta charSet="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1"/>
-            <title>RSC MDX SSG</title>
-        </head>
+        <html lang="en" dir="ltr">
+        <Head {...layoutProps} />
         <body>
         <header style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
             <h1>

@@ -3,17 +3,23 @@ import {glob} from 'glob';
 import path from 'path';
 
 export function generatePageModulesCode(pagesDir: string, files: string[]): string {
-    const imports = files.map((file, i) =>
-        `import * as Page${i} from ${JSON.stringify(path.join(pagesDir, file))};`
-    ).join('\n');
 
-    const entries = files.flatMap((file, i) => {
-        const base = file.replace(/\.mdx$|\.tsx$/, '');
-        const route = base === 'index' ? '/' : `/${base}`;
-        const entries = [`  ${JSON.stringify(route)}: Page${i}`];
-        if (base === 'index') entries.push(`  "/index": Page${i}`);
-        return entries;
-    }).join(',\n');
+    const imports = files
+        .map((file, i) =>
+            `import * as Page${i} from ${JSON.stringify(path.join(pagesDir, file))};`
+        )
+        .join('\n');
+
+    const entries = files
+        .flatMap((file, i) => {
+            // delete the extensions
+            const base = file.slice(0, file.indexOf("."));
+            const route = base === 'index' ? '/' : `/${base}`;
+            const entries = [`  ${JSON.stringify(route)}: Page${i}`];
+            if (base === 'index') entries.push(`  "/index": Page${i}`);
+            return entries;
+        })
+        .join(',\n');
 
     return `
 ${imports}
@@ -63,7 +69,9 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
             let context = this
             loadedEnv = context.environment.name;
             console.log(`${virtualModuleId} Loaded in env ${loadedEnv}`);
-            const files = glob.sync('**/*.{mdx,tsx,jsx}', {cwd: pagesDir});
+            let extensions = ['mdx', 'tsx', 'jsx']
+            let globPattern = `**/*.{${extensions.join(',')}}`;
+            const files = glob.sync(globPattern, {cwd: pagesDir});
             return generatePageModulesCode(pagesDir, files);
         },
         // https://vite.dev/guide/api-plugin#configureserver

@@ -1,5 +1,5 @@
 import type {ComponentType} from "react";
-import type {MarkdownFrontmatter, TocEntry} from "./index";
+import type {MarkdownFrontmatter, TocEntry} from "./mdx";
 
 export interface PageModule {
     frontmatter?: MarkdownFrontmatter;

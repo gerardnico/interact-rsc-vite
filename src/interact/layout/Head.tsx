@@ -1,0 +1,103 @@
+import type {LayoutProps} from "../types";
+import {config, themeConfig} from "../config";
+import {PAGE_CONTAINER} from "./classNames";
+
+
+export default function Head({pageModule, request}: LayoutProps) {
+
+    let title = pageModule.frontmatter?.title;
+    let description = pageModule.frontmatter?.description;
+    let keyWords = pageModule.frontmatter?.keyWords;
+    let robots = pageModule.frontmatter?.robots;
+
+    const primary = themeConfig.colors.primary;
+
+    const hexToRgb = (hex: string) => {
+        // @ts-ignore
+        return hex
+            .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (_m, r, g, b) => '#' + r + r + g + g + b + b)
+            .substring(1)
+            .match(/.{2}/g)
+            .map(x => parseInt(x, 16))
+    }
+
+    const primaryRgb = hexToRgb(primary);
+    let style = `
+:root {
+    --bs-primary: ${primary};
+    --bs-primary-rgb: ${primaryRgb};
+    --bs-link-color: ${primary};
+    --bs-link-color-rgb: ${primaryRgb};
+    --bs-body-font-family: "Times New Roman", Times, serif";
+}`
+    let containerMaxWidth = config.theme.layouts?.page?.containerMaxWidth;
+    if (containerMaxWidth != undefined) {
+        style += `
+.${PAGE_CONTAINER} {
+   max-width: ${containerMaxWidth}
+}
+`
+    }
+
+    /**
+     * Page Title
+     */
+    const url = new URL(request.url);
+    const base = themeConfig.site.base
+    const isRoot = url.pathname === base;
+    let headPageTitle = title ? title : "";
+    if (!headPageTitle && isRoot) {
+        headPageTitle = themeConfig.site.title || 'Default'
+    }
+    let pageTitle = headPageTitle + " | " + themeConfig.site.name
+
+    /**
+     * Head base meta
+     * Relative path  and anchor links in the page are
+     * calculated by the browser relative to the path name of this URL
+     */
+    let baseHeadURL = request.url;
+    const isDev = process.env.NODE_ENV === 'development';
+    if (!isDev) {
+        baseHeadURL = themeConfig.site.url + url.pathname
+    }
+    if (isRoot) {
+        // In the root, we need to add a slash otherwise the relative path is calculated
+        // to the previous path
+        baseHeadURL = `${base}/`;
+    }
+    return (
+        <head>
+            <meta charSet="UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <title>{pageTitle}</title>
+            <meta name="generator" content="Interact"/>
+            <base href={baseHeadURL}/>
+            {description && <meta name="description" content={description}/>}
+            {themeConfig.site.favicons && Object.entries(themeConfig.site.favicons).map(([faviconPath, faviconProperties]) => {
+                if (!faviconProperties) {
+                    return;
+                }
+                return (
+                    <link
+                        rel={faviconProperties.rel}
+                        href={faviconProperties.image?.href ? faviconProperties.image.href : `/${faviconPath}`}
+                        type={faviconProperties.image?.type}
+                        sizes={faviconProperties.image?.width && faviconProperties.image?.height ? `${faviconProperties.image.width}x${faviconProperties.image.height}` : ''}
+                    />
+                )
+            })}
+            {themeConfig.colors.primary &&
+                <meta name="theme-color" content={themeConfig.colors.primary}/>}
+            <meta name="robots" content={robots ? robots : "index,follow"}/>
+            {keyWords && <meta name="keywords" content={keyWords}/>}
+            <link
+                href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+                integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+                crossOrigin="anonymous"/>
+            <link rel="stylesheet"
+                  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
+            <style dangerouslySetInnerHTML={{__html: style}}/>
+        </head>
+    )
+}

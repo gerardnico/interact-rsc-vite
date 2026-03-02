@@ -1,0 +1,28 @@
+---
+title: How to create a JSX or TSX page?
+---
+
+
+## Example
+
+```jsx
+export const frontmatter = {
+    layout: "landing"
+}
+
+export default function () {
+    return (
+        <p>You can create a `jsx` or `tsx` page</p>
+    )
+}
+```
+
+## Typescript
+
+```typescript
+import type {MarkdownFrontmatter} from "@interact/types";
+
+export const frontmatter: MarkdownFrontmatter = {
+    layout: "landing"
+}
+```
