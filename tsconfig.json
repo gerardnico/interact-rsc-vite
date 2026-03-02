@@ -11,7 +11,7 @@
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "target": "ESNext",
-    "sourceMap": true,
+    //"sourceMap": true,
     "inlineSourceMap": true,
     "lib": [
       "ESNext",
