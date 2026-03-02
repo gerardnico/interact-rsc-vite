@@ -13,12 +13,13 @@ import {Command, Flags} from '@oclif/core'
 import {createServer, type InlineConfig} from 'vite'
 
 import {fileURLToPath} from "node:url";
+import viteImageService from "../../vite/image-service/vite-image-service";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const interactPackageDir = path.resolve(__dirname, '../..');
 
-export default class Dev extends Command {
+export default class Start extends Command {
     static description = 'Start Development server'
 
     static flags = {
@@ -26,6 +27,7 @@ export default class Dev extends Command {
             description: 'Project root directory',
             default: "",
         }),
+        // https://vite.dev/guide/assets#the-public-directory
         publicDir: Flags.string({
             description: 'Public assets directory',
             default: 'public',
@@ -41,7 +43,7 @@ export default class Dev extends Command {
     }
 
     async run(): Promise<void> {
-        const {flags} = await this.parse(Dev)
+        const {flags} = await this.parse(Start)
 
         let rootPath = path.resolve(flags.root)
         let pagesDir
@@ -56,14 +58,32 @@ export default class Dev extends Command {
         } else {
             publicDir = path.resolve(flags.publicDir);
         }
+        // https://vite.dev/guide/build#public-base-path
+        let publicBasePath = ""
+
         // Note: You can merge also
         // https://vite.dev/guide/api-javascript#mergeconfig
         const config: InlineConfig = {
             root: rootPath,
+            base: publicBasePath,
             server: {
                 port: flags.port,
             },
             publicDir: publicDir,
+            build: {
+                // https://rollupjs.org/configuration-options/
+                rollupOptions: {
+                    external: [
+                        // Ensure image service dependency such as sharp, mime and etag is excluded from bundling
+                        // https://sharp.pixelplumbing.com/install/#vite
+                        "sharp",
+                        "mime",
+                        "etag"
+                    ]
+                },
+                // https://vite.dev/config/build-options#build-outdir
+                outDir: path.resolve(rootPath, "dist")
+            },
             plugins: [
                 // You can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
                 // to understand how "use client" and "use server" directives are transformed internally.
@@ -85,15 +105,22 @@ export default class Dev extends Command {
                 }),
                 viteRscSsgPlugin(),
                 pageModulesPlugin(pagesDir),
-                confModulePlugin()
+                confModulePlugin(),
+                viteImageService({
+                    baseDir: path.resolve(rootPath, "img"),
+                    cacheDir: path.resolve(rootPath, ".interact/cache/img"),
+                })
             ],
         }
 
 
         const server = await createServer(config)
         await server.listen()
+        // port may change
+        // ie Port 5173 is in use, trying another one...
+        this.log(`Starting Interact Dev server`)
         server.printUrls()
-        this.log(`Interact Dev server started at http://localhost:${flags.port}`)
+
         // keep process alive + graceful shutdown
         const shutdown = async () => {
             this.log('\nShutting down Interact Dev server...')

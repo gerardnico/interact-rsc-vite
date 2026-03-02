@@ -248,17 +248,21 @@ __metadata:
     "@oclif/core": "npm:^4.8.2"
     "@realfavicongenerator/generate-favicon": "npm:^0.6.3"
     "@realfavicongenerator/image-adapter-node": "npm:^0.6.3"
+    "@types/etag": "npm:^1"
     "@types/node": "npm:^25.3.0"
     "@types/react": "npm:^19.2.14"
     "@types/react-dom": "npm:19.2.3"
     "@vitejs/plugin-react": "npm:latest"
     "@vitejs/plugin-rsc": "npm:latest"
+    etag: "npm:^1.8.1"
     glob: "npm:^13.0.6"
+    mime: "npm:^4.1.0"
     react: "npm:^19.2.4"
     react-dom: "npm:^19.2.4"
     remark-frontmatter: "npm:5.0.0"
     remark-mdx-frontmatter: "npm:5.2.0"
     rsc-html-stream: "npm:0.0.7"
+    sharp: "npm:0.34.5"
     typescript: "npm:5.9.3"
     vite: "npm:7.3.1"
     vitest: "npm:^4.0.18"
@@ -1173,6 +1177,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/etag@npm:^1":
+  version: 1.8.4
+  resolution: "@types/etag@npm:1.8.4"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/5dd38bcf6cff67ba9f391f9aada4bd93eee9b298b83a60a788a56454bf2ad9e3e6e8f84dae3c70c7a4102374a39a24eb93a4dfb26832ea2bdcd5adca2db3b024
+  languageName: node
+  linkType: hard
+
 "@types/hast@npm:^3.0.0":
   version: 3.0.4
   resolution: "@types/hast@npm:3.0.4"
@@ -1202,6 +1215,15 @@ __metadata:
   version: 2.1.0
   resolution: "@types/ms@npm:2.1.0"
   checksum: 10/532d2ebb91937ccc4a89389715e5b47d4c66e708d15942fe6cc25add6dc37b2be058230a327dd50f43f89b8b6d5d52b74685a9e8f70516edfc9bdd6be910eff4
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:*":
+  version: 25.3.3
+  resolution: "@types/node@npm:25.3.3"
+  dependencies:
+    undici-types: "npm:~7.18.0"
+  checksum: 10/883e8942b0ddf89f9aae56c4205af8d9a368acd6cab83aa052447a6c5e69ce2bc8ab3f54e549233ada160ba9216dad7f30c62c35867c584fe844ae99f7dea2e0
   languageName: node
   linkType: hard
 
@@ -1994,6 +2016,13 @@ __metadata:
   dependencies:
     "@types/estree": "npm:^1.0.0"
   checksum: 10/a65728d5727b71de172c5df323385755a16c0fdab8234dc756c3854cfee343261ddfbb72a809a5660fac8c75d960bb3e21aa898c2d7e9b19bb298482ca58a3af
+  languageName: node
+  linkType: hard
+
+"etag@npm:^1.8.1":
+  version: 1.8.1
+  resolution: "etag@npm:1.8.1"
+  checksum: 10/571aeb3dbe0f2bbd4e4fadbdb44f325fc75335cd5f6f6b6a091e6a06a9f25ed5392f0863c5442acb0646787446e816f13cbfc6edce5b07658541dff573cab1ff
   languageName: node
   linkType: hard
 
@@ -2984,6 +3013,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mime@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "mime@npm:4.1.0"
+  bin:
+    mime: bin/cli.js
+  checksum: 10/154c06eeaf803c4a87f44b3dbd3fafc50afed7154f9ea2d2dde4ae464be33a7c6943de6981d636abd5da3523d2bd66ee1ad2adb2e4c2e7a2fe5e0075bcde62d5
+  languageName: node
+  linkType: hard
+
 "minimatch@npm:^10.2.2":
   version: 10.2.3
   resolution: "minimatch@npm:10.2.3"
@@ -3557,7 +3595,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sharp@npm:^0.34.5":
+"sharp@npm:0.34.5, sharp@npm:^0.34.5":
   version: 0.34.5
   resolution: "sharp@npm:0.34.5"
   dependencies:

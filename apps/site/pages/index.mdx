@@ -7,6 +7,7 @@ import {getPages} from "../../../src/interact/pages/index.tsx";
 
 
 <p>Number of Pages: {Object.keys(getPages()).length - 1}</p>
+<img src={"_images?path=card_puncher_data_processing.jpg"} alt={"Card Puncher"} />
 <ul>
     {Object.entries(getPages()).map(([key, page]) => {
         if (key.startsWith("/index")) {
