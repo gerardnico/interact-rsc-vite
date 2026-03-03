@@ -1,10 +1,7 @@
 import fs from "fs";
 import path from "path";
+import conf from "interact:conf"
 
-/**
- * Directory of all pages
- */
-export let pagesDir = "pages"
 
 import Holy from "../layout/Holy";
 import Landing from "../layout/Landing";
@@ -94,9 +91,9 @@ export function getRootComponent(normalizedRequest: Request): React.JSX.Element 
  * can use it to render each page
  */
 export function getStaticPaths() {
-    return Object.keys(getPagesRecursively(pagesDir))
+    return Object.keys(getPagesRecursively(conf.pages.path))
 }
 
 export function getPages() {
-    return getPagesRecursively(pagesDir)
+    return getPagesRecursively(conf.pages.path)
 }

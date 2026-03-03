@@ -1,6 +1,6 @@
 import {Command, Flags} from '@oclif/core'
-import {config as interactConfig} from '../../config'
 import yaml from 'yaml'
+import ConfigHandler from "../../config";
 
 /**
  * Recursively filters an object by a key path
@@ -134,9 +134,9 @@ export default class PrintConfig extends Command {
     const pretty = !flags['no-pretty'] && !flags.plain
 
     // Get the config (filtered if needed)
-    let configToPrint = interactConfig
+    let configToPrint = new ConfigHandler({}).getConfig()
     if (flags.filter) {
-      const filtered = filterByKey(interactConfig, flags.filter)
+      const filtered = filterByKey(configToPrint, flags.filter)
       if (filtered === undefined) {
         this.error(`Key '${flags.filter}' not found in configuration`)
       }

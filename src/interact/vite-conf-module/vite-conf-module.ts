@@ -1,40 +1,74 @@
-import type {Plugin, ViteDevServer} from "vite";
+import type {Plugin} from "vite";
+import type {Config} from "../config/jsonConfigSchema";
 
-export default function ConfVirtualModulePlugin(): Plugin {
-    const virtualId = 'virtual:my-module'
-    const resolvedVirtualId = '\0' + virtualId
 
-    let server:ViteDevServer;
+export default function ConfVirtualModulePlugin(data: Config): Plugin {
+    const virtualModuleId = 'interact:conf'
 
-    const watchedFile = 'interact.conf.json'
+    /**
+     * We don't prefix with \0 as specified here:
+     * In vite 7, we got this error:
+     * [vite] Internal server error: The argument 'path' must be a string, Uint8Array, or URL without null bytes. Received '\x00interact:conf'
+     */
+    const resolvedVirtualId = virtualModuleId
+
+    const watchedFile = data.env.configFilePath;
+    let loadedEnv: string;
 
     return {
-        name: 'my-virtual-module',
+        name: 'interact-conf-module',
 
-        configureServer(_server) {
-            server = _server
+        resolveId(id) {
+            if (id === virtualModuleId) {
+                return resolvedVirtualId
+            }
+        },
+
+        load(id) {
+            if (id !== resolvedVirtualId) {
+                return null
+            }
+            let context = this
+
+            loadedEnv = context.environment.name;
+            console.log(`${virtualModuleId} loaded in env ${loadedEnv}`);
+            let jsonConfig = JSON.stringify(data)
+
+            return `
+          export const conf = ${jsonConfig}
+          export default conf
+        `
+
+        },
+
+        configureServer(server) {
 
             server.watcher.add(watchedFile)
 
             server.watcher.on('change', (file) => {
                 if (!file.endsWith(watchedFile)) return
-                const mod =
-                    server.moduleGraph.getModuleById(
-                        resolvedVirtualId
-                    )
-                // You cannot invalidate something that was never instantiated.
-                if (mod) {
-                    // ✅ invalidate cache
-                    server.moduleGraph.invalidateModule(mod)
 
-                    // ✅ trigger HMR update
+                if (!loadedEnv) {
+                    return;
+                }
+                let environment = server.environments[loadedEnv];
+
+                let module = environment.moduleGraph.getModuleById(virtualModuleId);
+
+                // You cannot invalidate something that was never instantiated.
+                if (module) {
+                    // invalidate cache
+                    environment.moduleGraph.invalidateModule(module)
+
+                    // trigger HMR update
+                    // full refresh, no?
                     server.ws.send({
                         type: 'update',
                         updates: [
                             {
                                 type: 'js-update',
-                                path: virtualId,
-                                acceptedPath: virtualId,
+                                path: virtualModuleId,
+                                acceptedPath: virtualModuleId,
                                 timestamp: Date.now()
                             }
                         ]
@@ -44,25 +78,5 @@ export default function ConfVirtualModulePlugin(): Plugin {
         },
 
 
-        resolveId(id) {
-            if (id === virtualId) {
-                return resolvedVirtualId
-            }
-        },
-
-        load(id) {
-            if (id === resolvedVirtualId) {
-                // const content = fs.readFileSync(
-                //     path.resolve('data.txt'),
-                //     'utf-8'
-                // )
-                // JSON.stringify(content)
-
-                return `
-          export const conf = {}
-          export default conf
-        `
-            }
-        }
     }
 }

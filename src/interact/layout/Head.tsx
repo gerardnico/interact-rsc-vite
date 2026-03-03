@@ -45,16 +45,16 @@ export default function Head({pageModule, request}: LayoutProps) {
      */
     const url = new URL(request.url);
     const base = interactConf.site.base
-    const isRoot = url.pathname === base;
+    const isBrowserPathRoot = url.pathname === base;
     let headPageTitle = title ? title : "";
-    if (!headPageTitle && isRoot) {
+    if (!headPageTitle && isBrowserPathRoot) {
         headPageTitle = interactConf.site.title || 'Default'
     }
     let pageTitle = headPageTitle + " | " + interactConf.site.name
 
     /**
      * Head base meta
-     * Relative path  and anchor links in the page are
+     * Relative path and anchor links in the page are
      * calculated by the browser relative to the path name of this URL
      */
     let baseHeadURL = request.url;
@@ -62,9 +62,11 @@ export default function Head({pageModule, request}: LayoutProps) {
     if (!isDev) {
         baseHeadURL = interactConf.site.url + url.pathname
     }
-    if (isRoot) {
-        // In the root, we need to add a slash otherwise the relative path is calculated
-        // to the previous path
+    if (isBrowserPathRoot) {
+        /**
+         * In the root, we need to add a slash otherwise the relative path is calculated
+         * against the parent path (if there is a base, there is another parent)
+         */
         baseHeadURL = `${base}/`;
     }
     return (
@@ -88,8 +90,8 @@ export default function Head({pageModule, request}: LayoutProps) {
                     />
                 )
             })}
-            {interactConf.colors.primary &&
-                <meta name="theme-color" content={interactConf.colors.primary}/>}
+            {interactConf.site.colorPrimary &&
+                <meta name="theme-color" content={interactConf.site.colorPrimary}/>}
             <meta name="robots" content={robots ? robots : "index,follow"}/>
             {keyWords && <meta name="keywords" content={keyWords}/>}
             <link

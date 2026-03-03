@@ -14,7 +14,7 @@ import {createServer, type InlineConfig} from 'vite'
 
 import {fileURLToPath} from "node:url";
 import viteImageService from "../../vite/image-service/vite-image-service";
-import {loadConfig} from "../../config";
+import configHandler from "../../config";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,17 +48,16 @@ export default class Start extends Command {
 
         let rootPath = path.resolve(flags.root)
 
-        // Config
-        const configFileName = 'interact.config.json';
-        let configFile = path.join(rootPath, `${configFileName}`);
-        let interactConfig = (await loadConfig(configFile)).config;
+        let pagesDir = flags.pagesDir
 
-        let pagesDir
-        if (!flags.pagesDir.startsWith("/")) {
-            pagesDir = path.resolve(rootPath, flags.pagesDir);
-        } else {
-            pagesDir = path.resolve(flags.pagesDir);
-        }
+        let interactConfig = new configHandler(
+            {
+                rootPath,
+                pagesDir
+            })
+            .getConfig();
+
+
         let publicDir;
         if (!flags.publicDir.startsWith("/")) {
             publicDir = path.resolve(rootPath, flags.publicDir);
@@ -123,7 +122,7 @@ export default class Start extends Command {
                 }),
                 viteRscSsgPlugin(),
                 pageModulesPlugin(pagesDir),
-                confModulePlugin(),
+                confModulePlugin(interactConfig),
                 viteImageService({
                     baseDir: path.resolve(rootPath, "img"),
                     cacheDir: path.resolve(cachePath, "img"),

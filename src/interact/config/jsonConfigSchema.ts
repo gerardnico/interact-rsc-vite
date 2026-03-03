@@ -1,25 +1,63 @@
 import {z} from 'zod';
 
 
+/**
+ * A utility function schema so that we widen the type
+ * and don't lose access to schema-specific methods like .extend(), .pick()
+ * Everywhere where there is a z.ZodType uses this method instead to wrap it
+ */
+function typedSchema<T>() {
+    return <S extends z.ZodType<T>>(schema: S) => schema;
+}
+
+
 const image = z.object({
     href: z.string().optional(),
     type: z.string().describe("The type (ie image/png or image/svg+xml)").optional(),
     width: z.number().describe("The intrinsic width of the image").optional(),
     height: z.number().optional(),
 }).describe("An image")
-const favicon = z.object({
-    rel: z.enum(['shortcut icon', 'icon', 'apple-touch-icon']).describe("The link rel (ie the type)"),
+type ImageType = z.infer<typeof image>
+let relSchema = z.enum(['shortcut icon', 'icon', 'apple-touch-icon']).describe("The link rel (ie the type)");
+type RelType = z.infer<typeof relSchema>
+type FaviconType = {
+    rel: RelType,
+    image?: ImageType,
+}
+const favicon: z.ZodType<FaviconType> = z.object({
+    rel: relSchema,
     image: image.describe("The image").optional()
 }).describe("A favicon image")
-export type FaviconType = z.infer<typeof favicon>;
-const FaviconSetSchema = z.record(z.string().describe("The path from the public directory"), favicon.nullable())
-export type FaviconSetSchemaType = z.infer<typeof FaviconSetSchema>;
+
+
+export type FaviconSetSchemaType = Record<string, FaviconType | null>;
+const FaviconSetSchema: z.ZodType<FaviconSetSchemaType> = z.record(
+    z.string().describe("The path from the public directory"),
+    favicon.nullable()
+);
+
 
 let colorMode = z.enum(['light', 'dark']).describe("The color mode").default('light');
+
+/**
+ * We create type so that we name intermediate type in the tree
+ */
+type jsonSiteSchemaType = {
+    url?: string,
+    base: string,
+    name: string,
+    title: string,
+    faviconMaster: string,
+    favicons?: FaviconSetSchemaType,
+    colorMode: z.infer<typeof colorMode>,
+    colorPrimary: string
+}
+
+
 /**
  * Site Section in JSON
  */
-const jsonSiteSchema = z.object({
+const jsonSiteSchema = typedSchema<jsonSiteSchemaType>()(z.object({
     url: z.string().describe("The URL (Used in the sitemap)").optional(),
     base: z.string().describe("Path added to the site URL (Example: /docs)").default(""),
     name: z.string().describe("The short name (used in the app manifest)").default("Website"),
@@ -28,7 +66,7 @@ const jsonSiteSchema = z.object({
     favicons: FaviconSetSchema.describe("The favicons (logos)").optional(),
     colorMode: colorMode,
     colorPrimary: z.string().describe("The primary color (known also as the theme color)").default("#906296"),
-}).describe("The site properties (global information that are themes independent)")
+}).describe("The site properties (global information that are themes independent)"))
 
 /**
  * Public Section in JSON
@@ -51,9 +89,7 @@ const jsonPagesSchema = z.object({
 })
 
 
-const siteSchema = jsonSiteSchema.extend({
-    rootPath: z.string().describe("The root path of the site project"),
-});
+
 
 let navBarLogoSchema = z.object({
     src: z.string().default("/favicon.svg"),
@@ -215,6 +251,7 @@ let ThemeConfigSchema = z.object({
     // https://getbootstrap.com/docs/5.3/customize/css-variables/
     cssVariables: cssVariables.describe("Css variables").optional()
 });
+type ThemeConfigSchemaType = z.infer<typeof ThemeConfigSchema>;
 
 /**
  * Components
@@ -307,26 +344,10 @@ function deepMerge(target: any, source: any) {
 }
 
 
-// Infer the TypeScript type from the schema
-export type Config = z.infer<typeof ConfigSchema>;
-
-/**
- * The final config object passed to component
- */
-export const ConfigSchema = z.object({
-    theme: ThemeConfigSchema.default(ThemeConfigSchema.parse({})),
-    site: siteSchema.default(siteSchema.parse({})),
-    plugins: PluginConfigSetSchema.default(PluginConfigSetSchema.parse({})).transform(data => deepMerge(plugins, data)),
-    components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})).transform(data => deepMerge(components, data)),
-    pages: jsonPagesSchema.default(jsonPagesSchema.parse({})),
-    images: jsonImageSchema.default(jsonImageSchema.parse({})),
-    public: jsonPublicSchema.default(jsonPublicSchema.parse({})),
-})
-
 /**
  * The JSON Schema used to parse the json file
  */
-const JsonConfigSchema = z.object({
+export const JsonConfigSchema = z.object({
     $schema: z.string().optional(),
     site: jsonSiteSchema.default(jsonSiteSchema.parse({})),
     pages: jsonPagesSchema.default(jsonPagesSchema.parse({})),
@@ -336,3 +357,25 @@ const JsonConfigSchema = z.object({
     plugins: PluginConfigSetSchema.default(PluginConfigSetSchema.parse({})).transform(data => deepMerge(plugins, data)),
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})).transform(data => deepMerge(components, data))
 })
+
+/**
+ * The final schema
+ */
+let finalSiteSchema = jsonSiteSchema.extend({
+    rootPath: z.string().describe("The root path of the site project")
+})
+/**
+ * The config passed to client
+ */
+export type Config = {
+    theme: ThemeConfigSchemaType,
+    site: z.infer<typeof finalSiteSchema>
+    plugins: PluginConfigSetSchemaType,
+    components: ComponentsConfigSetSchemaType,
+    pages: z.infer<typeof jsonPagesSchema>
+    images: z.infer<typeof jsonImageSchema>
+    public: z.infer<typeof jsonPublicSchema>
+    env: {
+        configFilePath: string
+    }
+}
