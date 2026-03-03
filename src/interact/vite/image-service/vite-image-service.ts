@@ -48,6 +48,8 @@ export default function viteImageService({
                 }
 
                 try {
+
+                    // https://github.com/JonasKruckenberg/imagetools/blob/main/docs/_media/directives.md
                     const url = new URL(req.url, "http://localhost");
 
                     const imgPath = url.searchParams.get("path");

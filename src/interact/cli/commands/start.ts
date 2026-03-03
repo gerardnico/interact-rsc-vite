@@ -14,6 +14,7 @@ import {createServer, type InlineConfig} from 'vite'
 
 import {fileURLToPath} from "node:url";
 import viteImageService from "../../vite/image-service/vite-image-service";
+import {loadConfig} from "../../config";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,6 +47,12 @@ export default class Start extends Command {
         const {flags} = await this.parse(Start)
 
         let rootPath = path.resolve(flags.root)
+
+        // Config
+        const configFileName = 'interact.config.json';
+        let configFile = path.join(rootPath, `${configFileName}`);
+        let interactConfig = (await loadConfig(configFile)).config;
+
         let pagesDir
         if (!flags.pagesDir.startsWith("/")) {
             pagesDir = path.resolve(rootPath, flags.pagesDir);
@@ -61,8 +68,18 @@ export default class Start extends Command {
         // https://vite.dev/guide/build#public-base-path
         let publicBasePath = ""
 
+
+        /**
+         * For runtime, I see also: './node_modules/.xxx'
+         * dist does not work as it will be cleaned up
+         */
+        let runtimePath = path.resolve(rootPath, ".interact");
+        let cachePath = path.resolve(runtimePath, ".interact/cache")
+
+
         // Note: You can merge also
         // https://vite.dev/guide/api-javascript#mergeconfig
+        let outDistDir = path.resolve(rootPath, "dist");
         const config: InlineConfig = {
             root: rootPath,
             base: publicBasePath,
@@ -74,7 +91,8 @@ export default class Start extends Command {
                 // https://rollupjs.org/configuration-options/
                 rollupOptions: {
                     external: [
-                        // Ensure image service dependency such as sharp, mime and etag is excluded from bundling
+                        // Ensure image service dependency (present in our vite-image-service.ts file)
+                        // such as sharp, mime and etag is excluded from bundling
                         // https://sharp.pixelplumbing.com/install/#vite
                         "sharp",
                         "mime",
@@ -82,7 +100,7 @@ export default class Start extends Command {
                     ]
                 },
                 // https://vite.dev/config/build-options#build-outdir
-                outDir: path.resolve(rootPath, "dist")
+                outDir: outDistDir
             },
             plugins: [
                 // You can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
@@ -108,7 +126,7 @@ export default class Start extends Command {
                 confModulePlugin(),
                 viteImageService({
                     baseDir: path.resolve(rootPath, "img"),
-                    cacheDir: path.resolve(rootPath, ".interact/cache/img"),
+                    cacheDir: path.resolve(cachePath, "img"),
                 })
             ],
         }

@@ -1,0 +1,6 @@
+# Tell bots not to index any of your images
+User-agent: *
+Disallow: /*.webp
+Disallow: /*.jpg
+Disallow: /*.png
+Disallow: /*.gif

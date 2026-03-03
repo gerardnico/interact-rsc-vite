@@ -34,7 +34,7 @@ export function getPackageJsonDir(startDir: string, firstAncestor: boolean = tru
     return result
 }
 
-let packageJson;
+let packageJson: any;
 
 export function getInteractPackageJson() {
     if (packageJson != undefined) {

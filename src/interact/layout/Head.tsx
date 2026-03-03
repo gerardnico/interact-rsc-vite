@@ -1,6 +1,7 @@
 import type {LayoutProps} from "../types";
-import {config, themeConfig} from "../config";
+import interactConf from "interact:conf";
 import {PAGE_CONTAINER} from "./classNames";
+import type {FaviconSetSchemaType} from "../config/jsonConfigSchema";
 
 
 export default function Head({pageModule, request}: LayoutProps) {
@@ -10,7 +11,7 @@ export default function Head({pageModule, request}: LayoutProps) {
     let keyWords = pageModule.frontmatter?.keyWords;
     let robots = pageModule.frontmatter?.robots;
 
-    const primary = themeConfig.colors.primary;
+    const primary = interactConf.site.colorPrimary
 
     const hexToRgb = (hex: string) => {
         // @ts-ignore
@@ -30,7 +31,7 @@ export default function Head({pageModule, request}: LayoutProps) {
     --bs-link-color-rgb: ${primaryRgb};
     --bs-body-font-family: "Times New Roman", Times, serif";
 }`
-    let containerMaxWidth = config.theme.layouts?.page?.containerMaxWidth;
+    let containerMaxWidth = interactConf.theme.layouts?.page?.containerMaxWidth;
     if (containerMaxWidth != undefined) {
         style += `
 .${PAGE_CONTAINER} {
@@ -43,13 +44,13 @@ export default function Head({pageModule, request}: LayoutProps) {
      * Page Title
      */
     const url = new URL(request.url);
-    const base = themeConfig.site.base
+    const base = interactConf.site.base
     const isRoot = url.pathname === base;
     let headPageTitle = title ? title : "";
     if (!headPageTitle && isRoot) {
-        headPageTitle = themeConfig.site.title || 'Default'
+        headPageTitle = interactConf.site.title || 'Default'
     }
-    let pageTitle = headPageTitle + " | " + themeConfig.site.name
+    let pageTitle = headPageTitle + " | " + interactConf.site.name
 
     /**
      * Head base meta
@@ -59,7 +60,7 @@ export default function Head({pageModule, request}: LayoutProps) {
     let baseHeadURL = request.url;
     const isDev = process.env.NODE_ENV === 'development';
     if (!isDev) {
-        baseHeadURL = themeConfig.site.url + url.pathname
+        baseHeadURL = interactConf.site.url + url.pathname
     }
     if (isRoot) {
         // In the root, we need to add a slash otherwise the relative path is calculated
@@ -74,7 +75,7 @@ export default function Head({pageModule, request}: LayoutProps) {
             <meta name="generator" content="Interact"/>
             <base href={baseHeadURL}/>
             {description && <meta name="description" content={description}/>}
-            {themeConfig.site.favicons && Object.entries(themeConfig.site.favicons).map(([faviconPath, faviconProperties]) => {
+            {interactConf.site.favicons && Object.entries(interactConf.site.favicons as FaviconSetSchemaType).map(([faviconPath, faviconProperties]) => {
                 if (!faviconProperties) {
                     return;
                 }
@@ -87,8 +88,8 @@ export default function Head({pageModule, request}: LayoutProps) {
                     />
                 )
             })}
-            {themeConfig.colors.primary &&
-                <meta name="theme-color" content={themeConfig.colors.primary}/>}
+            {interactConf.colors.primary &&
+                <meta name="theme-color" content={interactConf.colors.primary}/>}
             <meta name="robots" content={robots ? robots : "index,follow"}/>
             {keyWords && <meta name="keywords" content={keyWords}/>}
             <link

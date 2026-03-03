@@ -3,7 +3,7 @@ import {z} from 'zod';
 
 import {writeFileSync, mkdirSync} from 'fs'
 import {join} from 'path'
-import {ConfigSchema} from "../../config/configSchema";
+import {JsonConfigSchema} from "../../config/jsonConfigSchema";
 
 export default class GenerateSchema extends Command {
   static description = 'Generate JSON schema from Zod configuration'
@@ -25,7 +25,7 @@ export default class GenerateSchema extends Command {
     mkdirSync(outputDir, {recursive: true})
 
     // Generate JSON Schema
-    const jsonSchema = z.toJSONSchema(ConfigSchema)
+    const jsonSchema = z.toJSONSchema(JsonConfigSchema)
 
     // Write to file
     writeFileSync(outputPath, JSON.stringify(jsonSchema, null, 2))

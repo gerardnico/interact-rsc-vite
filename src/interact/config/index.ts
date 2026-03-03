@@ -1,7 +1,5 @@
-// src/config/index.ts
-import path from 'path';
 import {readFile} from 'fs/promises';
-import {type Config, ConfigSchema, type FaviconSetSchemaType} from "./configSchema.js";
+import {type Config, JsonConfigSchema, type FaviconSetSchemaType} from "./jsonConfigSchema";
 import fs from 'fs'
 
 /**
@@ -11,9 +9,6 @@ export interface ConfigSource {
     config: Config;
     loaded: boolean;
 }
-
-
-export const configFileName = 'interact.config.json';
 
 
 // Based on https://realfavicongenerator.net
@@ -62,10 +57,9 @@ function updateFavicon(favicons?: FaviconSetSchemaType): FaviconSetSchemaType {
 /**
  * Load configuration with fallback to defaults
  */
-async function loadConfig(): Promise<ConfigSource> {
+export async function loadConfig(configFile:string): Promise<ConfigSource> {
 
 
-    let configFile = path.join(process.cwd(), `${configFileName}`);
     let configContent: string;
     try {
         // Try to import the config file
@@ -76,7 +70,7 @@ async function loadConfig(): Promise<ConfigSource> {
             // Config file doesn't exist
             console.warn(`No ${configFile} found, using default configuration`);
             return {
-                config: ConfigSchema.parse({}),
+                config: JsonConfigSchema.parse({}),
                 loaded: false,
             };
         }
@@ -92,7 +86,7 @@ async function loadConfig(): Promise<ConfigSource> {
         console.error(`Error: ${String(error)}`);
         throw error;
     }
-    const result = ConfigSchema.safeParse(data);
+    const result = JsonConfigSchema.safeParse(data);
     if (!result.success) {
         let errorMessage = result.error.issues
             .map(issue => {
@@ -124,15 +118,3 @@ async function loadConfig(): Promise<ConfigSource> {
 
 
 }
-
-// Export the config source information
-export const configResult = await loadConfig();
-
-// Export just the config for convenience
-// noinspection JSUnusedGlobalSymbols
-export const config = configResult.config;
-export const themeConfig = configResult.config.theme;
-export default config;
-// noinspection JSUnusedGlobalSymbols
-export const loaded = configResult.loaded;
-
