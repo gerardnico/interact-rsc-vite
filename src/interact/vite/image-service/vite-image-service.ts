@@ -11,12 +11,17 @@ function hash(input: crypto.BinaryLike) {
     return crypto.createHash("sha1").update(input).digest("hex");
 }
 
-function detectFormat(req: Connect.IncomingMessage, original: string): keyof FormatEnum {
+function getFormatFromAcceptHeader(req: Connect.IncomingMessage, sourceFile: string): keyof FormatEnum {
+
     const accept = req.headers.accept || "";
 
+    // Example of Accept header for chrome
+    // image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+    // avif first, webp is supported
     if (accept.includes("image/avif")) return "avif";
     if (accept.includes("image/webp")) return "webp";
 
+    const original = path.extname(sourceFile).replace(".", "");
     return original as keyof FormatEnum;
 }
 
@@ -49,28 +54,28 @@ export default function viteImageService({
 
                 try {
 
-                    // https://github.com/JonasKruckenberg/imagetools/blob/main/docs/_media/directives.md
                     const url = new URL(req.url, "http://localhost");
-
                     const imgPath = url.searchParams.get("path");
+                    const requestedFormat = url.searchParams.get("f") as keyof FormatEnum | null;
                     const width = Number(url.searchParams.get("w"));
                     const quality = Number(url.searchParams.get("q")) || 75;
 
-                    if (!imgPath)
+                    if (!imgPath) {
+                        res.statusCode = 400;
                         return res.end("Missing path");
+                    }
 
-                    const sourceFile = path.resolve(baseDir, imgPath);
 
-                    const ext = path.extname(sourceFile).replace(".", "");
-
-                    const format: keyof FormatEnum = detectFormat(req, ext);
+                    let format = requestedFormat || getFormatFromAcceptHeader(req, imgPath);
 
                     const cacheKey = hash(`${imgPath}-${width}-${quality}-${format}`);
 
                     const cachedFile = path.join(cacheDir, `${cacheKey}.${format}`);
                     let type = mime.getType(format);
-                    if (!type)
+                    if (!type) {
+                        res.statusCode = 400;
                         return res.end(`Unknown type for format ${format}`);
+                    }
                     // serve cached
                     try {
                         const cached = await fs.readFile(cachedFile);
@@ -88,6 +93,7 @@ export default function viteImageService({
                     } catch {
                     }
 
+                    const sourceFile = path.resolve(baseDir, imgPath);
                     let sharpPipeline = sharp(sourceFile);
 
                     if (width)
@@ -110,7 +116,7 @@ export default function viteImageService({
                 } catch (err) {
                     console.error(err);
                     res.statusCode = 500;
-                    res.end("Image processing error");
+                    res.end(`Image processing error: ${err}`);
                 }
             });
         },

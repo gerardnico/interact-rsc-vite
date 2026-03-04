@@ -76,7 +76,6 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
             let globPattern = `**/*.{${extensions.join(',')}}`;
             const files = glob.sync(globPattern, {cwd: pagesDir});
             console.log(`${virtualModuleId} Loaded in env ${loadedEnv} with ${files.length} modules pages.`);
-            debugger;
             return generatePageModulesCode(pagesDir, files);
         },
         // https://vite.dev/guide/api-plugin#configureserver
