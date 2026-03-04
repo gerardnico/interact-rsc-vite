@@ -28,15 +28,6 @@ export default class Start extends Command {
             description: 'Project root directory',
             default: "",
         }),
-        // https://vite.dev/guide/assets#the-public-directory
-        publicDir: Flags.string({
-            description: 'Public assets directory',
-            default: 'public',
-        }),
-        pagesDir: Flags.string({
-            description: 'Pages directory',
-            default: 'pages',
-        }),
         port: Flags.integer({
             description: 'Dev server port',
             default: 5173,
@@ -48,25 +39,15 @@ export default class Start extends Command {
 
         let rootPath = path.resolve(flags.root)
 
-        let pagesDir = flags.pagesDir
-
         let interactConfig = new configHandler(
             {
-                rootPath,
-                pagesDir
+                rootPath
             })
             .getConfig();
 
 
-        let publicDir;
-        if (!flags.publicDir.startsWith("/")) {
-            publicDir = path.resolve(rootPath, flags.publicDir);
-        } else {
-            publicDir = path.resolve(flags.publicDir);
-        }
         // https://vite.dev/guide/build#public-base-path
         let publicBasePath = ""
-
 
         /**
          * For runtime, I see also: './node_modules/.xxx'
@@ -85,7 +66,7 @@ export default class Start extends Command {
             server: {
                 port: flags.port,
             },
-            publicDir: publicDir,
+            publicDir: interactConfig.public.path,
             build: {
                 // https://rollupjs.org/configuration-options/
                 rollupOptions: {
@@ -121,7 +102,7 @@ export default class Start extends Command {
                     },
                 }),
                 viteRscSsgPlugin(),
-                pageModulesPlugin(pagesDir),
+                pageModulesPlugin(interactConfig.pages.path),
                 confModulePlugin(interactConfig),
                 viteImageService({
                     baseDir: path.resolve(rootPath, "img"),

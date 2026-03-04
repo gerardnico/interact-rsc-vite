@@ -56,7 +56,7 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
 
     let loadedEnv = "";
     return {
-        name: 'vite-plugin-page-modules',
+        name: 'interact-vite-plugin-page-modules',
         // ResolveId Hook: https://rollupjs.org/plugin-development/#resolveid
         resolveId(id) {
             if (id === virtualModuleId) {
@@ -71,10 +71,12 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
             }
             let context = this
             loadedEnv = context.environment.name;
-            console.log(`${virtualModuleId} Loaded in env ${loadedEnv}`);
+
             let extensions = ['mdx', 'tsx', 'jsx']
             let globPattern = `**/*.{${extensions.join(',')}}`;
             const files = glob.sync(globPattern, {cwd: pagesDir});
+            console.log(`${virtualModuleId} Loaded in env ${loadedEnv} with ${files.length} modules pages.`);
+            debugger;
             return generatePageModulesCode(pagesDir, files);
         },
         // https://vite.dev/guide/api-plugin#configureserver

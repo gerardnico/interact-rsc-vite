@@ -1,25 +1,16 @@
 import {z} from 'zod';
 
 
-/**
- * A utility function schema so that we widen the type
- * and don't lose access to schema-specific methods like .extend(), .pick()
- * Everywhere where there is a z.ZodType uses this method instead to wrap it
- */
-function typedSchema<T>() {
-    return <S extends z.ZodType<T>>(schema: S) => schema;
-}
-
 
 const image = z.object({
-    href: z.string().optional(),
-    type: z.string().describe("The type (ie image/png or image/svg+xml)").optional(),
-    width: z.number().describe("The intrinsic width of the image").optional(),
-    height: z.number().optional(),
+    href: z.coerce.string<string>().optional(),
+    type: z.coerce.string<string>().describe("The type (ie image/png or image/svg+xml)").optional(),
+    width: z.coerce.number<number>().describe("The intrinsic width of the image").optional(),
+    height: z.coerce.number<number>().optional(),
 }).describe("An image")
-type ImageType = z.infer<typeof image>
+type ImageType = z.output<typeof image>
 let relSchema = z.enum(['shortcut icon', 'icon', 'apple-touch-icon']).describe("The link rel (ie the type)");
-type RelType = z.infer<typeof relSchema>
+type RelType = z.output<typeof relSchema>
 type FaviconType = {
     rel: RelType,
     image?: ImageType,
@@ -32,84 +23,72 @@ const favicon: z.ZodType<FaviconType> = z.object({
 
 export type FaviconSetSchemaType = Record<string, FaviconType | null>;
 const FaviconSetSchema: z.ZodType<FaviconSetSchemaType> = z.record(
-    z.string().describe("The path from the public directory"),
+    z.coerce.string<string>().describe("The path from the public directory"),
     favicon.nullable()
 );
 
 
 let colorMode = z.enum(['light', 'dark']).describe("The color mode").default('light');
 
-/**
- * We create type so that we name intermediate type in the tree
- */
-type jsonSiteSchemaType = {
-    url?: string,
-    base: string,
-    name: string,
-    title: string,
-    faviconMaster: string,
-    favicons?: FaviconSetSchemaType,
-    colorMode: z.infer<typeof colorMode>,
-    colorPrimary: string
-}
-
 
 /**
  * Site Section in JSON
  */
-const jsonSiteSchema = typedSchema<jsonSiteSchemaType>()(z.object({
-    url: z.string().describe("The URL (Used in the sitemap)").optional(),
-    base: z.string().describe("Path added to the site URL (Example: /docs)").default(""),
-    name: z.string().describe("The short name (used in the app manifest)").default("Website"),
-    title: z.string().describe("The title (used on the logo description, as index page title, in the app manifest as name)").default("Website"),
-    faviconMaster: z.string().describe("The master svg file used to generate the favicons relative to the image path").default("favicon.svg"),
+const jsonSiteSchema = z.object({
+    url: z.coerce.string().describe("The URL (Used in the sitemap)").optional(),
+    base: z.coerce.string().describe("Path added to the site URL (Example: /docs)").default(""),
+    name: z.coerce.string().describe("The short name (used in the app manifest)").default("Website"),
+    title: z.coerce.string().describe("The title (used on the logo description, as index page title, in the app manifest as name)").default("Website"),
+    faviconMaster: z.coerce.string().describe("The master svg file used to generate the favicons relative to the image path").default("favicon.svg"),
     favicons: FaviconSetSchema.describe("The favicons (logos)").optional(),
     colorMode: colorMode,
-    colorPrimary: z.string().describe("The primary color (known also as the theme color)").default("#906296"),
-}).describe("The site properties (global information that are themes independent)"))
+    colorPrimary: z.coerce.string().describe("The primary color (known also as the theme color)").default("#906296"),
+}).describe("The site properties (global information that are themes independent)")
+
 
 /**
  * Public Section in JSON
  */
 const jsonPublicSchema = z.object({
-    path: z.string().describe("The path of the public directory").default("public"),
+    // https://vite.dev/guide/assets#the-public-directory
+    path: z.coerce.string<string>().describe("The path of the public directory").default("public"),
 })
 /**
  * Image Section in JSON
  */
 const jsonImageSchema = z.object({
-    path: z.string().describe("The path of the image directory").default("images"),
+    path: z.coerce.string<string>().describe("The path of the image directory").default("images"),
 })
 
 /**
  * Pages Section in JSON
  */
 const jsonPagesSchema = z.object({
-    path: z.string().describe("The path of the pages directory").default("pages"),
+    path: z.coerce.string<string>().describe("The path of the pages directory").default("pages"),
 })
 
 
 
 
 let navBarLogoSchema = z.object({
-    src: z.string().default("/favicon.svg"),
-    alt: z.string().optional(),
-    width: z.number().default(24),
-    height: z.number().default(24)
+    src: z.coerce.string<string>().default("/favicon.svg"),
+    alt: z.coerce.string<string>().optional(),
+    width: z.coerce.number<number>().default(24),
+    height: z.coerce.number<number>().default(24)
 });
 let navBarSchema = z.object({
-    brandName: z.string().default("Brand").nullable(),
+    brandName: z.coerce.string<string>().default("Brand").nullable(),
     logo: navBarLogoSchema.default(navBarLogoSchema.parse({})),
 });
 let tocSchema = z.object({
-    minItems: z.number().default(2),
-    maxDepth: z.number().default(3),
+    minItems: z.coerce.number<number>().default(2),
+    maxDepth: z.coerce.number<number>().default(3),
 });
 let pageSchema = z.object({
     // https://getbootstrap.com/docs/5.3/layout/containers/
     containerClass: z.enum(['container', 'container-fluid', 'container-sm', 'container-md', 'container-lg', 'container-xl', 'container-xxl']).default('container'),
     // with the unit please
-    containerMaxWidth: z.string().optional()
+    containerMaxWidth: z.coerce.string<string>().optional()
 });
 let layoutSchema = z.object({
     navBar: navBarSchema.default(navBarSchema.parse({})),
@@ -122,9 +101,9 @@ let layoutSchema = z.object({
  *
  */
 const colorValue = z.union([
-    z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/),
+    z.coerce.string<string>().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/),
     z.literal("inherit"),
-    z.string().regex(/^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0|1|0?\.\d+)\s*\)$/),
+    z.coerce.string<string>().regex(/^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0|1|0?\.\d+)\s*\)$/),
 ]);
 
 /**
@@ -145,25 +124,25 @@ let cssVariables = z.object({
     "black": colorValue.describe("The black color"),
     "body-bg": modeColorValue.describe("The body-bg color"),
     "body-color": modeColorValue.describe("The body-color color"),
-    "body-font-family": z.string().describe("The body font family"),
-    "body-font-size": z.string().describe("The body font size (1rem default)"),
-    "body-font-weight": z.number().describe("The body font weight (400)"),
-    "body-line-height": z.number().describe("The body line height"),
+    "body-font-family": z.coerce.string<string>().describe("The body font family"),
+    "body-font-size": z.coerce.string<string>().describe("The body font size (1rem default)"),
+    "body-font-weight": z.coerce.number<number>().describe("The body font weight (400)"),
+    "body-line-height": z.coerce.number<number>().describe("The body line height"),
     "border-color": modeColorValue.describe("The border color"),
     "border-color-translucent": modeColorValue.describe("The border-color-translucent color"),
-    "border-radius": z.string().describe("The border radius (0.375rem)"),
-    "border-radius-2xl": z.string().describe("The border radius from 2xl (2rem)"),
-    "border-radius-lg": z.string().describe("The border radius from lg (0.5rem)"),
-    "border-radius-pill": z.string().describe("The border radius pill (50rem)"),
-    "border-radius-sm": z.string().describe("The border radius from sm (0.25rem)"),
-    "border-radius-xl": z.string().describe("The border radius from xl (1rem)"),
-    "border-radius-xxl": z.string().describe("The border radius from xxl (2rem)"),
-    "border-style": z.string().describe("The border style (solid)"),
-    "border-width": z.string().describe("The border width (1px)"),
-    "box-shadow": z.string().describe("The box shadow definition (0 0.5rem 1rem rgba(0, 0, 0, 0.15))"),
-    "box-shadow-inset": z.string().describe("The box shadow inset (inset 0 1px 2px rgba(0, 0, 0, 0.075))"),
-    "box-shadow-lg": z.string().describe("The box shadow from lg (0 1rem 3rem rgba(0, 0, 0, 0.175))"),
-    "box-shadow-sm": z.string().describe("The box shadow from sm (0 0.125rem 0.25rem rgba(0, 0, 0, 0.075))"),
+    "border-radius": z.coerce.string<string>().describe("The border radius (0.375rem)"),
+    "border-radius-2xl": z.coerce.string<string>().describe("The border radius from 2xl (2rem)"),
+    "border-radius-lg": z.coerce.string<string>().describe("The border radius from lg (0.5rem)"),
+    "border-radius-pill": z.coerce.string<string>().describe("The border radius pill (50rem)"),
+    "border-radius-sm": z.coerce.string<string>().describe("The border radius from sm (0.25rem)"),
+    "border-radius-xl": z.coerce.string<string>().describe("The border radius from xl (1rem)"),
+    "border-radius-xxl": z.coerce.string<string>().describe("The border radius from xxl (2rem)"),
+    "border-style": z.coerce.string<string>().describe("The border style (solid)"),
+    "border-width": z.coerce.string<string>().describe("The border width (1px)"),
+    "box-shadow": z.coerce.string<string>().describe("The box shadow definition (0 0.5rem 1rem rgba(0, 0, 0, 0.15))"),
+    "box-shadow-inset": z.coerce.string<string>().describe("The box shadow inset (inset 0 1px 2px rgba(0, 0, 0, 0.075))"),
+    "box-shadow-lg": z.coerce.string<string>().describe("The box shadow from lg (0 1rem 3rem rgba(0, 0, 0, 0.175))"),
+    "box-shadow-sm": z.coerce.string<string>().describe("The box shadow from sm (0 0.125rem 0.25rem rgba(0, 0, 0, 0.075))"),
     "code-color": modeColorValue.describe("The code color"),
     "cyan": colorValue.describe("The cyan color"),
     "danger": colorValue.describe("The danger color"),
@@ -176,15 +155,15 @@ let cssVariables = z.object({
     "dark-text-emphasis": modeColorValue.describe("The dark-text-emphasis color"),
     "emphasis-color": modeColorValue.describe("The emphasis color"),
     "focus-ring-color": colorValue.describe("The focus-ring color"),
-    "focus-ring-opacity": z.number().describe("The focus-ring opacity (0.25)"),
-    "focus-ring-width": z.string().describe("The focus-ring width (0.25rem)"),
-    "font-monospace": z.string().describe("The font monospace"),
-    "font-sans-serif": z.string().describe("The font sans serif"),
+    "focus-ring-opacity": z.coerce.number<number>().describe("The focus-ring opacity (0.25)"),
+    "focus-ring-width": z.coerce.string<string>().describe("The focus-ring width (0.25rem)"),
+    "font-monospace": z.coerce.string<string>().describe("The font monospace"),
+    "font-sans-serif": z.coerce.string<string>().describe("The font sans serif"),
     "form-invalid-border-color": modeColorValue.describe("The form-invalid-border color"),
     "form-invalid-color": modeColorValue.describe("The form-invalid color"),
     "form-valid-border-color": modeColorValue.describe("The form-valid-border color"),
     "form-valid-color": modeColorValue.describe("The form-valid color"),
-    "gradient": z.string().describe("The gradient"),
+    "gradient": z.coerce.string<string>().describe("The gradient"),
     "gray": colorValue.describe("The gray color"),
     "gray-100": colorValue.describe("The gray-100 color"),
     "gray-200": colorValue.describe("The gray-200 color"),
@@ -210,7 +189,7 @@ let cssVariables = z.object({
     "light-border-subtle": modeColorValue.describe("The light-border-subtle color"),
     "light-text-emphasis": modeColorValue.describe("The light-text-emphasis color"),
     "link-color": modeColorValue.describe("The link color"),
-    "link-decoration": z.string().describe("The link decoration (underline)"),
+    "link-decoration": z.coerce.string<string>().describe("The link decoration (underline)"),
     "link-hover-color": modeColorValue.describe("The link-hover color"),
     "orange": colorValue.describe("The orange color"),
     "pink": colorValue.describe("The pink color"),
@@ -251,7 +230,7 @@ let ThemeConfigSchema = z.object({
     // https://getbootstrap.com/docs/5.3/customize/css-variables/
     cssVariables: cssVariables.describe("Css variables").optional()
 });
-type ThemeConfigSchemaType = z.infer<typeof ThemeConfigSchema>;
+type ThemeConfigSchemaType = z.output<typeof ThemeConfigSchema>;
 
 /**
  * Components
@@ -261,10 +240,10 @@ const ComponentsConfigSchema = z.object({
     // we get: could not resolve "./node_modules/@gerardnico/interact-astro/src/components/H2/H2.tsx"
     // path below should be set in the exports of package.json
     // We derived them with import.meta.resolve
-    importPath: z.string(),
+    importPath: z.coerce.string<string>(),
 });
-const ComponentsConfigSetSchema = z.record(z.string(), ComponentsConfigSchema.nullable());
-export type ComponentsConfigSetSchemaType = z.infer<typeof ComponentsConfigSetSchema>;
+const ComponentsConfigSetSchema = z.record(z.coerce.string<string>(), ComponentsConfigSchema.nullable());
+export type ComponentsConfigSetSchemaType = z.output<typeof ComponentsConfigSetSchema>;
 
 
 // No file system path, it's derived thanks to import, and it does not work well with vite and import
@@ -310,14 +289,13 @@ const components: ComponentsConfigSetSchemaType = {
  * Plugins
  */
 const PluginConfigSchema = z.object({
-    path: z.string().optional(),
-    props: z.record(z.string(), z.any()).optional(),
+    path: z.coerce.string<string>().optional(),
+    props: z.record(z.coerce.string<string>(), z.any()).optional(),
     type: z.enum(['remark', 'rehype']).optional(),
 });
 
-export type PluginConfig = z.infer<typeof PluginConfigSchema>;
-const PluginConfigSetSchema = z.record(z.string(), PluginConfigSchema.nullable());
-export type PluginConfigSetSchemaType = z.infer<typeof PluginConfigSetSchema>;
+const PluginConfigSetSchema = z.record(z.coerce.string<string>(), PluginConfigSchema.nullable());
+export type PluginConfigSetSchemaType = z.output<typeof PluginConfigSetSchema>;
 const plugins: PluginConfigSetSchemaType = {
     "rehype-github-alerts": {},
     "rehype-href-rewrite": {},
@@ -344,11 +322,12 @@ function deepMerge(target: any, source: any) {
 }
 
 
+
 /**
  * The JSON Schema used to parse the json file
  */
 export const JsonConfigSchema = z.object({
-    $schema: z.string().optional(),
+    $schema: z.coerce.string().optional(),
     site: jsonSiteSchema.default(jsonSiteSchema.parse({})),
     pages: jsonPagesSchema.default(jsonPagesSchema.parse({})),
     public: jsonPublicSchema.default(jsonPublicSchema.parse({})),
@@ -358,23 +337,21 @@ export const JsonConfigSchema = z.object({
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})).transform(data => deepMerge(components, data))
 })
 
-/**
- * The final schema
- */
-let finalSiteSchema = jsonSiteSchema.extend({
-    rootPath: z.string().describe("The root path of the site project")
-})
+
 /**
  * The config passed to client
  */
 export type Config = {
     theme: ThemeConfigSchemaType,
-    site: z.infer<typeof finalSiteSchema>
+    site: z.output<typeof jsonSiteSchema> & {
+        // "The root path of the site project"
+        rootPath: string
+    }
     plugins: PluginConfigSetSchemaType,
     components: ComponentsConfigSetSchemaType,
-    pages: z.infer<typeof jsonPagesSchema>
-    images: z.infer<typeof jsonImageSchema>
-    public: z.infer<typeof jsonPublicSchema>
+    pages: z.output<typeof jsonPagesSchema>
+    images: z.output<typeof jsonImageSchema>
+    public: z.output<typeof jsonPublicSchema>
     env: {
         configFilePath: string
     }

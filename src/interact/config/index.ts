@@ -65,7 +65,6 @@ export default class ConfigHandler {
 
     private readonly configFile: string;
     private readonly rootPath: string;
-    private readonly pagesDir: string | undefined;
 
     constructor(props: ConfigHandlerProps) {
 
@@ -76,7 +75,6 @@ export default class ConfigHandler {
             this.rootPath = props.rootPath
         }
         this.configFile = path.join(this.rootPath, `${configFileName}`);
-        this.pagesDir = props.pagesDir;
     }
 
     #addDefaultAndRuntime(finalConfigData: Config) {
@@ -107,13 +105,22 @@ export default class ConfigHandler {
         /**
          * Adding page dir
          */
-        let pagesDir = this.pagesDir || finalConfigData.pages.path;
+        let pagesDir = finalConfigData.pages.path;
         if (pagesDir.startsWith("/")) {
             pagesDir = path.resolve(pagesDir);
         } else {
             pagesDir = path.resolve(this.rootPath, pagesDir);
         }
         finalConfigData.pages.path = pagesDir;
+
+        let publicDir = finalConfigData.public.path;
+        if (!publicDir.startsWith("/")) {
+            publicDir = path.resolve(this.rootPath, publicDir);
+        } else {
+            publicDir = path.resolve(publicDir);
+        }
+        finalConfigData.public.path = publicDir;
+
 
     }
 
