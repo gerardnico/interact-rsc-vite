@@ -1,43 +1,22 @@
-import sharp, {type FormatEnum} from "sharp";
 import fs from "fs/promises";
-import path from "path";
-import crypto from "crypto";
-import mime from "mrmime";
-import etag from "etag";
-import type {Connect, Plugin} from 'vite';
-import {
-    type ImageQualityPreset,
-    getPresetOptions
-} from "./image-quality-preset";
-
-
-function hash(input: crypto.BinaryLike) {
-    return crypto.createHash("sha1").update(input).digest("hex");
-}
-
-function getFormatFromAcceptHeader(req: Connect.IncomingMessage, sourceFile: string): keyof FormatEnum {
-
-    const accept = req.headers.accept || "";
-
-    // Example of Accept header for chrome
-    // image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
-    // avif first, webp is supported
-    if (accept.includes("image/avif")) return "avif";
-    if (accept.includes("image/webp")) return "webp";
-
-    const original = path.extname(sourceFile).replace(".", "");
-    return original as keyof FormatEnum;
-}
+import type {Plugin} from 'vite';
+/**
+ * Used by vite rsc to convert the
+ */
+import {toNodeHandler} from 'srvx/node'
+import {createImageHandler} from "./ImageHandler";
 
 type ViteImageService = {
     baseDir?: string,
     cacheDir?: string,
     endPoint?: string
+    secret: string
 };
 export default function viteImageService({
                                              baseDir = "img",
                                              cacheDir = ".cache/images",
-                                             endPoint = "/_images"
+                                             endPoint = "/_images",
+                                             secret
                                          }: ViteImageService): Plugin {
 
     async function ensureCache() {
@@ -51,79 +30,16 @@ export default function viteImageService({
             await ensureCache();
 
             server.middlewares.use(async (req, res, next) => {
-
                 if (!req.url?.startsWith(endPoint)) {
                     return next();
                 }
-
                 try {
-
-                    const url = new URL(req.url, "http://localhost");
-                    const imgPath = url.searchParams.get("path");
-                    const requestedFormat = url.searchParams.get("f") as keyof FormatEnum| null;
-                    const width = Number(url.searchParams.get("w"));
-                    let qualityPreset = url.searchParams.get("p") as ImageQualityPreset | null;
-                    if (!qualityPreset) {
-                        qualityPreset = 'high'
-                    }
-
-                    if (!imgPath) {
-                        res.statusCode = 400;
-                        return res.end("Missing path");
-                    }
-
-
-                    let format = requestedFormat || getFormatFromAcceptHeader(req, imgPath);
-
-                    const cacheKey = hash(`${imgPath}-${width}-${qualityPreset}-${format}`);
-
-                    const cachedFile = path.join(cacheDir, `${cacheKey}.${format}`);
-                    let type = mime.lookup(format as string);
-                    if (!type) {
-                        res.statusCode = 400;
-                        return res.end(`Unknown type for format ${format}`);
-                    }
-                    // serve cached
-                    try {
-                        const cached = await fs.readFile(cachedFile);
-
-                        res.setHeader("Content-Type", type);
-                        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-                        res.setHeader("ETag", etag(cached));
-
-                        if (req.headers["if-none-match"] === etag(cached)) {
-                            res.statusCode = 304;
-                            return res.end();
-                        }
-
-                        return res.end(cached);
-                    } catch {
-                    }
-
-                    const sourceFile = path.resolve(baseDir, imgPath);
-                    let sharpPipeline = sharp(sourceFile);
-
-                    if (width)
-                        sharpPipeline = sharpPipeline.resize({
-                            width,
-                            withoutEnlargement: true,
-                        });
-
-                    const options = getPresetOptions({preset: qualityPreset, format});
-                    sharpPipeline.toFormat(format, options)
-                    const buffer = await sharpPipeline.toBuffer();
-
-                    await fs.writeFile(cachedFile, buffer);
-
-                    res.setHeader("Content-Type", type);
-                    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-                    res.setHeader("ETag", etag(buffer));
-
-                    res.end(buffer);
+                    let handler = createImageHandler({
+                        baseDir, cacheDir, endPoint, secret
+                    })
+                    await toNodeHandler(handler)(req as any, res as any)
                 } catch (err) {
-                    console.error(err);
-                    res.statusCode = 500;
-                    res.end(`Image processing error: ${err}`);
+                    next(err)
                 }
             });
         },

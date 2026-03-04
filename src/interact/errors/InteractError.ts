@@ -5,16 +5,23 @@ export interface InteractErrorData {
     hint?: string | ((...params: any) => string);
 }
 
+function getString(message: string | ((...params: any) => string) | undefined) {
+    if (!message) {
+        return ''
+    }
+    return typeof message === 'string' ? message : message()
+}
+
 export class InteractError extends Error {
     code: number;
     title: string;
     hint?: string;
 
     constructor({code, title, message, hint}: InteractErrorData) {
-        super(typeof message === 'string' ? message : message());
+        super(getString(message));
         this.code = code;
         this.title = title;
-        this.hint = typeof hint === 'string' ? hint : hint();
+        this.hint = getString(hint);
     }
 }
 

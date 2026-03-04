@@ -54,8 +54,11 @@ const jsonPublicSchema = z.object({
     path: z.coerce.string<string>().describe("The path of the public directory").default("public"),
 })
 let defaultImagePropertyValues = z.object({
-    responsiveImage: z.boolean().describe("Automatically generate the required srcset and sizes").default(true),
-    lazyLoading: z.boolean().describe("Lazy loading (should be false for images above the fold)").default(false),
+    // fluid - scale down to fit the container, maintaining the aspect ratio (https://getbootstrap.com/docs/5.3/content/images/#responsive-images)
+    // none - not responsive (No srcset or sizes generated, no styles applied)
+    responsiveness: z.enum(['fluid', 'none']).describe("Automatically generate the required srcset and sizes").default('fluid'),
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
+    loading: z.enum(['lazy', 'eager']).describe("Lazy loading (should be false for images above the fold)").default('lazy'),
     decoding: z.enum(['async', 'sync', 'auto']).describe("Tell if the browser process the images on or off the main thread (sync - on, async - off, auto - the browser chooses)").default("async"),
     quality: z.enum(['low', 'mid', 'high', 'max']).describe("A quality preset (low:40, mid:60, high:80, max:90)").optional().default('high')
 });

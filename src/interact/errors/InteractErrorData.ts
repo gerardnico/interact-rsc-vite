@@ -1,4 +1,4 @@
-import {InteractErrorData} from "./InteractError";
+import type {InteractErrorData} from "./InteractError";
 
 const ResourceNoteFound: InteractErrorData = {
     code: 1001,
@@ -18,6 +18,7 @@ const AvatarIncorrectDimension: InteractErrorData = {
     message: 'Height and width do not have the same value',
     hint: 'Use the size parameter instead of height and width value.',
 };
+
 
 export {
     ResourceNoteFound,

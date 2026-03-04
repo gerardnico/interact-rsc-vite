@@ -1,11 +1,15 @@
 import sharp, {type FormatEnum} from 'sharp';
+import {z} from "zod";
 
-export type ImageQualityPreset = 'low' | 'mid' | 'high' | 'max';
+export const ImageQualityPresetSchema = z.enum(['low', 'mid', 'high' , 'max']);
+export type ImageQualityPreset = z.output<typeof ImageQualityPresetSchema>;
 
 /**
  * Key of the low objects
  */
-type QualityPresetFormats = 'jpeg' | 'png' | 'webp' | 'avif' | 'tiff' | 'gif' | 'heif'
+export const QualityPresetFormat = z.enum(['jpeg' , 'png' , 'webp' , 'avif' , 'tiff' , 'gif' , 'heif']);
+
+type QualityPresetFormats = z.output<typeof QualityPresetFormat>
 
 export const SHARP_QUALITY_PRESETS: Record<ImageQualityPreset, {
     jpeg: sharp.JpegOptions;

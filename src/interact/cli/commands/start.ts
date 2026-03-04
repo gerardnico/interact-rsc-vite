@@ -107,6 +107,7 @@ export default class Start extends Command {
                 viteImageService({
                     baseDir: path.resolve(rootPath, "img"),
                     cacheDir: path.resolve(cachePath, "img"),
+                    secret: process.env.IMAGE_SECRET || 'secret'
                 })
             ],
         }
