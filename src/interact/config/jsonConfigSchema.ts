@@ -1,7 +1,6 @@
 import {z} from 'zod';
 
 
-
 const image = z.object({
     href: z.coerce.string<string>().optional(),
     type: z.coerce.string<string>().describe("The type (ie image/png or image/svg+xml)").optional(),
@@ -45,6 +44,7 @@ const jsonSiteSchema = z.object({
     colorPrimary: z.coerce.string().describe("The primary color (known also as the theme color)").default("#906296"),
 }).describe("The site properties (global information that are themes independent)")
 
+//const imageType = z.literal(["default", "webp", "avif", "jpg"]);
 
 /**
  * Public Section in JSON
@@ -53,11 +53,19 @@ const jsonPublicSchema = z.object({
     // https://vite.dev/guide/assets#the-public-directory
     path: z.coerce.string<string>().describe("The path of the public directory").default("public"),
 })
+let defaultImagePropertyValues = z.object({
+    responsiveImage: z.boolean().describe("Automatically generate the required srcset and sizes").default(true),
+    lazyLoading: z.boolean().describe("Lazy loading (should be false for images above the fold)").default(false),
+    decoding: z.enum(['async', 'sync', 'auto']).describe("Tell if the browser process the images on or off the main thread (sync - on, async - off, auto - the browser chooses)").default("async"),
+    quality: z.enum(['low', 'mid', 'high', 'max']).describe("A quality preset (low:40, mid:60, high:80, max:90)").optional().default('high')
+});
+
 /**
  * Image Section in JSON
  */
 const jsonImageSchema = z.object({
     path: z.coerce.string<string>().describe("The path of the image directory").default("images"),
+    default: defaultImagePropertyValues.describe("The default values").default(defaultImagePropertyValues.parse({}))
 })
 
 /**
@@ -66,8 +74,6 @@ const jsonImageSchema = z.object({
 const jsonPagesSchema = z.object({
     path: z.coerce.string<string>().describe("The path of the pages directory").default("pages"),
 })
-
-
 
 
 let navBarLogoSchema = z.object({
@@ -240,15 +246,15 @@ const ComponentsConfigSchema = z.object({
     // we get: could not resolve "./node_modules/@gerardnico/interact-astro/src/components/H2/H2.tsx"
     // path below should be set in the exports of package.json
     // We derived them with import.meta.resolve
+    // No file system path, it's derived thanks to import, and it does not work well with vite and import
+    // as they don't handle symlink well
     importPath: z.coerce.string<string>(),
 });
 const ComponentsConfigSetSchema = z.record(z.coerce.string<string>(), ComponentsConfigSchema.nullable());
 export type ComponentsConfigSetSchemaType = z.output<typeof ComponentsConfigSetSchema>;
 
 
-// No file system path, it's derived thanks to import, and it does not work well with vite and import
-// as they don't handle symlink well
-const interactComponentBaseDirectory = `@gerardnico/interact-astro/components`
+const interactComponentBaseDirectory = `@combostrap/interact/components`
 const components: ComponentsConfigSetSchemaType = {
     "Avatar": {
         importPath: `${interactComponentBaseDirectory}/Avatar`
@@ -282,6 +288,9 @@ const components: ComponentsConfigSetSchemaType = {
     },
     "StarRating": {
         importPath: `${interactComponentBaseDirectory}/StarRating`
+    },
+    "Image": {
+        importPath: `${interactComponentBaseDirectory}/Image`
     }
 }
 
@@ -320,7 +329,6 @@ function deepMerge(target: any, source: any) {
     }
     return output;
 }
-
 
 
 /**

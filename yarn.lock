@@ -239,34 +239,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@combostrap/interact-rsc@workspace:.":
+"@combostrap/interact@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@combostrap/interact-rsc@workspace:."
+  resolution: "@combostrap/interact@workspace:."
   dependencies:
     "@altano/remark-mdx-toc-with-slugs": "npm:4.0.1"
     "@mdx-js/rollup": "npm:3.1.1"
-    "@oclif/core": "npm:^4.8.2"
-    "@realfavicongenerator/generate-favicon": "npm:^0.6.3"
-    "@realfavicongenerator/image-adapter-node": "npm:^0.6.3"
-    "@types/etag": "npm:^1"
-    "@types/node": "npm:^25.3.0"
-    "@types/react": "npm:^19.2.14"
+    "@oclif/core": "npm:4.8.2"
+    "@realfavicongenerator/generate-favicon": "npm:0.6.3"
+    "@realfavicongenerator/image-adapter-node": "npm:0.6.3"
+    "@types/etag": "npm:1"
+    "@types/node": "npm:25.3.0"
+    "@types/react": "npm:19.2.14"
     "@types/react-dom": "npm:19.2.3"
     "@vitejs/plugin-react": "npm:latest"
     "@vitejs/plugin-rsc": "npm:latest"
-    etag: "npm:^1.8.1"
-    glob: "npm:^13.0.6"
-    mime: "npm:^4.1.0"
-    react: "npm:^19.2.4"
-    react-dom: "npm:^19.2.4"
+    etag: "npm:1.8.1"
+    glob: "npm:13.0.6"
+    mrmime: "npm:2.0.1"
+    react: "npm:19.2.4"
+    react-dom: "npm:19.2.4"
     remark-frontmatter: "npm:5.0.0"
     remark-mdx-frontmatter: "npm:5.2.0"
+    rollup: "npm:*"
     rsc-html-stream: "npm:0.0.7"
     sharp: "npm:0.34.5"
     typescript: "npm:5.9.3"
     vite: "npm:7.3.1"
-    vitest: "npm:^4.0.18"
-    zod: "npm:^4.3.6"
+    vitest: "npm:4.0.18"
+    zod: "npm:4.3.6"
   languageName: unknown
   linkType: soft
 
@@ -819,7 +820,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oclif/core@npm:^4.8.2":
+"@oclif/core@npm:4.8.2":
   version: 4.8.2
   resolution: "@oclif/core@npm:4.8.2"
   dependencies:
@@ -845,7 +846,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@realfavicongenerator/generate-favicon@npm:^0.6.3":
+"@realfavicongenerator/generate-favicon@npm:0.6.3, @realfavicongenerator/generate-favicon@npm:^0.6.3":
   version: 0.6.3
   resolution: "@realfavicongenerator/generate-favicon@npm:0.6.3"
   dependencies:
@@ -854,7 +855,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@realfavicongenerator/image-adapter-node@npm:^0.6.3":
+"@realfavicongenerator/image-adapter-node@npm:0.6.3":
   version: 0.6.3
   resolution: "@realfavicongenerator/image-adapter-node@npm:0.6.3"
   dependencies:
@@ -1177,7 +1178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/etag@npm:^1":
+"@types/etag@npm:1":
   version: 1.8.4
   resolution: "@types/etag@npm:1.8.4"
   dependencies:
@@ -1227,7 +1228,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^25.3.0":
+"@types/node@npm:25.3.0":
   version: 25.3.0
   resolution: "@types/node@npm:25.3.0"
   dependencies:
@@ -1245,7 +1246,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.2.14":
+"@types/react@npm:19.2.14":
   version: 19.2.14
   resolution: "@types/react@npm:19.2.14"
   dependencies:
@@ -2019,7 +2020,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"etag@npm:^1.8.1":
+"etag@npm:1.8.1":
   version: 1.8.1
   resolution: "etag@npm:1.8.1"
   checksum: 10/571aeb3dbe0f2bbd4e4fadbdb44f325fc75335cd5f6f6b6a091e6a06a9f25ed5392f0863c5442acb0646787446e816f13cbfc6edce5b07658541dff573cab1ff
@@ -2157,7 +2158,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^13.0.0, glob@npm:^13.0.6":
+"glob@npm:13.0.6, glob@npm:^13.0.0":
   version: 13.0.6
   resolution: "glob@npm:13.0.6"
   dependencies:
@@ -3013,15 +3014,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mime@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "mime@npm:4.1.0"
-  bin:
-    mime: bin/cli.js
-  checksum: 10/154c06eeaf803c4a87f44b3dbd3fafc50afed7154f9ea2d2dde4ae464be33a7c6943de6981d636abd5da3523d2bd66ee1ad2adb2e4c2e7a2fe5e0075bcde62d5
-  languageName: node
-  linkType: hard
-
 "minimatch@npm:^10.2.2":
   version: 10.2.3
   resolution: "minimatch@npm:10.2.3"
@@ -3122,6 +3114,13 @@ __metadata:
   dependencies:
     minipass: "npm:^7.1.2"
   checksum: 10/f47365cc2cb7f078cbe7e046eb52655e2e7e97f8c0a9a674f4da60d94fb0624edfcec9b5db32e8ba5a99a5f036f595680ae6fe02a262beaa73026e505cc52f99
+  languageName: node
+  linkType: hard
+
+"mrmime@npm:2.0.1":
+  version: 2.0.1
+  resolution: "mrmime@npm:2.0.1"
+  checksum: 10/1f966e2c05b7264209c4149ae50e8e830908eb64dd903535196f6ad72681fa109b794007288a3c2814f7a1ecf9ca192769909c0c374d974d604a8de5fc095d4a
   languageName: node
   linkType: hard
 
@@ -3298,7 +3297,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^19.2.4":
+"react-dom@npm:19.2.4":
   version: 19.2.4
   resolution: "react-dom@npm:19.2.4"
   dependencies:
@@ -3316,7 +3315,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^19.2.4":
+"react@npm:19.2.4":
   version: 19.2.4
   resolution: "react@npm:19.2.4"
   checksum: 10/18179fe217f67eb2d0bc61cd04e7ad3c282ea09a1dface7eacd71816f62609f4bbf566c447c704335284deb8397b00bca084e0cd60e6f437279a7498e2d0bfe0
@@ -3459,7 +3458,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^4.43.0":
+"rollup@npm:*, rollup@npm:^4.43.0":
   version: 4.59.0
   resolution: "rollup@npm:4.59.0"
   dependencies:
@@ -3595,7 +3594,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sharp@npm:0.34.5, sharp@npm:^0.34.5":
+"sharp@npm:0.34.5":
   version: 0.34.5
   resolution: "sharp@npm:0.34.5"
   dependencies:
@@ -4190,7 +4189,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^4.0.18":
+"vitest@npm:4.0.18":
   version: 4.0.18
   resolution: "vitest@npm:4.0.18"
   dependencies:
@@ -4336,7 +4335,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^4.3.6":
+"zod@npm:4.3.6":
   version: 4.3.6
   resolution: "zod@npm:4.3.6"
   checksum: 10/25fc0f62e01b557b4644bf0b393bbaf47542ab30877c37837ea8caf314a8713d220c7d7fe51f68ffa72f0e1018ddfa34d96f1973d23033f5a2a5a9b6b9d9da01

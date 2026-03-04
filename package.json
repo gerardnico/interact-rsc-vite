@@ -1,5 +1,5 @@
 {
-  "name": "@combostrap/interact-rsc",
+  "name": "@combostrap/interact",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
@@ -18,9 +18,10 @@
     "@realfavicongenerator/image-adapter-node": "0.6.3",
     "etag": "1.8.1",
     "glob": "13.0.6",
-    "mime": "4.1.0",
+    "mrmime": "2.0.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "rollup": "*",
     "sharp": "0.34.5",
     "zod": "4.3.6"
   },

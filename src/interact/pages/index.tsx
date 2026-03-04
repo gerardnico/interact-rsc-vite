@@ -3,9 +3,9 @@ import path from "path";
 import conf from "interact:conf"
 
 
-import Holy from "../layout/Holy";
-import Landing from "../layout/Landing";
-import * as NotFoundModule from "../layout/NotFound";
+import Holy from "../components/Holy";
+import Landing from "../components/Landing";
+import * as NotFoundModule from "../components/NotFound";
 
 import getModulePage from 'interact:page-modules';
 

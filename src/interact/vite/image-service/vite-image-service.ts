@@ -2,9 +2,13 @@ import sharp, {type FormatEnum} from "sharp";
 import fs from "fs/promises";
 import path from "path";
 import crypto from "crypto";
-import mime from "mime";
+import mime from "mrmime";
 import etag from "etag";
 import type {Connect, Plugin} from 'vite';
+import {
+    type ImageQualityPreset,
+    getPresetOptions
+} from "./image-quality-preset";
 
 
 function hash(input: crypto.BinaryLike) {
@@ -56,9 +60,12 @@ export default function viteImageService({
 
                     const url = new URL(req.url, "http://localhost");
                     const imgPath = url.searchParams.get("path");
-                    const requestedFormat = url.searchParams.get("f") as keyof FormatEnum | null;
+                    const requestedFormat = url.searchParams.get("f") as keyof FormatEnum| null;
                     const width = Number(url.searchParams.get("w"));
-                    const quality = Number(url.searchParams.get("q")) || 75;
+                    let qualityPreset = url.searchParams.get("p") as ImageQualityPreset | null;
+                    if (!qualityPreset) {
+                        qualityPreset = 'high'
+                    }
 
                     if (!imgPath) {
                         res.statusCode = 400;
@@ -68,10 +75,10 @@ export default function viteImageService({
 
                     let format = requestedFormat || getFormatFromAcceptHeader(req, imgPath);
 
-                    const cacheKey = hash(`${imgPath}-${width}-${quality}-${format}`);
+                    const cacheKey = hash(`${imgPath}-${width}-${qualityPreset}-${format}`);
 
                     const cachedFile = path.join(cacheDir, `${cacheKey}.${format}`);
-                    let type = mime.getType(format);
+                    let type = mime.lookup(format as string);
                     if (!type) {
                         res.statusCode = 400;
                         return res.end(`Unknown type for format ${format}`);
@@ -102,8 +109,8 @@ export default function viteImageService({
                             withoutEnlargement: true,
                         });
 
-                    sharpPipeline = sharpPipeline.toFormat(format, {quality,});
-
+                    const options = getPresetOptions({preset: qualityPreset, format});
+                    sharpPipeline.toFormat(format, options)
                     const buffer = await sharpPipeline.toBuffer();
 
                     await fs.writeFile(cachedFile, buffer);
