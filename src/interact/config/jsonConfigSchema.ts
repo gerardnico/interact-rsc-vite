@@ -44,7 +44,6 @@ const jsonSiteSchema = z.object({
     colorPrimary: z.coerce.string().describe("The primary color (known also as the theme color)").default("#906296"),
 }).describe("The site properties (global information that are themes independent)")
 
-//const imageType = z.literal(["default", "webp", "avif", "jpg"]);
 
 /**
  * Public Section in JSON
@@ -56,11 +55,11 @@ const jsonPublicSchema = z.object({
 let defaultImagePropertyValues = z.object({
     // fluid - scale down to fit the container, maintaining the aspect ratio (https://getbootstrap.com/docs/5.3/content/images/#responsive-images)
     // none - not responsive (No srcset or sizes generated, no styles applied)
-    responsiveness: z.enum(['fluid', 'none']).describe("Automatically generate the required srcset and sizes").default('fluid'),
+    responsiveness: z.enum(['fluid', 'none']).describe("If fluid, automatically generates the required srcset and sizes").default('fluid'),
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
     loading: z.enum(['lazy', 'eager']).describe("Lazy loading (should be false for images above the fold)").default('lazy'),
     decoding: z.enum(['async', 'sync', 'auto']).describe("Tell if the browser process the images on or off the main thread (sync - on, async - off, auto - the browser chooses)").default("async"),
-    quality: z.enum(['low', 'mid', 'high', 'max']).describe("A quality preset (low:40, mid:60, high:80, max:90)").optional().default('high')
+    quality: z.enum(['low', 'mid', 'high', 'max']).describe("A quality preset for raster image compression (low:40, mid:60, high:80, max:90)").optional().default('high')
 });
 
 /**
