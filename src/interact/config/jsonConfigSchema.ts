@@ -54,16 +54,16 @@ const jsonPublicSchema = z.object({
 })
 // fluid - scale down to fit the container, maintaining the aspect ratio (https://getbootstrap.com/docs/5.3/content/images/#responsive-images)
 // none - not responsive (No srcset or sizes generated, no styles applied)
-const responsiveness = z.enum(['fluid', 'none']).describe("If fluid, automatically generates the required srcset and sizes").default('fluid');
-export type ImageResponsiveness = z.output<typeof responsiveness>
+const responsiveBehaviour = z.enum(['fluid', 'none']).describe("If fluid, scale down to fit the container, maintaining the aspect ratio").default('fluid');
+export type ImageResponsiveness = z.output<typeof responsiveBehaviour>
 
 let defaultImagePropertyValues = z.object({
-
-    responsiveness: responsiveness,
+    responsiveBehaviour: responsiveBehaviour,
+    responsiveBreakpoints: z.array(z.number().int().positive()).describe("The responsive breakpoints corresponding to a screen size. For each scree, a passing image is provided").default([640, 750, 828, 960, 1080, 1280, 1668, 1920, 2048, 2560, 3200, 3840, 4480, 5120, 6016]),
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
     loading: z.enum(['lazy', 'eager']).describe("Lazy loading (should be false for images above the fold)").default('lazy'),
     decoding: z.enum(['async', 'sync', 'auto']).describe("Tell if the browser process the images on or off the main thread (sync - on, async - off, auto - the browser chooses)").default("async"),
-    quality: z.enum(['low', 'mid', 'high', 'max']).describe("A quality preset for raster image compression (low:40, mid:60, high:80, max:90)").optional().default('high')
+    compressionLevel: z.enum(['low', 'mid', 'high', 'max', 'none']).describe("A compression level (low:40, mid:60, high:80, max:90)").optional().default('high'),
 });
 
 /**
@@ -353,6 +353,7 @@ export const JsonConfigSchema = z.object({
 })
 
 
+type ImageSchemaType = z.output<typeof ImageSchema>;
 /**
  * The config passed to client
  */
@@ -365,7 +366,7 @@ export type Config = {
     plugins: PluginConfigSetSchemaType,
     components: ComponentsConfigSetSchemaType,
     pages: z.output<typeof PagesSchema>
-    images: z.output<typeof ImageSchema>
+    images: ImageSchemaType
     public: z.output<typeof jsonPublicSchema>
     env: {
         configFilePath: string

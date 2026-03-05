@@ -2,12 +2,14 @@
 layout: landing
 ---
 import {getPages} from "../../../src/interact/pages/index.tsx";
+import Image from "../../../src/interact/components/Image.tsx";
 
 # Index
 
 
 <p>Number of Pages: {Object.keys(getPages()).length - 1}</p>
-<img src={"_images/card_puncher_data_processing.jpg?r=16:9&w=300&c=low"} alt={"Card Puncher"} />
+<Image src={"card_puncher_data_processing.jpg"}
+       alt={"Card Puncher"} />
 <ul>
     {Object.entries(getPages()).map(([key, page]) => {
         if (key.startsWith("/index")) {

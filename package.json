@@ -16,6 +16,7 @@
     "@oclif/core": "4.8.2",
     "@realfavicongenerator/generate-favicon": "0.6.3",
     "@realfavicongenerator/image-adapter-node": "0.6.3",
+    "clsx": "^2.1.1",
     "etag": "1.8.1",
     "glob": "13.0.6",
     "mrmime": "2.0.1",

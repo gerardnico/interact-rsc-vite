@@ -11,6 +11,10 @@ export class ExceptionNotFound extends Error {
 /**
  * Helper to calculate the target width and height with support for ratio
  * so that we don't have any cls error
+ *
+ *
+ * Note: HTML element width and height have an effect on the space reservation
+ * but not on responsive image at all
  */
 export class ImageDimensionHelper {
 

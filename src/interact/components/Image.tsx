@@ -1,130 +1,126 @@
-import React, {
-    type DetailedHTMLProps,
-    type HTMLAttributes,
-    type ImgHTMLAttributes,
-    type SourceHTMLAttributes
-} from "react";
+import React from "react";
 
+import interactConfig from "interact:conf"
 
 
 import {InteractError, InteractErrorData} from "../errors";
 
-import * as mime from "mrmime";
 import type {ImageCompressionType} from "../images/image-compression-type";
 import type {ImageResponsiveness} from "../config/jsonConfigSchema";
+import clsx from "clsx";
 
-
-const defaultFormats = ['webp'] as const;
-const defaultFallbackFormat = 'png' as const;
-
-// Certain formats don't want PNG fallbacks:
-// - GIF will typically want to stay as a gif, either for animation or for the lower amount of colors
-// - SVGs can't be converted to raster formats in most cases
-// - JPEGs compress photographs and high-noise images better than PNG in most cases
-// For those, we'll use the original format as the fallback instead.
-const specialFormatsFallback = ['gif', 'svg', 'jpg', 'jpeg'] as const;
-
-export declare const VALID_OUTPUT_FORMATS: readonly ["avif", "png", "webp", "jpeg", "jpg", "svg"];
-export type ImageOutputFormat = (typeof VALID_OUTPUT_FORMATS)[number] | (string & {});
 
 export type ImageType =
     React.ImgHTMLAttributes<HTMLImageElement>
     & {
-    compression?: ImageCompressionType;
-    responsiveness?: ImageResponsiveness;
-    fallbackFormat?: ImageOutputFormat;
-    pictureAttributes?: HTMLAttributes<'picture'>;
+    ratio?: string;
+    compressionLevel?: ImageCompressionType;
+    responsiveBehaviour?: ImageResponsiveness;
+}
+
+type ImageRequestProps = {
+    src: string,
+    responsiveBehaviour?: ImageResponsiveness,
+    compressionLevel?: ImageCompressionType,
+    ratio?: string,
+    height?: number | string,
+    width?: number | string,
+}
+
+type Images = {
+    src: string,
+    srcSet: string[] | undefined,
+    width: number,
+    height: number,
+}
+
+async function getImages(props: ImageRequestProps): Promise<Images> {
+
+    /**
+     * Srcset and sizes for responsive image
+     * Width is mandatory for responsive image
+     * Ref https://developers.google.com/search/docs/advanced/guidelines/google-images#responsive-images
+     */
+    return {
+        src: "_images/card_puncher_data_processing.jpg?r=16:9&w=300&c=low",
+        srcSet: undefined,
+        width: 300,
+        height: 150
+    }
 }
 
 /**
- * An Image React component based on the Image Service of Astro
- * (Picture.Astro and Image.Astro)
- * Async because this is a server function
+ * An Image React component
  */
-export default async function Image({fallbackFormat, ...props}: ImageType) {
-    if (props.alt === undefined || props.alt === null) {
+export default async function Image({
+                                        responsiveBehaviour,
+                                        compressionLevel,
+                                        className,
+                                        ratio,
+                                        height,
+                                        width,
+                                        src,
+                                        style,
+                                        ...imgAttributesProps
+                                    }: ImageType) {
+    if (imgAttributesProps.alt === undefined || imgAttributesProps.alt === null) {
         throw new InteractError(InteractErrorData.ImageAltMissing);
     }
-    const layout = props.layout ?? imageConfig.layout ?? 'none';
-    const useResponsive = layout !== 'none';
-    if (useResponsive) {
-        // Apply defaults from imageConfig if not provided
-        props.layout ??= imageConfig.layout;
-        props.fit ??= imageConfig.objectFit ?? 'cover';
-        props.position ??= imageConfig.objectPosition ?? 'center';
+    const finalResponsiveness: ImageResponsiveness = responsiveBehaviour ?? interactConfig.images.default.responsiveBehaviour;
+    const finalCompression = compressionLevel ?? interactConfig.images.default.compressionLevel;
+    const finalSrc = src ?? "unknown";
+
+
+    const optimizedImages = await getImages({
+        src: finalSrc,
+        responsiveBehaviour: finalResponsiveness,
+        compressionLevel: finalCompression,
+        width: width,
+        height: height,
+        ratio: ratio,
+    });
+
+    const finalStyle = {
+        /**
+         * We don't allow the image to scale up by default
+         */
+        maxHeight: optimizedImages.height,
+        /**
+         * if the image has a class that has a `height: 100%`, the image will stretch
+         */
+        height: "auto",
+        /**
+         * We don't allow the image to scale up by default
+         */
+        maxWidth: optimizedImages.width,
+        /**
+         * We allow the image to scale up to 100% of its parent
+         */
+        width: "100%",
+        ...style
     }
 
-
-    const originalSrc = await resolveSrc(props.src);
-    const optimizedImages: GetImageResult[] = await Promise.all(
-        formats.map(
-            async (format) =>
-                await getImage({
-                    ...props,
-                    src: originalSrc,
-                    format: format,
-                    widths: props.widths,
-                    densities: props.densities,
-                } as UnresolvedImageTransform),
-        ),
-    );
-
-    let resultFallbackFormat = fallbackFormat ?? defaultFallbackFormat;
-    if (
-        !fallbackFormat &&
-        isESMImportedImage(originalSrc) &&
-        (specialFormatsFallback as ReadonlyArray<string>).includes(originalSrc.format)
-    ) {
-        resultFallbackFormat = originalSrc.format;
-    }
-    const fallbackImage = await getImage({
-        ...props,
-        format: resultFallbackFormat,
-        widths: props.widths,
-        densities: props.densities,
-    } as UnresolvedImageTransform);
-
-    const imgAdditionalAttributes: HTMLAttributes<'img'> = {};
-    const sourceAdditionalAttributes: DetailedHTMLProps<SourceHTMLAttributes<HTMLSourceElement>, HTMLSourceElement> = {};
-
-    // Propagate the `sizes` attribute to the `source` elements
-    if (props.sizes) {
-        sourceAdditionalAttributes.sizes = props.sizes;
-    }
-
-    if (fallbackImage.srcSet.values.length > 0) {
-        imgAdditionalAttributes.srcset = fallbackImage.srcSet.attribute;
-    }
-
-    if (import.meta.env.DEV) {
-        imgAdditionalAttributes['data-image-component'] = 'true';
-    }
-
-    const {class: className,  ...attributes} = {
-        ...imgAdditionalAttributes,
-        ...fallbackImage.attributes,
-    };
-    const imgAttributes = attributes as React.ImgHTMLAttributes<HTMLImageElement>;
-
+    /**
+     * Note: HTML element width and height attributes have an effect on the space reservation
+     * but not on responsive image at all (They reserve space)
+     * HTML height and width attribute are important for the ratio calculation
+     */
     return (
-        <picture>
-            {
-                Object.entries(optimizedImages).map(([_, image]) => {
-                    const srcsetAttribute =
-                        props.densities || (!props.densities && !props.widths && !useResponsive)
-                            ? `${image.src}${image.srcSet.values.length > 0 ? ', ' + image.srcSet.attribute : ''}`
-                            : image.srcSet.attribute;
-                    return (
-                        <source
-                            srcSet={srcsetAttribute}
-                            type={mime.lookup(image.options.format ?? image.src) ?? `image/${image.options.format}`}
-                            {...sourceAdditionalAttributes}
-                        />
-                    );
-                })
-            }
-            <img src={fallbackImage.src} alt={props.alt} {...imgAttributes} className={className}/>
-        </picture>
+
+        <img
+            src={optimizedImages.src}
+            srcSet={optimizedImages.srcSet && optimizedImages.srcSet.join(', ')}
+            alt={imgAttributesProps.alt}
+            width={optimizedImages.width}
+            height={optimizedImages.height}
+            className={clsx(
+                className,
+                responsiveBehaviour == 'fluid' && 'img-fluid'
+            )}
+            {...imgAttributesProps}
+            style={finalStyle}
+        />
+
     )
 
 }
