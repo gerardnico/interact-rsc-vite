@@ -60,6 +60,7 @@ export type ImageType = z.output<typeof imageTypeSchema>
 let defaultImagePropertyValues = z.object({
     type: imageTypeSchema,
     responsiveBreakpoints: z.array(z.number().int().positive()).describe("The responsive breakpoints corresponding to a screen size. For each screen, a passing image is provided").default([375, 576, 768, 992, 1200, 1400]),
+    dpiCorrection: z.boolean().describe("Enable DPI correction by screen size for responsive images").optional().default(false),
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
     loading: z.enum(['lazy', 'eager']).describe("Lazy loading (should be false for images above the fold)").default('lazy'),
     decoding: z.enum(['async', 'sync', 'auto']).describe("Tell if the browser process the images on or off the main thread (sync - on, async - off, auto - the browser chooses)").default("async"),

@@ -15,6 +15,7 @@ import {ImageError, ImageErrors} from "./image-errors-dictionary";
 export type HtmlImageAttributes = {
     src: string,
     srcSet?: string[] | null,
+    sizes?: string[] | null
     width: number,
     height: number,
 }
@@ -26,6 +27,31 @@ type ImageRequestProps = {
     ratio?: string,
     height?: number | string,
     width?: number | string,
+}
+
+/**
+ * Return if the DPI correction is enabled or not for responsive image
+ *
+ * Mobile have a higher DPI and can then fit a bigger image on a smaller size.
+ *
+ * This can be disturbing when debugging responsive sizing image
+ * If you want also to use less bandwidth, this is also useful.
+ *
+ * @return bool
+ */
+const withDpiCorrection = interactConfig.images.defaultValues?.dpiCorrection || false
+
+function getSizes(screenWidth: number, imageWidth: number) {
+    let sizes;
+    if (withDpiCorrection) {
+        let dpiBase = 96;
+        sizes = `(max-width: ${screenWidth}px) and (min-resolution:` + (3 * dpiBase) + "dpi) " + ImageDimensionHelper.round(imageWidth / 3) + "px";
+        sizes += `, (max-width: ${screenWidth}px) and (min-resolution:` + (2 * dpiBase) + "dpi) " + ImageDimensionHelper.round(imageWidth / 2) + "px";
+        sizes += `, (max-width: ${screenWidth}px) and (min-resolution:${dpiBase}dpi) ${imageWidth}px`;
+    } else {
+        sizes = `(max-width: ${screenWidth}px) ${imageWidth}px`;
+    }
+    return sizes;
 }
 
 /**
@@ -69,7 +95,8 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         params.set(urlKeyCompressionProperty, props.compression)
     }
 
-    let uri = `${interactConfig.images.serviceEndpoint}/${props.src}`;
+    let uriBase = `${interactConfig.images.serviceEndpoint}/${props.src}`;
+    let uri = uriBase;
     if (params.size > 0) {
         uri = `${uri}?${params.toString()}`;
     }
@@ -85,7 +112,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
      * Width is mandatory for responsive image
      * Ref https://developers.google.com/search/docs/advanced/guidelines/google-images#responsive-images
      */
-    for (const breakpoint of interactConfig.images.responsiveBreakpoints) {
+    for (const breakpoint of interactConfig.images.defaultValues.responsiveBreakpoints) {
 
         /**
          * The image cannot scale up
@@ -112,21 +139,26 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
          * Breakpoint Height
          */
         let breakpointHeight;
-        if(
+        if (
             isHeightRequest // if this is a height request
             || isAspectRatioRequest
-         ) {
-            breakpointHeight = (breakpointWidthWithoutMargin)/originalRequestDimensionHelper.getTargetRatio()
-            params.set(urlKeyHeightProperty, String(breakpointHeight))
+        ) {
+            breakpointHeight = ImageDimensionHelper.round((breakpointWidthWithoutMargin) / originalRequestDimensionHelper.getTargetRatio())
+            breakPointParams.set(urlKeyHeightProperty, String(breakpointHeight))
         }
-        // $srcSet .= "$breakpointUrl {$breakpointWidthMinusMargin}w";
-        // $sizes .= $this->getSizes($breakpointPixels, $breakpointWidthMinusMargin);
+        if (props.compression != null) {
+            breakPointParams.set(urlKeyCompressionProperty, props.compression)
+        }
+
+        srcSet.push(`${uriBase}?${breakPointParams.toString()} ${breakpointWidthWithoutMargin}w`);
+        sizes.push(getSizes(breakpoint, breakpointWidthWithoutMargin));
 
 
     }
     return {
         src: uri,
-        srcSet: undefined,
+        srcSet: srcSet.length == 0 ? null : srcSet,
+        sizes: sizes.length == 0 ? null : sizes,
         width: targetWidth,
         height: targetHeight
     }

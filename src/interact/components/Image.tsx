@@ -57,6 +57,7 @@ function createImageElement(
         <img
             src={htmlImageAttributes.src}
             {...(htmlImageAttributes.srcSet != null && {srcSet: htmlImageAttributes.srcSet.join(', ')})}
+            {...(htmlImageAttributes.sizes != null && {sizes: htmlImageAttributes.sizes.join(', ')})}
             alt={imgAttributesProps.alt}
             width={htmlImageAttributes.width}
             height={htmlImageAttributes.height}

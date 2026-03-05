@@ -19,11 +19,11 @@ export class ExceptionNotFound extends Error {
 export class ImageDimensionHelper {
 
 
-    private readonly requestedWidth: number | null | undefined;
-    private readonly requestedHeight: number | null | undefined;
+    private readonly requestedWidth: number | null;
+    private readonly requestedHeight: number | null;
     private readonly intrinsicWidth: number;
     private readonly intrinsicHeight: number;
-    private readonly requestedRatio: number | null | undefined;
+    private readonly requestedRatio: number | null;
 
     /**
      * Build Image from an URL
@@ -32,43 +32,38 @@ export class ImageDimensionHelper {
         requestedWidth: number | null | undefined,
         requestedHeight: number | null | undefined,
         requestedRatio: number | null | undefined,
-        intrinsicWidth: number,
-        intrinsicHeight: number
+        intrinsicWidth: number, // For a raster image, the internal width; for SVG, the defined viewBox width.
+        intrinsicHeight: number // For a raster image, the internal height; for SVG, the defined viewBox height.
     }) {
 
-        this.requestedWidth = requestedWidth;
-        if (requestedWidth == 0) this.requestedWidth = null;
-        this.requestedHeight = requestedHeight;
-        if (requestedHeight == 0) this.requestedHeight = null;
+
+        if (requestedWidth == null || requestedWidth <= 0) {
+            this.requestedWidth = null;
+        } else {
+            this.requestedWidth = requestedWidth;
+        }
+        if (requestedHeight == null || requestedHeight <= 0) {
+            this.requestedHeight = null;
+        } else {
+            this.requestedHeight = requestedHeight;
+        }
         this.intrinsicWidth = intrinsicWidth;
         this.intrinsicHeight = intrinsicHeight;
-        this.requestedRatio = requestedRatio;
+        if (requestedRatio == null || requestedRatio <= 0) {
+            this.requestedRatio = null;
+        } else {
+            this.requestedRatio = requestedRatio;
+        }
 
         return this;
     }
 
-    /**
-     * For a raster image, the internal width; for SVG, the defined viewBox width.
-     * @returns pixels
-     */
-    #getIntrinsicWidth(): number {
-        return this.intrinsicWidth
-    }
-
-
-    /**
-     * For a raster image, the internal height; for SVG, the defined viewBox height.
-     * @returns pixels
-     */
-    #getIntrinsicHeight(): number {
-        return this.intrinsicHeight
-    }
 
     /**
      * Intrinsic aspect ratio (width / height).
      */
     #getIntrinsicAspectRatio(): number {
-        return this.#getIntrinsicWidth() / this.#getIntrinsicHeight();
+        return this.intrinsicWidth / this.intrinsicHeight;
     }
 
     /**
@@ -81,14 +76,18 @@ export class ImageDimensionHelper {
     /**
      * Returns the requested aspect ratio as a float.
      * Falls back to requestedWidth / requestedHeight if no explicit ratio was set.
-     * @throws {ExceptionNotFound}
      */
-    #getCalculatedRequestedAspectRatioAsFloat(): number {
+    #getCalculatedRequestedAspectRatioAsFloat(): number | null {
         if (this.requestedRatio != null) {
             return this.requestedRatio;
         }
-        // Both getters throw ExceptionNotFound on null/0 — no division-by-zero risk
-        return this.#getRequestedWidth() / this.#getRequestedHeight();
+        if (this.requestedHeight == null) {
+            return null;
+        }
+        if (this.requestedWidth == null) {
+            return null;
+        }
+        return this.requestedWidth / this.requestedHeight;
     }
 
     /**
@@ -121,31 +120,28 @@ export class ImageDimensionHelper {
      * Resolution order: explicit height → scale by width → scale by ratio → intrinsic height.
      */
     #getTargetHeight(): number {
-        try {
-            return this.#getRequestedHeight();
-        } catch { /* no explicit height */
+        if (this.requestedHeight != null) {
+            return this.requestedHeight;
         }
 
-        try {
-            const width = this.#getRequestedWidth();
-            let ratio: number;
-            try {
-                ratio = this.#getCalculatedRequestedAspectRatioAsFloat();
-            } catch {
+        if (this.requestedWidth != null) {
+            let ratio = this.#getCalculatedRequestedAspectRatioAsFloat();
+            if (ratio == null) {
                 ratio = this.#getIntrinsicAspectRatio();
             }
-            return ImageDimensionHelper.round(width / ratio);
-        } catch { /* no requested width */
+            if (ratio != null) {
+                return ImageDimensionHelper.round(this.requestedWidth / ratio);
+            }
         }
 
-        try {
-            const ratio = this.#getCalculatedRequestedAspectRatioAsFloat();
+
+        const ratio = this.#getCalculatedRequestedAspectRatioAsFloat();
+        if (ratio != null) {
             const [, croppedHeight] = this.#getCroppingDimensionsWithRatio(ratio);
             return croppedHeight;
-        } catch { /* no requested ratio */
         }
 
-        return this.#getIntrinsicHeight();
+        return this.intrinsicHeight;
     }
 
     /**
@@ -153,51 +149,30 @@ export class ImageDimensionHelper {
      * Resolution order: explicit width → scale by height → scale by ratio → intrinsic width.
      */
     #getTargetWidth(): number {
-        try {
-            return this.#getRequestedWidth();
-        } catch { /* no explicit width */
+        if (this.requestedWidth != null) {
+            return this.requestedWidth;
         }
 
-        try {
-            const height = this.#getRequestedHeight();
-            let ratio: number;
-            try {
-                ratio = this.#getCalculatedRequestedAspectRatioAsFloat();
-            } catch {
+        if (this.requestedHeight != null) {
+            let ratio = this.#getCalculatedRequestedAspectRatioAsFloat();
+            if (ratio == null) {
                 ratio = this.#getIntrinsicAspectRatio();
             }
-            return ImageDimensionHelper.round(ratio * height);
-        } catch { /* no requested height */
+            if (ratio != null) {
+                return ImageDimensionHelper.round(ratio * this.requestedHeight);
+            }
         }
 
-        try {
-            const ratio = this.#getCalculatedRequestedAspectRatioAsFloat();
+
+        const ratio = this.#getCalculatedRequestedAspectRatioAsFloat();
+        if (ratio != null) {
             const [logicalWidth] = this.#getCroppingDimensionsWithRatio(ratio);
             return logicalWidth;
-        } catch { /* no requested ratio */
         }
 
-        return this.#getIntrinsicWidth();
+        return this.intrinsicWidth;
     }
 
-    /**
-     * @throws {ExceptionNotFound} if no width was requested, or width is 0
-     */
-    #getRequestedWidth(): number {
-
-        if (this.requestedWidth == null) throw new ExceptionNotFound('No width was requested');
-        if (this.requestedWidth === 0) throw new ExceptionNotFound('Width 0 was requested');
-        return this.requestedWidth;
-    }
-
-    /**
-     * @throws {ExceptionNotFound} if no height was requested, or height is 0
-     */
-    #getRequestedHeight(): number {
-        if (this.requestedHeight == null) throw new ExceptionNotFound('Height not requested');
-        if (this.requestedHeight === 0) throw new ExceptionNotFound('Height 0 requested');
-        return this.requestedHeight;
-    }
 
     /**
      * Round a float to the nearest integer.
@@ -213,11 +188,11 @@ export class ImageDimensionHelper {
      * Crops to fit within intrinsic dimensions.
      */
     #getCroppingDimensionsWithRatio(targetRatio: number): [number, number] {
-        let logicalWidth = this.#getIntrinsicWidth();
+        let logicalWidth = this.intrinsicWidth;
         let logicalHeight = ImageDimensionHelper.round(logicalWidth / targetRatio);
 
-        if (logicalHeight > this.#getIntrinsicHeight()) {
-            logicalHeight = this.#getIntrinsicHeight();
+        if (logicalHeight > this.intrinsicHeight) {
+            logicalHeight = this.intrinsicHeight;
             logicalWidth = ImageDimensionHelper.round(targetRatio * logicalHeight);
         }
 
@@ -246,17 +221,15 @@ export class ImageDimensionHelper {
     }
 
     isRatioRequested() {
-        try {
-            this.#getCalculatedRequestedAspectRatioAsFloat()
-            return true;
-        } catch {
-            return false;
-        }
+
+        return this.#getCalculatedRequestedAspectRatioAsFloat() != null
+
     }
 
     isHeightRequest() {
-        return this.requestedWidth == null
+        return this.requestedWidth == null && this.requestedHeight != null;
     }
+
     /**
      * The Aspect ratio of the target image (maybe the original or an image scaled down)
      *
@@ -270,6 +243,6 @@ export class ImageDimensionHelper {
      *
      */
     getTargetRatio() {
-       return this.#getTargetWidth()/this.#getRequestedHeight();
+        return this.#getTargetWidth() / this.#getTargetHeight();
     }
 }

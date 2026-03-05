@@ -52,5 +52,16 @@ In case of error, the transformation service will:
 Example of `img` element that will show an error:
 
 ```html
-<img src="_images/does-not-exist.jpg"/>
+<img src="_images/does-not-exist.jpg" alt=""/>
 ```
+
+## Responsive Image
+
+### Dpi Correction
+
+Mobile have a higher DPI and can then fit a bigger image on a smaller size.
+
+You can enable DPI correction for responsive image.
+
+This can be disturbing when debugging responsive sizing image
+If you want also to use less bandwidth, this is also useful.

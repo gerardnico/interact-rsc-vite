@@ -94,7 +94,7 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
         }
 
         let error = url.searchParams.get(urlKeyErrorProperty);
-        let isBrokenImageRequestFromImageComponent = error!=null;
+        let isBrokenImageRequestFromImageComponent = url.searchParams.has(urlKeyErrorProperty);
         try {
 
             verifyUrlAndDeleteVerificationProperties(url, secret)
@@ -110,6 +110,9 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
                         throw new ImageError(imageError);
                     }
                 }
+                // unknown/undefined
+                // noinspection ExceptionCaughtLocallyJS
+                throw new ImageError(ImageErrors.INTERNAL_ERROR);
             }
 
             /**
