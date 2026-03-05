@@ -8,6 +8,7 @@ import {InteractError, InteractErrorData} from "../errors";
 import type {ImageCompressionType} from "../images/image-compression-type";
 import type {ImageResponsiveness} from "../config/jsonConfigSchema";
 import clsx from "clsx";
+import {getHtmlImageAttributes, type HtmlImageAttributes} from "../images/image-client";
 
 
 export type ImageType =
@@ -18,36 +19,6 @@ export type ImageType =
     responsiveBehaviour?: ImageResponsiveness;
 }
 
-type ImageRequestProps = {
-    src: string,
-    responsiveBehaviour?: ImageResponsiveness,
-    compressionLevel?: ImageCompressionType,
-    ratio?: string,
-    height?: number | string,
-    width?: number | string,
-}
-
-type Images = {
-    src: string,
-    srcSet: string[] | undefined,
-    width: number,
-    height: number,
-}
-
-async function getImages(props: ImageRequestProps): Promise<Images> {
-
-    /**
-     * Srcset and sizes for responsive image
-     * Width is mandatory for responsive image
-     * Ref https://developers.google.com/search/docs/advanced/guidelines/google-images#responsive-images
-     */
-    return {
-        src: "_images/card_puncher_data_processing.jpg?r=16:9&w=300&c=low",
-        srcSet: undefined,
-        width: 300,
-        height: 150
-    }
-}
 
 /**
  * An Image React component
@@ -66,25 +37,36 @@ export default async function Image({
     if (imgAttributesProps.alt === undefined || imgAttributesProps.alt === null) {
         throw new InteractError(InteractErrorData.ImageAltMissing);
     }
-    const finalResponsiveness: ImageResponsiveness = responsiveBehaviour ?? interactConfig.images.default.responsiveBehaviour;
-    const finalCompression = compressionLevel ?? interactConfig.images.default.compressionLevel;
+    const finalResponsiveBehaviour: ImageResponsiveness = responsiveBehaviour ?? interactConfig.images.defaultValues.responsiveBehaviour;
+    const finalCompression = compressionLevel ?? interactConfig.images.defaultValues.compressionLevel;
     const finalSrc = src ?? "unknown";
 
 
-    const optimizedImages = await getImages({
-        src: finalSrc,
-        responsiveBehaviour: finalResponsiveness,
-        compressionLevel: finalCompression,
-        width: width,
-        height: height,
-        ratio: ratio,
-    });
+    let htmlImageAttributes: HtmlImageAttributes;
+    try {
+        htmlImageAttributes = await getHtmlImageAttributes({
+            src: finalSrc,
+            responsiveBehaviour: finalResponsiveBehaviour,
+            compressionLevel: finalCompression,
+            width: width,
+            height: height,
+            ratio: ratio,
+        });
+    } catch (error) {
+        htmlImageAttributes = {
+            height: height as number,
+            width: width as number,
+            src: src as string,
+            srcSet: null,
+        }
+    }
+
 
     const finalStyle = {
         /**
          * We don't allow the image to scale up by default
          */
-        maxHeight: optimizedImages.height,
+        maxHeight: htmlImageAttributes.height,
         /**
          * if the image has a class that has a `height: 100%`, the image will stretch
          */
@@ -92,7 +74,7 @@ export default async function Image({
         /**
          * We don't allow the image to scale up by default
          */
-        maxWidth: optimizedImages.width,
+        maxWidth: htmlImageAttributes.width,
         /**
          * We allow the image to scale up to 100% of its parent
          */
@@ -108,14 +90,14 @@ export default async function Image({
     return (
 
         <img
-            src={optimizedImages.src}
-            srcSet={optimizedImages.srcSet && optimizedImages.srcSet.join(', ')}
+            src={htmlImageAttributes.src}
+            {...(htmlImageAttributes.srcSet != null && {srcSet: htmlImageAttributes.srcSet.join(', ')})}
             alt={imgAttributesProps.alt}
-            width={optimizedImages.width}
-            height={optimizedImages.height}
+            width={htmlImageAttributes.width}
+            height={htmlImageAttributes.height}
             className={clsx(
                 className,
-                responsiveBehaviour == 'fluid' && 'img-fluid'
+                finalResponsiveBehaviour == 'fluid' && 'img-fluid'
             )}
             {...imgAttributesProps}
             style={finalStyle}

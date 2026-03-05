@@ -67,7 +67,7 @@ export default function ConfVirtualModulePlugin(data: Config): Plugin {
                         updates: [
                             {
                                 type: 'js-update',
-                                path: virtualModuleId,
+                                imageDirectory: virtualModuleId,
                                 acceptedPath: virtualModuleId,
                                 timestamp: Date.now()
                             }

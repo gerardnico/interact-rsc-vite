@@ -102,25 +102,16 @@ export default class ConfigHandler {
          */
         finalConfigData.site.rootPath = this.rootPath;
 
-        /**
-         * Adding page dir
-         */
-        let pagesDir = finalConfigData.pages.path;
-        if (pagesDir.startsWith("/")) {
-            pagesDir = path.resolve(pagesDir);
-        } else {
-            pagesDir = path.resolve(this.rootPath, pagesDir);
-        }
-        finalConfigData.pages.path = pagesDir;
+        finalConfigData.pages.pagesDirectory = this.#qualifiedDirectoryPath(finalConfigData.pages.pagesDirectory);
+        finalConfigData.public.publicDirectory = this.#qualifiedDirectoryPath(finalConfigData.public.publicDirectory);
+        finalConfigData.images.imagesDirectory = this.#qualifiedDirectoryPath(finalConfigData.images.imagesDirectory);
 
-        let publicDir = finalConfigData.public.path;
-        if (!publicDir.startsWith("/")) {
-            publicDir = path.resolve(this.rootPath, publicDir);
-        } else {
-            publicDir = path.resolve(publicDir);
+    }
+    #qualifiedDirectoryPath(basePath: string) {
+        if (!basePath.startsWith("/")) {
+            return path.resolve(this.rootPath, basePath);
         }
-        finalConfigData.public.path = publicDir;
-
+        return path.resolve(basePath);
 
     }
 

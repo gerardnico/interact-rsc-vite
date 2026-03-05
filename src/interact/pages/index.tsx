@@ -91,9 +91,9 @@ export function getRootComponent(normalizedRequest: Request): React.JSX.Element 
  * can use it to render each page
  */
 export function getStaticPaths() {
-    return Object.keys(getPagesRecursively(conf.pages.path))
+    return Object.keys(getPagesRecursively(conf.pages.pagesDirectory))
 }
 
 export function getPages() {
-    return getPagesRecursively(conf.pages.path)
+    return getPagesRecursively(conf.pages.pagesDirectory)
 }

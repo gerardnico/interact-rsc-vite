@@ -66,7 +66,7 @@ export default class Start extends Command {
             server: {
                 port: flags.port,
             },
-            publicDir: interactConfig.public.path,
+            publicDir: interactConfig.public.publicDirectory,
             build: {
                 // https://rollupjs.org/configuration-options/
                 rollupOptions: {
@@ -102,10 +102,10 @@ export default class Start extends Command {
                     },
                 }),
                 viteRscSsgPlugin(),
-                pageModulesPlugin(interactConfig.pages.path),
+                pageModulesPlugin(interactConfig.pages.pagesDirectory),
                 confModulePlugin(interactConfig),
                 viteImageService({
-                    baseDir: path.resolve(rootPath, "img"),
+                    baseDir: interactConfig.images.imagesDirectory,
                     cacheDir: path.resolve(cachePath, "img"),
                     secret: process.env.IMAGE_SECRET || 'secret'
                 })

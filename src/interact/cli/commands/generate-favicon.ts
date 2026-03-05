@@ -66,7 +66,7 @@ async function generateImage({masterFilePath, dryRun, outputDirectory}: {
                 themeColor: config.theme.colors.primary
             }
         },
-        path: "/",
+        imageDirectory: "/",
     };
 
 
@@ -119,7 +119,7 @@ export default class GenerateFavicon extends Command {
         dryRun: Flags.boolean({
             aliases: ["dr"],
             description: "Don't create the files",
-            default: false,
+            defaultValues: false,
         }),
         outputDirectory: Flags.string({
             aliases: ["o"],

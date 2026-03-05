@@ -109,20 +109,20 @@ export default class PrintConfig extends Command {
     json: Flags.boolean({
       char: 'j',
       description: 'Output in JSON format',
-      default: false,
+      defaultValues: false,
     }),
     yaml: Flags.boolean({
       char: 'y',
       description: 'Output in YAML format (default)',
-      default: false,
+      defaultValues: false,
     }),
     'no-pretty': Flags.boolean({
       description: 'Disable colorized output',
-      default: false,
+      defaultValues: false,
     }),
     plain: Flags.boolean({
       description: 'Disable colorized output (alias for --no-pretty)',
-      default: false,
+      defaultValues: false,
     }),
   }
 

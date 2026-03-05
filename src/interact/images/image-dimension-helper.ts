@@ -19,19 +19,19 @@ export class ExceptionNotFound extends Error {
 export class ImageDimensionHelper {
 
 
-    private readonly requestedWidth: number | null;
-    private readonly requestedHeight: number | null;
+    private readonly requestedWidth: number | null | undefined;
+    private readonly requestedHeight: number | null | undefined;
     private readonly intrinsicWidth: number;
     private readonly intrinsicHeight: number;
-    private readonly requestedRatio: number | null;
+    private readonly requestedRatio: number | null | undefined;
 
     /**
      * Build Image from an URL
      */
     constructor({requestedWidth, requestedHeight, requestedRatio, intrinsicWidth, intrinsicHeight}: {
-        requestedWidth: number | null,
-        requestedHeight: number | null,
-        requestedRatio: number | null,
+        requestedWidth: number | null | undefined,
+        requestedHeight: number | null | undefined,
+        requestedRatio: number | null | undefined,
         intrinsicWidth: number,
         intrinsicHeight: number
     }) {
@@ -82,7 +82,7 @@ export class ImageDimensionHelper {
      * @throws {ExceptionNotFound}
      */
     #getCalculatedRequestedAspectRatioAsFloat(): number {
-        if (this.requestedRatio !== null) {
+        if (this.requestedRatio != null) {
             return this.requestedRatio;
         }
         // Both getters throw ExceptionNotFound on null/0 — no division-by-zero risk
@@ -182,7 +182,8 @@ export class ImageDimensionHelper {
      * @throws {ExceptionNotFound} if no width was requested, or width is 0
      */
     #getRequestedWidth(): number {
-        if (this.requestedWidth === null) throw new ExceptionNotFound('No width was requested');
+
+        if (this.requestedWidth == null) throw new ExceptionNotFound('No width was requested');
         if (this.requestedWidth === 0) throw new ExceptionNotFound('Width 0 was requested');
         return this.requestedWidth;
     }
@@ -191,7 +192,7 @@ export class ImageDimensionHelper {
      * @throws {ExceptionNotFound} if no height was requested, or height is 0
      */
     #getRequestedHeight(): number {
-        if (this.requestedHeight === null) throw new ExceptionNotFound('Height not requested');
+        if (this.requestedHeight == null) throw new ExceptionNotFound('Height not requested');
         if (this.requestedHeight === 0) throw new ExceptionNotFound('Height 0 requested');
         return this.requestedHeight;
     }
@@ -222,8 +223,10 @@ export class ImageDimensionHelper {
     }
 
 
+    // noinspection JSUnusedGlobalSymbols
     /**
      * Returns true when both width + height are set, or a ratio is set.
+     * Will be used when we have the cropFocus (middle, left top, ...)
      */
     isCropRequested(): boolean {
         if (this.requestedHeight !== null && this.requestedWidth !== null) return true;
@@ -235,7 +238,7 @@ export class ImageDimensionHelper {
      */
     getTargetDimensions() {
         const targetHeight = this.#getTargetHeight()
-        const targetWidth = this.#getRequestedWidth();
+        const targetWidth = this.#getTargetWidth();
         this.#checkLogicalRatioAgainstTargetRatio(targetWidth, targetHeight);
         return [targetWidth, targetHeight];
     }

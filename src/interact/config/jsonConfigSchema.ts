@@ -50,7 +50,7 @@ const jsonSiteSchema = z.object({
  */
 const jsonPublicSchema = z.object({
     // https://vite.dev/guide/assets#the-public-directory
-    path: z.coerce.string<string>().describe("The path of the public directory").default("public"),
+    publicDirectory: z.coerce.string<string>().describe("The path of the public directory").default("public"),
 })
 // fluid - scale down to fit the container, maintaining the aspect ratio (https://getbootstrap.com/docs/5.3/content/images/#responsive-images)
 // none - not responsive (No srcset or sizes generated, no styles applied)
@@ -70,15 +70,16 @@ let defaultImagePropertyValues = z.object({
  * Image Service Section
  */
 const ImageSchema = z.object({
-    path: z.coerce.string<string>().describe("The path of the image directory").default("images"),
-    default: defaultImagePropertyValues.describe("The default values").default(defaultImagePropertyValues.parse({}))
+    imagesDirectory: z.coerce.string<string>().describe("The path of the image directory").default("images"),
+    defaultValues: defaultImagePropertyValues.describe("The default values").default(defaultImagePropertyValues.parse({})),
+    serviceEndpoint: z.coerce.string<string>().startsWith("/").describe("The endpoint of the the local service endpoint").default("/_images"),
 })
 
 /**
  * Pages Schema
  */
 const PagesSchema = z.object({
-    path: z.coerce.string<string>().describe("The path of the pages directory").default("pages"),
+    pagesDirectory: z.coerce.string<string>().describe("The path of the pages directory").default("pages"),
     // mdx, properties, Markdown will come here
 })
 

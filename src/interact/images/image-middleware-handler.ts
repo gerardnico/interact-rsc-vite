@@ -1,5 +1,5 @@
 import path from "node:path";
-import {z} from "zod";
+
 import fsPromises from "fs/promises";
 import fs from "fs";
 import etag from "etag";
@@ -12,25 +12,17 @@ import {ImageDimensionHelper} from "./image-dimension-helper";
 import {fileURLToPath} from "node:url";
 import {dirname, join} from "path";
 import {optimize} from 'svgo';
+import {
+    castHeightToNumber,
+    castRatioToNumber,
+    castWidthToNumber,
+    ImageError,
+} from "./image-shared";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function hash(input: crypto.BinaryLike) {
     return crypto.createHash("sha1").update(input).digest("hex");
-}
-
-class ImageHandlerError extends Error {
-    message: string;
-    statusCode: number;
-    errorName: string | undefined;
-
-    constructor(message: string, statusCode: number, errorName?: string) {
-        super(message);
-        this.name = 'AppError';
-        this.message = message;
-        this.statusCode = statusCode;
-        this.errorName = errorName;
-    }
 }
 
 
@@ -48,11 +40,14 @@ function getFormatFromAcceptHeader(req: Request, sourceFile: string): keyof Form
     return original as keyof FormatEnum;
 }
 
+
+
+
+
 export function createImageHandler(config: { baseDir: string, cacheDir: string, endPoint: string; secret: string }) {
     const {endPoint, secret, cacheDir, baseDir} = config;
 
-    const widthSchema = z.coerce.number().int().positive().describe("A image width should have a positive integer value").nullable();
-    const heightSchema = z.coerce.number().int().positive().describe("A image height should have a positive integer value").nullable();
+
     const fallBackSvgString = fs.readFileSync(join(__dirname, 'broken-heart-landscape.svg'), 'utf-8');
 
     return async function (req: Request): Promise<Response> {
@@ -62,80 +57,31 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
 
         function getRequestedWith() {
             let urlWidth = url.searchParams.get("width") || url.searchParams.get("w");
-            try {
-                return widthSchema.parse(urlWidth);
-            } catch (e) {
-                throw new ImageHandlerError(`bad width value ${urlWidth}: ${e}`, 400, "Bad width requested");
-            }
+            return castWidthToNumber(urlWidth);
         }
 
         function getRequestedImagePath() {
             if (!url.pathname) {
-                throw new ImageHandlerError(`Missing path`, 400, "The path is missing")
+                throw new ImageError(`Missing path`, 400, "The path is missing")
             }
             if (!url.pathname.startsWith(endPoint)) {
-                throw new ImageHandlerError(`Path does not start with end point ${endPoint}`, 500)
+                throw new ImageError(`Path does not start with end point ${endPoint}`, 500)
             }
             return url.pathname.substring(endPoint.length + 1); // +1 to delete the root separator
         }
 
         function getRequestedHeight() {
             const rawHeight = url.searchParams.get("height") || url.searchParams.get("h");
-            try {
-                return heightSchema.parse(rawHeight);
-            } catch (e) {
-                throw new ImageHandlerError(`bad height value ${rawHeight}: ${e}`, 400, 'Bad height requested');
-            }
+            return castHeightToNumber(rawHeight);
         }
 
-
-        /**
-         * Convert 16:9, ... to a float
-         * @returns The ratio as a float
-         * @throws Error if the ratio string is invalid
-         */
-        function getRequestedRatio(): number | null {
-            const stringRatio = url.searchParams.get('ratio') || url.searchParams.get('r');
-            if (!stringRatio) {
-                return null;
-            }
-            const [widthStr, heightStr] = stringRatio.split(":", 2);
-
-            const width = parseInt(widthStr, 10);
-            if (isNaN(width)) {
-                throw new ImageHandlerError(
-                    `The width value (${widthStr}) of the ratio \`${stringRatio}\` is not numeric`,
-                    400,
-                    'Bad ratio requested (width)'
-                );
-            }
-
-            const height = parseInt(heightStr, 10);
-            if (isNaN(height)) {
-                throw new ImageHandlerError(
-                    `The height value (${heightStr}) of the ratio \`${stringRatio}\` is not numeric`,
-                    400,
-                    'Bad ratio requested (height)'
-                );
-            }
-
-            if (height === 0) {
-                throw new ImageHandlerError(
-                    `The height value of the ratio \`${stringRatio}\` should not be zero`,
-                    400,
-                    'Bad ratio requested (height)'
-                );
-            }
-
-            return width / height;
-        }
 
         function getCompression() {
             const compressionRawValue = (url.searchParams.get("compression") || url.searchParams.get('c')) || 'high';
             try {
                 return ImageCompressionSchema.parse(compressionRawValue);
             } catch (e) {
-                throw new ImageHandlerError(`bad compression value ${compressionRawValue}: ${e}`, 400, 'Bad compression requested');
+                throw new ImageError(`bad compression value ${compressionRawValue}: ${e}`, 400, 'Bad compression requested');
             }
         }
 
@@ -143,7 +89,7 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
             const requestedFormat = (url.searchParams.get("format") || url.searchParams.get("f")) as keyof FormatEnum || getFormatFromAcceptHeader(req, requestedImgPath);
             const contentType = mime.lookup(requestedFormat);
             if (!contentType) {
-                throw new ImageHandlerError(`Unknown type for format ${requestedFormat}`, 400, "Format unsupported");
+                throw new ImageError(`Unknown type for format ${requestedFormat}`, 400, "Format unsupported");
             }
             return [requestedFormat, contentType];
         }
@@ -155,7 +101,8 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
             const requestedImgPath = getRequestedImagePath()
             const requestedWidth = getRequestedWith()
             const requestedHeight = getRequestedHeight()
-            const requestedRatio = getRequestedRatio();
+            const stringRatio = url.searchParams.get('ratio') || url.searchParams.get('r');
+            const requestedRatio = castRatioToNumber(stringRatio);
             const requestedCompression = getCompression();
             const [requestedFormat, httpHeaderContentType] = getRequestFormat(requestedImgPath);
 
@@ -224,7 +171,7 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
             let status = 500
             let message = String(err)
             let name;
-            if (err instanceof ImageHandlerError) {
+            if (err instanceof ImageError) {
                 message = err.message;    // 'Unauthorized'
                 status = err.statusCode;
                 name = err.name;
