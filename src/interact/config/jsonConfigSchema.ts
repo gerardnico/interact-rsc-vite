@@ -7,12 +7,12 @@ const faviconImage = z.object({
     width: z.coerce.number<number>().describe("The intrinsic width of the image").optional(),
     height: z.coerce.number<number>().describe("The intrinsic height of the image").optional(),
 }).describe("An image")
-type ImageType = z.output<typeof faviconImage>
+type faviconImageType = z.output<typeof faviconImage>
 let relSchema = z.enum(['shortcut icon', 'icon', 'apple-touch-icon']).describe("The link rel (ie the type)");
 type RelType = z.output<typeof relSchema>
 type FaviconType = {
     rel: RelType,
-    image?: ImageType,
+    image?: faviconImageType,
 }
 const favicon: z.ZodType<FaviconType> = z.object({
     rel: relSchema,
@@ -54,12 +54,12 @@ const jsonPublicSchema = z.object({
 })
 // fluid - scale down to fit the container, maintaining the aspect ratio (https://getbootstrap.com/docs/5.3/content/images/#responsive-images)
 // none - not responsive (No srcset or sizes generated, no styles applied)
-const responsiveBehaviour = z.enum(['fluid', 'none']).describe("If fluid, scale down to fit the container, maintaining the aspect ratio").default('fluid');
-export type ImageResponsiveness = z.output<typeof responsiveBehaviour>
+const imageTypeSchema = z.enum(['fluid']).describe("The type of image to apply a specific style").default('fluid').optional();
+export type ImageType = z.output<typeof imageTypeSchema>
 
 let defaultImagePropertyValues = z.object({
-    responsiveBehaviour: responsiveBehaviour,
-    responsiveBreakpoints: z.array(z.number().int().positive()).describe("The responsive breakpoints corresponding to a screen size. For each scree, a passing image is provided").default([640, 750, 828, 960, 1080, 1280, 1668, 1920, 2048, 2560, 3200, 3840, 4480, 5120, 6016]),
+    type: imageTypeSchema,
+    responsiveBreakpoints: z.array(z.number().int().positive()).describe("The responsive breakpoints corresponding to a screen size. For each screen, a passing image is provided").default([375, 576, 768, 992, 1200, 1400]),
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
     loading: z.enum(['lazy', 'eager']).describe("Lazy loading (should be false for images above the fold)").default('lazy'),
     decoding: z.enum(['async', 'sync', 'auto']).describe("Tell if the browser process the images on or off the main thread (sync - on, async - off, auto - the browser chooses)").default("async"),

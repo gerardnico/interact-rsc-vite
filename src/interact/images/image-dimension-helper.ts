@@ -37,7 +37,9 @@ export class ImageDimensionHelper {
     }) {
 
         this.requestedWidth = requestedWidth;
+        if (requestedWidth == 0) this.requestedWidth = null;
         this.requestedHeight = requestedHeight;
+        if (requestedHeight == 0) this.requestedHeight = null;
         this.intrinsicWidth = intrinsicWidth;
         this.intrinsicHeight = intrinsicHeight;
         this.requestedRatio = requestedRatio;
@@ -243,4 +245,31 @@ export class ImageDimensionHelper {
         return [targetWidth, targetHeight];
     }
 
+    isRatioRequested() {
+        try {
+            this.#getCalculatedRequestedAspectRatioAsFloat()
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    isHeightRequest() {
+        return this.requestedWidth == null
+    }
+    /**
+     * The Aspect ratio of the target image (maybe the original or an image scaled down)
+     *
+     * https://html.spec.whatwg.org/multipage/embedded-content-other.html#attr-dim-height
+     * @return float
+     * false if the image is not supported
+     *
+     * It's needed for an img tag to set the img `width` and `height` that pass the
+     * {@link #checkWidthAndHeightRatioAndReturnTheGoodValue() check}
+     * to avoid layout shift
+     *
+     */
+    getTargetRatio() {
+       return this.#getTargetWidth()/this.#getRequestedHeight();
+    }
 }

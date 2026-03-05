@@ -4,7 +4,7 @@ import interactConfig from "interact:conf"
 
 
 import type {ImageCompressionType} from "../images/image-compression-type";
-import type {ImageResponsiveness} from "../config/jsonConfigSchema";
+import type {ImageType} from "../config/jsonConfigSchema";
 import clsx from "clsx";
 import {getHtmlImageAttributes, type HtmlImageAttributes} from "../images/image-client";
 import {ImageError, ImageErrors} from "../images/image-errors-dictionary";
@@ -12,18 +12,18 @@ import {ImageError, ImageErrors} from "../images/image-errors-dictionary";
 import {brokenImage, urlKeyErrorProperty} from "../images/image-shared";
 
 
-export type ImageType =
+export type ImageProps =
     React.ImgHTMLAttributes<HTMLImageElement>
     & {
     ratio?: string;
-    compressionLevel?: ImageCompressionType;
-    responsiveBehaviour?: ImageResponsiveness;
+    compression?: ImageCompressionType;
+    type?: ImageType;
 }
 
 function createImageElement(
     {
         htmlImageAttributes,
-        responsiveBehaviour,
+        type,
         style,
         className,
         ...imgAttributesProps
@@ -51,7 +51,6 @@ function createImageElement(
     /**
      * Note: HTML element width and height attributes have an effect on the space reservation
      * but not on responsive image at all (They reserve space)
-     * HTML height and width attribute are important for the ratio calculation
      */
     return (
 
@@ -63,7 +62,7 @@ function createImageElement(
             height={htmlImageAttributes.height}
             className={clsx(
                 className,
-                responsiveBehaviour == 'fluid' && 'img-fluid'
+                type == 'fluid' && 'img-fluid'
             )}
             {...imgAttributesProps}
             style={finalStyle}
@@ -84,7 +83,7 @@ function BrokenImage({error, altMessage}: { error: ImageError, altMessage?: stri
 }
 
 type AllImageProps = {
-    responsiveBehaviour?: ImageResponsiveness;
+    type?: ImageType;
     htmlImageAttributes: HtmlImageAttributes,
 } & React.ImgHTMLAttributes<HTMLImageElement>;
 
@@ -93,19 +92,18 @@ type AllImageProps = {
  * An Image React component
  */
 export default async function Image({
-                                        responsiveBehaviour,
-                                        compressionLevel,
+                                        type,
+                                        compression,
                                         className,
                                         ratio,
                                         height,
                                         width,
                                         src,
                                         ...imgAttributesProps
-                                    }: ImageType) {
+                                    }: ImageProps) {
     let htmlImageAttributes: HtmlImageAttributes;
-    const finalResponsiveBehaviour: ImageResponsiveness = responsiveBehaviour ?? interactConfig.images.defaultValues.responsiveBehaviour;
-    const finalCompression = compressionLevel ?? interactConfig.images.defaultValues.compressionLevel;
-
+    const finalImageType: ImageType = type ?? interactConfig.images.defaultValues.type;
+    const finalCompression = compression ?? interactConfig.images.defaultValues.compressionLevel;
     if (imgAttributesProps.alt === undefined || imgAttributesProps.alt === null) {
         return BrokenImage({error: new ImageError(ImageErrors.ALT_MISSING)})
     }
@@ -116,8 +114,8 @@ export default async function Image({
     try {
         htmlImageAttributes = await getHtmlImageAttributes({
             src: src,
-            responsiveBehaviour: finalResponsiveBehaviour,
-            compressionLevel: finalCompression,
+            type: finalImageType,
+            compression: finalCompression,
             width: width,
             height: height,
             ratio: ratio,
@@ -126,6 +124,6 @@ export default async function Image({
         return BrokenImage({error: (error as ImageError)});
     }
 
-    return createImageElement({htmlImageAttributes, ...imgAttributesProps});
+    return createImageElement({htmlImageAttributes, type: finalImageType, ...imgAttributesProps});
 
 }
