@@ -1,17 +1,17 @@
 import sharp, {type FormatEnum} from 'sharp';
 import {z} from "zod";
 
-export const ImageQualityPresetSchema = z.enum(['low', 'mid', 'high' , 'max']);
-export type ImageQualityPreset = z.output<typeof ImageQualityPresetSchema>;
+export const ImageCompressionSchema = z.enum(['low', 'mid', 'high', 'max', 'none']);
+export type ImageCompressionType = z.output<typeof ImageCompressionSchema>;
 
 /**
  * Key of the low objects
  */
-export const QualityPresetFormat = z.enum(['jpeg' , 'png' , 'webp' , 'avif' , 'tiff' , 'gif' , 'heif']);
+export const ImageFormatWithPreset = z.enum(['jpeg', 'png', 'webp', 'avif', 'tiff', 'gif', 'heif']);
 
-type QualityPresetFormats = z.output<typeof QualityPresetFormat>
+type ImageFormatWthPresetType = z.output<typeof ImageFormatWithPreset>
 
-export const SHARP_QUALITY_PRESETS: Record<ImageQualityPreset, {
+export const COMPRESSION_PRESETS: Record<ImageCompressionType, {
     jpeg: sharp.JpegOptions;
     png: sharp.PngOptions;
     webp: sharp.WebpOptions;
@@ -29,7 +29,6 @@ export const SHARP_QUALITY_PRESETS: Record<ImageQualityPreset, {
         gif: {effort: 1, colours: 64},
         heif: {quality: 40, effort: 2, compression: 'hevc'},
     },
-
     mid: {
         jpeg: {quality: 65, mozjpeg: true, progressive: true, chromaSubsampling: '4:2:0'},
         png: {quality: 65, compressionLevel: 7, effort: 4, palette: false},
@@ -39,7 +38,6 @@ export const SHARP_QUALITY_PRESETS: Record<ImageQualityPreset, {
         gif: {effort: 5, colours: 128},
         heif: {quality: 55, effort: 4, compression: 'hevc'},
     },
-
     high: {
         jpeg: {quality: 82, mozjpeg: true, progressive: true, chromaSubsampling: '4:4:4'},
         png: {quality: 85, compressionLevel: 6, effort: 7, palette: false},
@@ -59,6 +57,15 @@ export const SHARP_QUALITY_PRESETS: Record<ImageQualityPreset, {
         gif: {effort: 10, colours: 256},
         heif: {quality: 90, effort: 9, compression: 'hevc'},
     },
+    none: {
+        jpeg: {},
+        png: {},
+        webp: {},
+        avif: {},
+        tiff: {},
+        gif: {},
+        heif: {},
+    }
 };
 
 
@@ -67,15 +74,15 @@ export function getPresetOptions({
                                      preset = 'high'
                                  }: {
                                      format: keyof FormatEnum,
-                                     preset: ImageQualityPreset
+                                     preset: ImageCompressionType
                                  }
 ) {
 
-    const supported: QualityPresetFormats[] = ['jpeg', 'png', 'webp', 'avif', 'tiff', 'gif', 'heif'];
-    const include = supported.includes(format as QualityPresetFormats) ? (format as QualityPresetFormats) : null;
+    const supported: ImageFormatWthPresetType[] = ['jpeg', 'png', 'webp', 'avif', 'tiff', 'gif', 'heif'];
+    const include = supported.includes(format as ImageFormatWthPresetType) ? (format as ImageFormatWthPresetType) : null;
     if (!include) {
         // Fall back to Sharp's defaults for unsupported formats (e.g. raw, tile, dz)
         return {}
     }
-    return SHARP_QUALITY_PRESETS[preset][format as QualityPresetFormats];
+    return COMPRESSION_PRESETS[preset][format as ImageFormatWthPresetType];
 }

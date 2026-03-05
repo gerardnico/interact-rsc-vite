@@ -1,13 +1,13 @@
 import {z} from 'zod';
 
 
-const image = z.object({
-    href: z.coerce.string<string>().optional(),
+const faviconImage = z.object({
+    href: z.coerce.string<string>().describe("The href (by default, the name given in the key)").optional(),
     type: z.coerce.string<string>().describe("The type (ie image/png or image/svg+xml)").optional(),
     width: z.coerce.number<number>().describe("The intrinsic width of the image").optional(),
-    height: z.coerce.number<number>().optional(),
+    height: z.coerce.number<number>().describe("The intrinsic height of the image").optional(),
 }).describe("An image")
-type ImageType = z.output<typeof image>
+type ImageType = z.output<typeof faviconImage>
 let relSchema = z.enum(['shortcut icon', 'icon', 'apple-touch-icon']).describe("The link rel (ie the type)");
 type RelType = z.output<typeof relSchema>
 type FaviconType = {
@@ -16,7 +16,7 @@ type FaviconType = {
 }
 const favicon: z.ZodType<FaviconType> = z.object({
     rel: relSchema,
-    image: image.describe("The image").optional()
+    image: faviconImage.describe("The image").optional()
 }).describe("A favicon image")
 
 
@@ -35,14 +35,14 @@ let colorMode = z.enum(['light', 'dark']).describe("The color mode").default('li
  */
 const jsonSiteSchema = z.object({
     url: z.coerce.string().describe("The URL (Used in the sitemap)").optional(),
-    base: z.coerce.string().describe("Path added to the site URL (Example: /docs)").default(""),
+    base: z.coerce.string().describe("The base path added to the site URL (Example: /docs)").default(""),
     name: z.coerce.string().describe("The short name (used in the app manifest)").default("Website"),
     title: z.coerce.string().describe("The title (used on the logo description, as index page title, in the app manifest as name)").default("Website"),
     faviconMaster: z.coerce.string().describe("The master svg file used to generate the favicons relative to the image path").default("favicon.svg"),
     favicons: FaviconSetSchema.describe("The favicons (logos)").optional(),
     colorMode: colorMode,
     colorPrimary: z.coerce.string().describe("The primary color (known also as the theme color)").default("#906296"),
-}).describe("The site properties (global information that are themes independent)")
+}).describe("The site properties")
 
 
 /**
@@ -52,10 +52,14 @@ const jsonPublicSchema = z.object({
     // https://vite.dev/guide/assets#the-public-directory
     path: z.coerce.string<string>().describe("The path of the public directory").default("public"),
 })
+// fluid - scale down to fit the container, maintaining the aspect ratio (https://getbootstrap.com/docs/5.3/content/images/#responsive-images)
+// none - not responsive (No srcset or sizes generated, no styles applied)
+const responsiveness = z.enum(['fluid', 'none']).describe("If fluid, automatically generates the required srcset and sizes").default('fluid');
+export type ImageResponsiveness = z.output<typeof responsiveness>
+
 let defaultImagePropertyValues = z.object({
-    // fluid - scale down to fit the container, maintaining the aspect ratio (https://getbootstrap.com/docs/5.3/content/images/#responsive-images)
-    // none - not responsive (No srcset or sizes generated, no styles applied)
-    responsiveness: z.enum(['fluid', 'none']).describe("If fluid, automatically generates the required srcset and sizes").default('fluid'),
+
+    responsiveness: responsiveness,
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
     loading: z.enum(['lazy', 'eager']).describe("Lazy loading (should be false for images above the fold)").default('lazy'),
     decoding: z.enum(['async', 'sync', 'auto']).describe("Tell if the browser process the images on or off the main thread (sync - on, async - off, auto - the browser chooses)").default("async"),
@@ -63,18 +67,19 @@ let defaultImagePropertyValues = z.object({
 });
 
 /**
- * Image Section in JSON
+ * Image Service Section
  */
-const jsonImageSchema = z.object({
+const ImageSchema = z.object({
     path: z.coerce.string<string>().describe("The path of the image directory").default("images"),
     default: defaultImagePropertyValues.describe("The default values").default(defaultImagePropertyValues.parse({}))
 })
 
 /**
- * Pages Section in JSON
+ * Pages Schema
  */
-const jsonPagesSchema = z.object({
+const PagesSchema = z.object({
     path: z.coerce.string<string>().describe("The path of the pages directory").default("pages"),
+    // mdx, properties, Markdown will come here
 })
 
 
@@ -339,9 +344,9 @@ function deepMerge(target: any, source: any) {
 export const JsonConfigSchema = z.object({
     $schema: z.coerce.string().optional(),
     site: jsonSiteSchema.default(jsonSiteSchema.parse({})),
-    pages: jsonPagesSchema.default(jsonPagesSchema.parse({})),
+    pages: PagesSchema.default(PagesSchema.parse({})),
     public: jsonPublicSchema.default(jsonPublicSchema.parse({})),
-    images: jsonImageSchema.default(jsonImageSchema.parse({})),
+    images: ImageSchema.default(ImageSchema.parse({})),
     theme: ThemeConfigSchema.default(ThemeConfigSchema.parse({})),
     plugins: PluginConfigSetSchema.default(PluginConfigSetSchema.parse({})).transform(data => deepMerge(plugins, data)),
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})).transform(data => deepMerge(components, data))
@@ -359,8 +364,8 @@ export type Config = {
     }
     plugins: PluginConfigSetSchemaType,
     components: ComponentsConfigSetSchemaType,
-    pages: z.output<typeof jsonPagesSchema>
-    images: z.output<typeof jsonImageSchema>
+    pages: z.output<typeof PagesSchema>
+    images: z.output<typeof ImageSchema>
     public: z.output<typeof jsonPublicSchema>
     env: {
         configFilePath: string

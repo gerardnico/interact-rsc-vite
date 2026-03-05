@@ -10,7 +10,8 @@ import React, {
 import {InteractError, InteractErrorData} from "../errors";
 
 import * as mime from "mrmime";
-import type {ImageQualityPreset} from "../vite/image-service/image-quality-preset";
+import type {ImageCompressionType} from "../images/image-compression-type";
+import type {ImageResponsiveness} from "../config/jsonConfigSchema";
 
 
 const defaultFormats = ['webp'] as const;
@@ -29,8 +30,8 @@ export type ImageOutputFormat = (typeof VALID_OUTPUT_FORMATS)[number] | (string 
 export type ImageType =
     React.ImgHTMLAttributes<HTMLImageElement>
     & {
-    formats?: readonly ImageOutputFormat[];
-    quality?: ImageQualityPreset;
+    compression?: ImageCompressionType;
+    responsiveness?: ImageResponsiveness;
     fallbackFormat?: ImageOutputFormat;
     pictureAttributes?: HTMLAttributes<'picture'>;
 }
@@ -40,7 +41,7 @@ export type ImageType =
  * (Picture.Astro and Image.Astro)
  * Async because this is a server function
  */
-export default async function Image({formats = defaultFormats, fallbackFormat, ...props}: ImageType) {
+export default async function Image({fallbackFormat, ...props}: ImageType) {
     if (props.alt === undefined || props.alt === null) {
         throw new InteractError(InteractErrorData.ImageAltMissing);
     }
