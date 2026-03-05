@@ -18,3 +18,12 @@ All attribute of [the service](#image-service-parameters) plus the following:
 ## Features
 
 * No image stretch: final width and height values never go above the image intrinsic size.
+
+## Fallback image
+
+```mdxjs
+<Image src={"card_puncher_data_processing.jpg"}
+       alt={"Card Puncher"}
+       width={-1}
+/>
+```

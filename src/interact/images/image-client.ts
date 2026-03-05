@@ -7,14 +7,14 @@ import interactConfig from "interact:conf"
 import {
     castHeightToNumber,
     castRatioToNumber,
-    castWidthToNumber,
-    ImageError,
+    castWidthToNumber, urlKeyCompressionProperty, urlKeyHeightProperty, urlKeyRatioProperty, urlKeyWidthProperty,
 } from "./image-shared";
+import {ImageError, ImageErrors} from "./image-errors-dictionary";
 
 
 export type HtmlImageAttributes = {
     src: string,
-    srcSet: string[] | undefined | null,
+    srcSet?: string[] | null,
     width: number,
     height: number,
 }
@@ -43,7 +43,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         intrinsicHeight = metadata.height;
         intrinsicWidth = metadata.width;
     } catch (err) {
-        throw new ImageError(`Error while reading the file ${props.src}: ${String(err)}`, 400)
+        throw new ImageError({message: `Error while reading the file ${props.src}: ${String(err)}`, ...ImageErrors.NOT_FOUND})
     }
 
     let [targetWidth, targetHeight] = new ImageDimensionHelper({
@@ -56,16 +56,16 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
 
     const params = new URLSearchParams();
     if (props.width != null) {
-        params.set("width", String(props.width))
+        params.set(urlKeyWidthProperty, String(props.width))
     }
     if (props.height != null) {
-        params.set("height", String(props.height))
+        params.set(urlKeyHeightProperty, String(props.height))
     }
     if (props.ratio != null) {
-        params.set("ratio", props.ratio)
+        params.set(urlKeyRatioProperty, props.ratio)
     }
     if (props.compressionLevel != null) {
-        params.set("compression", props.compressionLevel)
+        params.set(urlKeyCompressionProperty, props.compressionLevel)
     }
 
     let uri = `${interactConfig.images.serviceEndpoint}/${props.src}`;

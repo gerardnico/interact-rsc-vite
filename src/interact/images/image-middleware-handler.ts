@@ -15,9 +15,11 @@ import {optimize} from 'svgo';
 import {
     castHeightToNumber,
     castRatioToNumber,
-    castWidthToNumber,
-    ImageError,
+    castWidthToNumber, urlKeyCompressionProperty,
+    urlKeyErrorProperty, urlKeyFormatProperty, urlKeyHeightProperty, urlKeyRatioProperty,
+    urlKeyWidthProperty,
 } from "./image-shared";
+import {ImageError, ImageErrors} from "./image-errors-dictionary";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -41,9 +43,6 @@ function getFormatFromAcceptHeader(req: Request, sourceFile: string): keyof Form
 }
 
 
-
-
-
 export function createImageHandler(config: { baseDir: string, cacheDir: string, endPoint: string; secret: string }) {
     const {endPoint, secret, cacheDir, baseDir} = config;
 
@@ -56,52 +55,70 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
         const url = new URL(req.url, "http://localhost");
 
         function getRequestedWith() {
-            let urlWidth = url.searchParams.get("width") || url.searchParams.get("w");
+            let urlWidth = url.searchParams.get(urlKeyWidthProperty) || url.searchParams.get("w");
             return castWidthToNumber(urlWidth);
         }
 
         function getRequestedImagePath() {
             if (!url.pathname) {
-                throw new ImageError(`Missing path`, 400, "The path is missing")
+                throw new ImageError({message: "The path is missing", ...ImageErrors.SRC_MISSING})
             }
             if (!url.pathname.startsWith(endPoint)) {
-                throw new ImageError(`Path does not start with end point ${endPoint}`, 500)
+                throw new ImageError({message: `Path does not start with end point ${endPoint}`, ...ImageErrors.INTERNAL_ERROR})
             }
             return url.pathname.substring(endPoint.length + 1); // +1 to delete the root separator
         }
 
         function getRequestedHeight() {
-            const rawHeight = url.searchParams.get("height") || url.searchParams.get("h");
+            const rawHeight = url.searchParams.get(urlKeyHeightProperty) || url.searchParams.get("h");
             return castHeightToNumber(rawHeight);
         }
 
 
         function getCompression() {
-            const compressionRawValue = (url.searchParams.get("compression") || url.searchParams.get('c')) || 'high';
+            const compressionRawValue = (url.searchParams.get(urlKeyCompressionProperty) || url.searchParams.get('c')) || 'high';
             try {
                 return ImageCompressionSchema.parse(compressionRawValue);
             } catch (e) {
-                throw new ImageError(`bad compression value ${compressionRawValue}: ${e}`, 400, 'Bad compression requested');
+                throw new ImageError({message: `bad compression value ${compressionRawValue}: ${e}`, ...ImageErrors.BAD_COMPRESSION});
             }
         }
 
         function getRequestFormat(requestedImgPath: string): [keyof FormatEnum, string] {
-            const requestedFormat = (url.searchParams.get("format") || url.searchParams.get("f")) as keyof FormatEnum || getFormatFromAcceptHeader(req, requestedImgPath);
+            const requestedFormat = (url.searchParams.get(urlKeyFormatProperty) || url.searchParams.get("f")) as keyof FormatEnum || getFormatFromAcceptHeader(req, requestedImgPath);
             const contentType = mime.lookup(requestedFormat);
             if (!contentType) {
-                throw new ImageError(`Unknown type for format ${requestedFormat}`, 400, "Format unsupported");
+                throw new ImageError({message: `Unknown type for format ${requestedFormat}`, ...ImageErrors.FORMAT_UNSUPPORTED});
             }
             return [requestedFormat, contentType];
         }
 
+        let error = url.searchParams.get(urlKeyErrorProperty);
+        let isBrokenImageRequestFromImageComponent = error!=null;
         try {
 
             verifyUrlAndDeleteVerificationProperties(url, secret)
 
+            /**
+             * Broken image requested
+             */
+
+            if (error) {
+                for (const imageError of Object.values(ImageErrors)) {
+                    if (String(imageError.code) == error) {
+                        // noinspection ExceptionCaughtLocallyJS
+                        throw new ImageError(imageError);
+                    }
+                }
+            }
+
+            /**
+             * Normal request
+             */
             const requestedImgPath = getRequestedImagePath()
             const requestedWidth = getRequestedWith()
             const requestedHeight = getRequestedHeight()
-            const stringRatio = url.searchParams.get('ratio') || url.searchParams.get('r');
+            const stringRatio = url.searchParams.get(urlKeyRatioProperty) || url.searchParams.get('r');
             const requestedRatio = castRatioToNumber(stringRatio);
             const requestedCompression = getCompression();
             const [requestedFormat, httpHeaderContentType] = getRequestFormat(requestedImgPath);
@@ -170,26 +187,37 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
 
             let status = 500
             let message = String(err)
-            let name;
+            let title;
             if (err instanceof ImageError) {
-                message = err.message;    // 'Unauthorized'
-                status = err.statusCode;
-                name = err.name;
+                message = err.message;
+                status = err.status || 500;
+                title = err.title;
             }
 
             let responseFallBackSvgString = fallBackSvgString;
 
             /**
              * Error title
+             * Note: File existing error is thrown by sharp
              */
-                // File existing is done via sharp
             let missingInputFile = "Input file is missing";
             if (message.includes(missingInputFile)) {
-                name = "Image not found";
+                title = "Image not found";
             }
-            if (name) {
-                responseFallBackSvgString = responseFallBackSvgString.replace("ERR_IMAGE_LOAD", name.toUpperCase())
+            if (title) {
+                responseFallBackSvgString = responseFallBackSvgString.replace("{ERR_TITLE}", title.toUpperCase())
             }
+
+            /**
+             * isBrokenImageRequest
+             */
+            let messageProvenance
+            if(isBrokenImageRequestFromImageComponent) {
+                messageProvenance = "IMAGE ELEMENT";
+            } else {
+                messageProvenance = "REQUEST";
+            }
+            responseFallBackSvgString = responseFallBackSvgString.replace("{ERR_PROVENANCE}", messageProvenance)
 
             try {
                 const requestedWith = getRequestedWith()

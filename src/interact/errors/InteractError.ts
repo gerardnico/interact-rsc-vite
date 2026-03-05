@@ -1,6 +1,7 @@
 export interface InteractErrorData {
     code: number;
     title: string;
+    status?: number;
     message?: string | ((...params: any) => string);
     hint?: string | ((...params: any) => string);
 }
@@ -16,12 +17,14 @@ export class InteractError extends Error {
     code: number;
     title: string;
     hint?: string;
+    status?: number;
 
-    constructor({code, title, message, hint}: InteractErrorData) {
+    constructor({code, title, message, hint, status}: InteractErrorData) {
         super(getString(message));
         this.code = code;
         this.title = title;
         this.hint = getString(hint);
+        this.status = status;
     }
 }
 

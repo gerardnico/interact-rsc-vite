@@ -28,7 +28,7 @@
           letter-spacing="2"
           fill="#b0b0b0"
           text-anchor="middle"
-          font-weight="400">SORRY, REQUEST ERROR</text>
+          font-weight="400">SORRY, {ERR_PROVENANCE} ERROR</text>
 
     <!-- Subtle error code -->
     <text x="200" y="234"
@@ -37,5 +37,5 @@
           letter-spacing="2"
           fill="#b0b0b0"
           text-anchor="middle"
-          >ERR_IMAGE_LOAD</text>
+          >{ERR_TITLE}</text>
 </svg>
