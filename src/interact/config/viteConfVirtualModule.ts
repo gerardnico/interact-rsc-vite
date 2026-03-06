@@ -1,5 +1,5 @@
 import type {Plugin} from "vite";
-import type {Config} from "../config/jsonConfigSchema";
+import type {Config} from "./jsonConfigSchema";
 
 
 export default function ConfVirtualModulePlugin(data: Config): Plugin {
@@ -67,7 +67,7 @@ export default function ConfVirtualModulePlugin(data: Config): Plugin {
                         updates: [
                             {
                                 type: 'js-update',
-                                imageDirectory: virtualModuleId,
+                                path: virtualModuleId,
                                 acceptedPath: virtualModuleId,
                                 timestamp: Date.now()
                             }

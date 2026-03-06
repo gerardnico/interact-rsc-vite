@@ -4,20 +4,21 @@ import type {Plugin} from 'vite';
  * Used by vite rsc to convert the
  */
 import {toNodeHandler} from 'srvx/node'
-import {createImageHandler} from "../../images/imageMiddlewareHandler";
+import {createImageHandler} from "./imageMiddlewareHandler";
 
-type ViteImageService = {
+type ImageViteDevMiddleware = {
     baseDir?: string,
     cacheDir?: string,
-    endPoint?: string
-    secret: string
+    endPoint?: string,
+    // if local there is no need to sign the URL
+    secret?: string
 };
 export default function viteImageService({
                                              baseDir = "img",
                                              cacheDir = ".cache/images",
                                              endPoint = "/_images",
                                              secret
-                                         }: ViteImageService): Plugin {
+                                         }: ImageViteDevMiddleware): Plugin {
 
     async function ensureCache() {
         await fs.mkdir(cacheDir, {recursive: true});

@@ -13,6 +13,7 @@ import {fileURLToPath} from "node:url";
 import {dirname, join} from "path";
 import {optimize} from 'svgo';
 import {
+    brokenImage,
     castFit,
     castHeightToNumber,
     castRatioToNumber,
@@ -44,11 +45,19 @@ function getFormatFromAcceptHeader(req: Request, sourceFile: string): keyof Form
 }
 
 
-export function createImageHandler(config: { baseDir: string, cacheDir: string, endPoint: string; secret: string }) {
+type ImageHandlerProps = {
+    baseDir: string,
+    cacheDir?: string,
+    endPoint: string;
+    // if the service is running locally, there is no need to sign and secret can be empty
+    secret?: string
+};
+
+export function createImageHandler(config: ImageHandlerProps) {
     const {endPoint, secret, cacheDir, baseDir} = config;
 
 
-    const fallBackSvgString = fs.readFileSync(join(__dirname, 'broken-heart-landscape.svg'), 'utf-8');
+    const fallBackSvgString = fs.readFileSync(join(__dirname, brokenImage), 'utf-8');
 
     return async function (req: Request): Promise<Response> {
 
@@ -98,7 +107,9 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
         let isBrokenImageRequestFromImageComponent = url.searchParams.has(urlKeyErrorProperty);
         try {
 
-            verifyUrlAndDeleteVerificationProperties(url, secret)
+            if (secret) {
+                verifyUrlAndDeleteVerificationProperties(url, secret)
+            }
 
             /**
              * Broken image requested
@@ -131,29 +142,32 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
             /**
              * Cache
              */
-            const cacheKey = hash(requestedImgPath + url.searchParams.toString());
-            const cachedFile = path.join(cacheDir, `${cacheKey}.${requestedFormat}`);
-            try {
+            let cachedFile
+            if (cacheDir) {
+                const cacheKey = hash(requestedImgPath + url.searchParams.toString());
+                cachedFile = path.join(cacheDir, `${cacheKey}.${requestedFormat}`);
+                try {
 
-                const cached = await fsPromises.readFile(cachedFile);
-                let etagValue = etag(cached);
-                let headers = {
-                    'Content-Type': httpHeaderContentType,
-                    "Cache-Control": "public, max-age=31536000, immutable",
-                    "ETag": etagValue
-                };
-                if (req.headers.get("if-none-match") === etagValue) {
+                    const cached = await fsPromises.readFile(cachedFile);
+                    let etagValue = etag(cached);
+                    let headers = {
+                        'Content-Type': httpHeaderContentType,
+                        "Cache-Control": "public, max-age=31536000, immutable",
+                        "ETag": etagValue
+                    };
+                    if (req.headers.get("if-none-match") === etagValue) {
 
-                    return new Response(null, {
-                        status: 304,
+                        return new Response(null, {
+                            status: 304,
+                            headers: headers
+                        })
+
+                    }
+                    return new Response(cached, {
                         headers: headers
-                    })
-
+                    });
+                } catch {
                 }
-                return new Response(cached, {
-                    headers: headers
-                });
-            } catch {
             }
 
             const sourceFile = path.resolve(baseDir, requestedImgPath);
@@ -178,7 +192,10 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
                     requestedCompression
                 }
             );
-            await fsPromises.writeFile(cachedFile, finalImage);
+
+            if (cachedFile) {
+                await fsPromises.writeFile(cachedFile, finalImage);
+            }
 
             return new Response(new Uint8Array(finalImage), {
                 headers: {

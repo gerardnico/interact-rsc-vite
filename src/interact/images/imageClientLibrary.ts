@@ -59,9 +59,18 @@ function getSizes(screenWidth: number, imageWidth: number) {
 }
 
 async function toImageServiceUri(src: string, serviceProperties: Partial<Record<ImageServiceKeyUrl, string>>, sharpPipeline: sharp.Sharp) {
-    let uriBase = `${interactConfig.images.serviceEndpoint}/${src}`
+
+    /**
+     * In dev/start mode?
+     */
     const isBuild = import.meta.env.MODE === 'production'
     if (!isBuild) {
+        // The endpoint of the local service endpoint ("/_images")
+        let serviceEndpoint = process.env.INTERACT_IMAGE_ENPOINT
+        if (!serviceEndpoint) {
+            throw new Error("Service endpoint env is not defined (process.env.INTERACT_IMAGE_ENPOINT)")
+        }
+        let uriBase = `${serviceEndpoint}/${src}`
         if (Object.keys(serviceProperties).length == 0) {
             return uriBase
         }
@@ -69,6 +78,9 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
         return `${uriBase}?${params.toString()}`;
     }
 
+    /**
+     * In static generation mode
+     */
     const imageBuffer = await processImageWithSharp({
         sharpPipeline,
         targetWidth: Number(serviceProperties.width),

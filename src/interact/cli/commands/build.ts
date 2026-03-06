@@ -1,6 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 import {createBuilder, createLogger} from 'vite'
-import {resolveInteractConfig} from "../utils/config";
+import {resolveViteConfig} from "../utils/cliConfigUtil";
 import pc from "picocolors";
 
 export default class Build extends Command {
@@ -19,7 +19,7 @@ export default class Build extends Command {
         const rootPath = flags.root
 
         try {
-            const builder = await createBuilder(resolveInteractConfig({rootPath}))
+            const builder = await createBuilder(resolveViteConfig({rootPath, command:'build'}))
             console.log(Object.keys(builder.environments))
             // build App will call the environment in order and is equivalent to:
             //   await builder.build(builder.environments.rsc)

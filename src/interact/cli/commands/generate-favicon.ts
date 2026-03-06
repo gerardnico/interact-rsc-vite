@@ -9,15 +9,17 @@ import {
     IconTransformationType
 } from '@realfavicongenerator/generate-favicon';
 import {getNodeImageAdapter, loadAndConvertToSvg} from "@realfavicongenerator/image-adapter-node";
-import config from "../../config";
+import type {Config} from "../../config/jsonConfigSchema";
+import configHandler from "../../config";
 
-async function generateImage({masterFilePath, dryRun, outputDirectory}: {
+async function generateImage({masterFilePath, dryRun, outputDirectory, interactConf: config}: {
     masterFilePath?: string,
     dryRun: boolean,
     outputDirectory: string
+    interactConf: Config
 }) {
     if (!masterFilePath) {
-        masterFilePath = config.theme.site.masterFavicon
+        masterFilePath = config.site.faviconMaster
     }
     console.log(`Generating Favicons and Manifest with the master file: ${masterFilePath}`)
 
@@ -50,7 +52,7 @@ async function generateImage({masterFilePath, dryRun, outputDirectory}: {
                     imageScale: 0.7,
                     brightness: 1
                 },
-                appTitle: config.theme.site.name
+                appTitle: config.site.name
             },
             webAppManifest: {
                 transformation: {
@@ -61,9 +63,9 @@ async function generateImage({masterFilePath, dryRun, outputDirectory}: {
                     brightness: 1
                 },
                 backgroundColor: "#ffffff",
-                name: config.theme.site.title,
-                shortName: config.theme.site.name,
-                themeColor: config.theme.colors.primary
+                name: config.site.title,
+                shortName: config.site.name,
+                themeColor: config.site.colorPrimary
             }
         },
         imageDirectory: "/",
@@ -119,13 +121,17 @@ export default class GenerateFavicon extends Command {
         dryRun: Flags.boolean({
             aliases: ["dr"],
             description: "Don't create the files",
-            defaultValues: false,
+            default: false
         }),
         outputDirectory: Flags.string({
             aliases: ["o"],
             description: "The output directory (default to the public directory)",
             default: "public"
-        })
+        }),
+        root: Flags.string({
+            description: 'Project root directory',
+            default: process.cwd(),
+        }),
     }
     static args = {
         filePath: Args.string({
@@ -136,10 +142,10 @@ export default class GenerateFavicon extends Command {
 
     async run(): Promise<void> {
         const {args, flags} = await this.parse(GenerateFavicon)
-
+        let interactConfig = new configHandler({rootPath: flags.root,}).getConfig();
         const filePath = args.filePath
         const dryRun = flags.dryRun
         const outputDirectory = flags.outputDirectory
-        await generateImage({masterFilePath: filePath, dryRun, outputDirectory})
+        await generateImage({interactConf: interactConfig, masterFilePath: filePath, dryRun, outputDirectory})
     }
 }

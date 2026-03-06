@@ -2,7 +2,7 @@
 import path from "node:path";
 import {Command, Flags} from '@oclif/core'
 import {createServer} from 'vite'
-import {resolveInteractConfig} from "../utils/config";
+import {resolveViteConfig} from "../utils/cliConfigUtil";
 
 
 export default class Start extends Command {
@@ -24,8 +24,8 @@ export default class Start extends Command {
 
         let rootPath = path.resolve(flags.root)
 
-        let interactConfig = resolveInteractConfig({rootPath, port: flags.port});
-        const server = await createServer(interactConfig);
+        let viteConfig = resolveViteConfig({rootPath, port: flags.port, command:"start"});
+        const server = await createServer(viteConfig);
         await server.listen()
         // port may change
         // ie Port 5173 is in use, trying another one...

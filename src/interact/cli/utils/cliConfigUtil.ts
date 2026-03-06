@@ -6,12 +6,12 @@ import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import remarkMdxToc from "@altano/remark-mdx-toc-with-slugs";
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
-import pageModulesPlugin from "../../vite-page-modules/vite-plugin-page-modules";
-import confModulePlugin from "../../vite-conf-module/vite-conf-module";
-import viteImageService from "../../vite/image-service/vite-image-service";
+import pageModulesPlugin from "../../pages/pagesViteVirtualModules";
+import confModulePlugin from "../../config/viteConfVirtualModule";
+import viteImageService from "../../images/imageViteDevMiddleware";
 import {fileURLToPath} from "node:url";
 import type {InlineConfig} from "vite";
-import viteRscSsgPlugin from "../../vite-rsc-ssg/vite-rsc-ssg-plugin";
+import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,16 +20,17 @@ const __dirname = path.dirname(__filename);
  */
 const interactPackageDir = path.resolve(__dirname, '../..');
 
-type InteractConfig = { rootPath: string, port?: number };
+type InteractCommand = 'start' | 'build' | 'preview';
+type InteractConfig = {
+    rootPath: string,
+    command?: InteractCommand;
+    port?: number
+};
 
-export function resolveInteractConfig({rootPath, port}: InteractConfig) {
+export function resolveViteConfig({rootPath, port, command}: InteractConfig): InlineConfig {
 
-    let imageMiddlewareEndPoint = "/_images";
-    let interactConfig = new configHandler(
-        {
-            rootPath,
-            imageEndpoint: imageMiddlewareEndPoint,
-        })
+
+    let interactConfig = new configHandler({rootPath})
         .getConfig();
 
 
@@ -47,7 +48,17 @@ export function resolveInteractConfig({rootPath, port}: InteractConfig) {
     // Note: You can merge also
     // https://vite.dev/guide/api-javascript#mergeconfig
     let outDistDir = path.resolve(rootPath, "dist");
+
+    /**
+     * Use to generate image into the static build
+     */
     process.env.VITE_OUT_DIR = outDistDir
+    /**
+     * Used to generate the URL in dev
+     * The endpoint of the local service endpoint ("/_images")
+     */
+    let imageMiddlewareEndPoint = "/_images";
+    process.env.INTERACT_IMAGE_ENPOINT = imageMiddlewareEndPoint
 
     return {
         logLevel: 'info', // or 'warn' — try 'info' first
@@ -55,9 +66,6 @@ export function resolveInteractConfig({rootPath, port}: InteractConfig) {
         base: publicBasePath,
         server: {
             port: port,
-        },
-        define: {
-            __OUT_DIR__: JSON.stringify(outDistDir)
         },
         publicDir: interactConfig.public.publicDirectory,
         build: {
@@ -85,7 +93,7 @@ export function resolveInteractConfig({rootPath, port}: InteractConfig) {
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactPackageDir, 'vite-rsc/server/entry.rsc.tsx'),
+                            index: path.resolve(interactPackageDir, 'rsc/server/entry.rsc.tsx'),
                         },
                     },
                 },
@@ -99,7 +107,7 @@ export function resolveInteractConfig({rootPath, port}: InteractConfig) {
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactPackageDir, 'vite-rsc/server/entry.ssr.tsx'),
+                            index: path.resolve(interactPackageDir, 'rsc/server/entry.ssr.tsx'),
                         },
                     },
                 },
@@ -115,7 +123,7 @@ export function resolveInteractConfig({rootPath, port}: InteractConfig) {
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactPackageDir, 'vite-rsc/browser/entry.browser.tsx'),
+                            index: path.resolve(interactPackageDir, 'rsc/browser/entry.browser.tsx'),
                         },
                     },
                 },
@@ -134,15 +142,15 @@ export function resolveInteractConfig({rootPath, port}: InteractConfig) {
             }),
             react(),
             rsc(),
-            viteRscSsgPlugin(),
+            viteSsgPlugin(),
             pageModulesPlugin(interactConfig.pages.pagesDirectory),
             confModulePlugin(interactConfig),
             viteImageService({
                 baseDir: interactConfig.images.imagesDirectory,
-                cacheDir: path.resolve(cachePath, "img"),
-                secret: process.env.IMAGE_SECRET || 'secret',
+                cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),
+                secret: process.env.IMAGE_SECRET,
                 endPoint: imageMiddlewareEndPoint
             })
         ],
-    } satisfies InlineConfig
+    }
 }

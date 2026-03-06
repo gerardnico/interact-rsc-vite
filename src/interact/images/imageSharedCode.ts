@@ -22,7 +22,7 @@ export type ImageServiceKeyUrl = "error" | "width" | "height" | "compression" | 
 /**
  * The broken image
  */
-export const brokenImage = "broken-heart-landscape.svg"
+export const brokenImage = "broken-heart.svg"
 
 const ImageWidthSchema = z.coerce.number().int().positive().describe("A image width should have a positive integer value").nullable().optional();
 const ImageHeightSchema = z.coerce.number().int().positive().describe("A image height should have a positive integer value").nullable().optional();

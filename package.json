@@ -4,9 +4,13 @@
   "private": true,
   "license": "MIT",
   "type": "module",
+  "bin": {
+    "interact": "dist/typescript/cli/cli.js"
+  },
   "scripts": {
+    "build": "tsc",
     "start": "tsx src/interact/cli/cli.ts start --root=apps/site",
-    "build": "tsx src/interact/cli/cli.ts build --root=apps/site",
+    "static": "tsx src/interact/cli/cli.ts build --root=apps/site",
     "preview": "tsx src/interact/cli/cli.ts preview --root=apps/site"
   },
   "files": [
@@ -16,7 +20,7 @@
     "@oclif/core": "4.8.2",
     "@realfavicongenerator/generate-favicon": "0.6.3",
     "@realfavicongenerator/image-adapter-node": "0.6.3",
-    "clsx": "^2.1.1",
+    "clsx": "2.1.1",
     "etag": "1.8.1",
     "glob": "13.0.6",
     "mrmime": "2.0.1",
@@ -24,24 +28,24 @@
     "react-dom": "19.2.4",
     "rollup": "*",
     "sharp": "0.34.5",
-    "svgo": "^4.0.1",
+    "svgo": "4.0.1",
     "zod": "4.3.6",
-    "picocolors": "*"
-  },
-  "devDependencies": {
+    "picocolors": "*",
     "@altano/remark-mdx-toc-with-slugs": "4.0.1",
     "@mdx-js/rollup": "3.1.1",
+    "remark-frontmatter": "5.0.0",
+    "remark-mdx-frontmatter": "5.2.0",
+    "rsc-html-stream": "0.0.7",
+    "vite": "7.3.1"
+  },
+  "devDependencies": {
     "@types/etag": "1",
     "@types/node": "25.3.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "latest",
     "@vitejs/plugin-rsc": "latest",
-    "remark-frontmatter": "5.0.0",
-    "remark-mdx-frontmatter": "5.2.0",
-    "rsc-html-stream": "0.0.7",
     "typescript": "5.9.3",
-    "vite": "7.3.1",
     "vitest": "4.0.18"
   },
   "packageManager": "yarn@4.12.0",

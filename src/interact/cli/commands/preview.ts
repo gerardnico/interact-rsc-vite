@@ -1,7 +1,7 @@
 
 import {Command, Flags} from '@oclif/core'
 import {createLogger, preview} from 'vite'
-import {resolveInteractConfig} from "../utils/config";
+import {resolveViteConfig} from "../utils/cliConfigUtil";
 import pc from "picocolors"
 
 export default class Build extends Command {
@@ -20,7 +20,7 @@ export default class Build extends Command {
         const rootPath = flags.root
 
         try {
-            const server = await preview(resolveInteractConfig({rootPath}));
+            const server = await preview(resolveViteConfig({rootPath, command:"preview"}));
             server.printUrls();
             server.bindCLIShortcuts({ print: true });
         } catch (e) {

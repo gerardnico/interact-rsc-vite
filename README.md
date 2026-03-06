@@ -5,6 +5,6 @@ based on [Vite React Rsc](https://github.com/vitejs/vite-plugin-react/blob/main/
 
 ## Note
 
-* The main entry that receive a HTTP request is the `handler` function
-  at [entry.rsc](src/interact/vite-rsc/entry.rsc.tsx)
-* The static build is done with [vite-rsc-ssg](src/interact/vite-rsc-ssg)
+* The main entry that receive an HTTP request is the `handler` function
+  at [entry.rsc](src/interact/rsc/server/entry.rsc.tsx)
+* The static build is done with [vite-rsc-ssg](src/interact/rsc/static-generation)

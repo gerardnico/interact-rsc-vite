@@ -381,10 +381,7 @@ export type Config = {
     plugins: PluginConfigSetSchemaType,
     components: ComponentsConfigSetSchemaType,
     pages: z.output<typeof PagesSchema>
-    images: ImageSchemaType & {
-        // The endpoint of the local service endpoint ("/_images")
-        serviceEndpoint: string,
-    }
+    images: ImageSchemaType,
     public: z.output<typeof jsonPublicSchema>
     env: {
         configFilePath: string

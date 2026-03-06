@@ -59,13 +59,11 @@ function updateFavicon(favicons?: FaviconSetSchemaType): FaviconSetSchemaType {
 
 export type ConfigHandlerProps = {
     rootPath?: string
-    imageEndpoint: string
 };
 export default class ConfigHandler {
 
     private readonly configFile: string;
     private readonly rootPath: string;
-    private readonly imageEndpoint: string;
 
     constructor(props: ConfigHandlerProps) {
 
@@ -76,7 +74,7 @@ export default class ConfigHandler {
             this.rootPath = props.rootPath
         }
         this.configFile = path.join(this.rootPath, `${configFileName}`);
-        this.imageEndpoint = props.imageEndpoint;
+
     }
 
     #addDefaultAndRuntime(finalConfigData: Config) {
@@ -107,11 +105,6 @@ export default class ConfigHandler {
         finalConfigData.pages.pagesDirectory = this.#qualifiedDirectoryPath(finalConfigData.pages.pagesDirectory);
         finalConfigData.public.publicDirectory = this.#qualifiedDirectoryPath(finalConfigData.public.publicDirectory);
         finalConfigData.images.imagesDirectory = this.#qualifiedDirectoryPath(finalConfigData.images.imagesDirectory);
-
-        /**
-         * Image
-         */
-        finalConfigData.images.serviceEndpoint = this.imageEndpoint;
 
     }
     #qualifiedDirectoryPath(basePath: string) {
