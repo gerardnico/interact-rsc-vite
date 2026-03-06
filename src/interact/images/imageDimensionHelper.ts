@@ -200,10 +200,8 @@ export class ImageDimensionHelper {
     }
 
 
-    // noinspection JSUnusedGlobalSymbols
     /**
      * Returns true when both width + height are set, or a ratio is set.
-     * Will be used when we have the cropFocus (middle, left top, ...)
      */
     isCropRequested(): boolean {
         if (this.requestedHeight !== null && this.requestedWidth !== null) return true;

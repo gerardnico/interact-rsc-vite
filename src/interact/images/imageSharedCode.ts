@@ -2,7 +2,9 @@
  * Shared code between client and server (handler)
  */
 import {z} from "zod";
-import {ImageError, ImageErrors} from "./image-errors-dictionary";
+import {ImageError, ImageErrors} from "./imageErrorsDictionary";
+import {ImageFitSchema} from "../config/jsonConfigSchema";
+import type {FitEnum} from "sharp";
 
 /**
  * Key Properties on the image service URL
@@ -13,28 +15,40 @@ export const urlKeyHeightProperty = "height"
 export const urlKeyCompressionProperty = "compression"
 export const urlKeyFormatProperty = "format"
 export const urlKeyRatioProperty = "ratio"
+export const urlKeyFitProperty = "fit"
 
+export type ImageServiceKeyUrl = "error" | "width" | "height" | "compression" | "fit" | "ratio"
 /**
  * The broken image
  */
 export const brokenImage = "broken-heart-landscape.svg"
 
-const widthSchema = z.coerce.number().int().positive().describe("A image width should have a positive integer value").nullable().optional();
-const heightSchema = z.coerce.number().int().positive().describe("A image height should have a positive integer value").nullable().optional();
+const ImageWidthSchema = z.coerce.number().int().positive().describe("A image width should have a positive integer value").nullable().optional();
+const ImageHeightSchema = z.coerce.number().int().positive().describe("A image height should have a positive integer value").nullable().optional();
 
-export function castWidthToNumber(width: string | null | undefined | number): number | null | undefined {
+
+export function castWidthToNumber(width: string | null | undefined | number): number | null {
     if (width == null) return null;
     try {
-        return widthSchema.parse(width);
+        return ImageWidthSchema.parse(width) || null;
     } catch (e) {
         throw new ImageError({message: `bad width value ${width}: ${e}`, ...ImageErrors.BAD_WIDTH});
     }
 }
 
-export function castHeightToNumber(rawHeight: string | null | undefined | number): number | null | undefined {
+export function castFit(fit: string | null | undefined | number): keyof FitEnum | null {
+    if (fit == null) return null;
+    try {
+        return ImageFitSchema.parse(fit) as unknown as keyof FitEnum || null;
+    } catch (e) {
+        throw new ImageError({message: `bad fit value ${fit}: ${e}`, ...ImageErrors.BAD_WIDTH});
+    }
+}
+
+export function castHeightToNumber(rawHeight: string | null | undefined | number): number | null {
     if (rawHeight == null) return null;
     try {
-        return heightSchema.parse(rawHeight);
+        return ImageHeightSchema.parse(rawHeight) || null;
     } catch (e) {
         throw new ImageError({message: `bad height value ${rawHeight}: ${e}`, ...ImageErrors.BAD_HEIGHT});
     }

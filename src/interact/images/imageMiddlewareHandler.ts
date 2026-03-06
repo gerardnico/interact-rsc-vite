@@ -4,22 +4,23 @@ import fsPromises from "fs/promises";
 import fs from "fs";
 import etag from "etag";
 import sharp, {type FormatEnum} from "sharp";
-import {getPresetOptions, ImageCompressionSchema} from "./image-compression-type";
-import {verifyUrlAndDeleteVerificationProperties} from "./url-signature";
+import {getPresetOptions, ImageCompressionSchema} from "./imageCompressionType";
+import {verifyUrlAndDeleteVerificationProperties} from "./urlSignature";
 import crypto from "crypto";
 import * as mime from "mrmime";
-import {ImageDimensionHelper} from "./image-dimension-helper";
+import {ImageDimensionHelper} from "./imageDimensionHelper";
 import {fileURLToPath} from "node:url";
 import {dirname, join} from "path";
 import {optimize} from 'svgo';
 import {
+    castFit,
     castHeightToNumber,
     castRatioToNumber,
     castWidthToNumber, urlKeyCompressionProperty,
-    urlKeyErrorProperty, urlKeyFormatProperty, urlKeyHeightProperty, urlKeyRatioProperty,
+    urlKeyErrorProperty, urlKeyFitProperty, urlKeyFormatProperty, urlKeyHeightProperty, urlKeyRatioProperty,
     urlKeyWidthProperty,
-} from "./image-shared";
-import {ImageError, ImageErrors} from "./image-errors-dictionary";
+} from "./imageSharedCode";
+import {ImageError, ImageErrors} from "./imageErrorsDictionary";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -88,7 +89,7 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
             const requestedFormat = (url.searchParams.get(urlKeyFormatProperty) || url.searchParams.get("f")) as keyof FormatEnum || getFormatFromAcceptHeader(req, requestedImgPath);
             const contentType = mime.lookup(requestedFormat);
             if (!contentType) {
-                throw new ImageError({message: `Unknown type for format ${requestedFormat}`, ...ImageErrors.FORMAT_UNSUPPORTED});
+                throw new ImageError({message: `Unknown type for format ${requestedFormat}`, ...ImageErrors.UNKNOWN_TYPE});
             }
             return [requestedFormat, contentType];
         }
@@ -123,8 +124,9 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
             const requestedHeight = getRequestedHeight()
             const stringRatio = url.searchParams.get(urlKeyRatioProperty) || url.searchParams.get('r');
             const requestedRatio = castRatioToNumber(stringRatio);
+            const requestedFit = castFit(url.searchParams.get(urlKeyFitProperty)) || undefined;
             const requestedCompression = getCompression();
-            const [requestedFormat, httpHeaderContentType] = getRequestFormat(requestedImgPath);
+            let [requestedFormat, httpHeaderContentType] = getRequestFormat(requestedImgPath);
 
             /**
              * Cache
@@ -168,13 +170,28 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
             })
             let [targetWidth, targetHeight] = dimensionHelper.getTargetDimensions();
 
+            /**
+             * When fit is contain, the created margin are black
+             * We make them transparent
+             */
+            let background;
+            if (requestedFit == 'contain') {
+                const transparentFormatSupport = ["webp", "png"]
+                if (!transparentFormatSupport.includes(requestedFormat)) {
+                    requestedFormat = "webp"
+                }
+                background = {r: 0, g: 0, b: 0, alpha: 0}// transparent
+            }
+
             sharpPipeline = sharpPipeline.resize({
                 width: targetWidth,
                 height: targetHeight,
+                fit: requestedFit,
                 withoutEnlargement: true,
+                background: background
             });
 
-            const options = getPresetOptions({preset: requestedCompression, format: requestedFormat});
+            const options = getPresetOptions({compression: requestedCompression, format: requestedFormat});
             sharpPipeline.toFormat(requestedFormat, options)
             const buffer = await sharpPipeline.toBuffer();
             await fsPromises.writeFile(cachedFile, buffer);
@@ -215,7 +232,7 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
              * isBrokenImageRequest
              */
             let messageProvenance
-            if(isBrokenImageRequestFromImageComponent) {
+            if (isBrokenImageRequestFromImageComponent) {
                 messageProvenance = "IMAGE ELEMENT";
             } else {
                 messageProvenance = "REQUEST";

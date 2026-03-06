@@ -11,6 +11,8 @@ import Image from "../../../src/interact/components/Image.tsx";
 <Image src={"card_puncher_data_processing.jpg"}
        alt={"Card Puncher"}
        width={300}
+       height={200}
+       fit={"contain"}
 />
 <ul>
     {Object.entries(getPages()).map(([key, page]) => {

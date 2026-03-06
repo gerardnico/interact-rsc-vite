@@ -1,15 +1,16 @@
-import {ImageDimensionHelper} from "./image-dimension-helper";
+import {ImageDimensionHelper} from "./imageDimensionHelper";
 import sharp from "sharp";
 import path from "node:path";
-import type {ImageType} from "../config/jsonConfigSchema";
-import type {ImageCompressionType} from "./image-compression-type";
+import type {ImageFitType, ImageType} from "../config/jsonConfigSchema";
+import type {ImageCompressionType} from "./imageCompressionType";
 import interactConfig from "interact:conf"
 import {
     castHeightToNumber,
     castRatioToNumber,
-    castWidthToNumber, urlKeyCompressionProperty, urlKeyHeightProperty, urlKeyRatioProperty, urlKeyWidthProperty,
-} from "./image-shared";
-import {ImageError, ImageErrors} from "./image-errors-dictionary";
+    castWidthToNumber,
+    type ImageServiceKeyUrl
+} from "./imageSharedCode";
+import {ImageError, ImageErrors} from "./imageErrorsDictionary";
 
 
 export type HtmlImageAttributes = {
@@ -24,6 +25,7 @@ type ImageRequestProps = {
     src: string,
     type?: ImageType,
     compression?: ImageCompressionType,
+    fit?: ImageFitType,
     ratio?: string,
     height?: number | string,
     width?: number | string,
@@ -54,6 +56,14 @@ function getSizes(screenWidth: number, imageWidth: number) {
     return sizes;
 }
 
+function toImageServiceUri(uriBase: string, serviceProperties: Partial<Record<ImageServiceKeyUrl, string>>) {
+    if (Object.keys(serviceProperties).length == 0) {
+        return uriBase
+    }
+    const params = new URLSearchParams(serviceProperties);
+    return `${uriBase}?${params.toString()}`;
+}
+
 /**
  *
  * @param props
@@ -81,25 +91,26 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
     });
     let [targetWidth, targetHeight] = originalRequestDimensionHelper.getTargetDimensions()
 
-    const params = new URLSearchParams();
+    let serviceProperties: Partial<Record<ImageServiceKeyUrl, string>> = {}
+
     if (props.width != null) {
-        params.set(urlKeyWidthProperty, String(props.width))
+        serviceProperties.width = String(props.width)
     }
     if (props.height != null) {
-        params.set(urlKeyHeightProperty, String(props.height))
+        serviceProperties.height = String(props.height)
     }
     if (props.ratio != null) {
-        params.set(urlKeyRatioProperty, props.ratio)
+        serviceProperties.ratio = props.ratio
     }
-    if (props.compression != null) {
-        params.set(urlKeyCompressionProperty, props.compression)
+    if (props.compression != null && props.compression != "none") {
+        serviceProperties.compression = props.compression
+    }
+    if (props.fit != null && originalRequestDimensionHelper.isCropRequested()) {
+        serviceProperties.fit = props.fit;
     }
 
     let uriBase = `${interactConfig.images.serviceEndpoint}/${props.src}`;
-    let uri = uriBase;
-    if (params.size > 0) {
-        uri = `${uri}?${params.toString()}`;
-    }
+    let uri = toImageServiceUri(uriBase, serviceProperties);
 
     const imageMargin = 20;
     let srcSet: string[] = [];
@@ -123,16 +134,17 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         if (breakpoint > intrinsicWidth) {
             continue;
         }
+        delete serviceProperties.width
+        delete serviceProperties.height
         /**
          * Breakpoint Width
          */
         let breakpointWidthWithoutMargin = breakpoint - imageMargin;
-        const breakPointParams = new URLSearchParams();
         if (
             !isHeightRequest // breakpoint url needs only the height attribute in this case
             || isAspectRatioRequest
         ) {
-            breakPointParams.set(urlKeyWidthProperty, String(breakpointWidthWithoutMargin))
+            serviceProperties.width = String(breakpointWidthWithoutMargin)
         }
 
         /**
@@ -144,13 +156,10 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
             || isAspectRatioRequest
         ) {
             breakpointHeight = ImageDimensionHelper.round((breakpointWidthWithoutMargin) / originalRequestDimensionHelper.getTargetRatio())
-            breakPointParams.set(urlKeyHeightProperty, String(breakpointHeight))
-        }
-        if (props.compression != null) {
-            breakPointParams.set(urlKeyCompressionProperty, props.compression)
+            serviceProperties.height = String(breakpointHeight)
         }
 
-        srcSet.push(`${uriBase}?${breakPointParams.toString()} ${breakpointWidthWithoutMargin}w`);
+        srcSet.push(toImageServiceUri(uriBase, serviceProperties) + ` ${breakpointWidthWithoutMargin}w`);
         sizes.push(getSizes(breakpoint, breakpointWidthWithoutMargin));
 
 

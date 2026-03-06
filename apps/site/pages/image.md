@@ -1,16 +1,18 @@
 ## Image Component
 
-All attribute of [the service](#image-service-parameters) plus the following:
+| Name        | Default | Possible values                                 | Description                                                    |
+|-------------|---------|-------------------------------------------------|----------------------------------------------------------------|
+| Type        | `fluid` | fluid`, `none`                                  | The type of image to apply dedicated styling                   |
+| Width       |         | Positive Integer                                | The requested width in pixel                                   |
+| Height      |         | Postiive Integer                                | The requested height in pixel                                  |
+| Fit         | `cover` | `cover`, `contain`, `fill`, `inside`, `outside` | How the image should fit the box defined by width and height   |
+| Ratio       |         | `number:number`                                 | The requested ratio (Most common: `21:9`,`16:9`, `4:3`, `1:1`) |
+| Compression | `mid`   | `low`, `mid`, `high`, `max`, `none`             | A compression preset for raster image                          |
 
-| Name        | Possible values                     | Description                                               |
-|-------------|-------------------------------------|-----------------------------------------------------------|
-| Type        | `fluid`, `none`                     | The type of image to apply dedicated styling              |
-| Width       | Integer                             | The requested width in pixel                              |
-| Height      | Integer                             | The requested height in pixel                             |
-| Ratio       | `width:height`                      | The requested ratio (Example: `16:9`)                     |
-| Compression | `low`, `mid`, `high`, `max`, `none` | A compression preset for raster image (default to `high`) |
+More:
 
 * A `fluid` image will scale down to fit the container, maintaining the aspect ratio.
+* [Fit explanation](https://sharp.pixelplumbing.com/api-resize/#resize)
 
 ## Features
 
@@ -19,6 +21,7 @@ All attribute of [the service](#image-service-parameters) plus the following:
 * Responsive by default
 * Ratio support
 * Fallback image
+* Crop support with fit attribute
 
 ## Error handling
 
@@ -65,3 +68,13 @@ You can enable DPI correction for responsive image.
 
 This can be disturbing when debugging responsive sizing image
 If you want also to use less bandwidth, this is also useful.
+
+## Compression
+
+| Level | Quality Level | Description                                                                                          |
+|-------|---------------|------------------------------------------------------------------------------------------------------|
+| none  |               | No compression applied; original image data is preserved exactly as-is                               |
+| low   | 90            | Minimal compression with negligible quality loss; best for archival or print use                     |
+| mid   | 80            | Balanced compression reducing file size by ~50% with minimal visible quality impact                  |
+| high  | 60            | Aggressive compression prioritizing small file size over image fidelity                              |
+| max   | 40            | Maximum compression; significantly reduced quality, optimized for bandwidth-constrained environments |

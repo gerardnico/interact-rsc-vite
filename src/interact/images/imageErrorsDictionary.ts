@@ -1,5 +1,9 @@
 import {InteractError, type InteractErrorData} from "../errors/InteractError";
-import {ImageCompressionSchema} from "./image-compression-type";
+import {
+    ImageCompressionSet,
+    ImageFormatCompressionSet,
+} from "./imageCompressionType";
+import {ImageFitSet} from "../config/jsonConfigSchema";
 
 export interface ImageErrorData extends InteractErrorData {
     // http status is mandatory
@@ -73,18 +77,24 @@ const BadCompression: ImageErrorData = {
     code: 1009,
     status: 400,
     title: 'Compression value is incorrect',
-    message: 'A compression value should be one of ' + ImageCompressionSchema.options,
+    message: 'A compression value should be one of ' + ImageCompressionSet.options.join(", "),
     hint: 'Use high, you can\'t go wrong'
 };
 
-const FormatUnsupported: ImageErrorData = {
+const UnknownType: ImageErrorData = {
     code: 1010,
     status: 400,
-    title: 'Image format is not supported',
-    message: 'The image format value should be one of ' + ImageCompressionSchema.options,
-    hint: 'Use high, you can\'t go wrong'
+    title: 'The content type is unknown',
+    message: 'The content type of the format requested is unknown',
+    hint: 'You can\'t be wrong using one of the following format: ' + ImageFormatCompressionSet.options.join(", ")
 };
 
+const BadFit: ImageErrorData = {
+    code: 1011,
+    status: 400,
+    title: 'Fit value is incorrect',
+    message: 'A fit value should be one of ' + ImageFitSet.options.join(", "),
+};
 
 export const ImageErrors = Object.freeze({
     NOT_FOUND: ResourceNoteFound,
@@ -93,8 +103,9 @@ export const ImageErrors = Object.freeze({
     AVATAR_INCORRECT_DIMENSION: AvatarIncorrectDimension,
     BAD_HEIGHT: BadHeight,
     BAD_WIDTH: BadWidth,
+    BAD_FIT: BadFit,
     BAD_RATIO: BadRatio,
     BAD_COMPRESSION: BadCompression,
     INTERNAL_ERROR: InternalError,
-    FORMAT_UNSUPPORTED: FormatUnsupported,
+    UNKNOWN_TYPE: UnknownType,
 });

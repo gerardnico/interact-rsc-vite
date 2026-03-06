@@ -1,5 +1,18 @@
+/**
+ * All Schema
+ *
+ * They are all here because
+ * this file is initialized first
+ * Otherwise you get: Cannot access 'ImageFitSet' before initialization
+ */
 import {z} from 'zod';
 
+import {ImageCompressionSchema} from "../images/imageCompressionType";
+
+
+export const ImageFitSet = z.enum(['cover', 'contain', 'fill', 'inside', 'outside']);
+export const ImageFitSchema = ImageFitSet.default('cover').describe("How the image is fitted in the box defined by width and height");
+export type ImageFitType = z.output<typeof ImageFitSchema>;
 
 const faviconImage = z.object({
     href: z.coerce.string<string>().describe("The href (by default, the name given in the key)").optional(),
@@ -64,7 +77,8 @@ let defaultImagePropertyValues = z.object({
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
     loading: z.enum(['lazy', 'eager']).describe("Lazy loading (should be false for images above the fold)").default('lazy'),
     decoding: z.enum(['async', 'sync', 'auto']).describe("Tell if the browser process the images on or off the main thread (sync - on, async - off, auto - the browser chooses)").default("async"),
-    compressionLevel: z.enum(['low', 'mid', 'high', 'max', 'none']).describe("A compression level (low:40, mid:60, high:80, max:90)").optional().default('high'),
+    compression: ImageCompressionSchema,
+    fit: ImageFitSchema
 });
 
 /**
@@ -72,8 +86,7 @@ let defaultImagePropertyValues = z.object({
  */
 const ImageSchema = z.object({
     imagesDirectory: z.coerce.string<string>().describe("The path of the image directory").default("images"),
-    defaultValues: defaultImagePropertyValues.describe("The default values").default(defaultImagePropertyValues.parse({})),
-    serviceEndpoint: z.coerce.string<string>().startsWith("/").describe("The endpoint of the the local service endpoint").default("/_images"),
+    defaultValues: defaultImagePropertyValues.describe("The default values").default(defaultImagePropertyValues.parse({}))
 })
 
 /**
@@ -368,7 +381,10 @@ export type Config = {
     plugins: PluginConfigSetSchemaType,
     components: ComponentsConfigSetSchemaType,
     pages: z.output<typeof PagesSchema>
-    images: ImageSchemaType
+    images: ImageSchemaType & {
+        // The endpoint of the local service endpoint ("/_images")
+        serviceEndpoint: string,
+    }
     public: z.output<typeof jsonPublicSchema>
     env: {
         configFilePath: string

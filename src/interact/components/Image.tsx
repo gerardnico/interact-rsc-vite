@@ -3,13 +3,13 @@ import React from "react";
 import interactConfig from "interact:conf"
 
 
-import type {ImageCompressionType} from "../images/image-compression-type";
-import type {ImageType} from "../config/jsonConfigSchema";
+import type {ImageCompressionType} from "../images/imageCompressionType";
+import type {ImageFitType, ImageType} from "../config/jsonConfigSchema";
 import clsx from "clsx";
-import {getHtmlImageAttributes, type HtmlImageAttributes} from "../images/image-client";
-import {ImageError, ImageErrors} from "../images/image-errors-dictionary";
+import {getHtmlImageAttributes, type HtmlImageAttributes} from "../images/imageClientLibrary";
+import {ImageError, ImageErrors} from "../images/imageErrorsDictionary";
 
-import {brokenImage, urlKeyErrorProperty} from "../images/image-shared";
+import {brokenImage, urlKeyErrorProperty} from "../images/imageSharedCode";
 
 
 export type ImageProps =
@@ -18,6 +18,7 @@ export type ImageProps =
     ratio?: string;
     compression?: ImageCompressionType;
     type?: ImageType;
+    fit?: ImageFitType;
 }
 
 function createImageElement(
@@ -95,6 +96,7 @@ type AllImageProps = {
 export default async function Image({
                                         type,
                                         compression,
+                                        fit,
                                         className,
                                         ratio,
                                         height,
@@ -104,7 +106,8 @@ export default async function Image({
                                     }: ImageProps) {
     let htmlImageAttributes: HtmlImageAttributes;
     const finalImageType: ImageType = type ?? interactConfig.images.defaultValues.type;
-    const finalCompression = compression ?? interactConfig.images.defaultValues.compressionLevel;
+    const finalCompression = compression ?? interactConfig.images.defaultValues.compression;
+    const finalFit = fit ?? interactConfig.images.defaultValues.fit;
     if (imgAttributesProps.alt === undefined || imgAttributesProps.alt === null) {
         return BrokenImage({error: new ImageError(ImageErrors.ALT_MISSING)})
     }
@@ -117,6 +120,7 @@ export default async function Image({
             src: src,
             type: finalImageType,
             compression: finalCompression,
+            fit: finalFit,
             width: width,
             height: height,
             ratio: ratio,

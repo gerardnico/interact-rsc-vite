@@ -39,9 +39,11 @@ export default class Start extends Command {
 
         let rootPath = path.resolve(flags.root)
 
+        let imageMiddlewareEndPoint = "/_images";
         let interactConfig = new configHandler(
             {
-                rootPath
+                rootPath,
+                imageEndpoint: imageMiddlewareEndPoint,
             })
             .getConfig();
 
@@ -54,12 +56,13 @@ export default class Start extends Command {
          * dist does not work as it will be cleaned up
          */
         let runtimePath = path.resolve(rootPath, ".interact");
-        let cachePath = path.resolve(runtimePath, ".interact/cache")
+        let cachePath = path.resolve(runtimePath, "cache")
 
 
         // Note: You can merge also
         // https://vite.dev/guide/api-javascript#mergeconfig
         let outDistDir = path.resolve(rootPath, "dist");
+
         const config: InlineConfig = {
             root: rootPath,
             base: publicBasePath,
@@ -107,7 +110,8 @@ export default class Start extends Command {
                 viteImageService({
                     baseDir: interactConfig.images.imagesDirectory,
                     cacheDir: path.resolve(cachePath, "img"),
-                    secret: process.env.IMAGE_SECRET || 'secret'
+                    secret: process.env.IMAGE_SECRET || 'secret',
+                    endPoint: imageMiddlewareEndPoint
                 })
             ],
         }
