@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/interact/cli/cli.ts start --root=apps/site",
-    "build": "vite build",
+    "build": "tsx src/interact/cli/cli.ts build --root=apps/site",
     "preview": "vite preview"
   },
   "files": [

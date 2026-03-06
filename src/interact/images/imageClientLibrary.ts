@@ -1,5 +1,5 @@
 import {ImageDimensionHelper} from "./imageDimensionHelper";
-import sharp from "sharp";
+import sharp, {type FitEnum} from "sharp";
 import path from "node:path";
 import type {ImageFitType, ImageType} from "../config/jsonConfigSchema";
 import type {ImageCompressionType} from "./imageCompressionType";
@@ -8,10 +8,12 @@ import {
     castHeightToNumber,
     castRatioToNumber,
     castWidthToNumber,
-    type ImageServiceKeyUrl
+    type ImageServiceKeyUrl,
+    processImageWithSharp
 } from "./imageSharedCode";
 import {ImageError, ImageErrors} from "./imageErrorsDictionary";
-
+import fsPromises from "fs/promises";
+import crypto from "crypto";
 
 export type HtmlImageAttributes = {
     src: string,
@@ -56,12 +58,43 @@ function getSizes(screenWidth: number, imageWidth: number) {
     return sizes;
 }
 
-function toImageServiceUri(uriBase: string, serviceProperties: Partial<Record<ImageServiceKeyUrl, string>>) {
-    if (Object.keys(serviceProperties).length == 0) {
-        return uriBase
+async function toImageServiceUri(src: string, serviceProperties: Partial<Record<ImageServiceKeyUrl, string>>, sharpPipeline: sharp.Sharp) {
+    let uriBase = `${interactConfig.images.serviceEndpoint}/${src}`
+    const isBuild = import.meta.env.MODE === 'production'
+    if (!isBuild) {
+        if (Object.keys(serviceProperties).length == 0) {
+            return uriBase
+        }
+        const params = new URLSearchParams(serviceProperties);
+        return `${uriBase}?${params.toString()}`;
     }
-    const params = new URLSearchParams(serviceProperties);
-    return `${uriBase}?${params.toString()}`;
+
+    const imageBuffer = await processImageWithSharp({
+        sharpPipeline,
+        targetWidth: Number(serviceProperties.width),
+        targetHeight: Number(serviceProperties.height),
+        requestedFit: serviceProperties.fit as keyof FitEnum,
+        requestedFormat: 'webp',
+        requestedCompression: serviceProperties.compression as ImageCompressionType
+    })
+    const normalizedProperties = JSON.stringify(serviceProperties, Object.keys(serviceProperties).sort());
+    const hash = crypto.createHash('sha256').update(normalizedProperties).digest('hex').slice(0, 16);
+
+
+    const pathWithoutExtension = src.slice(0, src.indexOf(".")); // 'path/file'
+    const extension = src.slice(src.indexOf("."));  // '.txt'
+    let buildUri = `/img/${pathWithoutExtension}-${hash}.${extension}`;
+
+    /**
+     * Write to file
+     */
+    const buildTargetFile = `${process.env.VITE_OUT_DIR}/client${buildUri}`;
+    debugger
+    await fsPromises.mkdir(path.dirname(buildTargetFile), {recursive: true});
+    await fsPromises.writeFile(buildTargetFile, imageBuffer);
+
+    return buildUri
+
 }
 
 /**
@@ -73,8 +106,9 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
 
     const sourceFile = path.resolve(interactConfig.images.imagesDirectory, props.src);
     let intrinsicWidth, intrinsicHeight;
+    let sharpPipeline;
     try {
-        let sharpPipeline = sharp(sourceFile);
+        sharpPipeline = sharp(sourceFile);
         const metadata = await sharpPipeline.metadata();
         intrinsicHeight = metadata.height;
         intrinsicWidth = metadata.width;
@@ -109,8 +143,8 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         serviceProperties.fit = props.fit;
     }
 
-    let uriBase = `${interactConfig.images.serviceEndpoint}/${props.src}`;
-    let uri = toImageServiceUri(uriBase, serviceProperties);
+
+    let uri = await toImageServiceUri(props.src, serviceProperties, sharpPipeline);
 
     const imageMargin = 20;
     let srcSet: string[] = [];
@@ -159,7 +193,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
             serviceProperties.height = String(breakpointHeight)
         }
 
-        srcSet.push(toImageServiceUri(uriBase, serviceProperties) + ` ${breakpointWidthWithoutMargin}w`);
+        srcSet.push(await toImageServiceUri(props.src, serviceProperties, sharpPipeline) + ` ${breakpointWidthWithoutMargin}w`);
         sizes.push(getSizes(breakpoint, breakpointWidthWithoutMargin));
 
 

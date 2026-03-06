@@ -38,8 +38,7 @@ async function renderStatic(config: ResolvedConfig) {
     const entryRscModule: typeof import('../vite-rsc/server/entry.rsc') = await import(pathToFileURL(rscIndexFilePath).href)
 
     // entry provides a list of static paths
-    const staticPaths = await entryRscModule.getStaticPaths()
-
+    const staticPaths = entryRscModule.getStaticPaths()
     // render rsc and html
     const baseDir = config.environments.client.build.outDir
     for (const staticPatch of staticPaths) {

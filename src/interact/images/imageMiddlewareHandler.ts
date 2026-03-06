@@ -4,7 +4,7 @@ import fsPromises from "fs/promises";
 import fs from "fs";
 import etag from "etag";
 import sharp, {type FormatEnum} from "sharp";
-import {getPresetOptions, ImageCompressionSchema} from "./imageCompressionType";
+import {ImageCompressionSchema} from "./imageCompressionType";
 import {verifyUrlAndDeleteVerificationProperties} from "./urlSignature";
 import crypto from "crypto";
 import * as mime from "mrmime";
@@ -16,7 +16,7 @@ import {
     castFit,
     castHeightToNumber,
     castRatioToNumber,
-    castWidthToNumber, urlKeyCompressionProperty,
+    castWidthToNumber, processImageWithSharp, urlKeyCompressionProperty,
     urlKeyErrorProperty, urlKeyFitProperty, urlKeyFormatProperty, urlKeyHeightProperty, urlKeyRatioProperty,
     urlKeyWidthProperty,
 } from "./imageSharedCode";
@@ -124,7 +124,7 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
             const requestedHeight = getRequestedHeight()
             const stringRatio = url.searchParams.get(urlKeyRatioProperty) || url.searchParams.get('r');
             const requestedRatio = castRatioToNumber(stringRatio);
-            const requestedFit = castFit(url.searchParams.get(urlKeyFitProperty)) || undefined;
+            const requestedFit = castFit(url.searchParams.get(urlKeyFitProperty));
             const requestedCompression = getCompression();
             let [requestedFormat, httpHeaderContentType] = getRequestFormat(requestedImgPath);
 
@@ -157,9 +157,8 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
             }
 
             const sourceFile = path.resolve(baseDir, requestedImgPath);
-            let sharpPipeline = sharp(sourceFile);
-
-            const {width: intrinsicWidth, height: intrinsicHeight} = await sharpPipeline.metadata();
+            const metadata = await sharp(sourceFile).metadata();
+            const {width: intrinsicWidth, height: intrinsicHeight} = metadata;
 
             const dimensionHelper = new ImageDimensionHelper({
                 requestedWidth,
@@ -169,38 +168,23 @@ export function createImageHandler(config: { baseDir: string, cacheDir: string, 
                 intrinsicWidth
             })
             let [targetWidth, targetHeight] = dimensionHelper.getTargetDimensions();
-
-            /**
-             * When fit is contain, the created margin are black
-             * We make them transparent
-             */
-            let background;
-            if (requestedFit == 'contain') {
-                const transparentFormatSupport = ["webp", "png"]
-                if (!transparentFormatSupport.includes(requestedFormat)) {
-                    requestedFormat = "webp"
+            const sharpPipeline = sharp(sourceFile)
+            const finalImage = await processImageWithSharp({
+                    sharpPipeline,
+                    targetWidth,
+                    targetHeight,
+                    requestedFit,
+                    requestedFormat,
+                    requestedCompression
                 }
-                background = {r: 0, g: 0, b: 0, alpha: 0}// transparent
-            }
+            );
+            await fsPromises.writeFile(cachedFile, finalImage);
 
-            sharpPipeline = sharpPipeline.resize({
-                width: targetWidth,
-                height: targetHeight,
-                fit: requestedFit,
-                withoutEnlargement: true,
-                background: background
-            });
-
-            const options = getPresetOptions({compression: requestedCompression, format: requestedFormat});
-            sharpPipeline.toFormat(requestedFormat, options)
-            const buffer = await sharpPipeline.toBuffer();
-            await fsPromises.writeFile(cachedFile, buffer);
-
-            return new Response(new Uint8Array(buffer), {
+            return new Response(new Uint8Array(finalImage), {
                 headers: {
                     "Content-Type": httpHeaderContentType,
                     "Cache-Control": "public, max-age=31536000, immutable",
-                    "ETag": etag(buffer)
+                    "ETag": etag(finalImage)
                 }
             })
         } catch (err) {

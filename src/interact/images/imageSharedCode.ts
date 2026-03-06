@@ -4,7 +4,8 @@
 import {z} from "zod";
 import {ImageError, ImageErrors} from "./imageErrorsDictionary";
 import {ImageFitSchema} from "../config/jsonConfigSchema";
-import type {FitEnum} from "sharp";
+import sharp, {type FitEnum, type FormatEnum} from "sharp";
+import {getPresetOptions, type ImageCompressionType} from "./imageCompressionType";
 
 /**
  * Key Properties on the image service URL
@@ -36,10 +37,9 @@ export function castWidthToNumber(width: string | null | undefined | number): nu
     }
 }
 
-export function castFit(fit: string | null | undefined | number): keyof FitEnum | null {
-    if (fit == null) return null;
+export function castFit(fit: string | null | undefined | number): keyof FitEnum {
     try {
-        return ImageFitSchema.parse(fit) as unknown as keyof FitEnum || null;
+        return ImageFitSchema.parse(fit) as unknown as keyof FitEnum;
     } catch (e) {
         throw new ImageError({message: `bad fit value ${fit}: ${e}`, ...ImageErrors.BAD_WIDTH});
     }
@@ -93,4 +93,48 @@ export function castRatioToNumber(stringRatio: string | null | undefined): numbe
     }
 
     return width / height;
+}
+
+export async function processImageWithSharp({
+    sharpPipeline,
+    targetWidth,
+    targetHeight,
+    requestedFit,
+    requestedFormat,
+    requestedCompression
+}: {
+    sharpPipeline: sharp.Sharp,
+    targetWidth: number,
+    targetHeight: number,
+    requestedFit: keyof FitEnum,
+    requestedFormat: keyof FormatEnum,
+    requestedCompression: ImageCompressionType
+}): Promise<Buffer> {
+
+
+    /**
+     * When fit is contain, the created margin are black
+     * We make them transparent
+     */
+    let background;
+    let outputFormat = requestedFormat;
+    if (requestedFit == 'contain') {
+        const transparentFormatSupport = ["webp", "png"]
+        if (!transparentFormatSupport.includes(requestedFormat)) {
+            outputFormat = "webp"
+        }
+        background = {r: 0, g: 0, b: 0, alpha: 0}// transparent
+    }
+
+    sharpPipeline = sharpPipeline.resize({
+        width: targetWidth,
+        height: targetHeight,
+        fit: requestedFit,
+        withoutEnlargement: true,
+        background: background
+    });
+
+    const options = getPresetOptions({compression: requestedCompression, format: outputFormat});
+    sharpPipeline.toFormat(outputFormat, options)
+    return await sharpPipeline.toBuffer();
 }

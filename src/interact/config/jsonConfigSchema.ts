@@ -11,7 +11,7 @@ import {ImageCompressionSchema} from "../images/imageCompressionType";
 
 
 export const ImageFitSet = z.enum(['cover', 'contain', 'fill', 'inside', 'outside']);
-export const ImageFitSchema = ImageFitSet.default('cover').describe("How the image is fitted in the box defined by width and height");
+export const ImageFitSchema = ImageFitSet.default('cover').describe("How the image is fitted in the box defined by width and height").default('cover');
 export type ImageFitType = z.output<typeof ImageFitSchema>;
 
 const faviconImage = z.object({
