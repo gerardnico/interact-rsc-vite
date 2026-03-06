@@ -10,10 +10,10 @@ import {
     loadServerAction,
     renderToReadableStream
 } from '@vitejs/plugin-rsc/rsc'
-import {parseRenderRequest} from '../shared/request'
-import type {RscPayload} from '../shared/types'
+import {parseRenderRequest} from '../shared/request.js'
+import type {RscPayload} from '../shared/types.js'
 import type {ReactFormState} from 'react-dom/client'
-import {getRootComponent, getStaticPaths} from "../../pages";
+import {getRootComponent, getStaticPaths} from "../../pages/index.js";
 
 /**
  * We export it so that static rendering (SSG)
@@ -108,7 +108,7 @@ export default async function handler(request: Request): Promise<Response> {
      * This is not a request made by our client asking for a RSC stream
      * Rendering the stream as HTML
      */
-    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr')>('ssr', 'index')
+    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr.js')>('ssr', 'index')
     const ssrResult = await ssr.renderHtml(rscStream, {
         formState,
         // allow quick simulation of javascript disabled browser
@@ -138,7 +138,7 @@ export async function handleSsg(request: Request): Promise<{
     const rscStream = renderToReadableStream<RscPayload>(rscPayload)
     const [rscStream1, rscStream2] = rscStream.tee()
 
-    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr')>('ssr', 'index')
+    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr.js')>('ssr', 'index')
     const ssrResult = await ssr.renderHtml(rscStream1, {ssg: true})
 
     return {html: ssrResult.stream, rsc: rscStream2}

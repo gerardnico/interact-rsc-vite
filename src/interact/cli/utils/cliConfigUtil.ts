@@ -1,4 +1,4 @@
-import configHandler from "../../config";
+import configHandler from "../../config/index.js";
 import path from "node:path";
 import mdx from "@mdx-js/rollup";
 import remarkFrontmatter from "remark-frontmatter";
@@ -6,12 +6,12 @@ import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import remarkMdxToc from "@altano/remark-mdx-toc-with-slugs";
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
-import pageModulesPlugin from "../../pages/pagesViteVirtualModules";
-import confModulePlugin from "../../config/viteConfVirtualModule";
-import viteImageService from "../../images/imageViteDevMiddleware";
+import pageModulesPlugin from "../../pages/pagesViteVirtualModules.js";
+import confModulePlugin from "../../config/viteConfVirtualModule.js";
+import viteImageService from "../../images/imageViteDevMiddleware.js";
 import {fileURLToPath} from "node:url";
 import type {InlineConfig} from "vite";
-import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin";
+import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -93,7 +93,7 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactPackageDir, 'rsc/server/entry.rsc.tsx'),
+                            index: path.resolve(interactPackageDir, 'rsc/server/entry.rsc.js'),
                         },
                     },
                 },
@@ -107,7 +107,7 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactPackageDir, 'rsc/server/entry.ssr.tsx'),
+                            index: path.resolve(interactPackageDir, 'rsc/server/entry.ssr.js'),
                         },
                     },
                 },
@@ -123,7 +123,7 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactPackageDir, 'rsc/browser/entry.browser.tsx'),
+                            index: path.resolve(interactPackageDir, 'rsc/browser/entry.browser.js'),
                         },
                     },
                 },

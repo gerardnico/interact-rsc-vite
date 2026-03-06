@@ -2,7 +2,7 @@
 import path from "node:path";
 import {Command, Flags} from '@oclif/core'
 import {createServer} from 'vite'
-import {resolveViteConfig} from "../utils/cliConfigUtil";
+import {resolveViteConfig} from "../utils/cliConfigUtil.js";
 
 
 export default class Start extends Command {

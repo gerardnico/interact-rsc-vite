@@ -1,8 +1,8 @@
-import {ImageDimensionHelper} from "./imageDimensionHelper";
+import {ImageDimensionHelper} from "./imageDimensionHelper.js";
 import sharp, {type FitEnum} from "sharp";
 import path from "node:path";
-import type {ImageFitType, ImageType} from "../config/jsonConfigSchema";
-import type {ImageCompressionType} from "./imageCompressionType";
+import type {ImageFitType, ImageType} from "../config/jsonConfigSchema.js";
+import type {ImageCompressionType} from "./imageCompressionType.js";
 import interactConfig from "interact:conf"
 import {
     castHeightToNumber,
@@ -10,8 +10,8 @@ import {
     castWidthToNumber,
     type ImageServiceKeyUrl,
     processImageWithSharp
-} from "./imageSharedCode";
-import {ImageError, ImageErrors} from "./imageErrorsDictionary";
+} from "./imageSharedCode.js";
+import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
 import fsPromises from "fs/promises";
 import crypto from "crypto";
 

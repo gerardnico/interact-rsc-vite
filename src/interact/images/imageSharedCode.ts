@@ -2,10 +2,10 @@
  * Shared code between client and server (handler)
  */
 import {z} from "zod";
-import {ImageError, ImageErrors} from "./imageErrorsDictionary";
-import {ImageFitSchema} from "../config/jsonConfigSchema";
+import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
+import {ImageFitSchema} from "../config/jsonConfigSchema.js";
 import sharp, {type FitEnum, type FormatEnum} from "sharp";
-import {getPresetOptions, type ImageCompressionType} from "./imageCompressionType";
+import {getPresetOptions, type ImageCompressionType} from "./imageCompressionType.js";
 
 /**
  * Key Properties on the image service URL

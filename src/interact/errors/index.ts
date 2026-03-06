@@ -1,5 +1,5 @@
-export {InteractError} from "./InteractError";
-export * as InteractErrorData from "./InteractErrorData";
+export {InteractError} from "./InteractError.js";
+export * as InteractErrorData from "./InteractErrorData.js";
 
 
 /**

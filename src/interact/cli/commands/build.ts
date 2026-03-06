@@ -1,9 +1,10 @@
-import {Command, Flags} from '@oclif/core'
+import { Flags} from '@oclif/core'
 import {createBuilder, createLogger} from 'vite'
-import {resolveViteConfig} from "../utils/cliConfigUtil";
+import {resolveViteConfig} from "../utils/cliConfigUtil.js";
 import pc from "picocolors";
+import {BaseCommand} from "../baseCommand.js";
 
-export default class Build extends Command {
+export default class Build extends BaseCommand<typeof Build> {
     static description = 'Build project for production'
 
     static flags = {

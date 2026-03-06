@@ -4,11 +4,11 @@ import fsPromises from "fs/promises";
 import fs from "fs";
 import etag from "etag";
 import sharp, {type FormatEnum} from "sharp";
-import {ImageCompressionSchema} from "./imageCompressionType";
-import {verifyUrlAndDeleteVerificationProperties} from "./urlSignature";
+import {ImageCompressionSchema} from "./imageCompressionType.js";
+import {verifyUrlAndDeleteVerificationProperties} from "./urlSignature.js";
 import crypto from "crypto";
 import * as mime from "mrmime";
-import {ImageDimensionHelper} from "./imageDimensionHelper";
+import {ImageDimensionHelper} from "./imageDimensionHelper.js";
 import {fileURLToPath} from "node:url";
 import {dirname, join} from "path";
 import {optimize} from 'svgo';
@@ -20,8 +20,8 @@ import {
     castWidthToNumber, processImageWithSharp, urlKeyCompressionProperty,
     urlKeyErrorProperty, urlKeyFitProperty, urlKeyFormatProperty, urlKeyHeightProperty, urlKeyRatioProperty,
     urlKeyWidthProperty,
-} from "./imageSharedCode";
-import {ImageError, ImageErrors} from "./imageErrorsDictionary";
+} from "./imageSharedCode.js";
+import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

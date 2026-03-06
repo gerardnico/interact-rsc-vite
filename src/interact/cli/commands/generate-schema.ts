@@ -3,7 +3,7 @@ import {z} from 'zod';
 
 import {writeFileSync, mkdirSync} from 'fs'
 import {join} from 'path'
-import {JsonConfigSchema} from "../../config/jsonConfigSchema";
+import {JsonConfigSchema} from "../../config/jsonConfigSchema.js";
 
 export default class GenerateSchema extends Command {
   static description = 'Generate JSON schema from Zod configuration'

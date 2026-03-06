@@ -3,13 +3,13 @@ import React from "react";
 import interactConfig from "interact:conf"
 
 
-import type {ImageCompressionType} from "../images/imageCompressionType";
-import type {ImageFitType, ImageType} from "../config/jsonConfigSchema";
+import type {ImageCompressionType} from "../images/imageCompressionType.js";
+import type {ImageFitType, ImageType} from "../config/jsonConfigSchema.js";
 import clsx from "clsx";
-import {getHtmlImageAttributes, type HtmlImageAttributes} from "../images/imageClientLibrary";
-import {ImageError, ImageErrors} from "../images/imageErrorsDictionary";
+import {getHtmlImageAttributes, type HtmlImageAttributes} from "../images/imageClientLibrary.js";
+import {ImageError, ImageErrors} from "../images/imageErrorsDictionary.js";
 
-import {brokenImage, urlKeyErrorProperty} from "../images/imageSharedCode";
+import {brokenImage, urlKeyErrorProperty} from "../images/imageSharedCode.js";
 
 
 export type ImageProps =

@@ -5,18 +5,20 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "interact": "dist/typescript/cli/cli.js"
+    "interact": "src/interact/cli/run.js"
   },
   "scripts": {
     "build": "tsc",
-    "start": "tsx src/interact/cli/cli.ts start --root=apps/site",
-    "static": "tsx src/interact/cli/cli.ts build --root=apps/site",
-    "preview": "tsx src/interact/cli/cli.ts preview --root=apps/site"
+    "start": "src/interact/cli/dev.js start --root=apps/site",
+    "static": "src/interact/cli/dev.js build --root=apps/site",
+    "preview": "src/interact/cli/dev.ts preview --root=apps/site"
   },
   "files": [
     "src/*"
   ],
   "dependencies": {
+    "@altano/remark-mdx-toc-with-slugs": "4.0.1",
+    "@mdx-js/rollup": "3.1.1",
     "@oclif/core": "4.8.2",
     "@realfavicongenerator/generate-favicon": "0.6.3",
     "@realfavicongenerator/image-adapter-node": "0.6.3",
@@ -24,19 +26,18 @@
     "etag": "1.8.1",
     "glob": "13.0.6",
     "mrmime": "2.0.1",
+    "picocolors": "*",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "rollup": "*",
-    "sharp": "0.34.5",
-    "svgo": "4.0.1",
-    "zod": "4.3.6",
-    "picocolors": "*",
-    "@altano/remark-mdx-toc-with-slugs": "4.0.1",
-    "@mdx-js/rollup": "3.1.1",
     "remark-frontmatter": "5.0.0",
     "remark-mdx-frontmatter": "5.2.0",
+    "rollup": "*",
     "rsc-html-stream": "0.0.7",
-    "vite": "7.3.1"
+    "sharp": "0.34.5",
+    "svgo": "4.0.1",
+    "ts-node": "10.9.2",
+    "vite": "7.3.1",
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@types/etag": "1",
@@ -54,7 +55,7 @@
     "version": "0.1.0",
     "bin": "interact",
     "dirname": "interact",
-    "commands": "./src/interact/cli/commands",
+    "commands": "dist/interact/cli/commands",
     "topicSeparator": " "
   },
   "resolutions": {

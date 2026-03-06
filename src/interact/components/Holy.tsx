@@ -1,5 +1,5 @@
-import type {LayoutProps} from "../types";
-import Head from "./Head";
+import type {LayoutProps} from "../types/index.js";
+import Head from "./Head.js";
 
 /**
  * Holy Layout

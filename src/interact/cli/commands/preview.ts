@@ -1,7 +1,7 @@
 
 import {Command, Flags} from '@oclif/core'
 import {createLogger, preview} from 'vite'
-import {resolveViteConfig} from "../utils/cliConfigUtil";
+import {resolveViteConfig} from "../utils/cliConfigUtil.js";
 import pc from "picocolors"
 
 export default class Build extends Command {

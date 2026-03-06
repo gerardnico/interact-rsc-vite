@@ -9,7 +9,7 @@ import React from 'react'
 import {renderToReadableStream} from 'react-dom/server.edge'
 import {prerender} from 'react-dom/static.edge'
 import {injectRSCPayload} from 'rsc-html-stream/server'
-import type {RscPayload} from '../shared/types'
+import type {RscPayload} from '../shared/types.js'
 import type {ReactFormState} from "react-dom/client";
 
 /**

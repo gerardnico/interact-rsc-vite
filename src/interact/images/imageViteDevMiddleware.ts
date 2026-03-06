@@ -4,7 +4,7 @@ import type {Plugin} from 'vite';
  * Used by vite rsc to convert the
  */
 import {toNodeHandler} from 'srvx/node'
-import {createImageHandler} from "./imageMiddlewareHandler";
+import {createImageHandler} from "./imageMiddlewareHandler.js";
 
 type ImageViteDevMiddleware = {
     baseDir?: string,

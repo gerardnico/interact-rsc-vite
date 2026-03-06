@@ -9,8 +9,8 @@ import {
     IconTransformationType
 } from '@realfavicongenerator/generate-favicon';
 import {getNodeImageAdapter, loadAndConvertToSvg} from "@realfavicongenerator/image-adapter-node";
-import type {Config} from "../../config/jsonConfigSchema";
-import configHandler from "../../config";
+import type {Config} from "../../config/jsonConfigSchema.js";
+import configHandler from "../../config/index.js";
 
 async function generateImage({masterFilePath, dryRun, outputDirectory, interactConf: config}: {
     masterFilePath?: string,

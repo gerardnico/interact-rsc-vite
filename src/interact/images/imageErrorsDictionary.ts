@@ -1,9 +1,9 @@
-import {InteractError, type InteractErrorData} from "../errors/InteractError";
+import {InteractError, type InteractErrorData} from "../errors/InteractError.js";
 import {
     ImageCompressionSet,
     ImageFormatCompressionSet,
-} from "./imageCompressionType";
-import {ImageFitSet} from "../config/jsonConfigSchema";
+} from "./imageCompressionType.js";
+import {ImageFitSet} from "../config/jsonConfigSchema.js";
 
 export interface ImageErrorData extends InteractErrorData {
     // http status is mandatory

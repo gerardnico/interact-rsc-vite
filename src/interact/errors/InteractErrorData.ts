@@ -1,4 +1,4 @@
-import type {InteractErrorData} from "./InteractError";
+import type {InteractErrorData} from "./InteractError.js";
 
 const ResourceNoteFound: InteractErrorData = {
     code: 1001,

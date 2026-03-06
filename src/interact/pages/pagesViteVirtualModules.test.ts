@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generatePageModulesCode } from './pagesViteVirtualModules';
+import { generatePageModulesCode } from './pagesViteVirtualModules.js';
 
 describe('generatePageModulesCode', () => {
     it('generates imports and routes for a list of files', () => {

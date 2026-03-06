@@ -1,5 +1,5 @@
 import type {Plugin} from "vite";
-import type {Config} from "./jsonConfigSchema";
+import type {Config} from "./jsonConfigSchema.js";
 
 
 export default function ConfVirtualModulePlugin(data: Config): Plugin {

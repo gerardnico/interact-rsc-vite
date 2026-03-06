@@ -1,7 +1,7 @@
-import type {LayoutProps} from "../types";
+import type {LayoutProps} from "../types/index.js";
 import interactConf from "interact:conf";
-import {PAGE_CONTAINER} from "./classNames";
-import type {FaviconSetSchemaType} from "../config/jsonConfigSchema";
+import {PAGE_CONTAINER} from "./classNames.js";
+import type {FaviconSetSchemaType} from "../config/jsonConfigSchema.js";
 
 
 export default function Head({pageModule, request}: LayoutProps) {

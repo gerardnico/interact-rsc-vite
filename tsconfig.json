@@ -6,10 +6,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "skipLibCheck": true,
+    "rootDir": "src",
     "verbatimModuleSyntax": true,
     //    "noEmit": true,
-    "moduleResolution": "Bundler",
-    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "target": "ESNext",
     //"sourceMap": true,
     "inlineSourceMap": true,
@@ -24,7 +25,7 @@
     ],
     "jsx": "react-jsx",
     // or "react-jsx" for React 17+
-    "outDir": "./dist/typescript",
+    "outDir": "./dist/",
     "esModuleInterop": true
   },
   "include": [

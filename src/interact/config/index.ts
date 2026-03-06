@@ -1,4 +1,4 @@
-import {type Config, JsonConfigSchema, type FaviconSetSchemaType} from "./jsonConfigSchema";
+import {type Config, JsonConfigSchema, type FaviconSetSchemaType} from "./jsonConfigSchema.js";
 import fs from 'fs'
 import {readFileSync} from "node:fs";
 import path from "node:path";

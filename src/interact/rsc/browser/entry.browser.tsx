@@ -17,9 +17,9 @@ import {
 import React from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
 import { rscStream } from 'rsc-html-stream/client'
-import type { RscPayload } from '../shared/types'
-import { GlobalErrorBoundary } from './error-boundary'
-import { createRscRenderRequest } from '../shared/request'
+import type { RscPayload } from '../shared/types.js'
+import { GlobalErrorBoundary } from './error-boundary.js'
+import { createRscRenderRequest } from '../shared/request.js'
 
 async function main() {
   // stash `setPayload` function to trigger re-rendering

@@ -1,6 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 import yaml from 'yaml'
-import ConfigHandler from "../../config";
+import ConfigHandler from "../../config/index.js";
 
 /**
  * Recursively filters an object by a key path

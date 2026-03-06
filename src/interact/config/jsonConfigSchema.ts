@@ -7,7 +7,7 @@
  */
 import {z} from 'zod';
 
-import {ImageCompressionSchema} from "../images/imageCompressionType";
+import {ImageCompressionSchema} from "../images/imageCompressionType.js";
 
 
 export const ImageFitSet = z.enum(['cover', 'contain', 'fill', 'inside', 'outside']);
