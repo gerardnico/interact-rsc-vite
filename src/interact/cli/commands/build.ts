@@ -1,6 +1,7 @@
 import {Command, Flags} from '@oclif/core'
-import {createBuilder} from 'vite'
+import {createBuilder, createLogger} from 'vite'
 import {resolveInteractConfig} from "../utils/config";
+import pc from "picocolors";
 
 export default class Build extends Command {
     static description = 'Build project for production'
@@ -18,19 +19,19 @@ export default class Build extends Command {
         const rootPath = flags.root
 
         try {
-            const builder = await createBuilder(resolveInteractConfig({rootPath, port: 5173}))
+            const builder = await createBuilder(resolveInteractConfig({rootPath}))
             console.log(Object.keys(builder.environments))
             // build App will call the environment in order and is equivalent to:
             //   await builder.build(builder.environments.rsc)
             //   await builder.build(builder.environments.ssr)
             //   await builder.build(builder.environments.client)
-            // It will also call the buildApp Hook needed for static root
+            // and calling the buildApp Hook (static generation uses this hook)
             await builder.buildApp();
             this.log('Build completed successfully!')
-        } catch (error) {
-            console.error(error)          // prints message
-            console.error((error as Error).stack)    // prints stack
-            this.error(`Build failed: ${error}`)
+        } catch (e) {
+            let error = e as Error;
+            createLogger('error').error(pc.red(`error when building:\n${error.stack}`), {error: error});
+            process.exit(1);
         }
     }
 }

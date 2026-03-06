@@ -7,7 +7,7 @@
   "scripts": {
     "start": "tsx src/interact/cli/cli.ts start --root=apps/site",
     "build": "tsx src/interact/cli/cli.ts build --root=apps/site",
-    "preview": "vite preview"
+    "preview": "tsx src/interact/cli/cli.ts preview --root=apps/site"
   },
   "files": [
     "src/*"
@@ -25,7 +25,8 @@
     "rollup": "*",
     "sharp": "0.34.5",
     "svgo": "^4.0.1",
-    "zod": "4.3.6"
+    "zod": "4.3.6",
+    "picocolors": "*"
   },
   "devDependencies": {
     "@altano/remark-mdx-toc-with-slugs": "4.0.1",
