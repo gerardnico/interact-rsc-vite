@@ -72,7 +72,7 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
             let context = this
             loadedEnv = context.environment.name;
 
-            let extensions = ['mdx', 'tsx', 'jsx']
+            let extensions = ['mdx', 'tsx', 'jsx', 'md']
             let globPattern = `**/*.{${extensions.join(',')}}`;
             const files = glob.sync(globPattern, {cwd: pagesDir});
             console.log(`${virtualModuleId} Loaded in env ${loadedEnv} with ${files.length} modules pages discovered at ${pagesDir}`);

@@ -16,6 +16,6 @@ export function useMDXComponents(): MDXComponents {
         h1(properties:React.HTMLAttributes<HTMLHeadingElement>) {
             return <h1 {...properties} className="custom"/>
         },
-        code: Code
+        pre: Code
     }
 }

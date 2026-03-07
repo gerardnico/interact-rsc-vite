@@ -41,6 +41,13 @@ declare module '*.mdx' {
     export default defaultType;
 }
 
+declare module '*.md' {
+    const defaultType: ComponentType;
+    export const frontmatter: Frontmatter;
+    export const toc: TocEntry[];
+    export default defaultType;
+}
+
 /**
  * All tsx file in pages directory are
  */

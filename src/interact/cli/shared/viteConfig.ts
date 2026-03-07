@@ -3,6 +3,7 @@ import mdx from "@mdx-js/rollup";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import remarkMdxToc from "@altano/remark-mdx-toc-with-slugs";
+import remarkGfm from 'remark-gfm';
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import pageModulesPlugin from "../../pages/viteVirtualPagesModules.js";
@@ -129,7 +130,7 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
             // You can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
             // to understand how "use client" and "use server" directives are transformed internally.
             // import("vite-plugin-inspect").then(m => m.default()),
-            react(),
+
             rsc(),
             viteSsgPlugin(),
             pageModulesPlugin(interactConfig.pages.pagesDirectory),
@@ -139,14 +140,17 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
                 secret: process.env.IMAGE_SECRET,
                 endPoint: imageMiddlewareEndPoint
             }),
+            // in Vite, @mdx-js/rollup must come before @vitejs/plugin-react
             mdx({
                 remarkPlugins: [
                     remarkFrontmatter,
                     remarkMdxFrontmatter, // exports frontmatter as `frontmatter`
                     remarkMdxToc, // exports headings as `toc`
+                    remarkGfm // Table
                 ],
                 providerImportSource: import.meta.resolve('./mdxComponentsProvider.js')
             }),
+            react(),
         ],
     }
 }

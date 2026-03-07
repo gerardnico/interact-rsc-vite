@@ -1,3 +1,7 @@
+---
+title: Image
+---
+
 ## Image Component
 
 | Name        | Default | Possible values                                 | Description                                                    |

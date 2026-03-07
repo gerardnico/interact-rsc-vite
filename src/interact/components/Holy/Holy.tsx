@@ -19,7 +19,7 @@ export default async function Holy(layoutProps: LayoutProps) {
         <html lang="en" dir="ltr">
         <Head {...layoutProps} />
         <body>
-        <NavBar { ...layoutProps} />
+        <NavBar {...layoutProps} />
         <div id="page-core" className={
             clsx(styles.pageCore,
                 PAGE_CONTAINER,
@@ -35,7 +35,7 @@ export default async function Holy(layoutProps: LayoutProps) {
                     <Toc {...layoutProps} />
                 </div>
                 <div id="main-content">
-                    <Component request={layoutProps.request}/>
+                    {Component && <Component request={layoutProps.request}/>}
                 </div>
                 <div id="main-side" className="d-print-none">
                 </div>
