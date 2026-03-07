@@ -273,7 +273,7 @@ const NavBarSchema = BaseComponentSchema.extend({
             brandName: z.string().optional(),
             logoWidth: z.coerce.number().optional(),
             logoHeight: z.coerce.number().optional(),
-            logoSrc: z.coerce.string().default("/favicon.svg"),
+            logoSrc: z.coerce.string().default("https://www.combostrap.com/_media/favicon.ico"),
             logoAlt: z.string().optional(),
         })
     ),

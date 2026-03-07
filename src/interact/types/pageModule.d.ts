@@ -9,6 +9,7 @@ export type PageModuleComponent = ComponentType<{ request: Request }>
 export interface TocEntry {
     value: string;
     depth: number;
+    slug: string;
     data?: Record<string, unknown>;
     children?: TocEntry[];
 }

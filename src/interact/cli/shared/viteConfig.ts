@@ -129,13 +129,6 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
             // You can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
             // to understand how "use client" and "use server" directives are transformed internally.
             // import("vite-plugin-inspect").then(m => m.default()),
-            mdx({
-                remarkPlugins: [
-                    remarkFrontmatter,
-                    remarkMdxFrontmatter, // exports frontmatter as `frontmatter`
-                    remarkMdxToc, // exports headings as `toc`
-                ],
-            }),
             react(),
             rsc(),
             viteSsgPlugin(),
@@ -145,7 +138,15 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
                 cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),
                 secret: process.env.IMAGE_SECRET,
                 endPoint: imageMiddlewareEndPoint
-            })
+            }),
+            mdx({
+                remarkPlugins: [
+                    remarkFrontmatter,
+                    remarkMdxFrontmatter, // exports frontmatter as `frontmatter`
+                    remarkMdxToc, // exports headings as `toc`
+                ],
+                providerImportSource: import.meta.resolve('./mdxComponentsProvider.js')
+            }),
         ],
     }
 }

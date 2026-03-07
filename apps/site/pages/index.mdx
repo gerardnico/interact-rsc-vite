@@ -1,10 +1,10 @@
 ---
-layout: landing
+layout: holy
 ---
 import {getPages} from "../../../src/interact/pages/index.tsx";
 import Image from "../../../src/interact/components/Image/Image.tsx";
 
-# Index
+## Index
 
 
 <p>Number of Pages: {Object.keys(getPages()).length - 1}</p>
@@ -14,6 +14,10 @@ import Image from "../../../src/interact/components/Image/Image.tsx";
        height={200}
        fit={"contain"}
 />
+
+
+## Pages
+
 <ul>
     {Object.entries(getPages()).map(([key, page]) => {
         if (key.startsWith("/index")) {

@@ -4,9 +4,7 @@
   "private": true,
   "license": "MIT",
   "type": "module",
-  "bin": {
-    "interact": "src/interact/cli/run.js"
-  },
+  "bin": "src/interact/cli/run.js",
   "scripts": {
     "build": "tsc",
     "start": "src/interact/cli/dev.js start --root=apps/site",
@@ -41,6 +39,7 @@
   },
   "devDependencies": {
     "@types/etag": "1",
+    "@types/mdx": "2.0.13",
     "@types/node": "25.3.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",

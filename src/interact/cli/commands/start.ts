@@ -27,7 +27,6 @@ export default class Start extends Command {
          */
         let rootPath = path.resolve(flags.root)
         process.env.INTERACT_ROOT_PATH = rootPath
-        debugger;
         /**
          * If on top of the file, it's loaded in dev
          * https://github.com/oclif/core/issues/997

@@ -70,7 +70,6 @@ class ConfigHandler {
 
     constructor() {
 
-        debugger;
         const interactRootPath = process.env.INTERACT_ROOT_PATH
         if (!interactRootPath) {
             this.rootPath = process.cwd();

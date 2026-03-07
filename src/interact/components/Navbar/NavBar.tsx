@@ -2,8 +2,9 @@
 import {PAGE_CONTAINER} from "../classNames.js";
 import interactConfig from "../../config/index.js";
 import Image from "../Image/Image.js"
+import type {LayoutProps} from "../../types/index.js";
 
-export default function NavBar() {
+export default function NavBar(props:LayoutProps) {
 
     let homeUrl = ""
     const isDev = process.env.NODE_ENV === 'development';
