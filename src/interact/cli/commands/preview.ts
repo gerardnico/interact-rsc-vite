@@ -1,7 +1,6 @@
 
 import {Command, Flags} from '@oclif/core'
 import {createLogger, preview} from 'vite'
-import {resolveViteConfig} from "../utils/cliConfigUtil.js";
 import pc from "picocolors"
 
 export default class Build extends Command {
@@ -18,6 +17,12 @@ export default class Build extends Command {
         const {flags} = await this.parse(Build)
 
         const rootPath = flags.root
+
+        /**
+         * If on top of the file, it's loaded in dev
+         * https://github.com/oclif/core/issues/997
+         */
+        const { resolveViteConfig } = await import("../shared/viteConfig.js");
 
         try {
             const server = await preview(resolveViteConfig({rootPath, command:"preview"}));

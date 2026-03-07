@@ -1,4 +1,3 @@
-import configHandler from "../../config/index.js";
 import path from "node:path";
 import mdx from "@mdx-js/rollup";
 import remarkFrontmatter from "remark-frontmatter";
@@ -6,12 +5,12 @@ import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import remarkMdxToc from "@altano/remark-mdx-toc-with-slugs";
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
-import pageModulesPlugin from "../../pages/pagesViteVirtualModules.js";
-import confModulePlugin from "../../config/viteConfVirtualModule.js";
+import pageModulesPlugin from "../../pages/viteVirtualPagesModules.js";
 import viteImageService from "../../images/imageViteDevMiddleware.js";
 import {fileURLToPath} from "node:url";
 import type {InlineConfig} from "vite";
 import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
+import interactConfig from "../../config/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,9 +28,6 @@ type InteractConfig = {
 
 export function resolveViteConfig({rootPath, port, command}: InteractConfig): InlineConfig {
 
-
-    let interactConfig = new configHandler({rootPath})
-        .getConfig();
 
 
     // https://vite.dev/guide/build#public-base-path
@@ -144,7 +140,6 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
             rsc(),
             viteSsgPlugin(),
             pageModulesPlugin(interactConfig.pages.pagesDirectory),
-            confModulePlugin(interactConfig),
             viteImageService({
                 baseDir: interactConfig.images.imagesDirectory,
                 cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),

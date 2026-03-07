@@ -1,5 +1,4 @@
-export * from "./mdx.d.ts";
-export * from "./page-modules.d.ts"
-export * from "./layout.d.ts"
-export * from "./config-module.d.ts"
-
+export * from "./pageModule.js";
+export * from "../pages/viteVirtualPagesModulesDef.d.ts"
+export * from "./layoutComponent.d.ts"
+export * from "../config/viteVirtualConfModule.d.ts"

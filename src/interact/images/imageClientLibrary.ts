@@ -1,9 +1,8 @@
 import {ImageDimensionHelper} from "./imageDimensionHelper.js";
 import sharp, {type FitEnum} from "sharp";
 import path from "node:path";
-import type {ImageFitType, ImageType} from "../config/jsonConfigSchema.js";
+import type {ImageFitType, ImageType} from "../config/configSchema.js";
 import type {ImageCompressionType} from "./imageCompressionType.js";
-import interactConfig from "interact:conf"
 import {
     castHeightToNumber,
     castRatioToNumber,
@@ -14,6 +13,7 @@ import {
 import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
 import fsPromises from "fs/promises";
 import crypto from "crypto";
+import interactConfig from "../config/index.js";
 
 export type HtmlImageAttributes = {
     src: string,
@@ -31,6 +31,7 @@ type ImageRequestProps = {
     ratio?: string,
     height?: number | string,
     width?: number | string,
+    error?: number
 }
 
 /**

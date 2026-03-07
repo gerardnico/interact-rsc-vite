@@ -1,4 +1,4 @@
-import type {LayoutProps} from "../types/index.js";
+import type {LayoutProps} from "../../types/index.js";
 
 /**
  * Landing Layout

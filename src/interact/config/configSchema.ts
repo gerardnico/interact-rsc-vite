@@ -98,30 +98,19 @@ const PagesSchema = z.object({
 })
 
 
-let navBarLogoSchema = z.object({
-    src: z.coerce.string<string>().default("/favicon.svg"),
-    alt: z.coerce.string<string>().optional(),
-    width: z.coerce.number<number>().default(24),
-    height: z.coerce.number<number>().default(24)
-});
-let navBarSchema = z.object({
-    brandName: z.coerce.string<string>().default("Brand").nullable(),
-    logo: navBarLogoSchema.default(navBarLogoSchema.parse({})),
-});
+
 let tocSchema = z.object({
     minItems: z.coerce.number<number>().default(2),
     maxDepth: z.coerce.number<number>().default(3),
 });
-let pageSchema = z.object({
+let container = z.object({
     // https://getbootstrap.com/docs/5.3/layout/containers/
     containerClass: z.enum(['container', 'container-fluid', 'container-sm', 'container-md', 'container-lg', 'container-xl', 'container-xxl']).default('container'),
     // with the unit please
     containerMaxWidth: z.coerce.string<string>().optional()
 });
 let layoutSchema = z.object({
-    navBar: navBarSchema.default(navBarSchema.parse({})),
-    toc: tocSchema.default(tocSchema.parse({})),
-    page: pageSchema.default(pageSchema.parse({}))
+    toc: tocSchema.default(tocSchema.parse({}))
 });
 
 
@@ -250,20 +239,22 @@ let cssVariables = z.object({
 }).partial();
 
 /**
- * Theme configuration type
+ * Style configuration type
  * (ie all that have a
  */
-let ThemeConfigSchema = z.object({
+let configStyleSchema = z.object({
     layoutProps: layoutSchema.describe("Properties used by layout components").default(layoutSchema.parse({})),
     // https://getbootstrap.com/docs/5.3/customize/css-variables/
-    cssVariables: cssVariables.describe("Css variables").optional()
+    cssVariables: cssVariables.describe("Css variables").optional().default(cssVariables.parse({})),
+    container: container.default(container.parse({}))
 });
-type ThemeConfigSchemaType = z.output<typeof ThemeConfigSchema>;
+type configStyleType = z.output<typeof configStyleSchema>;
 
 /**
  * Components
+ * Base schema shared by all components
  */
-const ComponentsConfigSchema = z.object({
+const BaseComponentSchema = z.object({
     // Physique path does not work well: ie with ./node_modules/`${interactPackageJson.name}/src/components`
     // we get: could not resolve "./node_modules/@gerardnico/interact-astro/src/components/H2/H2.tsx"
     // path below should be set in the exports of package.json
@@ -271,13 +262,34 @@ const ComponentsConfigSchema = z.object({
     // No file system path, it's derived thanks to import, and it does not work well with vite and import
     // as they don't handle symlink well
     importPath: z.coerce.string<string>(),
+    type: z.enum(["layout", "partial", "page"]).optional(),
+    props: z.record(z.string(), z.string()).optional(),
 });
-const ComponentsConfigSetSchema = z.record(z.coerce.string<string>(), ComponentsConfigSchema.nullable());
-export type ComponentsConfigSetSchemaType = z.output<typeof ComponentsConfigSetSchema>;
+
+// Component-specific schemas that extend the base
+const NavBarSchema = BaseComponentSchema.extend({
+    props: BaseComponentSchema.shape.props.and(
+        z.object({
+            brandName: z.string().optional(),
+            logoWidth: z.coerce.number().optional(),
+            logoHeight: z.coerce.number().optional(),
+            logoSrc: z.coerce.string().default("/favicon.svg"),
+            logoAlt: z.string().optional(),
+        })
+    ),
+});
+
+
+const ComponentsConfigSetSchema = z.object({
+    NavBar: NavBarSchema.optional(),
+}).catchall(BaseComponentSchema); // unknown keys fall back to base schema
+
+
+export type componentsSetSchemaType = z.output<typeof ComponentsConfigSetSchema>;
 
 
 const interactComponentBaseDirectory = `@combostrap/interact/components`
-const components: ComponentsConfigSetSchemaType = {
+const defaultComponentsValue: componentsSetSchemaType = {
     "Avatar": {
         importPath: `${interactComponentBaseDirectory}/Avatar`
     },
@@ -326,8 +338,8 @@ const PluginConfigSchema = z.object({
 });
 
 const PluginConfigSetSchema = z.record(z.coerce.string<string>(), PluginConfigSchema.nullable());
-export type PluginConfigSetSchemaType = z.output<typeof PluginConfigSetSchema>;
-const plugins: PluginConfigSetSchemaType = {
+export type pluginsSchemaType = z.output<typeof PluginConfigSetSchema>;
+const plugins: pluginsSchemaType = {
     "rehype-github-alerts": {},
     "rehype-href-rewrite": {},
     "remark-link-checker": {
@@ -362,26 +374,27 @@ export const JsonConfigSchema = z.object({
     pages: PagesSchema.default(PagesSchema.parse({})),
     public: jsonPublicSchema.default(jsonPublicSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
-    theme: ThemeConfigSchema.default(ThemeConfigSchema.parse({})),
+    style: configStyleSchema.default(configStyleSchema.parse({})),
     plugins: PluginConfigSetSchema.default(PluginConfigSetSchema.parse({})).transform(data => deepMerge(plugins, data)),
-    components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})).transform(data => deepMerge(components, data))
+    components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})).transform(data => deepMerge(defaultComponentsValue, data))
 })
 
 
-type ImageSchemaType = z.output<typeof ImageSchema>;
+type imageSchemaType = z.output<typeof ImageSchema>;
+type pageSchemaType = z.output<typeof PagesSchema>;
 /**
  * The config passed to client
  */
-export type Config = {
-    theme: ThemeConfigSchemaType,
+export type InteractConfigType = {
+    style: configStyleType,
     site: z.output<typeof jsonSiteSchema> & {
         // "The root path of the site project"
         rootPath: string
     }
-    plugins: PluginConfigSetSchemaType,
-    components: ComponentsConfigSetSchemaType,
-    pages: z.output<typeof PagesSchema>
-    images: ImageSchemaType,
+    plugins: pluginsSchemaType,
+    components: componentsSetSchemaType,
+    pages: pageSchemaType
+    images: imageSchemaType,
     public: z.output<typeof jsonPublicSchema>
     env: {
         configFilePath: string

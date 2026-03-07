@@ -3,7 +3,7 @@ import {
     ImageCompressionSet,
     ImageFormatCompressionSet,
 } from "./imageCompressionType.js";
-import {ImageFitSet} from "../config/jsonConfigSchema.js";
+import {ImageFitSet} from "../config/configSchema.js";
 
 export interface ImageErrorData extends InteractErrorData {
     // http status is mandatory

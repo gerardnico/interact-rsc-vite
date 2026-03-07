@@ -1,10 +1,10 @@
 
-import Head from "./Head.js";
-import type {LayoutProps} from "../types/index.js";
-
+import Head from "../Head/Head.js";
+import type {LayoutProps} from "../../types/index.js";
+import styles from "./Holy.module.css"
 
 /**
- * Holy Layout
+ * Holy Layout Components
  */
 export default async function Holy(layoutProps: LayoutProps) {
 
@@ -21,7 +21,7 @@ export default async function Holy(layoutProps: LayoutProps) {
             Rendered at {new Date().toISOString()}
           </span>
         </header>
-        <main>
+        <main className={styles.pageMain}>
             <Component request={layoutProps.request}/>
         </main>
         </body>

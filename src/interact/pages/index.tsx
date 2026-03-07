@@ -1,13 +1,13 @@
 import fs from "fs";
 import path from "path";
-import conf from "interact:conf"
 
 
-import Holy from "../components/Holy.js";
-import Landing from "../components/Landing.js";
-import * as NotFoundModule from "../components/NotFound.js";
+import Holy from "../components/Holy/Holy.js";
+import Landing from "../components/Landing/Landing.js";
+import * as NotFoundModule from "../components/NotFound/NotFound.js";
 
 import getModulePage from 'interact:page-modules';
+import interactConfig from "../config/index.js";
 
 export interface PageFile {
     path: string;
@@ -91,9 +91,9 @@ export function getRootComponent(normalizedRequest: Request): React.JSX.Element 
  * can use it to render each page
  */
 export function getStaticPaths() {
-    return Object.keys(getPagesRecursively(conf.pages.pagesDirectory))
+    return Object.keys(getPagesRecursively(interactConfig.pages.pagesDirectory))
 }
 
 export function getPages() {
-    return getPagesRecursively(conf.pages.pagesDirectory)
+    return getPagesRecursively(interactConfig.pages.pagesDirectory)
 }

@@ -1,5 +1,5 @@
 // don't use the relative path (not resolved)
-import type { PageModule } from "interact:page-modules";
+import PageModule from "pageModule.js"
 
 /**
  * The props of a layout component

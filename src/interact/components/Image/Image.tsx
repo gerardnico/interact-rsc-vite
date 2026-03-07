@@ -1,15 +1,14 @@
 import React from "react";
 
-import interactConfig from "interact:conf"
 
-
-import type {ImageCompressionType} from "../images/imageCompressionType.js";
-import type {ImageFitType, ImageType} from "../config/jsonConfigSchema.js";
+import type {ImageCompressionType} from "../../images/imageCompressionType.js";
+import type {ImageFitType, ImageType} from "../../config/configSchema.js";
 import clsx from "clsx";
-import {getHtmlImageAttributes, type HtmlImageAttributes} from "../images/imageClientLibrary.js";
-import {ImageError, ImageErrors} from "../images/imageErrorsDictionary.js";
+import {getHtmlImageAttributes, type HtmlImageAttributes} from "../../images/imageClientLibrary.js";
+import {ImageError, ImageErrors} from "../../images/imageErrorsDictionary.js";
 
-import {brokenImage, urlKeyErrorProperty} from "../images/imageSharedCode.js";
+import {brokenImage} from "../../images/imageSharedCode.js";
+import interactConfig from "../../config/index.js";
 
 
 export type ImageProps =
@@ -73,13 +72,16 @@ function createImageElement(
     )
 }
 
-function BrokenImage({error, altMessage}: { error: ImageError, altMessage?: string }) {
+async function BrokenImage({error, altMessage}: { error: ImageError, altMessage?: string }) {
+
+    let htmlImageAttributes = await getHtmlImageAttributes({
+        src: brokenImage,
+        height: 300,
+        width: 400,
+        error: error.code
+    });
     return createImageElement({
-        htmlImageAttributes: {
-            width: 400,
-            height: 300,
-            src: `${interactConfig.images.serviceEndpoint}/${brokenImage}?${urlKeyErrorProperty}=${error.code}`
-        },
+        htmlImageAttributes: htmlImageAttributes,
         alt: altMessage != null ? altMessage : error.message
     })
 }

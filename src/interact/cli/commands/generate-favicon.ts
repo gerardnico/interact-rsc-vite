@@ -9,14 +9,14 @@ import {
     IconTransformationType
 } from '@realfavicongenerator/generate-favicon';
 import {getNodeImageAdapter, loadAndConvertToSvg} from "@realfavicongenerator/image-adapter-node";
-import type {Config} from "../../config/jsonConfigSchema.js";
-import configHandler from "../../config/index.js";
+import type {InteractConfigType} from "../../config/configSchema.js";
+
 
 async function generateImage({masterFilePath, dryRun, outputDirectory, interactConf: config}: {
     masterFilePath?: string,
     dryRun: boolean,
     outputDirectory: string
-    interactConf: Config
+    interactConf: InteractConfigType
 }) {
     if (!masterFilePath) {
         masterFilePath = config.site.faviconMaster
@@ -142,7 +142,13 @@ export default class GenerateFavicon extends Command {
 
     async run(): Promise<void> {
         const {args, flags} = await this.parse(GenerateFavicon)
-        let interactConfig = new configHandler({rootPath: flags.root,}).getConfig();
+
+        /**
+         * If on top of the file, it's loaded in dev
+         * https://github.com/oclif/core/issues/997
+         */
+        // @ts-ignore
+        const interactConfig: InteractConfigType = await import("../../config/index.js");
         const filePath = args.filePath
         const dryRun = flags.dryRun
         const outputDirectory = flags.outputDirectory

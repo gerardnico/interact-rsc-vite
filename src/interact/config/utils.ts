@@ -12,7 +12,7 @@ import fs from "fs";
  * @param firstAncestor - if last return the last ancestor (up to the root)
  * @returns {string|null} - Absolute path of the top-most dir with package.json, or null if none found.
  */
-export function getPackageJsonDir(startDir: string, firstAncestor: boolean = true) {
+export function getPackageJsonDir(startDir: string, firstAncestor: boolean = true): string | undefined {
     let current = startDir
     let result: string | undefined
 

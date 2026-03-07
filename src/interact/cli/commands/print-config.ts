@@ -1,6 +1,6 @@
 import {Command, Flags} from '@oclif/core'
 import yaml from 'yaml'
-import ConfigHandler from "../../config/index.js";
+
 
 /**
  * Recursively filters an object by a key path
@@ -134,7 +134,7 @@ export default class PrintConfig extends Command {
     const pretty = !flags['no-pretty'] && !flags.plain
 
     // Get the config (filtered if needed)
-    let configToPrint = new ConfigHandler({}).getConfig()
+    let configToPrint = await import("../../config/index.js");
     if (flags.filter) {
       const filtered = filterByKey(configToPrint, flags.filter)
       if (filtered === undefined) {

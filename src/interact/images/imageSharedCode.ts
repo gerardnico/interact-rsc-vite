@@ -3,7 +3,7 @@
  */
 import {z} from "zod";
 import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
-import {ImageFitSchema} from "../config/jsonConfigSchema.js";
+import {ImageFitSchema} from "../config/configSchema.js";
 import sharp, {type FitEnum, type FormatEnum} from "sharp";
 import {getPresetOptions, type ImageCompressionType} from "./imageCompressionType.js";
 
@@ -96,13 +96,13 @@ export function castRatioToNumber(stringRatio: string | null | undefined): numbe
 }
 
 export async function processImageWithSharp({
-    sharpPipeline,
-    targetWidth,
-    targetHeight,
-    requestedFit,
-    requestedFormat,
-    requestedCompression
-}: {
+                                                sharpPipeline,
+                                                targetWidth,
+                                                targetHeight,
+                                                requestedFit,
+                                                requestedFormat,
+                                                requestedCompression
+                                            }: {
     sharpPipeline: sharp.Sharp,
     targetWidth: number,
     targetHeight: number,

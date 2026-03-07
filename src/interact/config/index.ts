@@ -1,4 +1,4 @@
-import {type Config, JsonConfigSchema, type FaviconSetSchemaType} from "./jsonConfigSchema.js";
+import {type InteractConfigType, JsonConfigSchema, type FaviconSetSchemaType} from "./configSchema.js";
 import fs from 'fs'
 import {readFileSync} from "node:fs";
 import path from "node:path";
@@ -8,7 +8,7 @@ import path from "node:path";
  * Configuration source information
  */
 export interface ConfigSource {
-    config: Config;
+    config: InteractConfigType;
     loaded: boolean;
 }
 
@@ -60,24 +60,28 @@ function updateFavicon(favicons?: FaviconSetSchemaType): FaviconSetSchemaType {
 export type ConfigHandlerProps = {
     rootPath?: string
 };
-export default class ConfigHandler {
+
+const configFileName = 'interact.config.json'
+
+class ConfigHandler {
 
     private readonly configFile: string;
     private readonly rootPath: string;
 
-    constructor(props: ConfigHandlerProps) {
+    constructor() {
 
-        const configFileName = 'interact.config.json';
-        if (!props.rootPath) {
+        debugger;
+        const interactRootPath = process.env.INTERACT_ROOT_PATH
+        if (!interactRootPath) {
             this.rootPath = process.cwd();
         } else {
-            this.rootPath = props.rootPath
+            this.rootPath = interactRootPath;
         }
         this.configFile = path.join(this.rootPath, `${configFileName}`);
 
     }
 
-    #addDefaultAndRuntime(finalConfigData: Config) {
+    #addDefaultAndRuntime(finalConfigData: InteractConfigType) {
 
 
         finalConfigData.site.favicons = updateFavicon(finalConfigData.site.favicons);
@@ -107,6 +111,7 @@ export default class ConfigHandler {
         finalConfigData.images.imagesDirectory = this.#qualifiedDirectoryPath(finalConfigData.images.imagesDirectory);
 
     }
+
     #qualifiedDirectoryPath(basePath: string) {
         if (!basePath.startsWith("/")) {
             return path.resolve(this.rootPath, basePath);
@@ -129,7 +134,7 @@ export default class ConfigHandler {
             throw new Error("Configuration error")
         }
 
-        let finalConfigData = (result.data as Config)
+        let finalConfigData = (result.data as InteractConfigType)
         this.#addDefaultAndRuntime(finalConfigData)
 
         return finalConfigData;
@@ -138,7 +143,7 @@ export default class ConfigHandler {
     /**
      * Load configuration with fallback to defaults
      */
-    getConfig(): Config {
+    getConfig(): InteractConfigType {
 
 
         let configContent: string;
@@ -150,7 +155,7 @@ export default class ConfigHandler {
             if (err.code === 'ENOENT') {
                 // Config file doesn't exist
                 console.warn(`No ${(this.configFile)} found, using default configuration`);
-                return  this.#parseAndAddDefaults({});
+                return this.#parseAndAddDefaults({});
             }
             console.error(`Unexpected error ${err.code} while reading the config file: ${(this.configFile)}`);
             throw error;
@@ -170,4 +175,12 @@ export default class ConfigHandler {
 
     }
 
+    getConfigFilePath() {
+        return this.configFile
+    }
 }
+
+let configHandler = new ConfigHandler();
+export const interactConfigFilePath = configHandler.getConfigFilePath()
+let interactConfig = configHandler.getConfig();
+export default interactConfig;

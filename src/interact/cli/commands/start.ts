@@ -2,7 +2,6 @@
 import path from "node:path";
 import {Command, Flags} from '@oclif/core'
 import {createServer} from 'vite'
-import {resolveViteConfig} from "../utils/cliConfigUtil.js";
 
 
 export default class Start extends Command {
@@ -22,9 +21,20 @@ export default class Start extends Command {
     async run(): Promise<void> {
         const {flags} = await this.parse(Start)
 
+        /**
+         * Eager injection of root path to be used by the interact config module
+         * before init
+         */
         let rootPath = path.resolve(flags.root)
+        process.env.INTERACT_ROOT_PATH = rootPath
+        debugger;
+        /**
+         * If on top of the file, it's loaded in dev
+         * https://github.com/oclif/core/issues/997
+         */
+        const { resolveViteConfig } = await import("../shared/viteConfig.js");
 
-        let viteConfig = resolveViteConfig({rootPath, port: flags.port, command:"start"});
+        let viteConfig = resolveViteConfig({rootPath, port: flags.port, command: "start"});
         const server = await createServer(viteConfig);
         await server.listen()
         // port may change

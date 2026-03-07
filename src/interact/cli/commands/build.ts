@@ -1,6 +1,5 @@
 import { Flags} from '@oclif/core'
 import {createBuilder, createLogger} from 'vite'
-import {resolveViteConfig} from "../utils/cliConfigUtil.js";
 import pc from "picocolors";
 import {BaseCommand} from "../baseCommand.js";
 
@@ -18,7 +17,11 @@ export default class Build extends BaseCommand<typeof Build> {
         const {flags} = await this.parse(Build)
 
         const rootPath = flags.root
-
+        /**
+         * If on top of the file, it's loaded in dev
+         * https://github.com/oclif/core/issues/997
+         */
+        const { resolveViteConfig } = await import("../shared/viteConfig.js");
         try {
             const builder = await createBuilder(resolveViteConfig({rootPath, command:'build'}))
             console.log(Object.keys(builder.environments))
