@@ -2,10 +2,12 @@ declare module 'interact:page-modules' {
     import type { ComponentType } from "react";
     import type { MarkdownFrontmatter, TocEntry } from "./mdx";
 
-    export interface PageModule {
+    export type PageModuleComponent = ComponentType<{ request: Request }>
+
+    export type PageModule = {
         frontmatter?: MarkdownFrontmatter;
         toc?: TocEntry[];
-        default: ComponentType;
+        default: PageModuleComponent;
     }
 
     export function getModulePage(opts: {

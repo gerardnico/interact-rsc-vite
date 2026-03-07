@@ -1,12 +1,14 @@
-import type {LayoutProps} from "../types/index.js";
+
 import Head from "./Head.js";
+import type {LayoutProps} from "../types/index.js";
+
 
 /**
  * Holy Layout
  */
 export default async function Holy(layoutProps: LayoutProps) {
 
-    let Component = layoutProps.pageModule.default
+    const Component = layoutProps.pageModule.default;
     return (
         <html lang="en" dir="ltr">
         <Head {...layoutProps} />
@@ -20,7 +22,7 @@ export default async function Holy(layoutProps: LayoutProps) {
           </span>
         </header>
         <main>
-            <Component/>
+            <Component request={layoutProps.request}/>
         </main>
         </body>
         </html>

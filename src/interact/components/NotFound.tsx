@@ -1,8 +1,6 @@
 
+export default function NotFound({request}: { request: Request }) {
 
-export default function NotFound() {
-
-    // TODO: how to 404?
-    return <p>Not found</p>
+    return <p>Error: The page {new URL(request.url).pathname} was not found</p>
 
 }
