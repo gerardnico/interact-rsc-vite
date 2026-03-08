@@ -1,7 +1,7 @@
-import type {LayoutProps} from "../../types/index.js";
+import type {TemplateProps} from "../../types/index.js";
 
 
-export function Header(layoutProps: LayoutProps) {
+export function Header(layoutProps: TemplateProps) {
 
     let title = layoutProps.pageModule?.frontmatter?.title;
     if (!title) {

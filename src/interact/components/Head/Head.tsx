@@ -1,4 +1,4 @@
-import type {LayoutProps} from "../../types/index.js";
+import type {TemplateProps} from "../../types/index.js";
 import {PAGE_CONTAINER} from "../classNames.js";
 import type {FaviconSetSchemaType, InteractConfigType} from "../../config/configSchema.js";
 import {interactConfig} from "interact:config";
@@ -8,7 +8,7 @@ import {interactConfig} from "interact:config";
  */
 let interactConfigTyped = interactConfig as InteractConfigType;
 
-export default function Head({pageModule, request}: LayoutProps) {
+export default function Head({pageModule, request}: TemplateProps) {
 
     let title = pageModule.frontmatter?.title;
     let description = pageModule.frontmatter?.description;

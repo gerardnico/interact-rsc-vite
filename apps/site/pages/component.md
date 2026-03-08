@@ -33,40 +33,17 @@ Example on how to change the `pre` component (for code block syntax highlighting
 You can add a component to be used in Markdown by defining them as `leaf` component in the
 `components` section of the [configuration file](conf.md).
 
-Example on how to add the `Planet` component
-
-* Create your component
-
-```javascript
-// src/components/Planet.js
-export function Planet() {
-    return "Pluto"
-}
-```
-
-* Define it in the [configuration file](conf.md).
-
-```json
-{
-  "components": {
-    "Pluto": {
-      "importPath": "src/component/Planet.js",
-      "type": "leaf"
-    }
-  }
-}
-```
-
-* You can now use it in [markdown page](markdown.md)
-
-```markdown
-<Planet/>
-```
-
-It will yield `Pluto`
+See [](howto/add-a-markdown-component.md)
 
 ## Type
 
-* `layout` components are the top components of every page and should include `html`. The can be used in the `layout`
-  property of the [page frontmatter](frontmatter.md)
-* `leaf` components are available in Markdown file (`md` or `mdx`)
+| Name       | Type       | Description                                                           |
+|------------|------------|-----------------------------------------------------------------------|
+| `layout`   | `template` | Top components of every page                                          |
+| `partials` | `template` | Sub-components used in layout components (toc, aside, ...).           |
+| `leaf`     | `content`  | Leaf Components (They are available in Markdown file (`md` or `mdx`)) |
+
+Note:
+
+* Layout component should return the `html` document. They can be used in the `layout` property of
+  the [page frontmatter](frontmatter.md)

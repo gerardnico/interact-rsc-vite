@@ -1,5 +1,5 @@
 declare module 'interact:page-modules' {
-    import PageModule from "../types/pageModule.js";
+    import PageModule from "./pageModule.js";
 
     export function getModulePage(opts: {
         path: string;

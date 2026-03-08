@@ -1,7 +1,7 @@
-import type {LayoutProps, TocEntry} from "../../types/index.js";
+import type {TemplateProps, TocEntry} from "../../types/index.js";
 
 
-export function Toc(layoutProps: LayoutProps) {
+export function Toc(layoutProps: TemplateProps) {
     let toc: TocEntry[] | undefined = layoutProps?.pageModule?.toc;
     return (
         <nav className="toc-cs">

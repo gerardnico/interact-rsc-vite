@@ -1,5 +1,5 @@
 import Head from "../Head/Head.js";
-import type {LayoutProps} from "../../types/index.js";
+import type {TemplateProps} from "../../types/index.js";
 import styles from "./Holy.module.css"
 import {PAGE_CONTAINER} from "../classNames.js";
 
@@ -17,7 +17,7 @@ let interactConfigTyped = interactConfig as InteractConfigType;
 /**
  * Holy Layout Components
  */
-export default async function Holy(layoutProps: LayoutProps) {
+export default async function Holy(layoutProps: TemplateProps) {
 
     const Component = layoutProps.pageModule.default;
     return (

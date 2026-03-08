@@ -2,11 +2,11 @@
 import {PAGE_CONTAINER} from "../classNames.js";
 import interactConfig from "interact:config";
 import Image from "../Image/Image.js"
-import type {LayoutProps} from "../../types/index.js";
+import type {TemplateProps} from "../../types/index.js";
 import type {InteractConfigType} from "../../config/configSchema.js";
 
 // @ts-ignore
-export default function NavBar(props:LayoutProps) {
+export default function NavBar(props:TemplateProps) {
 
     /**
      * Otherwise TypeScript does not errored for unknown propertie
