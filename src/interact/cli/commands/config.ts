@@ -1,5 +1,7 @@
-import {Command, Flags} from '@oclif/core'
+import {Flags} from '@oclif/core'
 import yaml from 'yaml'
+import {BaseCommand} from "../baseCommand.js";
+import {resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
 
 
 /**
@@ -91,7 +93,7 @@ function colorizeYaml(yamlString: string): string {
     .join('\n')
 }
 
-export default class PrintConfig extends Command {
+export default class Config extends BaseCommand<typeof Config> {
   static description = 'Print the interact configuration (YAML by default)'
 
   static examples = [
@@ -127,14 +129,14 @@ export default class PrintConfig extends Command {
   }
 
   async run(): Promise<void> {
-    const {flags} = await this.parse(PrintConfig)
+    const {flags} = await this.parse(Config)
 
     // Determine format
     const format = flags.json ? 'json' : 'yaml'
     const pretty = !flags['no-pretty'] && !flags.plain
 
-    // Get the config (filtered if needed)
-    let configToPrint = await import("../../config/configHandler.js");
+    const resolvedConfPath = resolveInteractConfPath(flags.confPath);
+    let configToPrint = resolveInteractConfig(resolvedConfPath);
     if (flags.filter) {
       const filtered = filterByKey(configToPrint, flags.filter)
       if (filtered === undefined) {

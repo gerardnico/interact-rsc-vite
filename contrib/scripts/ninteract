@@ -5,4 +5,4 @@
 SCRIPT_DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
 PROJECT_DIR=$(realpath "$SCRIPT_DIR/../..")
 # TSX_TSCONFIG_PATH="$PROJECT_DIR/tsconfig.json"
-tsx "$PROJECT_DIR/src/interact/cli/cli.ts" "$@"
+tsx "$PROJECT_DIR/src/interact/cli/dev.js" "$@"

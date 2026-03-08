@@ -10,15 +10,19 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
     // define flags that can be inherited by any command that extends BaseCommand
     static baseFlags = {
-        'log-level': Flags.option({
+        logLevel: Flags.option({
             default: 'info',
             helpGroup: 'GLOBAL',
-            options: ['debug', 'warn', 'error', 'info', 'trace'] as const,
+            options: ['info', 'warn', 'error', 'silent'] as const,
             summary: 'Specify level for logging.',
         })(),
-        root: Flags.string({
-            description: 'Project root directory',
+        confPath: Flags.string({
+            description: 'Project root directory or configuration file path',
             default: process.cwd(),
+        }),
+        outDir: Flags.string({
+            description: 'The output directory',
+            default: "dist",
         }),
 
     }
@@ -39,7 +43,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
         this.args = args as Args<T>
     }
 
-    protected async catch(err: Error & {exitCode?: number}): Promise<any> {
+    protected async catch(err: Error & { exitCode?: number }): Promise<any> {
         // add any custom logic to handle errors from the command
         // or simply return the parent class error handling
         return super.catch(err)

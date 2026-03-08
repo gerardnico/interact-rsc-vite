@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import Holy from "../components/Holy/Holy.js";
+import Holy from "#components/Holy";
 import Landing from "../components/Landing/Landing.js";
 import * as NotFoundModule from "../components/NotFound/NotFound.js";
 

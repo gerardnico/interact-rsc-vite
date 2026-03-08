@@ -256,7 +256,7 @@ const BaseComponentSchema = z.object({
     // No file system path, it's derived thanks to import, and it does not work well with vite and import
     // as they don't handle symlink well
     importPath: z.coerce.string<string>(),
-    type: z.enum(["layout", "partial", "page"]).optional(),
+    type: z.enum(["layout", "partial", "leaf"]),
     props: z.record(z.string(), z.string()).optional(),
 });
 
@@ -281,45 +281,51 @@ const ComponentsConfigSetSchema = z.object({
 
 export type componentsSetSchemaType = z.output<typeof ComponentsConfigSetSchema>;
 
-
-const interactComponentBaseDirectory = `@combostrap/interact/components`
+/**
+ * #components is declared in the package.json imports property
+ */
+const interactComponentBaseDirectory = `#components`
 const defaultComponentsValue: componentsSetSchemaType = {
-    "Avatar": {
-        importPath: `${interactComponentBaseDirectory}/Avatar`
+    // "Avatar": {
+    //     importPath: `${interactComponentBaseDirectory}/Avatar`
+    // },
+    // "Block": {
+    //     importPath: `${interactComponentBaseDirectory}/Block`
+    // },
+    "pre": {
+        importPath: `${interactComponentBaseDirectory}/Code`,
+        type: "leaf"
     },
-    "Block": {
-        importPath: `${interactComponentBaseDirectory}/Block`
-    },
-    "a": {
-        importPath: `${interactComponentBaseDirectory}/Anchor`
-    },
-    "h2": {
-        importPath: `${interactComponentBaseDirectory}/H2`
-    },
-    "h3": {
-        importPath: `${interactComponentBaseDirectory}/H3`
-    },
-    "Grid": {
-        importPath: `${interactComponentBaseDirectory}/Grid`
-    },
-    "GridCell": {
-        importPath: `${interactComponentBaseDirectory}/GridCell`
-    },
-    "Text": {
-        importPath: `${interactComponentBaseDirectory}/Text`
-    },
-    "Para": {
-        importPath: `${interactComponentBaseDirectory}/Para`
-    },
-    "RufflePlayer": {
-        importPath: `${interactComponentBaseDirectory}/RufflePlayer`
-    },
-    "StarRating": {
-        importPath: `${interactComponentBaseDirectory}/StarRating`
-    },
-    "Image": {
-        importPath: `${interactComponentBaseDirectory}/Image`
-    }
+    // "a": {
+    //     importPath: `${interactComponentBaseDirectory}/Anchor`
+    // },
+    // "h2": {
+    //     importPath: `${interactComponentBaseDirectory}/H2`
+    // },
+    // "h3": {
+    //     importPath: `${interactComponentBaseDirectory}/H3`
+    // },
+    // "Grid": {
+    //     importPath: `${interactComponentBaseDirectory}/Grid`
+    // },
+    // "GridCell": {
+    //     importPath: `${interactComponentBaseDirectory}/GridCell`
+    // },
+    // "Text": {
+    //     importPath: `${interactComponentBaseDirectory}/Text`
+    // },
+    // "Para": {
+    //     importPath: `${interactComponentBaseDirectory}/Para`
+    // },
+    // "RufflePlayer": {
+    //     importPath: `${interactComponentBaseDirectory}/RufflePlayer`
+    // },
+    // "StarRating": {
+    //     importPath: `${interactComponentBaseDirectory}/StarRating`
+    // },
+    // "Image": {
+    //     importPath: `${interactComponentBaseDirectory}/Image`
+    // }
 }
 
 /**

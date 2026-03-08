@@ -1,16 +1,14 @@
 // https://github.com/altano/npm-packages/blob/main/packages/remark-mdx-toc-with-slugs/src/index.ts
-import {Command, Flags} from '@oclif/core'
+import { Flags} from '@oclif/core'
 import {createServer} from 'vite'
+import {resolveViteConfig} from "../shared/viteConfig.js";
+import {BaseCommand} from "../baseCommand.js";
 
 
-export default class Start extends Command {
+export default class Start extends BaseCommand<typeof Start> {
     static description = 'Start Development server'
 
     static flags = {
-        confPath: Flags.string({
-            description: 'Project root directory or configuration file path',
-            default: process.cwd(),
-        }),
         port: Flags.integer({
             description: 'Dev server port',
             default: 5173,
@@ -20,13 +18,13 @@ export default class Start extends Command {
     async run(): Promise<void> {
         const {flags} = await this.parse(Start)
 
-        /**
-         * If on top of the file, it's loaded in dev
-         * https://github.com/oclif/core/issues/997
-         */
-        const {resolveViteConfig} = await import("../shared/viteConfig.js");
-
-        let viteConfig = resolveViteConfig({confPath: flags.confPath, port: flags.port, command: "start"});
+        let viteConfig = resolveViteConfig({
+            confPath: flags.confPath,
+            port: flags.port,
+            outDir: flags.outDir,
+            logLevel: flags.logLevel,
+            command: "start",
+        });
         const server = await createServer(viteConfig);
         await server.listen()
         // port may change

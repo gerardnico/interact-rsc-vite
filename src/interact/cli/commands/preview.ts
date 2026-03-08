@@ -1,36 +1,26 @@
-
-import {Command, Flags} from '@oclif/core'
 import {createLogger, preview} from 'vite'
 import pc from "picocolors"
+import {resolveViteConfig} from "../shared/viteConfig.js";
+import {BaseCommand} from "../baseCommand.js";
 
-export default class Build extends Command {
+export default class Preview extends BaseCommand<typeof Preview> {
     static description = 'Preview the static build'
 
-    static flags = {
-        root: Flags.string({
-            description: 'Project root directory',
-            default: process.cwd(),
-        }),
-    }
 
     async run(): Promise<void> {
-        const {flags} = await this.parse(Build)
-
-        const rootPath = flags.root
-
-        /**
-         * If on top of the file, it's loaded in dev
-         * https://github.com/oclif/core/issues/997
-         */
-        const { resolveViteConfig } = await import("../shared/viteConfig.js");
+        const {flags} = await this.parse(Preview)
 
         try {
-            const server = await preview(resolveViteConfig({confPath: rootPath, command:"preview"}));
+            const server = await preview(resolveViteConfig({
+                confPath: flags.confPath,
+                logLevel: flags.logLevel,
+                command: "preview"
+            }));
             server.printUrls();
-            server.bindCLIShortcuts({ print: true });
+            server.bindCLIShortcuts({print: true});
         } catch (e) {
             let error = e as Error;
-            createLogger('error').error(pc.red(`error when starting preview server:\n${error.stack}`), { error: error });
+            createLogger('error').error(pc.red(`error when starting preview server:\n${error.stack}`), {error: error});
             process.exit(1);
         }
     }

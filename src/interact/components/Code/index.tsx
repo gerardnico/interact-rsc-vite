@@ -37,7 +37,7 @@ interface PrismOptions {
     wordWrap?: boolean;
 }
 
-type PrismCodeBlockProps = React.HTMLAttributes<HTMLElement>
+export type CodeProps = React.HTMLAttributes<HTMLElement>
     & {
     language?: string;
     theme?: PrismTheme;
@@ -216,7 +216,7 @@ export default function Code({
                                  options = {},
                                  className = "",
                                  children
-                             }: PrismCodeBlockProps) {
+                             }: CodeProps) {
     const {
         lineNumbers = false,
         showLanguage = true,

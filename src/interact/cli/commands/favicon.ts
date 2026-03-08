@@ -1,4 +1,4 @@
-import {Args, Command, Flags} from '@oclif/core'
+import {Args, Flags} from '@oclif/core'
 import * as path from "path";
 import * as fs from "fs";
 
@@ -10,13 +10,15 @@ import {
 } from '@realfavicongenerator/generate-favicon';
 import {getNodeImageAdapter, loadAndConvertToSvg} from "@realfavicongenerator/image-adapter-node";
 import type {InteractConfigType} from "../../config/configSchema.js";
+import {BaseCommand} from "../baseCommand.js";
+import {resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
 
 
-async function generateImage({masterFilePath, dryRun, outputDirectory, interactConf: config}: {
+async function generateImage({masterFilePath, dryRun, outputDirectory, interactConfig: config}: {
     masterFilePath?: string,
     dryRun: boolean,
     outputDirectory: string
-    interactConf: InteractConfigType
+    interactConfig: InteractConfigType
 }) {
     if (!masterFilePath) {
         masterFilePath = config.site.faviconMaster
@@ -111,7 +113,7 @@ async function generateImage({masterFilePath, dryRun, outputDirectory, interactC
 }
 
 
-export default class GenerateFavicon extends Command {
+export default class Favicon extends BaseCommand<typeof Favicon> {
     static description = 'Generate the favicons and app manifest from a master icon file'
 
     static examples = [
@@ -128,10 +130,6 @@ export default class GenerateFavicon extends Command {
             description: "The output directory (default to the public directory)",
             default: "public"
         }),
-        root: Flags.string({
-            description: 'Project root directory',
-            default: process.cwd(),
-        }),
     }
     static args = {
         filePath: Args.string({
@@ -141,17 +139,17 @@ export default class GenerateFavicon extends Command {
     }
 
     async run(): Promise<void> {
-        const {args, flags} = await this.parse(GenerateFavicon)
+        const {args, flags} = await this.parse(Favicon)
 
         /**
          * If on top of the file, it's loaded in dev
          * https://github.com/oclif/core/issues/997
          */
-        // @ts-ignore
-        const interactConfig: InteractConfigType = await import("../../config/configHandler.js");
+        const resolvedConfPath = resolveInteractConfPath(flags.confPath);
+        const interactConfigTyped = resolveInteractConfig(resolvedConfPath);
         const filePath = args.filePath
         const dryRun = flags.dryRun
         const outputDirectory = flags.outputDirectory
-        await generateImage({interactConf: interactConfig, masterFilePath: filePath, dryRun, outputDirectory})
+        await generateImage({interactConfig: interactConfigTyped, masterFilePath: filePath, dryRun, outputDirectory})
     }
 }

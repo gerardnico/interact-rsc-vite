@@ -14,7 +14,7 @@ export interface TocEntry {
     children?: TocEntry[];
 }
 
-export interface Frontmatter {
+export interface InteractFrontmatter {
     name?: string;
     title?: string;
     description?: string;
@@ -29,21 +29,21 @@ export interface Frontmatter {
  * A page module exports optionally a frontmatter and a toc
  */
 export interface PageModule {
-    frontmatter?: Frontmatter;
+    frontmatter?: InteractFrontmatter;
     toc?: TocEntry[];
     default: PageModuleComponent;
 }
 
 declare module '*.mdx' {
     const defaultType: ComponentType;
-    export const frontmatter: Frontmatter;
+    export const frontmatter: InteractFrontmatter;
     export const toc: TocEntry[];
     export default defaultType;
 }
 
 declare module '*.md' {
     const defaultType: ComponentType;
-    export const frontmatter: Frontmatter;
+    export const frontmatter: InteractFrontmatter;
     export const toc: TocEntry[];
     export default defaultType;
 }
@@ -53,7 +53,7 @@ declare module '*.md' {
  */
 declare module "*/pages/*.tsx" {
     const module: PageModuleComponent;
-    export const frontmatter: Frontmatter | undefined;
+    export const frontmatter: InteractFrontmatter | undefined;
     export const toc: TocEntry[] | undefined;
     export default module.default;
 }
@@ -61,7 +61,7 @@ declare module "*/pages/*.tsx" {
 
 declare module "*/pages/*.jsx" {
     const module: PageModuleComponent;
-    export const frontmatter: Frontmatter | undefined;
+    export const frontmatter: InteractFrontmatter | undefined;
     export const toc: TocEntry[] | undefined;
     export default module.default;
 }

@@ -18,6 +18,6 @@ Why ?
 To avoid:
 
 ```html
-message: Cannot find module '/interact-rsc-vite/src/interact/config/jsonConfigSchema' imported from /interact-rsc-vite/src/interact/cli/commands/generate-schema.ts
+message: Cannot find module '/interact-rsc-vite/src/interact/config/jsonConfigSchema' imported from /interact-rsc-vite/src/interact/cli/commands/schema.ts
 ```
 

@@ -1,12 +1,12 @@
-import {Command} from '@oclif/core'
 import {z} from 'zod';
 
 import {writeFileSync, mkdirSync} from 'fs'
 import {join} from 'path'
 import {JsonConfigSchema} from "../../config/configSchema.js";
+import {BaseCommand} from "../baseCommand.js";
 
-export default class GenerateSchema extends Command {
-  static description = 'Generate JSON schema from Zod configuration'
+export default class Schema extends BaseCommand<typeof Schema> {
+  static description = 'Generate JSON schema'
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
@@ -16,7 +16,7 @@ export default class GenerateSchema extends Command {
   static strict = true
 
   async run(): Promise<void> {
-    await this.parse(GenerateSchema)
+    await this.parse(Schema)
 
     const outputDir = join(process.cwd(), 'dist', 'schemas')
     const outputPath = join(outputDir, 'interact.schema.json')

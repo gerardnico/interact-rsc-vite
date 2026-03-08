@@ -1,6 +1,7 @@
-
-
+---
+title: Markdown Page
+---
 
 ## Injecting Components
 
-You can inject components.
+See [How to add a Markdown component](component.md#add-a-markdown-component)

@@ -14,6 +14,7 @@ import type {InlineConfig} from "vite";
 import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
 import {resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
 import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
+import viteMdxComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,13 +24,22 @@ const __dirname = path.dirname(__filename);
 const interactPackageDir = path.resolve(__dirname, '../..');
 
 type InteractCommand = 'start' | 'build' | 'preview';
+type LogLevel = 'info' | 'warn' | 'error' | 'silent';
 type InteractConfig = {
     confPath: string,
     command?: InteractCommand;
-    port?: number
+    port?: number,
+    outDir?: string;
+    logLevel?: LogLevel;
 };
 
-export function resolveViteConfig({confPath, port, command}: InteractConfig): InlineConfig {
+export function resolveViteConfig(
+    {
+        confPath,
+        port,
+        command,
+        outDir = "dist"
+    }: InteractConfig): InlineConfig {
 
     const resolvedConfPath = resolveInteractConfPath(confPath);
     const interactConfigTyped = resolveInteractConfig(resolvedConfPath);
@@ -47,7 +57,12 @@ export function resolveViteConfig({confPath, port, command}: InteractConfig): In
 
     // Note: You can merge also
     // https://vite.dev/guide/api-javascript#mergeconfig
-    let outDistDir = path.resolve(confPath, "dist");
+    let outDistDir;
+    if (!outDir.startsWith("/")) {
+        outDistDir = path.resolve(resolvedConfPath.rootDirectory, outDir);
+    } else {
+        outDistDir = outDir;
+    }
 
     /**
      * Use to generate image into the static build
@@ -60,6 +75,11 @@ export function resolveViteConfig({confPath, port, command}: InteractConfig): In
     let imageMiddlewareEndPoint = "/_images";
     process.env[imageEndPointEnvName] = imageMiddlewareEndPoint
 
+    /**
+     * The components provider name
+     * (for mdx and layout)
+     */
+    const componentsProviderModuleName = "interact:components"
     return {
         logLevel: 'info', // or 'warn' — try 'info' first
         root: confPath,
@@ -150,8 +170,10 @@ export function resolveViteConfig({confPath, port, command}: InteractConfig): In
                     remarkMdxToc, // exports headings as `toc`
                     remarkGfm // Table
                 ],
-                providerImportSource: import.meta.resolve('./mdxComponentsProvider.js')
+                //providerImportSource: import.meta.resolve('./mdxComponentsProvider.js')
+                providerImportSource: componentsProviderModuleName
             }),
+            viteMdxComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
             react(),
         ],
     }
