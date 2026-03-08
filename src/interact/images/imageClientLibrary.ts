@@ -50,7 +50,6 @@ type ImageRequestProps = {
  *
  * @return bool
  */
-debugger;
 const withDpiCorrection = interactConfigTyped.images.defaultValues?.dpiCorrection || false
 
 function getSizes(screenWidth: number, imageWidth: number) {
@@ -113,7 +112,6 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
      * Write to file
      */
     const buildTargetFile = `${viteOutDir}/client${buildUri}`;
-    debugger
     await fsPromises.mkdir(path.dirname(buildTargetFile), {recursive: true});
     await fsPromises.writeFile(buildTargetFile, imageBuffer);
 

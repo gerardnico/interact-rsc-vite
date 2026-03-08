@@ -8,8 +8,8 @@
   "scripts": {
     "build": "tsc",
     "start": "src/interact/cli/dev.js start --confPath=apps/site",
-    "static": "src/interact/cli/dev.js build --confPath=apps/site",
-    "preview": "src/interact/cli/dev.ts preview --confPath=apps/site"
+    "ssg": "src/interact/cli/dev.js build --confPath=apps/site",
+    "preview": "src/interact/cli/dev.js preview --confPath=apps/site"
   },
   "files": [
     "src/*"

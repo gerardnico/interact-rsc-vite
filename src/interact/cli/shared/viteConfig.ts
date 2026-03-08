@@ -81,6 +81,7 @@ export function resolveViteConfig(
      */
     const componentsProviderModuleName = "interact:components"
     return {
+        mode: command == "build" ? "production" : "development",
         logLevel: 'info', // or 'warn' — try 'info' first
         root: confPath,
         base: publicBasePath,

@@ -62,8 +62,10 @@ export default function Head({pageModule, request}: TemplateProps) {
      * calculated by the browser relative to the path name of this URL
      */
     let baseHeadURL = request.url;
-    const isDev = process.env['NODE_ENV'] === 'development';
-    if (!isDev) {
+    /**
+     * The below IF got deleted when a production build is done
+     */
+    if (import.meta.env.MODE == "production") {
         baseHeadURL = interactConfigTyped.site.url + url.pathname
     }
     if (isBrowserPathRoot) {
