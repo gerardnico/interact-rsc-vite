@@ -2,13 +2,17 @@ import React from "react";
 
 
 import type {ImageCompressionType} from "../../images/imageCompressionType.js";
-import type {ImageFitType, ImageType} from "../../config/configSchema.js";
+import type {ImageFitType, ImageType, InteractConfigType} from "../../config/configSchema.js";
 import clsx from "clsx";
 import {getHtmlImageAttributes, type HtmlImageAttributes} from "../../images/imageClientLibrary.js";
 import {ImageError, ImageErrors} from "../../images/imageErrorsDictionary.js";
 
 import {brokenImage} from "../../images/imageSharedCode.js";
-import interactConfig from "../../config/index.js";
+import {interactConfig} from "interact:config";
+/**
+ * Otherwise we don't get any TypeScript error
+ */
+let interactConfigTyped = interactConfig as InteractConfigType;
 
 
 export type ImageProps =
@@ -107,9 +111,9 @@ export default async function Image({
                                         ...imgAttributesProps
                                     }: ImageProps) {
     let htmlImageAttributes: HtmlImageAttributes;
-    const finalImageType: ImageType = type ?? interactConfig.images.defaultValues.type;
-    const finalCompression = compression ?? interactConfig.images.defaultValues.compression;
-    const finalFit = fit ?? interactConfig.images.defaultValues.fit;
+    const finalImageType: ImageType = type ?? interactConfigTyped.images.defaultValues.type;
+    const finalCompression = compression ?? interactConfigTyped.images.defaultValues.compression;
+    const finalFit = fit ?? interactConfigTyped.images.defaultValues.fit;
     if (imgAttributesProps.alt === undefined || imgAttributesProps.alt === null) {
         return BrokenImage({error: new ImageError(ImageErrors.ALT_MISSING)})
     }

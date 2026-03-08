@@ -46,7 +46,7 @@ let colorMode = z.enum(['light', 'dark']).describe("The color mode").default('li
 /**
  * Site Section in JSON
  */
-const jsonSiteSchema = z.object({
+const SiteSchema = z.object({
     url: z.coerce.string().describe("The URL (Used in the sitemap)").optional(),
     base: z.coerce.string().describe("The base path added to the site URL (Example: /docs)").default(""),
     name: z.coerce.string().describe("The short name (used in the app manifest)").default("Website"),
@@ -58,13 +58,6 @@ const jsonSiteSchema = z.object({
 }).describe("The site properties")
 
 
-/**
- * Public Section in JSON
- */
-const jsonPublicSchema = z.object({
-    // https://vite.dev/guide/assets#the-public-directory
-    publicDirectory: z.coerce.string<string>().describe("The path of the public directory").default("public"),
-})
 // fluid - scale down to fit the container, maintaining the aspect ratio (https://getbootstrap.com/docs/5.3/content/images/#responsive-images)
 // none - not responsive (No srcset or sizes generated, no styles applied)
 const imageTypeSchema = z.enum(['fluid']).describe("The type of image to apply a specific style").default('fluid').optional();
@@ -85,16 +78,17 @@ let defaultImagePropertyValues = z.object({
  * Image Service Section
  */
 const ImageSchema = z.object({
-    imagesDirectory: z.coerce.string<string>().describe("The path of the image directory").default("images"),
     defaultValues: defaultImagePropertyValues.describe("The default values").default(defaultImagePropertyValues.parse({}))
 })
 
 /**
- * Pages Schema
+ * Path Schema
  */
-const PagesSchema = z.object({
+const PathsSchema = z.object({
     pagesDirectory: z.coerce.string<string>().describe("The path of the pages directory").default("pages"),
-    // mdx, properties, Markdown will come here
+    // https://vite.dev/guide/assets#the-public-directory
+    publicDirectory: z.coerce.string<string>().describe("The path of the public directory").default("public"),
+    imagesDirectory: z.coerce.string<string>().describe("The path of the image directory").default("images"),
 })
 
 
@@ -248,7 +242,7 @@ let configStyleSchema = z.object({
     cssVariables: cssVariables.describe("Css variables").optional().default(cssVariables.parse({})),
     container: container.default(container.parse({}))
 });
-type configStyleType = z.output<typeof configStyleSchema>;
+type styleConfigType = z.output<typeof configStyleSchema>;
 
 /**
  * Components
@@ -338,8 +332,8 @@ const PluginConfigSchema = z.object({
 });
 
 const PluginConfigSetSchema = z.record(z.coerce.string<string>(), PluginConfigSchema.nullable());
-export type pluginsSchemaType = z.output<typeof PluginConfigSetSchema>;
-const plugins: pluginsSchemaType = {
+export type pluginsConfigType = z.output<typeof PluginConfigSetSchema>;
+const plugins: pluginsConfigType = {
     "rehype-github-alerts": {},
     "rehype-href-rewrite": {},
     "remark-link-checker": {
@@ -370,9 +364,8 @@ function deepMerge(target: any, source: any) {
  */
 export const JsonConfigSchema = z.object({
     $schema: z.coerce.string().optional(),
-    site: jsonSiteSchema.default(jsonSiteSchema.parse({})),
-    pages: PagesSchema.default(PagesSchema.parse({})),
-    public: jsonPublicSchema.default(jsonPublicSchema.parse({})),
+    site: SiteSchema.default(SiteSchema.parse({})),
+    paths: PathsSchema.default(PathsSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
     plugins: PluginConfigSetSchema.default(PluginConfigSetSchema.parse({})).transform(data => deepMerge(plugins, data)),
@@ -380,23 +373,21 @@ export const JsonConfigSchema = z.object({
 })
 
 
-type imageSchemaType = z.output<typeof ImageSchema>;
-type pageSchemaType = z.output<typeof PagesSchema>;
+type imageConfigType = z.output<typeof ImageSchema>;
+type pathsConfigType = z.output<typeof PathsSchema>;
+type siteConfigType = z.output<typeof SiteSchema>;
 /**
  * The config passed to client
  */
 export type InteractConfigType = {
-    style: configStyleType,
-    site: z.output<typeof jsonSiteSchema> & {
-        // "The root path of the site project"
-        rootPath: string
-    }
-    plugins: pluginsSchemaType,
+    style: styleConfigType,
+    site: siteConfigType
+    plugins: pluginsConfigType,
     components: componentsSetSchemaType,
-    pages: pageSchemaType
-    images: imageSchemaType,
-    public: z.output<typeof jsonPublicSchema>
-    env: {
-        configFilePath: string
+    images: imageConfigType,
+    paths: pathsConfigType & {
+        configFile: string
+        // "The root path of the site project"
+        rootDirectory: string
     }
 }

@@ -134,7 +134,7 @@ export default class PrintConfig extends Command {
     const pretty = !flags['no-pretty'] && !flags.plain
 
     // Get the config (filtered if needed)
-    let configToPrint = await import("../../config/index.js");
+    let configToPrint = await import("../../config/configHandler.js");
     if (flags.filter) {
       const filtered = filterByKey(configToPrint, flags.filter)
       if (filtered === undefined) {

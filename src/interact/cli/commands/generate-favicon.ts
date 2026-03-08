@@ -148,7 +148,7 @@ export default class GenerateFavicon extends Command {
          * https://github.com/oclif/core/issues/997
          */
         // @ts-ignore
-        const interactConfig: InteractConfigType = await import("../../config/index.js");
+        const interactConfig: InteractConfigType = await import("../../config/configHandler.js");
         const filePath = args.filePath
         const dryRun = flags.dryRun
         const outputDirectory = flags.outputDirectory

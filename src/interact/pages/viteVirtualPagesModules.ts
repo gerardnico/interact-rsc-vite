@@ -108,6 +108,9 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
                     return;
                 }
                 let environment = server.environments[loadedEnv];
+                if(!environment){
+                    throw new Error(`Environment "${loadedEnv}" not found.`);
+                }
 
                 let module = environment.moduleGraph.getModuleById(virtualModuleId);
                 // undefined because it may be not loaded

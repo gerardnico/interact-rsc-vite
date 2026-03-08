@@ -6,7 +6,12 @@ import Landing from "../components/Landing/Landing.js";
 import * as NotFoundModule from "../components/NotFound/NotFound.js";
 
 import getModulePage from 'interact:page-modules';
-import interactConfig from "../config/index.js";
+import {interactConfig} from "interact:config";
+import type {InteractConfigType} from "../config/configSchema.js";
+/**
+ * Otherwise we don't get any TypeScript error
+ */
+let interactConfigTyped = interactConfig as InteractConfigType;
 
 export interface PageFile {
     path: string;
@@ -90,9 +95,10 @@ export function getRootComponent(normalizedRequest: Request): React.JSX.Element 
  * can use it to render each page
  */
 export function getStaticPaths() {
-    return Object.keys(getPagesRecursively(interactConfig.pages.pagesDirectory))
+    return Object.keys(getPagesRecursively(interactConfigTyped.paths.pagesDirectory))
 }
 
+
 export function getPages() {
-    return getPagesRecursively(interactConfig.pages.pagesDirectory)
+    return getPagesRecursively(interactConfigTyped.paths.pagesDirectory)
 }

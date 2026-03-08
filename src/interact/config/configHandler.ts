@@ -63,21 +63,62 @@ export type ConfigHandlerProps = {
 
 const configFileName = 'interact.config.json'
 
+export interface ConfPathResolvedType {
+    rootDirectory: string;
+    filePath: string;
+}
+
+/**
+ * The interact conf path may be the config file or a directory
+ * @param confPath
+ */
+export function resolveInteractConfPath(confPath: string | undefined): ConfPathResolvedType {
+
+    const finalConfPath = confPath || process.env['INTERACT_CONF_PATH'] || process.cwd();
+    if (finalConfPath.endsWith(configFileName)) {
+        return {
+            rootDirectory: path.dirname(finalConfPath),
+            filePath: finalConfPath
+        }
+    }
+    return {
+        rootDirectory: finalConfPath,
+        filePath: path.join(finalConfPath, `${configFileName}`)
+    }
+
+}
+
+let interactConfig: InteractConfigType | null = null
+
+/**
+ * To resolve only once
+ * Why? We need the conf on initialization for vite
+ * and just after to create the virtual module
+ * This way we process the file once
+ */
+export function resolveInteractConfig(resolvedConf: ConfPathResolvedType) {
+    if (interactConfig != null) {
+        return interactConfig
+    }
+    interactConfig = new ConfigHandler(resolvedConf).getConfig();
+    return interactConfig;
+}
+
+
+/**
+ * The main function
+ */
+// noinspection JSUnusedGlobalSymbols - It's used in a virtual module, so never detected as imported by the IDE
 class ConfigHandler {
 
     private readonly configFile: string;
-    private readonly rootPath: string;
+    private readonly rootDirectory: string;
+    private readonly interactConfig: InteractConfigType;
 
-    constructor() {
-
-        const interactRootPath = process.env.INTERACT_ROOT_PATH
-        if (!interactRootPath) {
-            this.rootPath = process.cwd();
-        } else {
-            this.rootPath = interactRootPath;
-        }
-        this.configFile = path.join(this.rootPath, `${configFileName}`);
-
+    constructor(confPathResolved: ConfPathResolvedType) {
+        this.configFile = confPathResolved.filePath;
+        this.rootDirectory = confPathResolved.rootDirectory;
+        this.interactConfig = this.#process()
     }
 
     #addDefaultAndRuntime(finalConfigData: InteractConfigType) {
@@ -92,28 +133,24 @@ class ConfigHandler {
                     base: baseValue,
                 }
             } else {
-                rehypeHrefRewrite.props.base = baseValue;
+                rehypeHrefRewrite.props['base'] = baseValue;
             }
         }
 
-        finalConfigData.env = {
-            configFilePath: this.configFile
+        finalConfigData.paths = {
+            configFile: this.configFile,
+            rootDirectory: this.rootDirectory,
+            pagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.pagesDirectory),
+            publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
+            imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory)
         }
 
-        /**
-         * Root Path
-         */
-        finalConfigData.site.rootPath = this.rootPath;
-
-        finalConfigData.pages.pagesDirectory = this.#qualifiedDirectoryPath(finalConfigData.pages.pagesDirectory);
-        finalConfigData.public.publicDirectory = this.#qualifiedDirectoryPath(finalConfigData.public.publicDirectory);
-        finalConfigData.images.imagesDirectory = this.#qualifiedDirectoryPath(finalConfigData.images.imagesDirectory);
 
     }
 
     #qualifiedDirectoryPath(basePath: string) {
         if (!basePath.startsWith("/")) {
-            return path.resolve(this.rootPath, basePath);
+            return path.resolve(this.rootDirectory, basePath);
         }
         return path.resolve(basePath);
 
@@ -142,7 +179,7 @@ class ConfigHandler {
     /**
      * Load configuration with fallback to defaults
      */
-    getConfig(): InteractConfigType {
+    #process(): InteractConfigType {
 
 
         let configContent: string;
@@ -174,12 +211,9 @@ class ConfigHandler {
 
     }
 
-    getConfigFilePath() {
-        return this.configFile
+    getConfig(): InteractConfigType {
+        return this.interactConfig
     }
+
 }
 
-let configHandler = new ConfigHandler();
-export const interactConfigFilePath = configHandler.getConfigFilePath()
-let interactConfig = configHandler.getConfig();
-export default interactConfig;

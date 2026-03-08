@@ -31,16 +31,24 @@ export default function viteSsgPlugin(): Plugin[] {
 }
 
 async function renderStatic(config: ResolvedConfig) {
+    let rscEnv = config.environments['rsc'];
+    if (!rscEnv) {
+        throw new Error("The rsc env environment does not exist.");
+    }
     /**
      * Import the created rsc build
      */
-    const rscIndexFilePath = path.join(config.environments.rsc.build.outDir, 'index.js')
+    const rscIndexFilePath = path.join(rscEnv.build.outDir, 'index.js')
     const entryRscModule: typeof import('../server/entry.rsc.js') = await import(pathToFileURL(rscIndexFilePath).href)
 
     // entry provides a list of static paths
     const staticPaths = entryRscModule.getStaticPaths()
     // render rsc and html
-    const baseDir = config.environments.client.build.outDir
+    let clientEnv = config.environments['client'];
+    if (!clientEnv) {
+        throw new Error("The client env environment does not exist.");
+    }
+    const baseDir = clientEnv.build.outDir
     for (const staticPatch of staticPaths) {
         config.logger.info('[vite-rsc:ssg] -> ' + staticPatch)
         let fakeRequest = new Request(new URL(staticPatch, 'http://ssg.local'));

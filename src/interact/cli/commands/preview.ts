@@ -25,7 +25,7 @@ export default class Build extends Command {
         const { resolveViteConfig } = await import("../shared/viteConfig.js");
 
         try {
-            const server = await preview(resolveViteConfig({rootPath, command:"preview"}));
+            const server = await preview(resolveViteConfig({confPath: rootPath, command:"preview"}));
             server.printUrls();
             server.bindCLIShortcuts({ print: true });
         } catch (e) {

@@ -2,13 +2,18 @@ import Head from "../Head/Head.js";
 import type {LayoutProps} from "../../types/index.js";
 import styles from "./Holy.module.css"
 import {PAGE_CONTAINER} from "../classNames.js";
-import interactConfig from "../../config/index.js";
+
 import clsx from "clsx";
 import {Aside} from "../Aside/Aside.js";
 import {Header} from "../Header/Header.js";
 import {Toc} from "../Toc/Toc.js";
 import NavBar from "../Navbar/NavBar.js";
-
+import {interactConfig} from "interact:config";
+import type {InteractConfigType} from "../../config/configSchema.js";
+/**
+ * Otherwise we don't get any TypeScript error
+ */
+let interactConfigTyped = interactConfig as InteractConfigType;
 /**
  * Holy Layout Components
  */
@@ -21,15 +26,15 @@ export default async function Holy(layoutProps: LayoutProps) {
         <body>
         <NavBar {...layoutProps} />
         <div id="page-core" className={
-            clsx(styles.pageCore,
+            clsx(styles['pageCore'],
                 PAGE_CONTAINER,
-                interactConfig.style.container.containerClass,
+                interactConfigTyped.style.container.containerClass,
                 "position-relative mt-3"
             )}>
-            <aside id="page-side" className={clsx(styles.pageSide, "d-print-none")}>
+            <aside id="page-side" className={clsx(styles['pageSide'], "d-print-none")}>
                 <Aside {...layoutProps}/>
             </aside>
-            <main id="page-main" className={styles.pageMain}>
+            <main id="page-main" className={styles['pageMain']}>
                 <Header {...layoutProps} />
                 <div id="main-toc">
                     <Toc {...layoutProps} />

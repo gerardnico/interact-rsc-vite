@@ -215,7 +215,10 @@ export class ImageDimensionHelper {
         const targetHeight = this.#getTargetHeight()
         const targetWidth = this.#getTargetWidth();
         this.#checkLogicalRatioAgainstTargetRatio(targetWidth, targetHeight);
-        return [targetWidth, targetHeight];
+        return {
+            targetWidth,
+            targetHeight
+        };
     }
 
     isRatioRequested() {

@@ -7,11 +7,13 @@ import remarkGfm from 'remark-gfm';
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import pageModulesPlugin from "../../pages/viteVirtualPagesModules.js";
+import viteVirtualConfModule from "../../config/viteVirtualConfModule.js";
 import viteImageService from "../../images/imageViteDevMiddleware.js";
 import {fileURLToPath} from "node:url";
 import type {InlineConfig} from "vite";
 import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
-import interactConfig from "../../config/index.js";
+import {resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
+import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,14 +24,15 @@ const interactPackageDir = path.resolve(__dirname, '../..');
 
 type InteractCommand = 'start' | 'build' | 'preview';
 type InteractConfig = {
-    rootPath: string,
+    confPath: string,
     command?: InteractCommand;
     port?: number
 };
 
-export function resolveViteConfig({rootPath, port, command}: InteractConfig): InlineConfig {
+export function resolveViteConfig({confPath, port, command}: InteractConfig): InlineConfig {
 
-
+    const resolvedConfPath = resolveInteractConfPath(confPath);
+    const interactConfigTyped = resolveInteractConfig(resolvedConfPath);
 
     // https://vite.dev/guide/build#public-base-path
     let publicBasePath = ""
@@ -38,33 +41,33 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
      * For runtime, I see also: './node_modules/.xxx'
      * dist does not work as it will be cleaned up
      */
-    let runtimePath = path.resolve(rootPath, ".interact");
+    let runtimePath = path.resolve(resolvedConfPath.rootDirectory, ".interact");
     let cachePath = path.resolve(runtimePath, "cache")
 
 
     // Note: You can merge also
     // https://vite.dev/guide/api-javascript#mergeconfig
-    let outDistDir = path.resolve(rootPath, "dist");
+    let outDistDir = path.resolve(confPath, "dist");
 
     /**
      * Use to generate image into the static build
      */
-    process.env.VITE_OUT_DIR = outDistDir
+    process.env[imageViteOutDirEnvName] = outDistDir
     /**
      * Used to generate the URL in dev
      * The endpoint of the local service endpoint ("/_images")
      */
     let imageMiddlewareEndPoint = "/_images";
-    process.env.INTERACT_IMAGE_ENPOINT = imageMiddlewareEndPoint
+    process.env[imageEndPointEnvName] = imageMiddlewareEndPoint
 
     return {
         logLevel: 'info', // or 'warn' — try 'info' first
-        root: rootPath,
+        root: confPath,
         base: publicBasePath,
         server: {
             port: port,
         },
-        publicDir: interactConfig.public.publicDirectory,
+        publicDir: interactConfigTyped.paths.publicDirectory,
         build: {
             // https://rollupjs.org/configuration-options/
             rollupOptions: {
@@ -130,17 +133,16 @@ export function resolveViteConfig({rootPath, port, command}: InteractConfig): In
             // You can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
             // to understand how "use client" and "use server" directives are transformed internally.
             // import("vite-plugin-inspect").then(m => m.default()),
-
             rsc(),
             viteSsgPlugin(),
-            pageModulesPlugin(interactConfig.pages.pagesDirectory),
+            pageModulesPlugin(interactConfigTyped.paths.pagesDirectory),
             viteImageService({
-                baseDir: interactConfig.images.imagesDirectory,
+                baseDir: interactConfigTyped.paths.imagesDirectory,
                 cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),
-                secret: process.env.IMAGE_SECRET,
+                secret: process.env[imageSecretEnvName],
                 endPoint: imageMiddlewareEndPoint
             }),
-            // in Vite, @mdx-js/rollup must come before @vitejs/plugin-react
+            viteVirtualConfModule(resolvedConfPath),
             mdx({
                 remarkPlugins: [
                     remarkFrontmatter,

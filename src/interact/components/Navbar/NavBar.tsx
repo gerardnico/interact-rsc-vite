@@ -1,13 +1,20 @@
 
 import {PAGE_CONTAINER} from "../classNames.js";
-import interactConfig from "../../config/index.js";
+import interactConfig from "interact:config";
 import Image from "../Image/Image.js"
 import type {LayoutProps} from "../../types/index.js";
+import type {InteractConfigType} from "../../config/configSchema.js";
 
+// @ts-ignore
 export default function NavBar(props:LayoutProps) {
 
+    /**
+     * Otherwise TypeScript does not errored for unknown propertie
+     */
+    const interactConfigCasted = (interactConfig as InteractConfigType)
+
     let homeUrl = ""
-    const isDev = process.env.NODE_ENV === 'development';
+    const isDev = process.env['NODE_ENV'] === 'development';
     if (isDev) {
         homeUrl = ""
     }
@@ -17,9 +24,9 @@ export default function NavBar(props:LayoutProps) {
         // goes to http://localhost
         homeUrl = homeUrl.slice(0, homeUrl.length - 1)
     }
-    let siteBase = interactConfig.site.base;
-    if (siteBase) {
+    let siteBase = interactConfigCasted.site.base;
 
+    if (siteBase) {
         homeUrl = `${homeUrl}${siteBase}`
     }
 
@@ -30,7 +37,7 @@ export default function NavBar(props:LayoutProps) {
     let logoSrc: string | undefined;
     let logoAlt: string | undefined;
     let logoClass: string | undefined;
-    let navBarConfig = interactConfig.components.NavBar;
+    let navBarConfig = interactConfigCasted.components.NavBar;
     logoSrc = navBarConfig?.props.logoSrc;
     if (typeof logoSrc != 'undefined') {
         const isSvg = logoSrc.endsWith('.svg');
@@ -40,7 +47,7 @@ export default function NavBar(props:LayoutProps) {
         }
         logoAlt = navBarConfig?.props.logoAlt;
         if (typeof logoAlt == 'undefined') {
-            logoAlt = interactConfig.site.name;
+            logoAlt = interactConfigCasted.site.name;
         }
 
         if (siteBase) {
@@ -51,14 +58,14 @@ export default function NavBar(props:LayoutProps) {
             logoSrc = `${siteBase}${logoPathSep}${logoSrc}`
         }
     }
-    const containerClass = interactConfig.style.container.containerClass
+    const containerClass = interactConfigCasted.style.container.containerClass
     return (
         <header id="page-header" className="d-print-none">
             <nav className="navbar navbar-expand-md navbar-light" data-type="fixed-top"
                  style={{backgroundColor: "var(--bs-light)"}}>
                 <div className={PAGE_CONTAINER + " " + containerClass}>
                     <a className="link-primary navbar-brand"
-                       href={homeUrl} title={interactConfig.site.title}
+                       href={homeUrl} title={interactConfigCasted.site.title}
                        accessKey="h" style={{fontWeight:700}}>
                         {logoSrc ? (
                             <Image src={logoSrc} alt={logoAlt} className={logoClass}

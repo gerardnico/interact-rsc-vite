@@ -3,7 +3,10 @@
     "erasableSyntaxOnly": true,
     //"allowImportingTsExtensions": true,
     "strict": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true, // 'targetWidth' is possibly 'undefined'.
     "noUnusedLocals": true,
+    "noImplicitAny": true,  // allows implicit any
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "rootDir": "src",

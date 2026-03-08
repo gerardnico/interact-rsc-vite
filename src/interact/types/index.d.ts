@@ -1,4 +1,4 @@
 export * from "./pageModule.js";
-export * from "../pages/viteVirtualPagesModulesDef.d.ts"
-export * from "./layoutComponent.d.ts"
-export * from "../config/viteVirtualConfModule.d.ts"
+export * from "../pages/viteVirtualPagesModulesDef.js"
+export * from "./layoutComponent.js"
+export * from "../config/viteVirtualConfModuleDef.js"

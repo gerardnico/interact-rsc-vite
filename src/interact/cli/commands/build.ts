@@ -23,7 +23,7 @@ export default class Build extends BaseCommand<typeof Build> {
          */
         const { resolveViteConfig } = await import("../shared/viteConfig.js");
         try {
-            const builder = await createBuilder(resolveViteConfig({rootPath, command:'build'}))
+            const builder = await createBuilder(resolveViteConfig({confPath: rootPath, command:'build'}))
             console.log(Object.keys(builder.environments))
             // build App will call the environment in order and is equivalent to:
             //   await builder.build(builder.environments.rsc)

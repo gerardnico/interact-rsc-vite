@@ -1,8 +1,12 @@
 import type {LayoutProps} from "../../types/index.js";
 import {PAGE_CONTAINER} from "../classNames.js";
-import type {FaviconSetSchemaType} from "../../config/configSchema.js";
-import interactConfig from "../../config/index.js";
+import type {FaviconSetSchemaType, InteractConfigType} from "../../config/configSchema.js";
+import {interactConfig} from "interact:config";
 
+/**
+ * Otherwise we don't get any TypeScript error
+ */
+let interactConfigTyped = interactConfig as InteractConfigType;
 
 export default function Head({pageModule, request}: LayoutProps) {
 
@@ -11,7 +15,7 @@ export default function Head({pageModule, request}: LayoutProps) {
     let keyWords = pageModule.frontmatter?.keyWords;
     let robots = pageModule.frontmatter?.robots;
 
-    const primary = interactConfig.site.colorPrimary
+    const primary = interactConfigTyped.site.colorPrimary
 
     const hexToRgb = (hex: string) => {
         // @ts-ignore
@@ -31,7 +35,7 @@ export default function Head({pageModule, request}: LayoutProps) {
     --bs-link-color-rgb: ${primaryRgb};
     --bs-body-font-family: "Times New Roman", Times, serif";
 }`
-    let containerMaxWidth = interactConfig.style.container.containerMaxWidth;
+    let containerMaxWidth = interactConfigTyped.style.container.containerMaxWidth;
     if (containerMaxWidth != undefined) {
         style += `
 .${PAGE_CONTAINER} {
@@ -44,13 +48,13 @@ export default function Head({pageModule, request}: LayoutProps) {
      * Page Title
      */
     const url = new URL(request.url);
-    const base = interactConfig.site.base
+    const base = interactConfigTyped.site.base
     const isBrowserPathRoot = url.pathname === base;
     let headPageTitle = title ? title : "";
     if (!headPageTitle && isBrowserPathRoot) {
-        headPageTitle = interactConfig.site.title || 'Default'
+        headPageTitle = interactConfigTyped.site.title || 'Default'
     }
-    let pageTitle = headPageTitle + " | " + interactConfig.site.name
+    let pageTitle = headPageTitle + " | " + interactConfigTyped.site.name
 
     /**
      * Head base meta
@@ -58,9 +62,9 @@ export default function Head({pageModule, request}: LayoutProps) {
      * calculated by the browser relative to the path name of this URL
      */
     let baseHeadURL = request.url;
-    const isDev = process.env.NODE_ENV === 'development';
+    const isDev = process.env['NODE_ENV'] === 'development';
     if (!isDev) {
-        baseHeadURL = interactConfig.site.url + url.pathname
+        baseHeadURL = interactConfigTyped.site.url + url.pathname
     }
     if (isBrowserPathRoot) {
         /**
@@ -77,7 +81,7 @@ export default function Head({pageModule, request}: LayoutProps) {
             <meta name="generator" content="Interact"/>
             <base href={baseHeadURL}/>
             {description && <meta name="description" content={description}/>}
-            {interactConfig.site.favicons && Object.entries(interactConfig.site.favicons as FaviconSetSchemaType).map(([faviconPath, faviconProperties]) => {
+            {interactConfigTyped.site.favicons && Object.entries(interactConfigTyped.site.favicons as FaviconSetSchemaType).map(([faviconPath, faviconProperties]) => {
                 if (!faviconProperties) {
                     return;
                 }
@@ -90,8 +94,8 @@ export default function Head({pageModule, request}: LayoutProps) {
                     />
                 )
             })}
-            {interactConfig.site.colorPrimary &&
-                <meta name="theme-color" content={interactConfig.site.colorPrimary}/>}
+            {interactConfigTyped.site.colorPrimary &&
+                <meta name="theme-color" content={interactConfigTyped.site.colorPrimary}/>}
             <meta name="robots" content={robots ? robots : "index,follow"}/>
             {keyWords && <meta name="keywords" content={keyWords}/>}
             <link

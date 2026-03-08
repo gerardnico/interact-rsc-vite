@@ -7,9 +7,9 @@
   "bin": "src/interact/cli/run.js",
   "scripts": {
     "build": "tsc",
-    "start": "src/interact/cli/dev.js start --root=apps/site",
-    "static": "src/interact/cli/dev.js build --root=apps/site",
-    "preview": "src/interact/cli/dev.ts preview --root=apps/site"
+    "start": "src/interact/cli/dev.js start --confPath=apps/site",
+    "static": "src/interact/cli/dev.js build --confPath=apps/site",
+    "preview": "src/interact/cli/dev.ts preview --confPath=apps/site"
   },
   "files": [
     "src/*"

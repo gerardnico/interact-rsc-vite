@@ -1,7 +1,7 @@
 import {ImageDimensionHelper} from "./imageDimensionHelper.js";
 import sharp, {type FitEnum} from "sharp";
 import path from "node:path";
-import type {ImageFitType, ImageType} from "../config/configSchema.js";
+import type {ImageFitType, ImageType, InteractConfigType} from "../config/configSchema.js";
 import type {ImageCompressionType} from "./imageCompressionType.js";
 import {
     castHeightToNumber,
@@ -13,7 +13,13 @@ import {
 import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
 import fsPromises from "fs/promises";
 import crypto from "crypto";
-import interactConfig from "../config/index.js";
+import {interactConfig} from "interact:config";
+import {imageEndPointEnvName, imageViteOutDirEnvName} from "./imageMiddlewareHandler.js";
+
+/**
+ * Otherwise we don't get any TypeScript error
+ */
+let interactConfigTyped = interactConfig as InteractConfigType;
 
 export type HtmlImageAttributes = {
     src: string,
@@ -44,7 +50,8 @@ type ImageRequestProps = {
  *
  * @return bool
  */
-const withDpiCorrection = interactConfig.images.defaultValues?.dpiCorrection || false
+debugger;
+const withDpiCorrection = interactConfigTyped.images.defaultValues?.dpiCorrection || false
 
 function getSizes(screenWidth: number, imageWidth: number) {
     let sizes;
@@ -67,9 +74,9 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
     const isBuild = import.meta.env.MODE === 'production'
     if (!isBuild) {
         // The endpoint of the local service endpoint ("/_images")
-        let serviceEndpoint = process.env.INTERACT_IMAGE_ENPOINT
+        let serviceEndpoint = process.env[imageEndPointEnvName]
         if (!serviceEndpoint) {
-            throw new Error("Service endpoint env is not defined (process.env.INTERACT_IMAGE_ENPOINT)")
+            throw new Error(`Service endpoint env (${imageEndPointEnvName}) is not defined`)
         }
         let uriBase = `${serviceEndpoint}/${src}`
         if (Object.keys(serviceProperties).length == 0) {
@@ -98,10 +105,14 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
     const extension = src.slice(src.indexOf("."));  // '.txt'
     let buildUri = `/img/${pathWithoutExtension}-${hash}.${extension}`;
 
+    let viteOutDir = process.env[imageViteOutDirEnvName];
+    if (!viteOutDir) {
+        throw new Error(`The env ${imageViteOutDirEnvName} is not defined`);
+    }
     /**
      * Write to file
      */
-    const buildTargetFile = `${process.env.VITE_OUT_DIR}/client${buildUri}`;
+    const buildTargetFile = `${viteOutDir}/client${buildUri}`;
     debugger
     await fsPromises.mkdir(path.dirname(buildTargetFile), {recursive: true});
     await fsPromises.writeFile(buildTargetFile, imageBuffer);
@@ -117,7 +128,8 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
  */
 export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<HtmlImageAttributes> {
 
-    const sourceFile = path.resolve(interactConfig.images.imagesDirectory, props.src);
+
+    const sourceFile = path.resolve(interactConfigTyped.paths.imagesDirectory, props.src);
     let intrinsicWidth, intrinsicHeight;
     let sharpPipeline;
     try {
@@ -136,7 +148,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         intrinsicWidth,
         intrinsicHeight
     });
-    let [targetWidth, targetHeight] = originalRequestDimensionHelper.getTargetDimensions()
+    let {targetWidth, targetHeight} = originalRequestDimensionHelper.getTargetDimensions()
 
     let serviceProperties: Partial<Record<ImageServiceKeyUrl, string>> = {}
 
@@ -170,12 +182,12 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
      * Width is mandatory for responsive image
      * Ref https://developers.google.com/search/docs/advanced/guidelines/google-images#responsive-images
      */
-    for (const breakpoint of interactConfig.images.defaultValues.responsiveBreakpoints) {
+    for (const breakpoint of interactConfigTyped.images.defaultValues.responsiveBreakpoints) {
 
         /**
          * The image cannot scale up
          */
-        if (breakpoint > targetWidth) {
+        if (targetWidth && breakpoint > targetWidth) {
             continue;
         }
         if (breakpoint > intrinsicWidth) {

@@ -65,8 +65,8 @@ export function castRatioToNumber(stringRatio: string | null | undefined): numbe
     }
     const [widthStr, heightStr] = stringRatio.split(":", 2);
 
-    const width = parseInt(widthStr, 10);
-    if (isNaN(width)) {
+    const width = widthStr && parseInt(widthStr, 10);
+    if (typeof width == 'undefined' || width == "" || isNaN(width)) {
         throw new ImageError({
                 message: `The width value (${widthStr}) of the ratio \`${stringRatio}\` is not numeric`,
                 ...ImageErrors.BAD_RATIO
@@ -74,8 +74,8 @@ export function castRatioToNumber(stringRatio: string | null | undefined): numbe
         );
     }
 
-    const height = parseInt(heightStr, 10);
-    if (isNaN(height)) {
+    const height = heightStr && parseInt(heightStr, 10);
+    if (typeof height == 'undefined' || height == "" || isNaN(height)) {
         throw new ImageError({
                 message: `The height value (${heightStr}) of the ratio \`${stringRatio}\` is not numeric`,
                 ...ImageErrors.BAD_RATIO
@@ -138,3 +138,4 @@ export async function processImageWithSharp({
     sharpPipeline.toFormat(outputFormat, options)
     return await sharpPipeline.toBuffer();
 }
+

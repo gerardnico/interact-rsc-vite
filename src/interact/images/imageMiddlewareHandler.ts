@@ -181,7 +181,7 @@ export function createImageHandler(config: ImageHandlerProps) {
                 intrinsicHeight,
                 intrinsicWidth
             })
-            let [targetWidth, targetHeight] = dimensionHelper.getTargetDimensions();
+            let {targetWidth, targetHeight} = dimensionHelper.getTargetDimensions();
             const sharpPipeline = sharp(sourceFile)
             const finalImage = await processImageWithSharp({
                     sharpPipeline,
@@ -264,3 +264,10 @@ export function createImageHandler(config: ImageHandlerProps) {
         }
     }
 }
+
+/**
+ * Env name
+ */
+export const imageEndPointEnvName = 'INTERACT_IMAGE_ENPOINT'
+export const imageViteOutDirEnvName = 'VITE_OUT_DIR'
+export const imageSecretEnvName = 'INTERACT_IMAGE_SECRET'
