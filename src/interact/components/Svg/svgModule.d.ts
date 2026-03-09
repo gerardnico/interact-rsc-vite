@@ -1,5 +1,5 @@
 /**
- * Svg Override
+ * Svg Override (used so that TypeScript on import of svg file)
  * https://vite.dev/guide/features#client-types
  */
 declare module '*.svg' {

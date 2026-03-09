@@ -7,13 +7,16 @@ You can add a component to be used in [Markdown pages](../markdown.md) by defini
 
 ### Steps
 
-Example on how to add a `Planet` component that will yield the word `Pluto` (as used in the [mdx documentation](https://mdxjs.com/guides/injecting-components/)) 
+Example on how to add a `Planet` component that will yield the word `Pluto` (as used in
+the [mdx documentation](https://mdxjs.com/guides/injecting-components/))
 
 ### Create your component
 
+The component should be exported as default.
+
 ```javascript
 // src/components/Planet.js
-export function Planet() {
+export default function Planet() {
     return "Pluto"
 }
 ```
@@ -26,8 +29,8 @@ You can register it by defining it in the [configuration file](../conf.md).
 {
   "components": {
     "Pluto": {
-      "importPath": "src/component/Planet.js",
-      "type": "leaf"
+      "importPath": "src/components/Planet.js",
+      "type": "content"
     }
   }
 }
@@ -35,7 +38,7 @@ You can register it by defining it in the [configuration file](../conf.md).
 
 ### Use it
 
-You can now use it in [markdown page](../markdown.md)
+You can now use it in [mdx Markdown page](../markdown.md)
 
 ```markdown
 <Planet/>

@@ -166,14 +166,17 @@ export function resolveViteConfig(
             }),
             viteVirtualConfModule(resolvedConfPath),
             mdx({
+                mdExtensions: [], // When treated as Markdown, the custom elements are deleted
+                mdxExtensions: ['.mdx', '.md'],
                 remarkPlugins: [
                     remarkFrontmatter,
                     remarkMdxFrontmatter, // exports frontmatter as `frontmatter`
                     remarkMdxToc, // exports headings as `toc`
                     remarkGfm // Table
                 ],
-                //providerImportSource: import.meta.resolve('./mdxComponentsProvider.js')
-                providerImportSource: componentsProviderModuleName
+                rehypePlugins: [],
+                //providerImportSource: import.meta.resolve('../../componentsProvider/componentsProvider.js')
+                providerImportSource: componentsProviderModuleName,
             }),
             viteMdxComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
             react(),

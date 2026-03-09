@@ -48,3 +48,36 @@ Note:
 
 * Layout component should return the `html` document. They can be used in the `layout` property of
   the [page frontmatter](frontmatter.md)
+
+## Support
+
+### Expected component `xxx` to be defined
+
+If you get this error:
+
+```
+Error: Expected component `xxx` to be defined: you likely forgot to import, pass, or provide it.
+```
+
+The possible causes are:
+
+* the component is [not registered](howto/add-a-markdown-component.md#register-it)
+* the components is not exported as `default`:
+
+Example:
+
+* Bad
+
+```javascript
+export async function Svg({}) {
+    // body
+}
+```
+
+* Good
+
+```javascript
+export default async function Svg({}) {
+    // body
+}
+```

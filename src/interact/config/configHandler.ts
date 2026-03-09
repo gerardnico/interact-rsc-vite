@@ -78,6 +78,10 @@ const defaultComponentsValue: componentsSetSchemaType = {
     "NotFound": {
         importPath: `${publicComponent}/NotFound`,
         type: "page"
+    },
+    "Svg": {
+        importPath: `${publicComponent}/Svg`,
+        type: "content"
     }
 }
 

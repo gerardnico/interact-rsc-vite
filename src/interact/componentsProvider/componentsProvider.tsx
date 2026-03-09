@@ -9,6 +9,7 @@ import Holy from "#components/Holy";
 import type {ComponentType} from "react";
 import type {TemplateProps} from "./templateComponent.js";
 import Landing from "#components/Landing";
+import Svg from "#components/Svg";
 
 const layoutComponents: Record<string, ComponentType<TemplateProps>> = {
     holy: Holy,
@@ -23,14 +24,11 @@ const layoutComponents: Record<string, ComponentType<TemplateProps>> = {
  */
 export function useMDXComponents(): MDXComponents {
     return {
-        p: ({children}) => <p className="my-4">{children}</p>,
         Planet() {
             return 'Pluto'
         },
-        h1(properties: React.HTMLAttributes<HTMLHeadingElement>) {
-            return <h1 {...properties} className="custom"/>
-        },
-        pre: Code
+        pre: Code,
+        Svg: Svg
     }
 }
 
