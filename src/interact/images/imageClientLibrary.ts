@@ -1,7 +1,7 @@
 import {ImageDimensionHelper} from "./imageDimensionHelper.js";
 import sharp, {type FitEnum} from "sharp";
 import path from "node:path";
-import type {ImageFitType, ImageType, InteractConfigType} from "../config/configSchema.js";
+import type {ImageFitType, ImageType} from "../config/configSchema.js";
 import type {ImageCompressionType} from "./imageCompressionType.js";
 import {
     castHeightToNumber,
@@ -15,6 +15,7 @@ import fsPromises from "fs/promises";
 import crypto from "crypto";
 import {interactConfig} from "interact:config";
 import {imageEndPointEnvName, imageViteOutDirEnvName} from "./imageMiddlewareHandler.js";
+import type {InteractConfigType} from "../config/configHandler.js";
 
 /**
  * Otherwise we don't get any TypeScript error

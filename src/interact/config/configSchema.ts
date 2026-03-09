@@ -40,8 +40,6 @@ const FaviconSetSchema: z.ZodType<FaviconSetSchemaType> = z.record(
 );
 
 
-let colorMode = z.enum(['light', 'dark']).describe("The color mode").default('light');
-
 
 /**
  * Site Section in JSON
@@ -53,20 +51,20 @@ const SiteSchema = z.object({
     title: z.coerce.string().describe("The title (used on the logo description, as index page title, in the app manifest as name)").default("Website"),
     faviconMaster: z.coerce.string().describe("The master svg file used to generate the favicons relative to the image path").default("favicon.svg"),
     favicons: FaviconSetSchema.describe("The favicons (logos)").optional(),
-    colorMode: colorMode,
+    colorMode: z.enum(['light', 'dark']).describe("The color mode").default('light'),
     colorPrimary: z.coerce.string().describe("The primary color (known also as the theme color)").default("#906296"),
 }).describe("The site properties")
 
 
 // fluid - scale down to fit the container, maintaining the aspect ratio (https://getbootstrap.com/docs/5.3/content/images/#responsive-images)
 // none - not responsive (No srcset or sizes generated, no styles applied)
-const imageTypeSchema = z.enum(['fluid']).describe("The type of image to apply a specific style").default('fluid').optional();
+const imageTypeSchema = z.enum(['fluid']).describe("The type of image to apply a specific style").default('fluid');
 export type ImageType = z.output<typeof imageTypeSchema>
 
 let defaultImagePropertyValues = z.object({
     type: imageTypeSchema,
     responsiveBreakpoints: z.array(z.number().int().positive()).describe("The responsive breakpoints corresponding to a screen size. For each screen, a passing image is provided").default([375, 576, 768, 992, 1200, 1400]),
-    dpiCorrection: z.boolean().describe("Enable DPI correction by screen size for responsive images").optional().default(false),
+    dpiCorrection: z.boolean().describe("Enable DPI correction by screen size for responsive images").default(false),
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img#loading
     loading: z.enum(['lazy', 'eager']).describe("Lazy loading (should be false for images above the fold)").default('lazy'),
     decoding: z.enum(['async', 'sync', 'auto']).describe("Tell if the browser process the images on or off the main thread (sync - on, async - off, auto - the browser chooses)").default("async"),
@@ -239,14 +237,16 @@ let cssVariables = z.object({
 let configStyleSchema = z.object({
     layoutProps: layoutSchema.describe("Properties used by layout components").default(layoutSchema.parse({})),
     // https://getbootstrap.com/docs/5.3/customize/css-variables/
-    cssVariables: cssVariables.describe("Css variables").optional().default(cssVariables.parse({})),
+    cssVariables: cssVariables.describe("Css variables").default(cssVariables.parse({})),
     container: container.default(container.parse({}))
 });
-type styleConfigType = z.output<typeof configStyleSchema>;
+export type styleConfigType = z.output<typeof configStyleSchema>;
 
 /**
  * Components
  * Base schema shared by all components
+ * They are all optional because when the user defines properties
+ * for a default component, it does not need to set any properties
  */
 const BaseComponentSchema = z.object({
     // Physique path does not work well: ie with ./node_modules/`${interactPackageJson.name}/src/components`
@@ -255,22 +255,22 @@ const BaseComponentSchema = z.object({
     // We derived them with import.meta.resolve
     // No file system path, it's derived thanks to import, and it does not work well with vite and import
     // as they don't handle symlink well
-    importPath: z.coerce.string<string>(),
-    type: z.enum(["layout", "partial", "leaf"]),
-    props: z.record(z.string(), z.string()).optional(),
+    importPath: z.coerce.string<string>().optional(),
+    type: z.enum(["layout", "partial", "leaf"]).default("leaf"),
+    props: z.record(z.string(), z.unknown()).optional(),
 });
 
 // Component-specific schemas that extend the base
 const NavBarSchema = BaseComponentSchema.extend({
     props: BaseComponentSchema.shape.props.and(
         z.object({
-            brandName: z.string().optional(),
-            logoWidth: z.coerce.number().optional(),
-            logoHeight: z.coerce.number().optional(),
+            brandName: z.string().nullable().optional(),
+            logoWidth: z.number().optional(),
+            logoHeight: z.number().optional(),
             logoSrc: z.coerce.string().default("https://www.combostrap.com/_media/favicon.ico"),
             logoAlt: z.string().optional(),
         })
-    ),
+    ).optional(),
 });
 
 
@@ -281,62 +281,6 @@ const ComponentsConfigSetSchema = z.object({
 
 export type componentsSetSchemaType = z.output<typeof ComponentsConfigSetSchema>;
 
-/**
- * #components is declared in the package.json imports property
- */
-//const privateComponent = `#components`
-const publicComponent = `@combostrap/interact/components`
-const defaultComponentsValue: componentsSetSchemaType = {
-    // "Avatar": {
-    //     importPath: `${interactComponentBaseDirectory}/Avatar`
-    // },
-    "Block": {
-        importPath: `${publicComponent}/Block`,
-        type: "leaf"
-    },
-    "pre": {
-        importPath: `${publicComponent}/Code`,
-        type: "leaf"
-    },
-    "a": {
-        importPath: `${publicComponent}/Anchor`,
-        type: "leaf"
-    },
-    // "h2": {
-    //     importPath: `${interactComponentBaseDirectory}/H2`
-    // },
-    // "h3": {
-    //     importPath: `${interactComponentBaseDirectory}/H3`
-    // },
-    "Grid": {
-        importPath: `${publicComponent}/Grid`,
-        type: "leaf"
-    },
-    "GridCell": {
-        importPath: `${publicComponent}/GridCell`,
-        type: "leaf"
-    },
-    "Text": {
-        importPath: `${publicComponent}/Text`,
-        type: "leaf"
-    },
-    "Para": {
-        importPath: `${publicComponent}/Para`,
-        type: "leaf"
-    },
-    "RufflePlayer": {
-        importPath: `${publicComponent}/RufflePlayer`,
-        type: "leaf"
-    },
-    "StarRating": {
-        importPath: `${publicComponent}/StarRating`,
-        type: "leaf"
-    },
-    "Image": {
-        importPath: `${publicComponent}/Image`,
-        type: "leaf"
-    }
-}
 
 /**
  * Plugins
@@ -349,34 +293,9 @@ const PluginConfigSchema = z.object({
 
 const PluginConfigSetSchema = z.record(z.coerce.string<string>(), PluginConfigSchema.nullable());
 export type pluginsConfigType = z.output<typeof PluginConfigSetSchema>;
-const plugins: pluginsConfigType = {
-    "rehype-github-alerts": {},
-    "rehype-href-rewrite": {},
-    "remark-link-checker": {
-        props: {strict: true}
-    },
-    "remark-layout": {},
-    "remark-frontmatter-modified-time": {}
-}
 
 /**
- * Deep merge two objects
- */
-function deepMerge(target: any, source: any) {
-    const output = {...target};
-    for (const key in source) {
-        if (source[key] instanceof Object && key in target) {
-            output[key] = deepMerge(target[key], source[key]);
-        } else {
-            output[key] = source[key];
-        }
-    }
-    return output;
-}
-
-
-/**
- * The JSON Schema used to parse the json file
+ * The JSON Schema used to parse the Json file
  */
 export const JsonConfigSchema = z.object({
     $schema: z.coerce.string().optional(),
@@ -384,26 +303,10 @@ export const JsonConfigSchema = z.object({
     paths: PathsSchema.default(PathsSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
-    plugins: PluginConfigSetSchema.default(PluginConfigSetSchema.parse({})).transform(data => deepMerge(plugins, data)),
-    components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})).transform(data => deepMerge(defaultComponentsValue, data))
+    components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})),
 })
 
 
-type imageConfigType = z.output<typeof ImageSchema>;
-type pathsConfigType = z.output<typeof PathsSchema>;
-type siteConfigType = z.output<typeof SiteSchema>;
-/**
- * The config passed to client
- */
-export type InteractConfigType = {
-    style: styleConfigType,
-    site: siteConfigType
-    plugins: pluginsConfigType,
-    components: componentsSetSchemaType,
-    images: imageConfigType,
-    paths: pathsConfigType & {
-        configFile: string
-        // "The root path of the site project"
-        rootDirectory: string
-    }
-}
+export type imageConfigType = z.output<typeof ImageSchema>;
+export type pathsConfigType = z.output<typeof PathsSchema>;
+export type siteConfigType = z.output<typeof SiteSchema>;

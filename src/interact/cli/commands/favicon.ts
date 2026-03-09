@@ -9,9 +9,8 @@ import {
     IconTransformationType
 } from '@realfavicongenerator/generate-favicon';
 import {getNodeImageAdapter, loadAndConvertToSvg} from "@realfavicongenerator/image-adapter-node";
-import type {InteractConfigType} from "../../config/configSchema.js";
 import {BaseCommand} from "../baseCommand.js";
-import {resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
+import {type InteractConfigType, resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
 
 
 async function generateImage({masterFilePath, dryRun, outputDirectory, interactConfig: config}: {
@@ -20,7 +19,7 @@ async function generateImage({masterFilePath, dryRun, outputDirectory, interactC
     outputDirectory: string
     interactConfig: InteractConfigType
 }) {
-    if (!masterFilePath) {
+    if (masterFilePath == null) {
         masterFilePath = config.site.faviconMaster
     }
     console.log(`Generating Favicons and Manifest with the master file: ${masterFilePath}`)

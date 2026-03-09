@@ -2,13 +2,14 @@ import React from "react";
 
 
 import type {ImageCompressionType} from "../../images/imageCompressionType.js";
-import type {ImageFitType, ImageType, InteractConfigType} from "../../config/configSchema.js";
+import type {ImageFitType, ImageType} from "../../config/configSchema.js";
 import clsx from "clsx";
 import {getHtmlImageAttributes, type HtmlImageAttributes} from "../../images/imageClientLibrary.js";
 import {ImageError, ImageErrors} from "../../images/imageErrorsDictionary.js";
 
 import {brokenImage} from "../../images/imageSharedCode.js";
 import {interactConfig} from "interact:config";
+import type {InteractConfigType} from "../../config/configHandler.js";
 /**
  * Otherwise we don't get any TypeScript error
  */

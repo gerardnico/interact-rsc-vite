@@ -1,7 +1,8 @@
 import type {TemplateProps} from "../../types/index.js";
 import {PAGE_CONTAINER} from "../classNames.js";
-import type {FaviconSetSchemaType, InteractConfigType} from "../../config/configSchema.js";
+import type {FaviconSetSchemaType} from "../../config/configSchema.js";
 import {interactConfig} from "interact:config";
+import type {InteractConfigType} from "../../config/configHandler.js";
 
 /**
  * Otherwise we don't get any TypeScript error

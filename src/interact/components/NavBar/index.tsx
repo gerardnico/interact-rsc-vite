@@ -3,7 +3,7 @@ import {PAGE_CONTAINER} from "../classNames.js";
 import interactConfig from "interact:config";
 import Image from "../Image/index.js"
 import type {TemplateProps} from "../../types/index.js";
-import type {InteractConfigType} from "../../config/configSchema.js";
+import type {InteractConfigType} from "../../config/configHandler.js";
 
 // @ts-ignore
 export default function NavBar(props:TemplateProps) {
@@ -38,14 +38,14 @@ export default function NavBar(props:TemplateProps) {
     let logoAlt: string | undefined;
     let logoClass: string | undefined;
     let navBarConfig = interactConfigCasted.components.NavBar;
-    logoSrc = navBarConfig?.props.logoSrc;
+    logoSrc = navBarConfig?.props?.logoSrc;
     if (typeof logoSrc != 'undefined') {
         const isSvg = logoSrc.endsWith('.svg');
         logoClass = "d-inline-block align-text-top"
         if (isSvg) {
             logoClass += "svg-cs svg-icon-cs"
         }
-        logoAlt = navBarConfig?.props.logoAlt;
+        logoAlt = navBarConfig?.props?.logoAlt;
         if (typeof logoAlt == 'undefined') {
             logoAlt = interactConfigCasted.site.name;
         }

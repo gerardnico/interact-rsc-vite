@@ -1,6 +1,6 @@
 import type {Plugin} from 'vite';
 import path from 'path';
-import type {InteractConfigType} from "../config/configSchema.js";
+import type {InteractConfigType} from "../config/configHandler.js";
 
 export function generateComponentProvider(interactConfig: InteractConfigType): string {
 
@@ -8,8 +8,12 @@ export function generateComponentProvider(interactConfig: InteractConfigType): s
     let mdxMappingElementNameComponentName = []
     let exports = [];
     for (const [key, value] of Object.entries(interactConfig.components)) {
-        let importName = path.basename(value.importPath)
-        imports.push(`import ${importName} from ${JSON.stringify(value.importPath)};`);
+        let importPath = value.importPath;
+        if (importPath == null) {
+            throw new Error(`Import ${importPath} not defined for the component ${key}`);
+        }
+        let importName = path.basename(importPath)
+        imports.push(`import ${importName} from ${JSON.stringify(importPath)};`);
         /**
          * Mdx Function Providers get only the leaf component
          */

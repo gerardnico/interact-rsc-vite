@@ -2,12 +2,12 @@ import fs from "fs";
 import path from "path";
 
 import Holy from "#components/Holy";
-import Landing from "../components/Landing/Landing.js";
-import * as NotFoundModule from "../components/NotFound/NotFound.js";
+import Landing from "#components/Landing";
+import * as NotFoundModule from "#components/NotFound";
 
 import getModulePage from 'interact:page-modules';
 import {interactConfig} from "interact:config";
-import type {InteractConfigType} from "../config/configSchema.js";
+import type {InteractConfigType} from "../config/configHandler.js";
 /**
  * Otherwise we don't get any TypeScript error
  */

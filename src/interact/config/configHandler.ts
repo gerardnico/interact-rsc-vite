@@ -1,4 +1,9 @@
-import {type InteractConfigType, JsonConfigSchema, type FaviconSetSchemaType} from "./configSchema.js";
+import {
+    JsonConfigSchema,
+    type FaviconSetSchemaType,
+    type pluginsConfigType, type componentsSetSchemaType, type pathsConfigType, type imageConfigType,
+    type siteConfigType, type styleConfigType
+} from "./configSchema.js";
 import fs from 'fs'
 import {readFileSync} from "node:fs";
 import path from "node:path";
@@ -12,6 +17,67 @@ export interface ConfigSource {
     loaded: boolean;
 }
 
+/**
+ * #components is declared in the package.json imports property
+ */
+//const privateComponent = `#components`
+const publicComponent = `@combostrap/interact/components`
+const defaultComponentsValue: componentsSetSchemaType = {
+    "Block": {
+        importPath: `${publicComponent}/Block`,
+        type: "leaf"
+    },
+    "pre": {
+        importPath: `${publicComponent}/Code`,
+        type: "leaf"
+    },
+    "a": {
+        importPath: `${publicComponent}/Anchor`,
+        type: "leaf"
+    },
+    "NavBar": {
+        importPath: `${publicComponent}/NavBar`,
+        type: "partial"
+    },
+    "Grid": {
+        importPath: `${publicComponent}/Grid`,
+        type: "leaf"
+    },
+    "GridCell": {
+        importPath: `${publicComponent}/GridCell`,
+        type: "leaf"
+    },
+    "Text": {
+        importPath: `${publicComponent}/Text`,
+        type: "leaf"
+    },
+    "Para": {
+        importPath: `${publicComponent}/Para`,
+        type: "leaf"
+    },
+    "RufflePlayer": {
+        importPath: `${publicComponent}/RufflePlayer`,
+        type: "leaf"
+    },
+    "StarRating": {
+        importPath: `${publicComponent}/StarRating`,
+        type: "leaf"
+    },
+    "Image": {
+        importPath: `${publicComponent}/Image`,
+        type: "leaf"
+    }
+}
+
+const defaultMarkdownUnifiedPlugins: pluginsConfigType = {
+    "rehype-github-alerts": {},
+    "rehype-href-rewrite": {},
+    "remark-link-checker": {
+        props: {strict: true}
+    },
+    "remark-layout": {},
+    "remark-frontmatter-modified-time": {}
+}
 
 // Based on https://realfavicongenerator.net
 let defaultFavicons: FaviconSetSchemaType = {
@@ -41,7 +107,7 @@ let defaultFavicons: FaviconSetSchemaType = {
     }
 };
 
-function updateFavicon(favicons?: FaviconSetSchemaType): FaviconSetSchemaType {
+function updateFavicon(favicons?: FaviconSetSchemaType | undefined): FaviconSetSchemaType {
     if (!favicons) {
         favicons = {}
     }
@@ -104,6 +170,59 @@ export function resolveInteractConfig(resolvedConf: ConfPathResolvedType) {
     return interactConfig;
 }
 
+/**
+ * Deep merge two objects
+ * Source wins (The last argument win) in case of conflict on primitive type
+ * We use the same order as in an object with ...
+ */
+function deepMerge(target: any, source: any) {
+    if (target == null) return source;
+    if (source == null) return target;
+
+    const output = {...target};
+
+    const allKeys = new Set([...Object.keys(target), ...Object.keys(source)]);
+
+    for (const key of allKeys) {
+        const inTarget = key in target;
+        const inSource = key in source;
+        // console.log("Deep Merge on " + key + " (Source: " + inSource + ", target: " + inTarget + ")");
+        if (inTarget && inSource) {
+            if (target[key] instanceof Object && source[key] instanceof Object) {
+                // console.log("Recursive Deep Merge on " + key)
+                output[key] = deepMerge(target[key], source[key]);
+                continue
+            }
+            // primitive type, source win
+            output[key] = source[key];
+            continue;
+        }
+        if (inSource) {
+            output[key] = source[key];
+        }
+        // if in target, already in
+        //output[key] = target[key];
+    }
+
+    return output;
+}
+
+/**
+ * The config seen by the client
+ * (no schema field and configFile and Root directory)
+ */
+export type InteractConfigType = {
+    style: styleConfigType,
+    site: siteConfigType
+    plugins: pluginsConfigType,
+    components: componentsSetSchemaType,
+    images: imageConfigType,
+    paths: pathsConfigType & {
+        configFile: string
+        // "The root path of the site project"
+        rootDirectory: string
+    }
+}
 
 /**
  * The main function
@@ -124,18 +243,18 @@ class ConfigHandler {
     #addDefaultAndRuntime(finalConfigData: InteractConfigType) {
 
 
-        finalConfigData.site.favicons = updateFavicon(finalConfigData.site.favicons);
-        let rehypeHrefRewrite = finalConfigData.plugins["rehype-href-rewrite"];
-        if (rehypeHrefRewrite != null) {
-            let baseValue = finalConfigData.site?.base;
-            if (typeof rehypeHrefRewrite.props === 'undefined') {
-                rehypeHrefRewrite.props = {
-                    base: baseValue,
-                }
-            } else {
-                rehypeHrefRewrite.props['base'] = baseValue;
-            }
-        }
+        finalConfigData.site.favicons = updateFavicon(finalConfigData?.site?.favicons);
+        // let rehypeHrefRewrite = finalConfigData.plugins["rehype-href-rewrite"];
+        // if (rehypeHrefRewrite != null) {
+        //     let baseValue = finalConfigData.site?.base;
+        //     if (typeof rehypeHrefRewrite.props === 'undefined') {
+        //         rehypeHrefRewrite.props = {
+        //             base: baseValue,
+        //         }
+        //     } else {
+        //         rehypeHrefRewrite.props['base'] = baseValue;
+        //     }
+        // }
 
         finalConfigData.paths = {
             configFile: this.configFile,
@@ -145,6 +264,15 @@ class ConfigHandler {
             imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory)
         }
 
+        /**
+         * Default plugins
+         */
+        finalConfigData.plugins = deepMerge(defaultMarkdownUnifiedPlugins, finalConfigData.plugins)
+
+        /**
+         * Default components
+         */
+        finalConfigData.components = deepMerge(defaultComponentsValue, finalConfigData.components)
 
     }
 

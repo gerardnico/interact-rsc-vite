@@ -25,7 +25,9 @@ export default class Schema extends BaseCommand<typeof Schema> {
     mkdirSync(outputDir, {recursive: true})
 
     // Generate JSON Schema
-    const jsonSchema = z.toJSONSchema(JsonConfigSchema)
+    // Why input: ZodDefault is now reflected as optional with io: "input".
+    // https://github.com/colinhacks/zod/issues/4134
+    const jsonSchema = z.toJSONSchema(JsonConfigSchema, { io: "input" })
 
     // Write to file
     writeFileSync(outputPath, JSON.stringify(jsonSchema, null, 2))
