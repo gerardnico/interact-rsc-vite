@@ -7,7 +7,7 @@ import clsx from "clsx";
 import {Aside} from "../Aside/Aside.js";
 import {Header} from "../Header/Header.js";
 import {Toc} from "../Toc/Toc.js";
-import NavBar from "../Navbar/NavBar.js";
+import NavBar from "../Navbar/index.js";
 import {interactConfig} from "interact:config";
 import type {InteractConfigType} from "../../config/configSchema.js";
 /**

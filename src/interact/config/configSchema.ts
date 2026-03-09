@@ -284,48 +284,58 @@ export type componentsSetSchemaType = z.output<typeof ComponentsConfigSetSchema>
 /**
  * #components is declared in the package.json imports property
  */
-const interactComponentBaseDirectory = `#components`
+//const privateComponent = `#components`
+const publicComponent = `@combostrap/interact/components`
 const defaultComponentsValue: componentsSetSchemaType = {
     // "Avatar": {
     //     importPath: `${interactComponentBaseDirectory}/Avatar`
     // },
-    // "Block": {
-    //     importPath: `${interactComponentBaseDirectory}/Block`
-    // },
-    "pre": {
-        importPath: `${interactComponentBaseDirectory}/Code`,
+    "Block": {
+        importPath: `${publicComponent}/Block`,
         type: "leaf"
     },
-    // "a": {
-    //     importPath: `${interactComponentBaseDirectory}/Anchor`
-    // },
+    "pre": {
+        importPath: `${publicComponent}/Code`,
+        type: "leaf"
+    },
+    "a": {
+        importPath: `${publicComponent}/Anchor`,
+        type: "leaf"
+    },
     // "h2": {
     //     importPath: `${interactComponentBaseDirectory}/H2`
     // },
     // "h3": {
     //     importPath: `${interactComponentBaseDirectory}/H3`
     // },
-    // "Grid": {
-    //     importPath: `${interactComponentBaseDirectory}/Grid`
-    // },
-    // "GridCell": {
-    //     importPath: `${interactComponentBaseDirectory}/GridCell`
-    // },
-    // "Text": {
-    //     importPath: `${interactComponentBaseDirectory}/Text`
-    // },
-    // "Para": {
-    //     importPath: `${interactComponentBaseDirectory}/Para`
-    // },
-    // "RufflePlayer": {
-    //     importPath: `${interactComponentBaseDirectory}/RufflePlayer`
-    // },
-    // "StarRating": {
-    //     importPath: `${interactComponentBaseDirectory}/StarRating`
-    // },
-    // "Image": {
-    //     importPath: `${interactComponentBaseDirectory}/Image`
-    // }
+    "Grid": {
+        importPath: `${publicComponent}/Grid`,
+        type: "leaf"
+    },
+    "GridCell": {
+        importPath: `${publicComponent}/GridCell`,
+        type: "leaf"
+    },
+    "Text": {
+        importPath: `${publicComponent}/Text`,
+        type: "leaf"
+    },
+    "Para": {
+        importPath: `${publicComponent}/Para`,
+        type: "leaf"
+    },
+    "RufflePlayer": {
+        importPath: `${publicComponent}/RufflePlayer`,
+        type: "leaf"
+    },
+    "StarRating": {
+        importPath: `${publicComponent}/StarRating`,
+        type: "leaf"
+    },
+    "Image": {
+        importPath: `${publicComponent}/Image`,
+        type: "leaf"
+    }
 }
 
 /**

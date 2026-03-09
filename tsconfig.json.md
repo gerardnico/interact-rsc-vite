@@ -21,3 +21,25 @@ To avoid:
 message: Cannot find module '/interact-rsc-vite/src/interact/config/jsonConfigSchema' imported from /interact-rsc-vite/src/interact/cli/commands/schema.ts
 ```
 
+## Source map
+
+So that the stack trace line number are not the compiled one.
+```json
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "declarationMap": true
+  }
+}
+```
+
+## Declaration map (d.ts) file
+
+```json
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true
+  }
+}
+```

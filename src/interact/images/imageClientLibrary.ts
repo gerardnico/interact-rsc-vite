@@ -65,7 +65,13 @@ function getSizes(screenWidth: number, imageWidth: number) {
     return sizes;
 }
 
-async function toImageServiceUri(src: string, serviceProperties: Partial<Record<ImageServiceKeyUrl, string>>, sharpPipeline: sharp.Sharp) {
+/**
+ *
+ * @param src - the src path
+ * @param serviceProperties - the image service properties
+ * @param sharpPipeline - a sharp instance - may be undefined when we send an error request (ie the file is on the server, not the client)
+ */
+async function toImageServiceUri(src: string, serviceProperties: Partial<Record<ImageServiceKeyUrl, string>>, sharpPipeline?: sharp.Sharp) {
 
     /**
      * In dev/start mode?
@@ -85,6 +91,9 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
         return `${uriBase}?${params.toString()}`;
     }
 
+    if (sharpPipeline == null) {
+        throw new Error(`Internal: sharp is mandatory to generate the image ${src}`)
+    }
     /**
      * In static generation mode
      */
@@ -126,6 +135,29 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
  */
 export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<HtmlImageAttributes> {
 
+    let serviceProperties: Partial<Record<ImageServiceKeyUrl, string>> = {}
+    if (props.width != null) {
+        serviceProperties.width = String(props.width)
+    }
+    if (props.height != null) {
+        serviceProperties.height = String(props.height)
+    }
+    if (props.ratio != null) {
+        serviceProperties.ratio = props.ratio
+    }
+
+    if (props.error) {
+        /**
+         * Error request
+         */
+        serviceProperties.error = String(props.error);
+        let uri = await toImageServiceUri(props.src, serviceProperties);
+        return {
+            src: uri,
+            width: Number(props.width) || 100,
+            height: Number(props.height) || 100,
+        }
+    }
 
     const sourceFile = path.resolve(interactConfigTyped.paths.imagesDirectory, props.src);
     let intrinsicWidth, intrinsicHeight;
@@ -136,7 +168,10 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         intrinsicHeight = metadata.height;
         intrinsicWidth = metadata.width;
     } catch (err) {
-        throw new ImageError({message: `Error while reading the file ${props.src}: ${String(err)}`, ...ImageErrors.NOT_FOUND})
+        throw new ImageError({
+            ...ImageErrors.NOT_FOUND,
+            message: `Error while reading the file ${props.src}: ${String(err)}`
+        })
     }
 
     let originalRequestDimensionHelper = new ImageDimensionHelper({
@@ -148,17 +183,6 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
     });
     let {targetWidth, targetHeight} = originalRequestDimensionHelper.getTargetDimensions()
 
-    let serviceProperties: Partial<Record<ImageServiceKeyUrl, string>> = {}
-
-    if (props.width != null) {
-        serviceProperties.width = String(props.width)
-    }
-    if (props.height != null) {
-        serviceProperties.height = String(props.height)
-    }
-    if (props.ratio != null) {
-        serviceProperties.ratio = props.ratio
-    }
     if (props.compression != null && props.compression != "none") {
         serviceProperties.compression = props.compression
     }

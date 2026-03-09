@@ -1,7 +1,7 @@
 
 import {PAGE_CONTAINER} from "../classNames.js";
 import interactConfig from "interact:config";
-import Image from "../Image/Image.js"
+import Image from "../Image/index.js"
 import type {TemplateProps} from "../../types/index.js";
 import type {InteractConfigType} from "../../config/configSchema.js";
 
@@ -69,8 +69,8 @@ export default function NavBar(props:TemplateProps) {
                        accessKey="h" style={{fontWeight:700}}>
                         {logoSrc ? (
                             <Image src={logoSrc} alt={logoAlt} className={logoClass}
-                                         width={navBarConfig?.props?.logoWidth}
-                                         height={navBarConfig?.props?.logoHeight}/>) : ''}
+                                   width={navBarConfig?.props?.logoWidth}
+                                   height={navBarConfig?.props?.logoHeight}/>) : ''}
                         {navBarConfig?.props?.brandName != null &&
                             <span
                                 className="btn navbar-brand text-primary">{navBarConfig?.props?.brandName}</span>}

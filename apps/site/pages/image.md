@@ -4,14 +4,19 @@ title: Image
 
 ## Image Component
 
-| Name        | Default | Possible values                                 | Description                                                    |
-|-------------|---------|-------------------------------------------------|----------------------------------------------------------------|
-| Type        | `fluid` | fluid`, `none`                                  | The type of image to apply dedicated styling                   |
-| Width       |         | Positive Integer                                | The requested width in pixel                                   |
-| Height      |         | Postiive Integer                                | The requested height in pixel                                  |
-| Fit         | `cover` | `cover`, `contain`, `fill`, `inside`, `outside` | How the image should fit the box defined by width and height   |
-| Ratio       |         | `number:number`                                 | The requested ratio (Most common: `21:9`,`16:9`, `4:3`, `1:1`) |
-| Compression | `mid`   | `low`, `mid`, `high`, `max`, `none`             | A compression preset for raster image                          |
+| Name   | Default | Possible values  | Description                                                    |
+|--------|---------|------------------|----------------------------------------------------------------|
+| Type   | `fluid` | fluid`, `none`   | The type of image to apply dedicated styling                   |
+| Width  |         | Positive Integer | The requested width in pixel                                   |
+| Height |         | Postiive Integer | The requested height in pixel                                  |
+| Ratio  |         | `number:number`  | The requested ratio (Most common: `21:9`,`16:9`, `4:3`, `1:1`) |
+
+## Transformation Properties
+
+| Name        | Default | Possible values                                 | Description                                                  |
+|-------------|---------|-------------------------------------------------|--------------------------------------------------------------|
+| Fit         | `cover` | `cover`, `contain`, `fill`, `inside`, `outside` | How the image should fit the box defined by width and height |
+| Compression | `mid`   | `low`, `mid`, `high`, `max`, `none`             | A compression preset for raster image                        |
 
 More:
 
@@ -40,10 +45,10 @@ In case of a bad input in the image component:
 
 Example of Image that will show an error:
 
-```mdxjs
-<Image src={"card_puncher_data_processing.jpg"}
-       alt={"Card Puncher"}
-       width={-1}
+```markdown
+<Image src="card_puncher_data_processing.jpg"
+alt="Card Puncher"
+width="-1"
 />
 ```
 

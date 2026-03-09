@@ -15,6 +15,7 @@ import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
 import {resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
 import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
 import viteMdxComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
+import svgReactPlugin from "vite-plugin-svgr";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -176,6 +177,16 @@ export function resolveViteConfig(
             }),
             viteMdxComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
             react(),
+            // https://www.npmjs.com/package/vite-plugin-svgr
+            svgReactPlugin({
+                include: '**/*.svg',
+                svgrOptions: {
+                    plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx'],
+                    svgoConfig: {
+                        plugins: ['preset-default', 'removeTitle', 'removeDesc', 'removeDoctype', 'cleanupIds'],
+                    },
+                },
+            }),
         ],
     }
 }

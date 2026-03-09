@@ -1,10 +1,11 @@
 {
   "name": "@combostrap/interact",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "license": "MIT",
   "type": "module",
-  "bin": "src/interact/cli/run.js",
+  "bin": {
+    "interact": "src/interact/cli/run.js"
+  },
   "scripts": {
     "build": "tsc",
     "start": "src/interact/cli/dev.js start --confPath=apps/site",
@@ -12,8 +13,16 @@
     "preview": "src/interact/cli/dev.js preview --confPath=apps/site"
   },
   "files": [
-    "src/*"
+    "dist/interact/**/*.js",
+    "dist/interact/**/*.d.ts",
+    "dist/interact/**/*.js.map"
   ],
+  "exports": {
+    "./client": {
+      "types": "./src/interact/types/index.d.ts"
+    },
+    "./components/*": "./dist/interact/components/*/index.js"
+  },
   "imports": {
     "#components/*": "./src/interact/components/*/index.js"
   },
@@ -23,6 +32,9 @@
     "@oclif/core": "4.8.2",
     "@realfavicongenerator/generate-favicon": "0.6.3",
     "@realfavicongenerator/image-adapter-node": "0.6.3",
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
+    "@svgr/plugin-svgo": "^8.1.0",
     "clsx": "2.1.1",
     "etag": "1.8.1",
     "glob": "13.0.6",
@@ -31,7 +43,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "remark-frontmatter": "5.0.0",
-    "remark-gfm": "^4.0.1",
+    "remark-gfm": "4.0.1",
     "remark-mdx-frontmatter": "5.2.0",
     "rollup": "*",
     "rsc-html-stream": "0.0.7",
@@ -39,6 +51,7 @@
     "svgo": "4.0.1",
     "ts-node": "10.9.2",
     "vite": "7.3.1",
+    "vite-plugin-svgr": "4.5.0",
     "zod": "4.3.6"
   },
   "devDependencies": {
