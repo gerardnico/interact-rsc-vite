@@ -37,11 +37,12 @@ See [](howto/add-a-markdown-component.md)
 
 ## Type
 
-| Name       | Type       | Description                                                           |
-|------------|------------|-----------------------------------------------------------------------|
-| `layout`   | `template` | Top components of every page                                          |
-| `partials` | `template` | Sub-components used in layout components (toc, aside, ...).           |
-| `leaf`     | `content`  | Leaf Components (They are available in Markdown file (`md` or `mdx`)) |
+| Name                | Type       | Description                                                                 |
+|---------------------|------------|-----------------------------------------------------------------------------|
+| [layout](layout.md) | `template` | Top components of every page                                                |
+| `partials`          | `template` | Sub-components used in layout components (toc, aside, ...).                 |
+| `content`           | `content`  | Components made available in Markdown files (`md` or `mdx`))                |
+| `page`              | `page`     | Components that exports also frontmatter and toc (Example: `NotFound` page) |
 
 Note:
 

@@ -5,6 +5,7 @@ import type {InteractConfigType} from "../config/configHandler.js";
 export function generateComponentProvider(interactConfig: InteractConfigType): string {
 
     let imports = [];
+    let layoutComponents = [];
     let mdxMappingElementNameComponentName = []
     let exports = [];
     for (const [key, value] of Object.entries(interactConfig.components)) {
@@ -13,13 +14,25 @@ export function generateComponentProvider(interactConfig: InteractConfigType): s
             throw new Error(`Import ${importPath} not defined for the component ${key}`);
         }
         let importName = path.basename(importPath)
-        imports.push(`import ${importName} from ${JSON.stringify(importPath)};`);
+        if(value.type=="page") {
+            imports.push(`import * as ${importName} from ${JSON.stringify(importPath)};`);
+        } else {
+            imports.push(`import ${importName} from ${JSON.stringify(importPath)};`);
+        }
         /**
-         * Mdx Function Providers get only the leaf component
+         * Mdx Function Providers get only the content component
          */
-        if (value.type == "leaf") {
+        if (value.type == "content") {
             mdxMappingElementNameComponentName.push(`${key}:${importName}`)
         }
+        /**
+         * Layout
+         */
+        if (value.type == "layout") {
+            let layoutKey = key.toLowerCase();
+            layoutComponents.push(`${layoutKey}:${importName}`)
+        }
+
         /**
          * We export all component so that they can be used
          */
@@ -38,6 +51,11 @@ export function useMDXComponents() {
   return {
     ${mdxMappingElementNameComponentName.join(',\n')}
   }
+}
+
+const layoutComponents = { ${layoutComponents.join(',\n')} }
+export function getLayoutComponent(name) {
+  return layoutComponents[name];
 }
 
 export { ${exports.join(', ')} };

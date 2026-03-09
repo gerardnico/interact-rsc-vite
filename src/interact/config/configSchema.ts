@@ -40,7 +40,6 @@ const FaviconSetSchema: z.ZodType<FaviconSetSchemaType> = z.record(
 );
 
 
-
 /**
  * Site Section in JSON
  */
@@ -88,7 +87,6 @@ const PathsSchema = z.object({
     publicDirectory: z.coerce.string<string>().describe("The path of the public directory").default("public"),
     imagesDirectory: z.coerce.string<string>().describe("The path of the image directory").default("images"),
 })
-
 
 
 let tocSchema = z.object({
@@ -256,7 +254,7 @@ const BaseComponentSchema = z.object({
     // No file system path, it's derived thanks to import, and it does not work well with vite and import
     // as they don't handle symlink well
     importPath: z.coerce.string<string>().optional(),
-    type: z.enum(["layout", "partial", "leaf"]).default("leaf"),
+    type: z.enum(["layout", "partial", "content", "page"]).default("content"),
     props: z.record(z.string(), z.unknown()).optional(),
 });
 

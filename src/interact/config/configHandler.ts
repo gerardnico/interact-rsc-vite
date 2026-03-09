@@ -25,15 +25,23 @@ const publicComponent = `@combostrap/interact/components`
 const defaultComponentsValue: componentsSetSchemaType = {
     "Block": {
         importPath: `${publicComponent}/Block`,
-        type: "leaf"
+        type: "content"
+    },
+    "Landing": {
+        importPath: `${publicComponent}/Landing`,
+        type: "layout"
+    },
+    "Holy": {
+        importPath: `${publicComponent}/Holy`,
+        type: "layout"
     },
     "pre": {
         importPath: `${publicComponent}/Code`,
-        type: "leaf"
+        type: "content"
     },
     "a": {
         importPath: `${publicComponent}/Anchor`,
-        type: "leaf"
+        type: "content"
     },
     "NavBar": {
         importPath: `${publicComponent}/NavBar`,
@@ -41,31 +49,35 @@ const defaultComponentsValue: componentsSetSchemaType = {
     },
     "Grid": {
         importPath: `${publicComponent}/Grid`,
-        type: "leaf"
+        type: "content"
     },
     "GridCell": {
         importPath: `${publicComponent}/GridCell`,
-        type: "leaf"
+        type: "content"
     },
     "Text": {
         importPath: `${publicComponent}/Text`,
-        type: "leaf"
+        type: "content"
     },
     "Para": {
         importPath: `${publicComponent}/Para`,
-        type: "leaf"
+        type: "content"
     },
     "RufflePlayer": {
         importPath: `${publicComponent}/RufflePlayer`,
-        type: "leaf"
+        type: "content"
     },
     "StarRating": {
         importPath: `${publicComponent}/StarRating`,
-        type: "leaf"
+        type: "content"
     },
     "Image": {
         importPath: `${publicComponent}/Image`,
-        type: "leaf"
+        type: "content"
+    },
+    "NotFound": {
+        importPath: `${publicComponent}/NotFound`,
+        type: "page"
     }
 }
 

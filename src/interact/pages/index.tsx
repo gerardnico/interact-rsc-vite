@@ -2,12 +2,13 @@ import fs from "fs";
 import path from "path";
 
 import Holy from "#components/Holy";
-import Landing from "#components/Landing";
-import * as NotFoundModule from "#components/NotFound";
 
 import getModulePage from 'interact:page-modules';
 import {interactConfig} from "interact:config";
 import type {InteractConfigType} from "../config/configHandler.js";
+import {getLayoutComponent, NotFound} from "interact:components";
+import type {PageModule} from "./pageModule.js";
+
 /**
  * Otherwise we don't get any TypeScript error
  */
@@ -57,33 +58,24 @@ export function getRootComponent(normalizedRequest: Request): React.JSX.Element 
     /**
      * Get a page module
      */
-    let pageModule = getModulePage({path: url.pathname});
+    let pageModule: PageModule | undefined = getModulePage({path: url.pathname});
 
-    if (!pageModule) {
-        pageModule = NotFoundModule;
+    if (pageModule == null) {
+        pageModule = NotFound;
     }
     /**
      * Layout
      */
     let layout = "holy"
-    let frontMatterLayout = pageModule?.frontmatter?.layout?.toLowerCase();
+    let frontMatterLayout = pageModule?.frontmatter?.layout;
     if (frontMatterLayout) {
         layout = frontMatterLayout
     }
-    let Layout
-    switch (layout) {
-        case "holy": {
-            Layout = Holy
-            break
-        }
-        case "landing": {
-            Layout = Landing
-            break;
-        }
-        default: {
-            Layout = Holy;
-            console.log("Layout not found: " + layout)
-        }
+    const normalizedLayout = layout.toLowerCase().replace("-", "")
+    let Layout = getLayoutComponent(normalizedLayout);
+    if (Layout == null) {
+        Layout = Holy;
+        console.error(`Frontmatter layout ${layout} not found, holy layout was used instead`)
     }
 
     return <Layout pageModule={pageModule} request={normalizedRequest}/>

@@ -1,9 +1,19 @@
+// noinspection JSUnusedGlobalSymbols
+
 /**
  * Just an example of what should be generated
  */
 import type {MDXComponents} from 'mdx/types.js'
 import Code from "#components/Code";
 import Holy from "#components/Holy";
+import type {ComponentType} from "react";
+import type {TemplateProps} from "./templateComponent.js";
+import Landing from "#components/Landing";
+
+const layoutComponents: Record<string, ComponentType<TemplateProps>> = {
+    holy: Holy,
+    landing: Landing,
+};
 
 /**
  * useMDXComponents is used by Mdx
@@ -22,6 +32,10 @@ export function useMDXComponents(): MDXComponents {
         },
         pre: Code
     }
+}
+
+export function getLayoutComponent(name: string): ComponentType<TemplateProps> | undefined {
+    return layoutComponents[name.toLowerCase()];
 }
 
 export {Code, Holy}

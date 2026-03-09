@@ -6,7 +6,7 @@ import {PAGE_CONTAINER} from "../classNames.js";
 import clsx from "clsx";
 import {Aside} from "../Aside/Aside.js";
 import {Header} from "../Header/Header.js";
-import {Toc} from "../Toc/Toc.js";
+import {Toc} from "../Toc/index.js";
 import NavBar from "../NavBar/index.js";
 import {interactConfig} from "interact:config";
 import type {InteractConfigType} from "../../config/configHandler.js";
@@ -19,7 +19,7 @@ let interactConfigTyped = interactConfig as InteractConfigType;
  */
 export default async function Holy(layoutProps: TemplateProps) {
 
-    const Component = layoutProps.pageModule.default;
+    const PageComponent = layoutProps.pageModule.default;
     return (
         <html lang="en" dir="ltr">
         <Head {...layoutProps} />
@@ -40,7 +40,7 @@ export default async function Holy(layoutProps: TemplateProps) {
                     <Toc {...layoutProps} />
                 </div>
                 <div id="main-content">
-                    {Component && <Component request={layoutProps.request}/>}
+                    {PageComponent && <PageComponent request={layoutProps.request}/>}
                 </div>
                 <div id="main-side" className="d-print-none">
                 </div>

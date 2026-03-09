@@ -35,7 +35,7 @@ You can register it by defining it in the [configuration file](../conf.md).
 
 ### Use it
 
-* You can now use it in [markdown page](../markdown.md)
+You can now use it in [markdown page](../markdown.md)
 
 ```markdown
 <Planet/>
