@@ -6,7 +6,7 @@ import {PAGE_CONTAINER} from "../classNames.js";
 import clsx from "clsx";
 import {Aside} from "../Aside/Aside.js";
 import {Header} from "../Header/Header.js";
-import {Toc} from "../Toc/index.js";
+import Toc from "../Toc/index.js";
 import NavBar from "../NavBar/index.js";
 import {interactConfig} from "interact:config";
 import type {InteractConfigType} from "../../config/configHandler.js";

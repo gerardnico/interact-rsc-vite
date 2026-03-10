@@ -1,3 +1,5 @@
+import "interact:outline-numbering.css"
+
 /**
  * client module
  * It is used for hydration and client-side rendering

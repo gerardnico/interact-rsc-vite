@@ -20,8 +20,22 @@ for the [dev](src/interact/cli/dev.js) script
 
 This import declaration permits to keep the component private
 and to refer to them like that:
+
 ```javascript
 import Code from "#components/Code"
 ```
 
 It's used in the `interact:component-provider` module
+
+## Component Export
+
+```json
+{
+  "exports": {
+    "./components/*": "./src/interact/components/*/index.js"
+  }
+}
+```
+
+Why not the `dist` directory? Because vite does the bundling.
+The only code that needs to be build is the cli.

@@ -301,7 +301,7 @@ export default function Code({
         fontSize: "11px",
         fontFamily: "inherit",
         cursor: "pointer",
-        outline: "none",
+        outlineNumbering: "none",
         letterSpacing: "0.02em",
     };
 

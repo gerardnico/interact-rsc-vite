@@ -22,7 +22,7 @@
     "./client": {
       "types": "./src/interact/types/index.d.ts"
     },
-    "./components/*": "./dist/interact/components/*/index.js"
+    "./components/*": "./src/interact/components/*/index.js"
   },
   "imports": {
     "#components/*": "./src/interact/components/*/index.js"

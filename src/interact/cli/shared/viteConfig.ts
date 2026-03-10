@@ -16,6 +16,7 @@ import {resolveInteractConfig, resolveInteractConfPath} from "../../config/confi
 import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
 import viteMdxComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
 import svgReactPlugin from "vite-plugin-svgr";
+import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -186,6 +187,7 @@ export function resolveViteConfig(
                     },
                 },
             }),
+            viteOutlineNumberingStylesPlugin(interactConfigTyped)
         ],
     }
 }

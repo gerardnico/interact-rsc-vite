@@ -2,7 +2,7 @@ import {
     JsonConfigSchema,
     type FaviconSetSchemaType,
     type pluginsConfigType, type componentsSetSchemaType, type pathsConfigType, type imageConfigType,
-    type siteConfigType, type styleConfigType
+    type siteConfigType, type styleConfigType, type outlineConfigType
 } from "./configSchema.js";
 import fs from 'fs'
 import {readFileSync} from "node:fs";
@@ -235,6 +235,7 @@ export type InteractConfigType = {
     style: styleConfigType,
     site: siteConfigType
     plugins: pluginsConfigType,
+    outline: outlineConfigType,
     components: componentsSetSchemaType,
     images: imageConfigType,
     paths: pathsConfigType & {

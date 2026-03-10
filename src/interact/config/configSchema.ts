@@ -89,18 +89,24 @@ const PathsSchema = z.object({
 })
 
 
-let tocSchema = z.object({
-    minItems: z.coerce.number<number>().default(2),
-    maxDepth: z.coerce.number<number>().default(3),
-});
 let container = z.object({
     // https://getbootstrap.com/docs/5.3/layout/containers/
     containerClass: z.enum(['container', 'container-fluid', 'container-sm', 'container-md', 'container-lg', 'container-xl', 'container-xxl']).default('container'),
     // with the unit please
     containerMaxWidth: z.coerce.string<string>().optional()
 });
-let layoutSchema = z.object({
-    toc: tocSchema.default(tocSchema.parse({}))
+
+
+let counterStyleSchema = z.enum(['decimal', 'decimal-leading-zero', 'arabic-indic', 'upper-armenian', 'lower-armenian', 'bengali', 'cambodian/khmer', 'cjk-decimal', 'devanagari', 'georgian', 'gujarati', 'gurmukhi', 'hebrew', 'kannada', 'lao', 'malayalam', 'mongolian', 'myanmar', 'oriya', 'persian', 'lower-roman', 'upper-roman', 'tamil', 'telugu', 'thai', 'tibetan', 'lower-alpha', 'upper-alpha', 'lower-greek', 'hiragana', 'hiragana-iroha', 'katakana', 'katakana-iroha']);
+let outlineNumberingSchema = z.object({
+    enabled: z.boolean().describe("Is outline numbering enabled").default(true),
+    suffix: z.string().describe("The suffix of the numbering").default(" - "),
+    counterSeparator: z.string().describe("The separator for each counter").default("."),
+    counterStyleLevel2: counterStyleSchema.describe("The style of the level 2 counter").default("decimal"),
+    counterStyleLevel3: counterStyleSchema.describe("The style of the level 3 counter").default("decimal"),
+    counterStyleLevel4: counterStyleSchema.describe("The style of the level 4 counter").default("decimal"),
+    counterStyleLevel5: counterStyleSchema.describe("The style of the level 5 counter").default("decimal"),
+    counterStyleLevel6: counterStyleSchema.describe("The style of the level 6 counter").default("decimal"),
 });
 
 
@@ -233,7 +239,6 @@ let cssVariables = z.object({
  * (ie all that have a
  */
 let configStyleSchema = z.object({
-    layoutProps: layoutSchema.describe("Properties used by layout components").default(layoutSchema.parse({})),
     // https://getbootstrap.com/docs/5.3/customize/css-variables/
     cssVariables: cssVariables.describe("Css variables").default(cssVariables.parse({})),
     container: container.default(container.parse({}))
@@ -258,6 +263,15 @@ const BaseComponentSchema = z.object({
     props: z.record(z.string(), z.unknown()).optional(),
 });
 
+const TocSchema = BaseComponentSchema.extend({
+    props: BaseComponentSchema.shape.props.and(
+        z.object({
+            minItems: z.coerce.number<number>().default(2),
+            maxDepth: z.coerce.number<number>().default(3),
+        })
+    ).optional(),
+});
+
 // Component-specific schemas that extend the base
 const NavBarSchema = BaseComponentSchema.extend({
     props: BaseComponentSchema.shape.props.and(
@@ -274,6 +288,7 @@ const NavBarSchema = BaseComponentSchema.extend({
 
 const ComponentsConfigSetSchema = z.object({
     NavBar: NavBarSchema.optional(),
+    Toc: TocSchema.optional(),
 }).catchall(BaseComponentSchema); // unknown keys fall back to base schema
 
 
@@ -292,12 +307,16 @@ const PluginConfigSchema = z.object({
 const PluginConfigSetSchema = z.record(z.coerce.string<string>(), PluginConfigSchema.nullable());
 export type pluginsConfigType = z.output<typeof PluginConfigSetSchema>;
 
+const OutlineSchema = z.object({
+    numbering: outlineNumberingSchema.default(outlineNumberingSchema.parse({})),
+})
 /**
  * The JSON Schema used to parse the Json file
  */
 export const JsonConfigSchema = z.object({
     $schema: z.coerce.string().optional(),
     site: SiteSchema.default(SiteSchema.parse({})),
+    outline: OutlineSchema.default(OutlineSchema.parse({})),
     paths: PathsSchema.default(PathsSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
@@ -308,3 +327,4 @@ export const JsonConfigSchema = z.object({
 export type imageConfigType = z.output<typeof ImageSchema>;
 export type pathsConfigType = z.output<typeof PathsSchema>;
 export type siteConfigType = z.output<typeof SiteSchema>;
+export type outlineConfigType = z.output<typeof OutlineSchema>;

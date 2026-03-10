@@ -1,20 +1,45 @@
 import type {TemplateProps, TocEntry} from "../../types/index.js";
+import "./toc.css"
+interface TocProps extends TemplateProps {
+    maxDepth?: number;
+}
 
+function TocItems({entries, maxDepth, currentDepth = 1}: {
+    entries: TocEntry[],
+    maxDepth: number,
+    currentDepth?: number
+}) {
+    if (currentDepth > maxDepth) return null;
 
-export function Toc(layoutProps: TemplateProps) {
-    let toc: TocEntry[] | undefined = layoutProps.pageModule?.toc;
     return (
-        <nav className="toc-cs">
-            <h5 className="mb-3">Table of Contents</h5>
-            <ul className="list-unstyled">
-                {toc && toc.map((heading, i) => (
-                    <li key={i} className={`toc-level-${heading.depth} mb-2`}>
-                        <a href={`#${heading.slug}`} className="text-decoration-none text-secondary">
-                            {heading.value}
-                        </a>
-                    </li>
-                ))}
-            </ul>
+        <ul>
+            {entries.map((heading, i) => (
+                <li key={i} className={`toc-entry toc-level-${heading.depth}`}>
+                    <a href={`#${heading.slug}`}>
+                        {heading.value}
+                    </a>
+                    {heading.children && heading.children.length > 0 && (
+                        <TocItems entries={heading.children} maxDepth={maxDepth} currentDepth={currentDepth + 1}/>
+                    )}
+                </li>
+            ))}
+        </ul>
+    );
+}
+
+export default function Toc({maxDepth, ...layoutProps}: TocProps) {
+    if (maxDepth == null) {
+        maxDepth = 3;
+    }
+    const toc: TocEntry[] | undefined = layoutProps.pageModule?.toc;
+    /**
+     * The selector is a class so that we can put more than one
+     * for documentation purposes
+     */
+    return (
+        <nav className="toc">
+            <p className="toc-header">Table of Contents</p>
+            {toc && <TocItems entries={toc} maxDepth={maxDepth}/>}
         </nav>
-    )
+    );
 }

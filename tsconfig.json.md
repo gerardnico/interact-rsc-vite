@@ -11,7 +11,7 @@ https://vite.dev/guide/features#client-types
 }
 ```
 
-All files should have a `js` even the typescript one.
+All files should have a `js` even the TypeScript one.
 
 Why ?
 
@@ -34,6 +34,8 @@ So that the stack trace line number are not the compiled one.
 ```
 
 ## Declaration map (d.ts) file
+
+To help IDE find the right code place.
 
 ```json
 {
