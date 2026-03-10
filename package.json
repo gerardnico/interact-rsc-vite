@@ -8,6 +8,7 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "start": "src/interact/cli/dev.js start --confPath=apps/site",
+    "site": "src/interact/cli/dev.js start --confPath=../com-gerardnico",
     "ssg": "src/interact/cli/dev.js build --confPath=apps/site",
     "preview": "src/interact/cli/dev.js preview --confPath=apps/site"
   },

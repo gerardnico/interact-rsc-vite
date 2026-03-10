@@ -162,7 +162,9 @@ export function resolveViteConfig(
                 endPoint: imageMiddlewareEndPoint
             }),
             viteVirtualConfModule(resolvedConfPath),
+            // https://mdxjs.com/packages/mdx/#processoroptions
             mdx({
+                development: command == "start",
                 mdExtensions: [], // When treated as Markdown, the custom elements are deleted
                 mdxExtensions: ['.mdx', '.md'],
                 remarkPlugins: [

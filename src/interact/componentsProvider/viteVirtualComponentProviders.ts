@@ -78,7 +78,7 @@ export function getLayoutComponent(name) {
   return layoutComponents[name];
 }
 
-export { ${exports.values().toArray().join(', ')} };
+export { ${[...exports].join(', ')} };
 `;
 }
 

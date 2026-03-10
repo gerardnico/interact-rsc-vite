@@ -1,0 +1,94 @@
+import {visit} from "unist-util-visit";
+import type {Root} from 'hast'
+import {removePublicPart} from "./unified-util.js";
+
+
+/**
+ * Astro path does not have the md or mdx extension but the link checker (editor or cli) needs them
+ * This plugin will delete the Markdown extension from a link
+ *
+ * Example:
+ * * /docs/getting-started.md → /docs/getting-started
+ * * /docs/getting-started.mdx → /docs/getting-started
+ * * /docs/index.md → /docs
+ * * /docs/index.mdx → /docs
+ * * Leaves external links untouched
+ *
+ * Remove also the public
+ * * ../../../public/static/file.pdf -> /static/file.pdf
+ *
+ * @param publicDirName - the dir name
+ * @param target - the external link target
+ * @param base - the site base
+ * @returns {(function(*): void)|*}
+ */
+export default function rehypeHrefRewrite({publicDirName = 'public', target = "_blank", base = ''}: {
+    publicDirName: string,
+    target: string,
+    base: string
+}): ((publicPattern: string) => void) | any {
+    return function transformer(tree: Root) {
+        visit(tree, "element", node => {
+
+            if (node.tagName === "img" &&
+                node.properties &&
+                typeof node.properties.src === "string") {
+                if (!base) {
+                    return;
+                }
+                // with an image the full path should be given
+                // the base head HTML element has no effect
+                if (node.properties.src.startsWith("http")) {
+                    return;
+                }
+                if (node.properties.src.endsWith(base)) {
+                    return
+                }
+                node.properties.src = `${base}${node.properties.src}`
+                return;
+            }
+
+            if (
+                node.tagName === "a" &&
+                node.properties &&
+                typeof node.properties.href === "string"
+            ) {
+                const href = node.properties.href;
+
+                if (
+                    href.startsWith("http://") ||
+                    href.startsWith("https://")) {
+                    node.properties.target = target
+                    return;
+                }
+                // Skip external, hash, absolute, and mailto links
+                if (
+                    href.startsWith("#") ||
+                    href.startsWith("mailto:") ||
+                    href.startsWith("/")
+                ) {
+                    return;
+                }
+
+                /**
+                 * Special case so that the href is not empty
+                 * by the replacement below
+                 */
+                if (href === "index.md" || href === "index.mdx") {
+                    node.properties.href = ".";
+                    return
+                }
+
+                // Remove .md or .mdx at the end (before optional slash)
+                node.properties.href = href.replace(/(\.mdx?|\/index\.mdx?)$/, "");
+
+                // Remove the public part
+                node.properties.href = removePublicPart({
+                    relativePath: node.properties.href,
+                    publicDirName: publicDirName,
+                    absolute: false,
+                })
+            }
+        });
+    };
+}
