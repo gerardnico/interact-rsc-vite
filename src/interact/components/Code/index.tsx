@@ -1,6 +1,7 @@
 "use client"
 
 import React, {useState, useEffect, useRef, useCallback} from "react";
+import clsx from "clsx";
 
 
 declare global {
@@ -26,8 +27,12 @@ type PrismTheme =
     | "funky"
     | "twilight";
 
-interface PrismOptions {
-    lineNumbers?: boolean;
+
+export type CodeProps = React.HTMLAttributes<HTMLElement>
+    & {
+    lang: string,
+    children: React.ReactElement<React.HTMLAttributes<HTMLPreElement>, 'pre'>;
+    lineNumbers?: boolean
     lineHighlight?: string; // e.g. "1,3-5"
     commandLine?: boolean;
     showLanguage?: boolean;
@@ -37,16 +42,6 @@ interface PrismOptions {
     wordWrap?: boolean;
 }
 
-export type CodeProps = React.HTMLAttributes<HTMLElement>
-    & {
-    language?: string;
-    theme?: PrismTheme;
-    colorMode?: "light" | "dark";
-    options?: PrismOptions;
-    className?: string;
-}
-
-// ─── Theme Definitions ────────────────────────────────────────────────────────
 
 const LIGHT_THEMES: PrismTheme[] = [
     "default",
@@ -65,27 +60,20 @@ const DARK_THEMES: PrismTheme[] = [
     "vsDark",
 ];
 
+let cdnBase = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0";
+
 const THEME_CDN: Record<PrismTheme, string> = {
-    default:
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css",
-    okaidia:
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css",
-    tomorrow:
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css",
-    solarizedlight:
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-solarizedlight.min.css",
-    dracula:
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css",
-    nord: "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css",
-    oneDark:
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css",
-    vsDark:
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css",
-    coy: "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css",
-    funky:
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-funky.min.css",
-    twilight:
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css",
+    default: "prism.min.css",
+    okaidia: "prism-okaidia.min.css",
+    tomorrow: "prism-tomorrow.min.css",
+    solarizedlight: "prism-solarizedlight.min.css",
+    dracula: "prism-twilight.min.css",
+    nord: "prism-tomorrow.min.css",
+    oneDark: "prism-okaidia.min.css",
+    vsDark: "prism-tomorrow.min.css",
+    coy: "prism-coy.min.css",
+    funky: "prism-funky.min.css",
+    twilight: "prism-twilight.min.css",
 };
 
 const SUPPORTED_LANGUAGES = [
@@ -112,7 +100,6 @@ const SUPPORTED_LANGUAGES = [
     "kotlin",
 ];
 
-// ─── Loader Helpers ───────────────────────────────────────────────────────────
 
 let prismCoreLoaded = false;
 let prismCorePromise: Promise<void> | null = null;
@@ -151,8 +138,7 @@ async function loadPrismCore(): Promise<void> {
     if (prismCoreLoaded) return;
     if (prismCorePromise) return prismCorePromise;
 
-    prismCorePromise = loadScript(
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"
+    prismCorePromise = loadScript(`${cdnBase}/prism.min.js`
     ).then(() => {
         prismCoreLoaded = true;
     });
@@ -162,30 +148,10 @@ async function loadPrismCore(): Promise<void> {
 
 async function loadPrismLanguage(lang: string): Promise<void> {
     if (loadedLangs.has(lang)) return;
-    const base =
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-";
+    const base = `${cdnBase}/components/prism-`;
     const map: Record<string, string> = {
-        javascript: "javascript",
-        typescript: "typescript",
-        jsx: "jsx",
-        tsx: "tsx",
-        python: "python",
-        rust: "rust",
-        go: "go",
-        java: "java",
-        cpp: "cpp",
-        c: "c",
-        csharp: "csharp",
-        css: "css",
+        js: "javascript",
         html: "markup",
-        bash: "bash",
-        json: "json",
-        yaml: "yaml",
-        markdown: "markdown",
-        sql: "sql",
-        graphql: "graphql",
-        swift: "swift",
-        kotlin: "kotlin",
     };
     const file = map[lang] ?? lang;
     try {
@@ -198,8 +164,7 @@ async function loadPrismLanguage(lang: string): Promise<void> {
 
 async function loadPrismPlugin(plugin: string): Promise<void> {
     if (loadedPlugins.has(plugin)) return;
-    const base =
-        "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/";
+    const base = `${cdnBase}/plugins/`;
     await loadScript(`${base}${plugin}/${plugin}.min.js`);
     loadStylesheet(
         `${base}${plugin}/prism-${plugin}.min.css`,
@@ -209,26 +174,44 @@ async function loadPrismPlugin(plugin: string): Promise<void> {
 }
 
 
-export default function Code({
-                                 language = "txt",
-                                 theme: themeProp,
-                                 colorMode = "dark",
-                                 options = {},
-                                 className = "",
-                                 children
-                             }: CodeProps) {
-    const {
-        lineNumbers = false,
-        showLanguage = true,
-        copyButton = true,
-        wordWrap = false,
-    } = options;
+type colorMode = "light" | "dark";
 
+function getLanguage(children: React.ReactElement<React.HTMLAttributes<HTMLPreElement>, 'pre'>) {
+    let lang = "txt"
+    if (children == null) {
+        // code wraps directly
+        return null
+    }
+    lang = children.props['className'] as string; // language-jsx, ...
+    if (lang == null) {
+        return null
+    }
+    const sep = lang.lastIndexOf("-")
+    if (sep != -1) {
+        return lang.slice(sep + 1);
+    }
+    return lang;
+}
+
+export default function Code({
+                                 lang,
+                                 children,
+                                 lineNumbers = false,
+                                 wordWrap = false,
+                                 lineHighlight,
+                                 commandLine = false,
+                                 toolbar = false,
+                                 normalize = true,
+                                 ...rest
+                             }: CodeProps) {
+
+    let themeProp;
+    const [currentMode, setCurrentMode] = useState<colorMode>("light");
     const [currentTheme, setCurrentTheme] = useState<PrismTheme>(
-        themeProp ?? (colorMode === "dark" ? "okaidia" : "default")
+        themeProp ?? (currentMode === "dark" ? "okaidia" : "default")
     );
-    const [currentMode, setCurrentMode] = useState<"light" | "dark">(colorMode);
-    const [currentLang, setCurrentLang] = useState(language);
+
+    const [currentLang, setCurrentLang] = useState(lang ? lang : getLanguage(children) || "txt");
     const [lineNums, setLineNums] = useState(lineNumbers);
     const [wrap, setWrap] = useState(wordWrap);
     const [copied, setCopied] = useState(false);
@@ -245,7 +228,7 @@ export default function Code({
 
     // Load CSS theme
     useEffect(() => {
-        loadStylesheet(THEME_CDN[currentTheme], "prism-theme");
+        loadStylesheet(`${cdnBase}/themes/${THEME_CDN[currentTheme]}`, "prism-theme");
     }, [currentTheme]);
 
     // Load Prism + plugins + language, then highlight
@@ -268,7 +251,7 @@ export default function Code({
     }, [highlight]);
 
     const handleCopy = async () => {
-        await navigator.clipboard.writeText("code");
+        await navigator.clipboard.writeText(String(children.props.children));
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -283,15 +266,13 @@ export default function Code({
         fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
         borderRadius: "12px",
         overflow: "hidden",
-        boxShadow: isLight
-            ? "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)"
-            : "0 4px 32px rgba(0,0,0,0.55), 0 1px 6px rgba(0,0,0,0.3)",
         border: isLight ? "1px solid #e2e8f0" : "1px solid rgba(255,255,255,0.07)",
         background: isLight ? "#f8fafc" : "#0d1117",
         transition: "all 0.2s ease",
+        marginBottom: "1rem"
     };
 
-    const toolbar: React.CSSProperties = {
+    const toolbarStyle: React.CSSProperties = {
         display: "flex",
         alignItems: "center",
         gap: "8px",
@@ -346,7 +327,6 @@ export default function Code({
         letterSpacing: "0.02em",
         transition: "all 0.15s",
     });
-
     const modeBtnStyle = (m: "light" | "dark"): React.CSSProperties => ({
         padding: "3px 10px",
         borderRadius: "6px",
@@ -373,7 +353,7 @@ export default function Code({
     });
 
     const langBadge: React.CSSProperties = {
-        marginLeft: "auto",
+        marginRight: "0.5rem",
         fontSize: "10px",
         fontWeight: 600,
         letterSpacing: "0.08em",
@@ -415,8 +395,6 @@ export default function Code({
         maxHeight: "520px",
     };
 
-    // ── Render ──────────────────────────────────────────────────────────────────
-
     return (
         <>
             {/* Google Font for JetBrains Mono */}
@@ -425,82 +403,83 @@ export default function Code({
                 rel="stylesheet"
             />
 
-            <div style={shell} className={className}>
+            <div style={shell} {...rest}>
                 {/* ── Toolbar ── */}
-                <div style={toolbar}>
-                    {/* Traffic-light dots */}
-                    <div style={dotStyle("#ff5f57")}/>
-                    <div style={dotStyle("#febc2e")}/>
-                    <div style={dotStyle("#28c840")}/>
+                {toolbar && (
+                    <>
+                        <div style={toolbarStyle}>
+                            {/* Traffic-light dots */}
+                            <div style={dotStyle("#ff5f57")}/>
+                            <div style={dotStyle("#febc2e")}/>
+                            <div style={dotStyle("#28c840")}/>
 
-                    <div style={{width: 8}}/>
+                            <div style={{width: 8}}/>
 
-                    {/* Light / Dark mode */}
-                    <button style={modeBtnStyle("light")} onClick={() => setCurrentMode("light")}>
-                        ☀ Light
-                    </button>
-                    <button style={modeBtnStyle("dark")} onClick={() => setCurrentMode("dark")}>
-                        ◑ Dark
-                    </button>
+                            {/* Light / Dark mode */}
+                            <button style={modeBtnStyle("light")} onClick={() => setCurrentMode("light")}>
+                                ☀ Light
+                            </button>
+                            <button style={modeBtnStyle("dark")} onClick={() => setCurrentMode("dark")}>
+                                ◑ Dark
+                            </button>
 
-                    {/* Theme picker */}
-                    <select
-                        style={selectStyle}
-                        value={currentTheme}
-                        onChange={(e) => setCurrentTheme(e.target.value as PrismTheme)}
-                    >
-                        {themeList.map((t) => (
-                            <option key={t} value={t}>
-                                {t.charAt(0).toUpperCase() + t.slice(1)}
-                            </option>
-                        ))}
-                    </select>
+                            {/* Theme picker */}
+                            <select
+                                style={selectStyle}
+                                value={currentTheme}
+                                onChange={(e) => setCurrentTheme(e.target.value as PrismTheme)}
+                            >
+                                {themeList.map((t) => (
+                                    <option key={t} value={t}>
+                                        {t.charAt(0).toUpperCase() + t.slice(1)}
+                                    </option>
+                                ))}
+                            </select>
 
-                    {/* Language picker */}
-                    <select
-                        style={selectStyle}
-                        value={currentLang}
-                        onChange={(e) => setCurrentLang(e.target.value)}
-                    >
-                        {SUPPORTED_LANGUAGES.map((l) => (
-                            <option key={l} value={l}>
-                                {l}
-                            </option>
-                        ))}
-                    </select>
+                            {/* Language picker */}
+                            <select
+                                style={selectStyle}
+                                value={currentLang}
+                                onChange={(e) => setCurrentLang(e.target.value)}
+                            >
+                                {SUPPORTED_LANGUAGES.map((l) => (
+                                    <option key={l} value={l}>
+                                        {l}
+                                    </option>
+                                ))}
+                            </select>
 
-                    {/* Options */}
-                    <button style={toggleBtn(lineNums)} onClick={() => setLineNums((v) => !v)}>
-                        # Lines
-                    </button>
-                    <button style={toggleBtn(wrap)} onClick={() => setWrap((v) => !v)}>
-                        ↵ Wrap
-                    </button>
+                            {/* Options */}
+                            <button style={toggleBtn(lineNums)} onClick={() => setLineNums((v) => !v)}>
+                                # Lines
+                            </button>
+                            <button style={toggleBtn(wrap)} onClick={() => setWrap((v) => !v)}>
+                                ↵ Wrap
+                            </button>
 
-                    {/* Copy */}
-                    {copyButton && (
-                        <button style={copyBtnStyle} onClick={handleCopy}>
-                            {copied ? "✓ Copied" : "⎘ Copy"}
-                        </button>
-                    )}
-
-                    {/* Language badge */}
-                    {showLanguage && <span style={langBadge}>{currentLang}</span>}
-                </div>
-
+                        </div>
+                    </>
+                )}
                 {/* ── Code Block ── */}
                 <pre
                     style={preStyle}
-                    className={lineNums ? "line-numbers" : undefined}
+                    className={clsx(
+                        "position-relative",
+                        lineNums ?? "line-numbers"
+                    )}
                 >
-          <code
-              ref={codeRef}
-              className={`language-${currentLang}`}
-              style={{opacity: ready ? 1 : 0.4, transition: "opacity 0.2s"}}
-          >
-            {children}
-          </code>
-        </pre>
+                    <div className="position-absolute top-0 end-0 p-2">
+                        <span style={langBadge}>{currentLang}</span>
+                        <button style={copyBtnStyle} onClick={handleCopy}>{copied ? "✓ Copied" : "⎘ Copy"}</button>
+                    </div>
+                      <code
+                          ref={codeRef}
+                          className={`language-${currentLang}`}
+                          style={{opacity: ready ? 1 : 0.4, transition: "opacity 0.2s"}}
+                      >
+                        {children.props.children}
+                      </code>
+                </pre>
             </div>
         </>
     );

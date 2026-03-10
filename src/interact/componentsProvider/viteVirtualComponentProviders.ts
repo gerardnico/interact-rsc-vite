@@ -7,14 +7,34 @@ export function generateComponentProvider(interactConfig: InteractConfigType): s
     let imports = [];
     let layoutComponents = [];
     let mdxMappingElementNameComponentName = []
-    let exports = [];
+    // component may be registered multiple time
+    // for instance, code is registered for the pre element and itself as Code
+    // but it should be exported only once
+    let exports = new Set<string>();
     for (const [key, value] of Object.entries(interactConfig.components)) {
+
+        /**
+         * Import Path
+         */
         let importPath = value.importPath;
         if (importPath == null) {
             throw new Error(`Import ${importPath} not defined for the component ${key}`);
         }
+
+        /**
+         * Import name
+         */
         let importName = path.basename(importPath)
-        if(value.type=="page") {
+        // Delete the tsx, jsx, js extension
+        const lastPoint = importName.lastIndexOf(".");
+        if (lastPoint != -1) {
+            importName = importName.substring(0, lastPoint);
+        }
+
+        /**
+         * Import statement
+         */
+        if (value.type == "page") {
             imports.push(`import * as ${importName} from ${JSON.stringify(importPath)};`);
         } else {
             imports.push(`import ${importName} from ${JSON.stringify(importPath)};`);
@@ -36,7 +56,7 @@ export function generateComponentProvider(interactConfig: InteractConfigType): s
         /**
          * We export all component so that they can be used
          */
-        exports.push(importName);
+        exports.add(importName);
     }
 
     /**
@@ -58,7 +78,7 @@ export function getLayoutComponent(name) {
   return layoutComponents[name];
 }
 
-export { ${exports.join(', ')} };
+export { ${exports.values().toArray().join(', ')} };
 `;
 }
 

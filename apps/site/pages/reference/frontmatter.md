@@ -17,7 +17,7 @@ layout: holy
 
 ### Programmatic Page (tsx, jsx or js)
 
-In a [programmatic page](jsx-tsx-page.mdx)
+In a [programmatic page](programmatic-page.md)
 
 ```ts
 export const frontmatter = {

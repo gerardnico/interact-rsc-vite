@@ -48,12 +48,8 @@ export function resolveViteConfig(
     // https://vite.dev/guide/build#public-base-path
     let publicBasePath = ""
 
-    /**
-     * For runtime, I see also: './node_modules/.xxx'
-     * dist does not work as it will be cleaned up
-     */
-    let runtimePath = path.resolve(resolvedConfPath.rootDirectory, ".interact");
-    let cachePath = path.resolve(runtimePath, "cache")
+
+    let cachePath = path.resolve(interactConfigTyped.paths.runtimeDirectory, "cache")
 
 
     // Note: You can merge also

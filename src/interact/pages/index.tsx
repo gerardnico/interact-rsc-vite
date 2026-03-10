@@ -8,6 +8,7 @@ import {interactConfig} from "interact:config";
 import type {InteractConfigType} from "../config/configHandler.js";
 import {getLayoutComponent, NotFound} from "interact:components";
 import type {PageModule} from "./pageModule.js";
+import React from "react";
 
 /**
  * Otherwise we don't get any TypeScript error

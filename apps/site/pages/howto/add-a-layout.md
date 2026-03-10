@@ -6,7 +6,7 @@ title: How to add a layout?
 
 ### Create a layout component
 
-The layout should return the `html` element wrapping a [page component](../page.md)
+The layout should return the `html` element wrapping a [page component](../reference/page.md)
 
 Example of minimal implementations:
 
@@ -28,7 +28,7 @@ export function MyLayout(props: TemplateProps) {
 
 ### Register it
 
-You can register it by defining it in the [configuration file](../conf.md).
+You can register it by defining it in the [configuration file](../reference/conf.md).
 
 ```json
 {
@@ -45,7 +45,7 @@ You can register it by defining it in the [configuration file](../conf.md).
 
 You can now use it.
 
-For instance, in a [markdown page](../markdown.md)
+For instance, in a [markdown page](../reference/markdown.md)
 
 ```markdown
 ---

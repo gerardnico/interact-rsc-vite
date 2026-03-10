@@ -1,0 +1,13 @@
+{
+  "$schema": ".interact/interact.schema.json",
+  "components": {
+    "Counter": {
+      "importPath": "./components/Counter.tsx",
+      "type": "content"
+    },
+    "Planet": {
+      "importPath": "./components/Planet.js",
+      "type": "content"
+    }
+  }
+}

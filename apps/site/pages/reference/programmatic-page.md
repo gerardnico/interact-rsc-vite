@@ -6,26 +6,34 @@ A programmatic page is a [page](page.md) created in one of the following languag
 
 ## Example
 
+### Jsx
+
 ```jsx
 // pages/my-page.jsx
 export const frontmatter = {
     layout: "landing"
 }
 
-export default function () {
+export default function MyPage() {
     return (
-        <p>You can create a `jsx` or `tsx` page</p>
+        <p>You can create a `jsx` page</p>
     )
 }
 ```
 
-## Typescript
+### Typescript tsx
 
-```typescript
+```tsx
 // pages/my-page.tsx
-import type {InteractFrontmatter} from "@combostrap/interact/types";
+import type {InteractFrontmatter} from "@combostrap/interact/client";
 
 export const frontmatter: InteractFrontmatter = {
     layout: "landing"
+}
+
+export default function MyPage() {
+    return (
+        <p>You can create a `tsx` page</p>
+    )
 }
 ```

@@ -84,16 +84,16 @@ export default function Head({pageModule, request}: TemplateProps) {
             <meta name="generator" content="Interact"/>
             <base href={baseHeadURL}/>
             {description && <meta name="description" content={description}/>}
-            {interactConfigTyped.site.favicons && Object.entries(interactConfigTyped.site.favicons as FaviconSetSchemaType).map(([faviconPath, faviconProperties]) => {
+            {interactConfigTyped.site.favicons && Object.entries(interactConfigTyped.site.favicons as FaviconSetSchemaType).map(([faviconPath, faviconProperties], index) => {
                 if (!faviconProperties) {
                     return;
                 }
                 return (
-                    <link
-                        rel={faviconProperties.rel}
-                        href={faviconProperties.image?.href ? faviconProperties.image.href : `/${faviconPath}`}
-                        type={faviconProperties.image?.type}
-                        sizes={faviconProperties.image?.width && faviconProperties.image?.height ? `${faviconProperties.image.width}x${faviconProperties.image.height}` : ''}
+                    <link key={index}
+                          rel={faviconProperties.rel}
+                          href={faviconProperties.image?.href ? faviconProperties.image.href : `/${faviconPath}`}
+                          type={faviconProperties.image?.type}
+                          sizes={faviconProperties.image?.width && faviconProperties.image?.height ? `${faviconProperties.image.width}x${faviconProperties.image.height}` : ''}
                     />
                 )
             })}

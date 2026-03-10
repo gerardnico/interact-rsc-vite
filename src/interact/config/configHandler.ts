@@ -39,6 +39,10 @@ const defaultComponentsValue: componentsSetSchemaType = {
         importPath: `${publicComponent}/Code`,
         type: "content"
     },
+    "Code": {
+        importPath: `${publicComponent}/Code`,
+        type: "content"
+    },
     "a": {
         importPath: `${publicComponent}/Anchor`,
         type: "content"
@@ -237,6 +241,10 @@ export type InteractConfigType = {
         configFile: string
         // "The root path of the site project"
         rootDirectory: string
+        // The tmp directory, image cache, ...
+        // For runtime, I see also: './node_modules/.xxx'
+        // output dir such as dist does not work as it will be cleaned up
+        runtimeDirectory: string
     }
 }
 
@@ -277,7 +285,8 @@ class ConfigHandler {
             rootDirectory: this.rootDirectory,
             pagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.pagesDirectory),
             publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
-            imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory)
+            imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
+            runtimeDirectory: path.resolve(this.rootDirectory, ".interact")
         }
 
         /**

@@ -1,6 +1,7 @@
 import {createBuilder, createLogger} from 'vite'
 import pc from "picocolors";
 import {BaseCommand} from "../baseCommand.js";
+import {resolveViteConfig} from "../shared/viteConfig.js";
 
 export default class Build extends BaseCommand<typeof Build> {
     static description = 'Build project for production'
@@ -9,11 +10,6 @@ export default class Build extends BaseCommand<typeof Build> {
     async run(): Promise<void> {
         const {flags} = await this.parse(Build)
 
-        /**
-         * If on top of the file, it's loaded in dev
-         * https://github.com/oclif/core/issues/997
-         */
-        const {resolveViteConfig} = await import("../shared/viteConfig.js");
         try {
             const builder = await createBuilder(resolveViteConfig({
                 confPath: flags.confPath,

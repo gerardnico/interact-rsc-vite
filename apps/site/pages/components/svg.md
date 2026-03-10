@@ -23,13 +23,13 @@ Output example:
 
 ### Programmatic Page
 
-In a [programmatic page](jsx-tsx-page.mdx), importing a svg will return
+In a [programmatic page](../reference/programmatic-page.md), importing a svg will return
 an [optimized](#optimization) [React Svg Component](https://react-svgr.com/docs/what-is-svgr/)
 
 Example:
 
 ````javascript
-import Arrow from "../images/arrow-right-circle.svg"
+import Arrow from "./arrow-right-circle.svg"
 
 export default function svgPage() {
     return (

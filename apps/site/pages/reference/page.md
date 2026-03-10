@@ -2,24 +2,13 @@
 title: Page
 ---
 
-A page is a file that is served as HTML.
+A page is a file that is wrapped in a [layout](layout.md) and served as HTML.
 
 It can be written in:
 
 * [markdown](markdown.md) (md or mdx)
-* [programmatically](jsx-tsx-page.mdx) (jsx, mdx)
+* [programmatically](programmatic-page.md) (jsx, mdx)
 
-## Layout
-
-You can set the [layout](layout.md) by giving the layout name in the layout frontmatter property
-
-Example:
-
-```markdown
----
-layout: holy
----
-```
 
 ## Pages Directory
 
