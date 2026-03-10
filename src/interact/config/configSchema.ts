@@ -266,8 +266,7 @@ const BaseComponentSchema = z.object({
 const TocSchema = BaseComponentSchema.extend({
     props: BaseComponentSchema.shape.props.and(
         z.object({
-            minItems: z.coerce.number<number>().default(2),
-            maxDepth: z.coerce.number<number>().default(3),
+            maxDepth: z.coerce.number<number>().describe("The maximum level printed").default(3),
         })
     ).optional(),
 });

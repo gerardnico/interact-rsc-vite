@@ -23,33 +23,21 @@ export interface ConfigSource {
 //const privateComponent = `#components`
 const publicComponent = `@combostrap/interact/components`
 const defaultComponentsValue: componentsSetSchemaType = {
-    "Block": {
-        importPath: `${publicComponent}/Block`,
+    "a": {
+        importPath: `${publicComponent}/Anchor`,
         type: "content"
     },
-    "Landing": {
-        importPath: `${publicComponent}/Landing`,
-        type: "layout"
-    },
-    "Holy": {
-        importPath: `${publicComponent}/Holy`,
-        type: "layout"
-    },
-    "pre": {
-        importPath: `${publicComponent}/Code`,
+    "Block": {
+        importPath: `${publicComponent}/Block`,
         type: "content"
     },
     "Code": {
         importPath: `${publicComponent}/Code`,
         type: "content"
     },
-    "a": {
-        importPath: `${publicComponent}/Anchor`,
+    "code": {
+        importPath: `${publicComponent}/Mark`,
         type: "content"
-    },
-    "NavBar": {
-        importPath: `${publicComponent}/NavBar`,
-        type: "partial"
     },
     "Grid": {
         importPath: `${publicComponent}/Grid`,
@@ -59,12 +47,28 @@ const defaultComponentsValue: componentsSetSchemaType = {
         importPath: `${publicComponent}/GridCell`,
         type: "content"
     },
-    "Text": {
-        importPath: `${publicComponent}/Text`,
+    "Holy": {
+        importPath: `${publicComponent}/Holy`,
+        type: "layout"
+    },
+    "Image": {
+        importPath: `${publicComponent}/Image`,
         type: "content"
+    },
+    "Landing": {
+        importPath: `${publicComponent}/Landing`,
+        type: "layout"
     },
     "Para": {
         importPath: `${publicComponent}/Para`,
+        type: "content"
+    },
+    "NavBar": {
+        importPath: `${publicComponent}/NavBar`,
+        type: "partial"
+    },
+    "pre": {
+        importPath: `${publicComponent}/Code`,
         type: "content"
     },
     "RufflePlayer": {
@@ -75,9 +79,17 @@ const defaultComponentsValue: componentsSetSchemaType = {
         importPath: `${publicComponent}/StarRating`,
         type: "content"
     },
-    "Image": {
-        importPath: `${publicComponent}/Image`,
+    "table": {
+        importPath: `${publicComponent}/Table`,
         type: "content"
+    },
+    "Text": {
+        importPath: `${publicComponent}/Text`,
+        type: "content"
+    },
+    "Toc": {
+        importPath: `${publicComponent}/Toc`,
+        type: "partial"
     },
     "NotFound": {
         importPath: `${publicComponent}/NotFound`,

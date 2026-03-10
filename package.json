@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "type": "module",
-  "bin": {
-    "interact": "src/interact/cli/run.js"
-  },
+  "bin": "src/interact/cli/run.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
