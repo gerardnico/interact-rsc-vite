@@ -1,7 +1,7 @@
 // https://github.com/altano/npm-packages/blob/main/packages/remark-mdx-toc-with-slugs/src/index.ts
 import {Flags} from '@oclif/core'
 import {createServer} from 'vite'
-import {resolveViteConfig} from "../shared/viteConfig.js";
+import {resolveViteConfig} from "../shared/vite.config.js";
 import {BaseCommand} from "../baseCommand.js";
 
 

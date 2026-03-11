@@ -1,7 +1,7 @@
 import {createBuilder, createLogger} from 'vite'
 import pc from "picocolors";
 import {BaseCommand} from "../baseCommand.js";
-import {resolveViteConfig} from "../shared/viteConfig.js";
+import {resolveViteConfig} from "../shared/vite.config.js";
 
 export default class Build extends BaseCommand<typeof Build> {
     static description = 'Build project for production'

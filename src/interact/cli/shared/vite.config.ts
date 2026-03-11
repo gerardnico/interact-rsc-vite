@@ -1,9 +1,5 @@
 import path from "node:path";
 import mdx from "@mdx-js/rollup";
-import remarkFrontmatter from "remark-frontmatter";
-import remarkMdxFrontmatter from "remark-mdx-frontmatter";
-import remarkMdxToc from "@altano/remark-mdx-toc-with-slugs";
-import remarkGfm from 'remark-gfm';
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import pageModulesPlugin from "../../pages/viteVirtualPagesModules.js";
@@ -17,6 +13,8 @@ import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "
 import viteMdxComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
 import svgReactPlugin from "vite-plugin-svgr";
 import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
+import {viteCmsMiddlewareProvider} from "../../cms/viteCmsMiddlewareProvider.js";
+import {unifiedPlugins} from "./md.config.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -78,6 +76,7 @@ export function resolveViteConfig(
      * (for mdx and layout)
      */
     const componentsProviderModuleName = "interact:components"
+
     return {
         mode: command == "build" ? "production" : "development",
         logLevel: 'info', // or 'warn' — try 'info' first
@@ -167,15 +166,9 @@ export function resolveViteConfig(
                 development: command == "start",
                 mdExtensions: [], // When treated as Markdown, the custom elements are deleted
                 mdxExtensions: ['.mdx', '.md'],
-                remarkPlugins: [
-                    remarkFrontmatter,
-                    remarkMdxFrontmatter, // exports frontmatter as `frontmatter`
-                    remarkMdxToc, // exports headings as `toc`
-                    remarkGfm // Table
-                ],
-                rehypePlugins: [],
                 //providerImportSource: import.meta.resolve('../../componentsProvider/componentsProvider.js')
                 providerImportSource: componentsProviderModuleName,
+                remarkPlugins: unifiedPlugins.remarkPlugins,
             }),
             viteMdxComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
             react(),
@@ -189,7 +182,15 @@ export function resolveViteConfig(
                     },
                 },
             }),
-            viteOutlineNumberingStylesPlugin(interactConfigTyped)
+            viteOutlineNumberingStylesPlugin(interactConfigTyped),
+            viteCmsMiddlewareProvider(
+                [{
+                    importPath: path.resolve(interactPackageDir, 'cms/localPageCmsMiddleware.js'),
+                    props: {
+                        pagesDirectory: interactConfigTyped.paths.pagesDirectory
+                    }
+                }]
+            ),
         ],
     }
 }

@@ -1,6 +1,6 @@
 import {createLogger, preview} from 'vite'
 import pc from "picocolors"
-import {resolveViteConfig} from "../shared/viteConfig.js";
+import {resolveViteConfig} from "../shared/vite.config.js";
 import {BaseCommand} from "../baseCommand.js";
 
 export default class Preview extends BaseCommand<typeof Preview> {

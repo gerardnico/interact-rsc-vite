@@ -3,13 +3,14 @@ import path from "path";
 
 import Holy from "#components/Holy";
 
-import getModulePage from 'interact:page-modules';
+import getProgrammaticPageModule from 'interact:page-modules';
 import {interactConfig} from "interact:config";
 import type {InteractConfigType} from "../config/configHandler.js";
 import {getLayoutComponent, NotFound} from "interact:components";
 import type {PageModule} from "./pageModule.js";
 import React from "react";
-import {getCmsPage} from "../pages-cms/localPageCms.js";
+import createCmsPipeline from "../cms/cmsPipeline.js";
+import {cmsHandlers} from "interact:cms-provider"
 
 /**
  * Otherwise we don't get any TypeScript error
@@ -20,6 +21,9 @@ export interface PageFile {
     path: string;
     name: string;
 }
+
+const cmsPipeline = createCmsPipeline();
+cmsHandlers.forEach(cm => cmsPipeline.use(cm))
 
 export function getPagesRecursively(dir: string, startDir: string = dir): Record<string, PageFile> {
     const results: Record<string, PageFile> = {};
@@ -49,6 +53,7 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
     return results;
 }
 
+
 /**
  * The root component should return the entire document including the root <html> tag.
  * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
@@ -58,13 +63,17 @@ export async function getRootComponent(normalizedRequest: Request): Promise<Reac
 
     let url = new URL(normalizedRequest.url)
     /**
-     * Get a page module
+     * Get a programmatic page module (jsx, tsx, ts, js)
      */
-    let pageModule: PageModule | undefined = getModulePage({path: url.pathname});
+    let pageModule: PageModule | undefined = getProgrammaticPageModule({path: url.pathname});
 
     if (pageModule == null) {
-        pageModule = await getCmsPage(normalizedRequest);
+        /**
+         * Cms Module?
+         */
+        pageModule = await cmsPipeline.run(normalizedRequest);
     }
+
     if (pageModule == null) {
         pageModule = NotFound;
     }
