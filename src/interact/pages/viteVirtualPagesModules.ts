@@ -43,7 +43,7 @@ export default getModulePage;
   `.trim();
 }
 
-export default function pageModulesPlugin(pagesDir: string): Plugin {
+export default function pageModulesPlugin(pagesDir: string, extensions: string[] = ['mdx', 'tsx', 'jsx']): Plugin {
     const virtualModuleId = 'interact:page-modules';
     /**
      * We don't prefix with \0 as specified here:
@@ -71,8 +71,6 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
             }
             let context = this
             loadedEnv = context.environment.name;
-
-            let extensions = ['mdx', 'tsx', 'jsx', 'md']
             let globPattern = `**/*.{${extensions.join(',')}}`;
             const files = glob.sync(globPattern, {cwd: pagesDir});
             console.log(`${virtualModuleId} Loaded in env ${loadedEnv} with ${files.length} modules pages discovered at ${pagesDir}`);
@@ -108,7 +106,7 @@ export default function pageModulesPlugin(pagesDir: string): Plugin {
                     return;
                 }
                 let environment = server.environments[loadedEnv];
-                if(!environment){
+                if (!environment) {
                     throw new Error(`Environment "${loadedEnv}" not found.`);
                 }
 

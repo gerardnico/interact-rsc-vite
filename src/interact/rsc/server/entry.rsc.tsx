@@ -82,7 +82,7 @@ export default async function handler(request: Request): Promise<Response> {
     /**
      * Serialize React VDOM to RSC stream
      */
-    let rootComponent = getRootComponent(renderRequest.request)
+    let rootComponent = await getRootComponent(renderRequest.request)
     const rscPayload: RscPayload = {
         root: rootComponent,
         formState,
@@ -132,7 +132,7 @@ export async function handleSsg(request: Request): Promise<{
     rsc: ReadableStream<Uint8Array>
 }> {
 
-    let rootComponent = getRootComponent(request)
+    let rootComponent = await getRootComponent(request)
 
     const rscPayload: RscPayload = {root: rootComponent}
     const rscStream = renderToReadableStream<RscPayload>(rscPayload)

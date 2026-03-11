@@ -9,6 +9,7 @@ import type {InteractConfigType} from "../config/configHandler.js";
 import {getLayoutComponent, NotFound} from "interact:components";
 import type {PageModule} from "./pageModule.js";
 import React from "react";
+import {getCmsPage} from "../pages-cms/localPageCms.js";
 
 /**
  * Otherwise we don't get any TypeScript error
@@ -53,7 +54,7 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
  * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
  * @param normalizedRequest - the request with the URL without the rsc suffix
  */
-export function getRootComponent(normalizedRequest: Request): React.JSX.Element {
+export async function getRootComponent(normalizedRequest: Request): Promise<React.ReactNode> {
 
     let url = new URL(normalizedRequest.url)
     /**
@@ -62,8 +63,12 @@ export function getRootComponent(normalizedRequest: Request): React.JSX.Element 
     let pageModule: PageModule | undefined = getModulePage({path: url.pathname});
 
     if (pageModule == null) {
+        pageModule = await getCmsPage(normalizedRequest);
+    }
+    if (pageModule == null) {
         pageModule = NotFound;
     }
+
     /**
      * Layout
      */

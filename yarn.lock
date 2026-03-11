@@ -252,6 +252,8 @@ __metadata:
     "@svgr/plugin-jsx": "npm:^8.1.0"
     "@svgr/plugin-svgo": "npm:^8.1.0"
     "@types/etag": "npm:1"
+    "@types/hast": "npm:^3.0.4"
+    "@types/mdast": "npm:^4.0.4"
     "@types/mdx": "npm:2.0.13"
     "@types/node": "npm:25.3.0"
     "@types/react": "npm:19.2.14"
@@ -265,6 +267,7 @@ __metadata:
     picocolors: "npm:*"
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
+    rehype-react: "npm:^8.0.0"
     remark-frontmatter: "npm:5.0.0"
     remark-gfm: "npm:4.0.1"
     remark-mdx-frontmatter: "npm:5.2.0"
@@ -1386,7 +1389,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hast@npm:^3.0.0":
+"@types/hast@npm:^3.0.0, @types/hast@npm:^3.0.4":
   version: 3.0.4
   resolution: "@types/hast@npm:3.0.4"
   dependencies:
@@ -1395,7 +1398,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mdast@npm:^4.0.0":
+"@types/mdast@npm:^4.0.0, @types/mdast@npm:^4.0.4":
   version: 4.0.4
   resolution: "@types/mdast@npm:4.0.4"
   dependencies:
@@ -4109,6 +4112,17 @@ __metadata:
     unified: "npm:^11.0.0"
     vfile: "npm:^6.0.0"
   checksum: 10/4ab6f0416296fd6b1a6180e74e19ec110b3fa6f0b3a434468e84092e8c36db99a3a77bd6412cf7a4c8d69b1701ab38aed7d0fd466588802ca295765892d2d361
+  languageName: node
+  linkType: hard
+
+"rehype-react@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "rehype-react@npm:8.0.0"
+  dependencies:
+    "@types/hast": "npm:^3.0.0"
+    hast-util-to-jsx-runtime: "npm:^2.0.0"
+    unified: "npm:^11.0.0"
+  checksum: 10/8669aa4d0d530c8d6f388b32b7ccb4814b1cb17c3847f1f8e7553b85acb7cd02569e451ea70ee33c5da8222ed3c05876fcef88e1eec05681ba71e31aa613b6b0
   languageName: node
   linkType: hard
 

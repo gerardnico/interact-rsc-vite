@@ -42,6 +42,7 @@
     "picocolors": "*",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "rehype-react": "^8.0.0",
     "remark-frontmatter": "5.0.0",
     "remark-gfm": "4.0.1",
     "remark-mdx-frontmatter": "5.2.0",
@@ -56,6 +57,8 @@
   },
   "devDependencies": {
     "@types/etag": "1",
+    "@types/hast": "^3.0.4",
+    "@types/mdast": "^4.0.4",
     "@types/mdx": "2.0.13",
     "@types/node": "25.3.0",
     "@types/react": "19.2.14",

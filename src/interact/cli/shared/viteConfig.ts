@@ -154,7 +154,7 @@ export function resolveViteConfig(
             // import("vite-plugin-inspect").then(m => m.default()),
             rsc(),
             viteSsgPlugin(),
-            pageModulesPlugin(interactConfigTyped.paths.pagesDirectory),
+            pageModulesPlugin(interactConfigTyped.paths.pagesDirectory, ['mdx', 'tsx', 'jsx']),
             viteImageService({
                 baseDir: interactConfigTyped.paths.imagesDirectory,
                 cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),
