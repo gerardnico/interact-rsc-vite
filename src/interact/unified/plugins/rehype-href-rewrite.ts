@@ -1,6 +1,6 @@
 import {visit} from "unist-util-visit";
 import type {Root} from 'hast'
-import {removePublicPart} from "./unified-util.js";
+import {removePublicPart} from "../unified-util.js";
 
 
 /**

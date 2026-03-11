@@ -54,7 +54,7 @@ export async function handler({pagesDirectory, strictYamlParsing = false}: {
         let frontmatter = {}
         const vFile = await unified()
             .use(remarkParse)           // Parse markdown into mdast
-            .use(settings.remarkPlugins || [])
+            .use(settings.markdown.remarkPlugins || [])
             .use(function () {
                 /**
                  * Capture Frontmatter
@@ -74,7 +74,7 @@ export async function handler({pagesDirectory, strictYamlParsing = false}: {
                 // only
                 //passThrough: ['mdxJsxFlowElement', 'mdxJsxTextElement']
             })
-            .use(settings.rehypePlugins || [])
+            .use(settings.markdown.rehypePlugins || [])
             .use(rehypeReact, {         // hast → React element tree
                 createElement,
                 Fragment,
@@ -88,6 +88,7 @@ export async function handler({pagesDirectory, strictYamlParsing = false}: {
             }).process(content);
         return {
             frontmatter: frontmatter,
+            toc: vFile.data?.toc || {},
             default: () => {
                 return vFile.result
             }

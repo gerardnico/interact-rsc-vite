@@ -6,7 +6,7 @@ title: CMS
 
 You can create a provider plugin with a file:
 
-* that exports a handler function that accepts a props object
+* that exports a handler function that accepts optionally, a props object (only data, no functions)
 * and returns a function that accepts a web api request and returns an object:
   * with as default, a mandatory React Element
   * and optionally, a [frontmatter](frontmatter.md) and a `toc`

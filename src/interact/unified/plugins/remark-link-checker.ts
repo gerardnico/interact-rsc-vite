@@ -4,7 +4,7 @@ import {visit} from 'unist-util-visit';
 import type {Root} from "mdast";
 import {VFile} from "vfile";
 import {is} from 'unist-util-is'
-import {removePublicPart} from "./unified-util.js";
+import {removePublicPart} from "../unified-util.js";
 
 const MD_EXT_RE = /\.(md|mdx)$/i;
 

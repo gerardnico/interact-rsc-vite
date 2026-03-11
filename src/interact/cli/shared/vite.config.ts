@@ -161,6 +161,8 @@ export function resolveViteConfig(
                 endPoint: imageMiddlewareEndPoint
             }),
             viteVirtualConfModule(resolvedConfPath),
+            // used by mdx
+            viteMdxComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
             // https://mdxjs.com/packages/mdx/#processoroptions
             mdx({
                 development: command == "start",
@@ -168,9 +170,15 @@ export function resolveViteConfig(
                 mdxExtensions: ['.mdx', '.md'],
                 //providerImportSource: import.meta.resolve('../../componentsProvider/componentsProvider.js')
                 providerImportSource: componentsProviderModuleName,
-                remarkPlugins: unifiedPlugins.remarkPlugins,
+                remarkPlugins: [
+                    ...unifiedPlugins.markdown.remarkPlugins,
+                    ...unifiedPlugins.mdx.remarkPlugins,
+                ],
+                rehypePlugins: [
+                    ...unifiedPlugins.markdown.rehypePlugins,
+                    ...unifiedPlugins.mdx.rehypePlugins,
+                ]
             }),
-            viteMdxComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
             react(),
             // https://www.npmjs.com/package/vite-plugin-svgr
             svgReactPlugin({
