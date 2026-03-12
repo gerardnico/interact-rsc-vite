@@ -14,7 +14,7 @@ import viteMdxComponentProvider from "../../componentsProvider/viteVirtualCompon
 import svgReactPlugin from "vite-plugin-svgr";
 import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
 import {viteCmsMiddlewareProvider} from "../../cms/viteCmsMiddlewareProvider.js";
-import {mandatoryUnifiedPlugins} from "../../markdown/conf/markdownBasePlugins.js";
+import {getMandatoryUnifiedPlugins} from "../../markdown/conf/markdownBasePlugins.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -77,6 +77,19 @@ export function resolveViteConfig(
      */
     const componentsProviderModuleName = "interact:components"
 
+    const mandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfigTyped)
+
+    /**
+     * Markdown Configuration file
+     */
+    let markdownConfigImportPath = path.resolve(interactPackageDir, "markdown/conf/markdownConfigDefault.js");
+    let configImportPath = interactConfigTyped.markdown.configImportPath;
+    if (configImportPath != null) {
+        if (configImportPath.startsWith(".")) {
+            markdownConfigImportPath = path.resolve(confPath, configImportPath);
+        }
+    }
+
     return {
         mode: command == "build" ? "production" : "development",
         logLevel: 'info', // or 'warn' — try 'info' first
@@ -85,11 +98,11 @@ export function resolveViteConfig(
         server: {
             port: port,
         },
-        resolve:{
+        resolve: {
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
-            alias:{
-                "@interact/markdown-config": path.resolve(interactPackageDir,"markdown/conf/markdownConfigDefault.js"),
+            alias: {
+                "@interact/markdown-config": markdownConfigImportPath,
             }
         },
         // https://vite.dev/config/shared-options#publicdir

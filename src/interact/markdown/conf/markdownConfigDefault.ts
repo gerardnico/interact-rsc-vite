@@ -1,6 +1,5 @@
 import remarkGfm from "remark-gfm";
-import type {PluggableList} from "unified";
-
+import type {InteractMarkdownConfigType} from "@interact/markdown-config";
 
 // noinspection JSUnusedGlobalSymbols - imported via vite aliasing
 export const markdownConfig: InteractMarkdownConfigType = {

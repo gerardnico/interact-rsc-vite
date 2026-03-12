@@ -61,11 +61,13 @@ Once you have [registered it](../howto/add-a-content-component.md#register-it), 
 
 <Counter/>
 
-## How to
+
+
+## Custom
 
 ### Add a Markdown component
 
-You can add a component to be used in Markdown by defining them as `leaf` component in the
+You can add a component to be used in Markdown by defining them as `content` component in the
 `components` section of the [configuration file](conf.md).
 
 See [How to add a content component](../howto/add-a-content-component.md)
@@ -109,7 +111,7 @@ Error: Expected component `xxx` to be defined: you likely forgot to import, pass
 The possible causes are:
 
 * the component is [not registered](../howto/add-a-content-component.md#register-it)
-* the components is not exported as `default`:
+* the component is not exported as `default`:
 
 Example:
 

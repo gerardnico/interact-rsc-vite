@@ -23,7 +23,7 @@ function TocItems({entries, maxDepth, currentDepth = 1}: {
         <ul>
             {entries.map((heading, i) => (
                 <li key={i} className={`toc-entry toc-level-${heading.depth}`}>
-                    <a href={`#${heading.slug}`}>
+                    <a href={`#${heading.id}`}>
                         {heading.value}
                     </a>
                     {heading.children && heading.children.length > 0 && (

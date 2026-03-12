@@ -1,10 +1,10 @@
 import {visit} from "unist-util-visit";
 import type {Root} from 'hast'
-import {removePublicPart} from "../unified-util.js";
+import {isHastAnchorElement, isHastImgElement, removePublicPart} from "../util/unified-util.js";
 
 
 /**
- * Astro path does not have the md or mdx extension but the link checker (editor or cli) needs them
+ * Path does not have the md or mdx extension but the link checker (editor or cli) needs them
  * This plugin will delete the Markdown extension from a link
  *
  * Example:
@@ -22,17 +22,18 @@ import {removePublicPart} from "../unified-util.js";
  * @param base - the site base
  * @returns {(function(*): void)|*}
  */
-export default function rehypeHrefRewrite({publicDirName = 'public', target = "_blank", base = ''}: {
+export default function rehypeHrefRewrite({publicDirName = 'public', base = ''}: {
     publicDirName: string,
-    target: string,
     base: string
 }): ((publicPattern: string) => void) | any {
     return function transformer(tree: Root) {
         visit(tree, "element", node => {
 
-            if (node.tagName === "img" &&
-                node.properties &&
-                typeof node.properties.src === "string") {
+            if (isHastImgElement(node)) {
+
+                if(node.properties?.src ==null){
+                    return;
+                }
                 if (!base) {
                     return;
                 }
@@ -48,17 +49,15 @@ export default function rehypeHrefRewrite({publicDirName = 'public', target = "_
                 return;
             }
 
-            if (
-                node.tagName === "a" &&
-                node.properties &&
-                typeof node.properties.href === "string"
-            ) {
+            if (                isHastAnchorElement(node)            ) {
                 const href = node.properties.href;
+                if(href==null){
+                    return;
+                }
 
                 if (
                     href.startsWith("http://") ||
                     href.startsWith("https://")) {
-                    node.properties.target = target
                     return;
                 }
                 // Skip external, hash, absolute, and mailto links

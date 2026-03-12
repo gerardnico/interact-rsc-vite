@@ -2,7 +2,7 @@ import {
     JsonConfigSchema,
     type FaviconSetSchemaType,
     type pluginsConfigType, type componentsSetSchemaType, type pathsConfigType, type imageConfigType,
-    type siteConfigType, type styleConfigType, type outlineConfigType
+    type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType
 } from "./configSchema.js";
 import fs from 'fs'
 import {readFileSync} from "node:fs";
@@ -250,6 +250,7 @@ export type InteractConfigType = {
     outline: outlineConfigType,
     components: componentsSetSchemaType,
     images: imageConfigType,
+    markdown: markdownConfigType,
     paths: pathsConfigType & {
         configFile: string
         // "The root path of the site project"
@@ -313,6 +314,20 @@ class ConfigHandler {
          * Default components
          */
         finalConfigData.components = deepMerge(defaultComponentsValue, finalConfigData.components)
+
+        /**
+         * Default Markdown
+         */
+        if (finalConfigData.markdown.configImportPath == null) {
+            const extensions = [".js", ".ts"]
+            for (const extension of extensions) {
+                const markdownConfig = path.resolve(this.rootDirectory, `config/markdown.config${extension}`);
+                if (fs.existsSync(markdownConfig)) {
+                    finalConfigData.markdown.configImportPath = markdownConfig
+                    break;
+                }
+            }
+        }
 
     }
 

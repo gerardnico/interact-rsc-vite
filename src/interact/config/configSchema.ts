@@ -309,6 +309,9 @@ export type pluginsConfigType = z.output<typeof PluginConfigSetSchema>;
 const OutlineSchema = z.object({
     numbering: outlineNumberingSchema.default(outlineNumberingSchema.parse({})),
 })
+let MarkdownConfigSchema = z.object({
+    configImportPath: z.string().describe("The import path of the config file. For a local path, the value should start with a point otherwise it's considered a package name").optional(),
+});
 /**
  * The JSON Schema used to parse the Json file
  */
@@ -320,6 +323,7 @@ export const JsonConfigSchema = z.object({
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})),
+    markdown: MarkdownConfigSchema.default(MarkdownConfigSchema.parse({})),
 })
 
 
@@ -327,3 +331,5 @@ export type imageConfigType = z.output<typeof ImageSchema>;
 export type pathsConfigType = z.output<typeof PathsSchema>;
 export type siteConfigType = z.output<typeof SiteSchema>;
 export type outlineConfigType = z.output<typeof OutlineSchema>;
+export type markdownConfigType = z.output<typeof MarkdownConfigSchema>;
+
