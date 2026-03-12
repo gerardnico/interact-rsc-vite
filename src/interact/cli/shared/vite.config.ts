@@ -14,7 +14,7 @@ import viteMdxComponentProvider from "../../componentsProvider/viteVirtualCompon
 import svgReactPlugin from "vite-plugin-svgr";
 import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
 import {viteCmsMiddlewareProvider} from "../../cms/viteCmsMiddlewareProvider.js";
-import {unifiedPlugins} from "./md.config.js";
+import {mandatoryUnifiedPlugins} from "../../markdown/conf/markdownBasePlugins.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,7 +48,7 @@ export function resolveViteConfig(
     let publicBasePath = ""
 
 
-    let cachePath = path.resolve(interactConfigTyped.paths.runtimeDirectory, "cache")
+    let cachePath = path.resolve(interactConfigTyped.paths.cacheDirectory, "cache")
 
 
     // Note: You can merge also
@@ -85,7 +85,17 @@ export function resolveViteConfig(
         server: {
             port: port,
         },
+        resolve:{
+            // https://vite.dev/config/shared-options#resolve-alias
+            // When aliasing to file system paths, always use absolute paths.
+            alias:{
+                "@interact/markdown-config": path.resolve(interactPackageDir,"markdown/conf/markdownConfigDefault.js"),
+            }
+        },
+        // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
+        // https://vite.dev/config/shared-options#cachedir
+        cacheDir: path.resolve(interactConfigTyped.paths.cacheDirectory, ".vite"),
         build: {
             // https://rollupjs.org/configuration-options/
             rollupOptions: {
@@ -171,12 +181,12 @@ export function resolveViteConfig(
                 //providerImportSource: import.meta.resolve('../../componentsProvider/componentsProvider.js')
                 providerImportSource: componentsProviderModuleName,
                 remarkPlugins: [
-                    ...unifiedPlugins.markdown.remarkPlugins,
-                    ...unifiedPlugins.mdx.remarkPlugins,
+                    ...mandatoryUnifiedPlugins.markdown.remarkPlugins,
+                    ...mandatoryUnifiedPlugins.mdx.remarkPlugins,
                 ],
                 rehypePlugins: [
-                    ...unifiedPlugins.markdown.rehypePlugins,
-                    ...unifiedPlugins.mdx.rehypePlugins,
+                    ...mandatoryUnifiedPlugins.markdown.rehypePlugins,
+                    ...mandatoryUnifiedPlugins.mdx.rehypePlugins,
                 ]
             }),
             react(),

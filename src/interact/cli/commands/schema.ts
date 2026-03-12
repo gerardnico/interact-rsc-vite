@@ -21,7 +21,7 @@ export default class Schema extends BaseCommand<typeof Schema> {
     const {flags} = await this.parse(Schema)
     const resolvedConfPath = resolveInteractConfPath(flags.confPath);
     const interactConfigTyped = resolveInteractConfig(resolvedConfPath);
-    const outputDir = interactConfigTyped.paths.runtimeDirectory
+    const outputDir = interactConfigTyped.paths.cacheDirectory
     const outputPath = join(outputDir, 'interact.schema.json')
 
     // Create output directory if it doesn't exist
