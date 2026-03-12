@@ -15,6 +15,7 @@ import svgReactPlugin from "vite-plugin-svgr";
 import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
 import {viteCmsMiddlewareProvider} from "../../cms/viteCmsMiddlewareProvider.js";
 import {getMandatoryUnifiedPlugins} from "../../markdown/conf/markdownBasePlugins.js";
+import type {InteractMarkdownConfigType} from "@interact/markdown-config";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,13 +34,13 @@ type InteractConfig = {
     logLevel?: LogLevel;
 };
 
-export function resolveViteConfig(
+export async function resolveViteConfig(
     {
         confPath,
         port,
         command,
         outDir = "dist"
-    }: InteractConfig): InlineConfig {
+    }: InteractConfig): Promise<InlineConfig> {
 
     const resolvedConfPath = resolveInteractConfPath(confPath);
     const interactConfigTyped = resolveInteractConfig(resolvedConfPath);
@@ -89,6 +90,24 @@ export function resolveViteConfig(
             markdownConfigImportPath = path.resolve(confPath, configImportPath);
         }
     }
+
+    let markdownConfModule;
+    try {
+        markdownConfModule = await import(markdownConfigImportPath);
+    } catch (err) {
+        if (err instanceof Error) {
+            let message = err.message;
+            if ((err as NodeJS.ErrnoException).code === 'ERR_MODULE_NOT_FOUND') {
+                message += `The module ${markdownConfigImportPath} was not found`;
+            }
+            throw new Error(message);
+        }
+    }
+    let markdownConfig = 'markdownConfig';
+    if (!(markdownConfig in markdownConfModule)) {
+        throw new Error(`The markdown configuration module (${markdownConfigImportPath}) has no ${markdownConfig} export`)
+    }
+    let markdownConf: InteractMarkdownConfigType = markdownConfModule.markdownConfig
 
     return {
         mode: command == "build" ? "production" : "development",
@@ -171,11 +190,6 @@ export function resolveViteConfig(
             },
         },
         plugins: [
-            // You can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
-            // to understand how "use client" and "use server" directives are transformed internally.
-            // import("vite-plugin-inspect").then(m => m.default()),
-            rsc(),
-            viteSsgPlugin(),
             pageModulesPlugin(interactConfigTyped.paths.pagesDirectory, ['mdx', 'tsx', 'jsx']),
             viteImageService({
                 baseDir: interactConfigTyped.paths.imagesDirectory,
@@ -195,10 +209,12 @@ export function resolveViteConfig(
                 providerImportSource: componentsProviderModuleName,
                 remarkPlugins: [
                     ...mandatoryUnifiedPlugins.markdown.remarkPlugins,
+                    ...(markdownConf.remarkPlugins || []),
                     ...mandatoryUnifiedPlugins.mdx.remarkPlugins,
                 ],
                 rehypePlugins: [
                     ...mandatoryUnifiedPlugins.markdown.rehypePlugins,
+                    ...(markdownConf.rehypePlugins || []),
                     ...mandatoryUnifiedPlugins.mdx.rehypePlugins,
                 ]
             }),
@@ -222,6 +238,13 @@ export function resolveViteConfig(
                     }
                 }]
             ),
+            // Rsc
+            // At the end because the client import the outline numbering css virtual vite module
+            // Note: you can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
+            // to understand how "use client" and "use server" directives are transformed internally.
+            // import("vite-plugin-inspect").then(m => m.default()),
+            rsc(),
+            viteSsgPlugin(),
         ],
     }
 }

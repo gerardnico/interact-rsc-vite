@@ -11,7 +11,7 @@ export default class Build extends BaseCommand<typeof Build> {
         const {flags} = await this.parse(Build)
 
         try {
-            const builder = await createBuilder(resolveViteConfig({
+            const builder = await createBuilder(await resolveViteConfig({
                 confPath: flags.confPath,
                 outDir: flags.outDir,
                 logLevel: flags.logLevel,

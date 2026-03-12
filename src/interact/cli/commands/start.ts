@@ -18,7 +18,7 @@ export default class Start extends BaseCommand<typeof Start> {
     async run(): Promise<void> {
         const {flags} = await this.parse(Start)
 
-        let viteConfig = resolveViteConfig({
+        let viteConfig = await resolveViteConfig({
             confPath: flags.confPath,
             port: flags.port,
             outDir: flags.outDir,

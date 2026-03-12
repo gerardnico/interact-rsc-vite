@@ -11,7 +11,7 @@ export default class Preview extends BaseCommand<typeof Preview> {
         const {flags} = await this.parse(Preview)
 
         try {
-            const server = await preview(resolveViteConfig({
+            const server = await preview(await resolveViteConfig({
                 confPath: flags.confPath,
                 logLevel: flags.logLevel,
                 command: "preview"
