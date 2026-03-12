@@ -39,3 +39,8 @@ It's used in the `interact:component-provider` module
 
 Why not the `dist` directory? Because vite does the bundling.
 The only code that needs to be build is the cli.
+
+## Vite as direct dependency
+
+Is mandatory for development otherwise you get error such
+unable to find `./cjs/react-server-dom-webpack-client.browser.development.js`
