@@ -6,13 +6,9 @@
 import {type SVGProps} from "react";
 import {optimize, type Config} from "svgo";
 import interactConfig from "interact:config";
-import type {InteractConfig} from "../../config/configHandler.js";
 import {readFile} from "node:fs/promises";
 
-/**
- * Otherwise we don't get any TypeScript error
- */
-let interactConfigTyped = interactConfig as InteractConfig;
+
 
 
 interface SvgComponentProps extends SVGProps<SVGSVGElement> {
@@ -44,7 +40,7 @@ export default async function Svg({
 
     try {
 
-        const svgFile = interactConfigTyped.paths.imagesDirectory + "/" + src;
+        const svgFile = interactConfig.paths.imagesDirectory + "/" + src;
         const svgCode = await readFile(svgFile, "utf-8");
         // https://svgo.dev/docs/preset-default/
         // https://svgo.dev/docs/plugins/

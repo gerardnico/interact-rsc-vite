@@ -5,7 +5,7 @@ import type {MdxJsxFlowElement, MdxJsxTextElement} from 'mdast-util-mdx-jsx'
 import YAML from "yaml";
 import remarkRehype from "remark-rehype";
 import rehypeReact from "rehype-react";
-import {createElement, Fragment} from "react";
+import {Fragment} from "react";
 import {jsx, jsxs} from "react/jsx-runtime";
 import {getMandatoryUnifiedPlugins} from "../conf/markdownBasePlugins.js";
 import {markdownConfig} from "@interact/markdown-config";
@@ -16,7 +16,7 @@ import {mdxJsx} from 'micromark-extension-mdx-jsx'
 import {mdxJsxFromMarkdown} from 'mdast-util-mdx-jsx'
 import * as acorn from "acorn";
 import type {Element as HastElement} from "hast";
-import type {Page, TocNode} from "../../pages/interactPage.js";
+import type {Page, TocNode} from "@combostrap/interact/types";
 
 // Markdown processing to react component via rehypeReact
 // Why?

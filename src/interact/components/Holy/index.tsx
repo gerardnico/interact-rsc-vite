@@ -9,11 +9,7 @@ import {Header} from "../Header/Header.js";
 import Toc from "../Toc/index.js";
 import NavBar from "../NavBar/index.js";
 import {interactConfig} from "interact:config";
-import type {InteractConfig} from "../../config/configHandler.js";
-/**
- * Otherwise we don't get any TypeScript error
- */
-let interactConfigTyped = interactConfig as InteractConfig;
+
 /**
  * Holy Layout Components
  */
@@ -28,7 +24,7 @@ export default async function Holy(layoutProps: TemplateProps) {
         <div id="page-core" className={
             clsx(styles['pageCore'],
                 PAGE_CONTAINER,
-                interactConfigTyped.style.container.containerClass,
+                interactConfig.style.container.containerClass,
                 "position-relative mt-3"
             )}>
             <aside id="page-side" className={clsx(styles['pageSide'], "d-print-none")}>

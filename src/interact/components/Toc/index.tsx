@@ -1,12 +1,8 @@
 import type {TemplateProps, TocNode} from "../../types/index.js";
 import "./toc.css"
 import interactConfig from "interact:config";
-import type {InteractConfig} from "../../config/configHandler.js";
 
-/**
- * Otherwise we don't get any TypeScript error
- */
-let interactConfigTyped = interactConfig as InteractConfig;
+
 
 interface TocProps extends TemplateProps {
     maxDepth?: number;
@@ -37,7 +33,7 @@ function TocItems({entries, maxDepth, currentDepth = 1}: {
 
 export default function Toc({maxDepth, ...layoutProps}: TocProps) {
     if (maxDepth == null) {
-        maxDepth = interactConfigTyped.components.Toc?.props?.maxDepth;
+        maxDepth = interactConfig.components.Toc?.props?.maxDepth;
         if (maxDepth == null) {
             maxDepth = 3
         }

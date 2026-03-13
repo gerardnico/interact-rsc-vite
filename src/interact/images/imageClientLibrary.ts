@@ -15,12 +15,7 @@ import fsPromises from "fs/promises";
 import crypto from "crypto";
 import {interactConfig} from "interact:config";
 import {imageEndPointEnvName, imageViteOutDirEnvName} from "./imageMiddlewareHandler.js";
-import type {InteractConfig} from "../config/configHandler.js";
 
-/**
- * Otherwise we don't get any TypeScript error
- */
-let interactConfigTyped = interactConfig as InteractConfig;
 
 export type HtmlImageAttributes = {
     src: string,
@@ -51,7 +46,7 @@ type ImageRequestProps = {
  *
  * @return bool
  */
-const withDpiCorrection = interactConfigTyped.images.defaultValues?.dpiCorrection || false
+const withDpiCorrection = interactConfig.images.defaultValues?.dpiCorrection || false
 
 function getSizes(screenWidth: number, imageWidth: number) {
     let sizes;
@@ -160,7 +155,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         }
     }
 
-    const sourceFile = path.resolve(interactConfigTyped.paths.imagesDirectory, props.src);
+    const sourceFile = path.resolve(interactConfig.paths.imagesDirectory, props.src);
     let intrinsicWidth, intrinsicHeight;
     let sharpPipeline;
     try {
@@ -205,7 +200,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
      * Width is mandatory for responsive image
      * Ref https://developers.google.com/search/docs/advanced/guidelines/google-images#responsive-images
      */
-    for (const breakpoint of interactConfigTyped.images.defaultValues.responsiveBreakpoints) {
+    for (const breakpoint of interactConfig.images.defaultValues.responsiveBreakpoints) {
 
         /**
          * The image cannot scale up

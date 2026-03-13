@@ -9,11 +9,7 @@ import {ImageError, ImageErrors} from "../../images/imageErrorsDictionary.js";
 
 import {brokenImage} from "../../images/imageSharedCode.js";
 import {interactConfig} from "interact:config";
-import type {InteractConfig} from "../../config/configHandler.js";
-/**
- * Otherwise we don't get any TypeScript error
- */
-let interactConfigTyped = interactConfig as InteractConfig;
+
 
 
 export type ImageProps =
@@ -112,9 +108,9 @@ export default async function Image({
                                         ...imgAttributesProps
                                     }: ImageProps) {
     let htmlImageAttributes: HtmlImageAttributes;
-    const finalImageType: ImageType = type ?? interactConfigTyped.images.defaultValues.type;
-    const finalCompression = compression ?? interactConfigTyped.images.defaultValues.compression;
-    const finalFit = fit ?? interactConfigTyped.images.defaultValues.fit;
+    const finalImageType: ImageType = type ?? interactConfig.images.defaultValues.type;
+    const finalCompression = compression ?? interactConfig.images.defaultValues.compression;
+    const finalFit = fit ?? interactConfig.images.defaultValues.fit;
     if (imgAttributesProps.alt === undefined || imgAttributesProps.alt === null) {
         return BrokenImage({error: new ImageError(ImageErrors.ALT_MISSING)})
     }

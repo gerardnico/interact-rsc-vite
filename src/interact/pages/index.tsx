@@ -5,16 +5,12 @@ import Holy from "#components/Holy";
 
 import getPageModule from 'interact:page-modules';
 import {interactConfig} from "interact:config";
-import type {InteractConfig} from "@combostrap/interact/types";
 import {getLayoutComponent, NotFound} from "interact:components";
 import React from "react";
 import createPagesProviderPipeline from "../pagesProviderManager/pagesHandlerPipeline.js";
 import {pagesProviderHandlers} from "interact:pages-provider-manager"
 
-/**
- * Otherwise we don't get any TypeScript error
- */
-let interactConfigTyped = interactConfig as InteractConfig;
+
 
 export interface PageFile {
     path: string;
@@ -106,10 +102,10 @@ export async function getRootComponent(normalizedRequest: Request): Promise<Reac
  * can use it to render each page
  */
 export function getStaticPaths() {
-    return Object.keys(getPagesRecursively(interactConfigTyped.paths.pagesDirectory))
+    return Object.keys(getPagesRecursively(interactConfig.paths.pagesDirectory))
 }
 
 
 export function getPages() {
-    return getPagesRecursively(interactConfigTyped.paths.pagesDirectory)
+    return getPagesRecursively(interactConfig.paths.pagesDirectory)
 }
