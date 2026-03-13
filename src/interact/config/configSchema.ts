@@ -291,7 +291,18 @@ const ComponentsConfigSetSchema = z.object({
 }).catchall(BaseComponentSchema); // unknown keys fall back to base schema
 
 
-export type componentsSetSchemaType = z.output<typeof ComponentsConfigSetSchema>;
+const PageProviderSchema = z.object({
+    importPath: z.coerce.string<string>(),
+    props: z.record(z.string(), z.unknown()).optional(),
+}).describe("Provider Properties");
+const PagesConfigSchema = z.object({
+    providers: z.array(PageProviderSchema).optional(),
+});
+
+export type PageProvider = z.output<typeof PageProviderSchema>;
+export type PagesConfig = z.output<typeof PagesConfigSchema>;
+
+export type ComponentsSet = z.output<typeof ComponentsConfigSetSchema>;
 
 
 /**
@@ -320,6 +331,7 @@ export const JsonConfigSchema = z.object({
     site: SiteSchema.default(SiteSchema.parse({})),
     outline: OutlineSchema.default(OutlineSchema.parse({})),
     paths: PathsSchema.default(PathsSchema.parse({})),
+    pages: PagesConfigSchema.default(PagesConfigSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})),

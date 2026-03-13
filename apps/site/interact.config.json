@@ -9,5 +9,16 @@
       "importPath": "./components/Planet.js",
       "type": "content"
     }
+  },
+  "pages": {
+    "providers": [
+      {
+        "importPath": "./cms/remote-markdown.js",
+        "props": {
+          "basePath": "https://raw.githubusercontent.com",
+          "prefix": "/github"
+        }
+      }
+    ]
   }
 }

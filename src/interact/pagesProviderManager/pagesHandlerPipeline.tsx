@@ -17,7 +17,22 @@ export default function createPagesProviderPipeline(): cmsPipelineType {
     async function run(request: Request) {
 
         for (const pagesProviderMiddleware of pagesProviderMiddlewares) {
-            const result = await pagesProviderMiddleware(request);
+            let result;
+            try {
+                result = await pagesProviderMiddleware(request);
+            } catch (e) {
+                // Error
+                return {
+                    default: () => {
+                        return (
+                            <>
+                                <p>Error while running a pages Provider Middleware:</p>
+                                <p>{String(e)}</p>
+                            </>
+                        )
+                    }
+                }
+            }
             if (result != null) {
                 return result;
             }

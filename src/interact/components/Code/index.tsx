@@ -402,7 +402,7 @@ export default function Code({
                 rel="stylesheet"
             />
 
-            <div style={shell} {...rest}>
+            <div className={"position-relative"} style={shell} {...rest}>
                 {/* ── Toolbar ── */}
                 {toolbar && (
                     <>
@@ -459,18 +459,17 @@ export default function Code({
                         </div>
                     </>
                 )}
+                <div className="position-absolute top-0 end-0 p-2">
+                    <span style={langBadge}>{currentLang}</span>
+                    <button style={copyBtnStyle} onClick={handleCopy}>{copied ? "✓ Copied" : "⎘ Copy"}</button>
+                </div>
                 {/* ── Code Block ── */}
                 <pre
                     style={preStyle}
                     className={clsx(
-                        "position-relative",
                         lineNums ?? "line-numbers"
                     )}
                 >
-                    <div className="position-absolute top-0 end-0 p-2">
-                        <span style={langBadge}>{currentLang}</span>
-                        <button style={copyBtnStyle} onClick={handleCopy}>{copied ? "✓ Copied" : "⎘ Copy"}</button>
-                    </div>
                       <code
                           ref={codeRef}
                           className={`language-${currentLang}`}

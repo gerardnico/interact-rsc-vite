@@ -233,12 +233,14 @@ export async function resolveViteConfig(
             {
                 enforce: "post", // runs after as we depend on the component plugin
                 ...vitePagesProviderManager(
-                    [{
-                        importPath: path.resolve(interactPackageDir, 'pagesProvider/localPagesProvider.js'),
-                        props: {
-                            pagesDirectory: interactConfigTyped.paths.pagesDirectory
-                        }
-                    }]
+                    [
+                        ...interactConfigTyped.pages.providers || [],
+                        {
+                            importPath: path.resolve(interactPackageDir, 'pagesProvider/localPagesProvider.js'),
+                            props: {
+                                pagesDirectory: interactConfigTyped.paths.pagesDirectory
+                            }
+                        }]
                 )
             },
             // Rsc

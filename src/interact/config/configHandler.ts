@@ -1,8 +1,8 @@
 import {
     JsonConfigSchema,
     type FaviconSetSchemaType,
-    type pluginsConfigType, type componentsSetSchemaType, type pathsConfigType, type imageConfigType,
-    type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType
+    type pluginsConfigType, type ComponentsSet, type pathsConfigType, type imageConfigType,
+    type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType, type PagesConfig
 } from "./configSchema.js";
 import fs from 'fs'
 import {readFileSync} from "node:fs";
@@ -22,7 +22,7 @@ export interface ConfigSource {
  */
 //const privateComponent = `#components`
 const publicComponent = `@combostrap/interact/components`
-const defaultComponentsValue: componentsSetSchemaType = {
+const defaultComponentsValue: ComponentsSet = {
     "a": {
         importPath: `${publicComponent}/Anchor`,
         type: "content"
@@ -248,7 +248,8 @@ export type InteractConfig = {
     site: siteConfigType
     plugins: pluginsConfigType,
     outline: outlineConfigType,
-    components: componentsSetSchemaType,
+    components: ComponentsSet,
+    pages: PagesConfig,
     images: imageConfigType,
     markdown: markdownConfigType,
     paths: pathsConfigType & {

@@ -2,7 +2,11 @@
 title: Page Provider and CMS Binding
 ---
 
-## Page Provider
+A page provider is a handler function that returns a [page](page.md).
+
+All CMS would be implemented as a page provider.
+
+## How to create a page Provider
 
 You can create a provider plugin with a module:
 
@@ -15,8 +19,17 @@ You can create a provider plugin with a module:
 // ./src/cms/my-provider.js
 export async function handler(props) {
     return async (request) => {
-        // fetch your data
+        
+        const pathname = new URL(request.url).pathname
+        
+        // check if you handle the request
+        if(!pathname.startsWith("/my-provider")){
+            return
+        }
+        
+        // Fetch your data
         const data = await fetch(new URL(request.url).pathname)
+        
         return {
             frontmatter: {
                 layout: "holy"
@@ -35,3 +48,26 @@ export async function handler(props) {
 You can take a look to the `localPageCmsMiddleware.tsx` file, it's a CMS plugin
 that returns local [Markdown](markdown.md) file as page.
 
+## Registration
+
+You can register your page provider in the `pages.providers` node of the [configuration file](conf.md)
+
+Example:
+
+```json
+{
+  "pages": {
+    "providers": [
+      {
+        "importPath": "./cms/my-provider.js",
+        "props": {
+          "uri": "",
+          "timeout": 1
+        }
+      }
+    ]
+  }
+}
+```
+
+They are executed in order.

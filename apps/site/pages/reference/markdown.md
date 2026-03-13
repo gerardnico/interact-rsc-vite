@@ -16,6 +16,11 @@ Markdown file are [pages](page.md) that accepts:
 * the Markdown syntax
 * and [content component](component.md#type) like `<Foo />`
 
+Note that because we allow custom elements:
+
+* All element should be closed
+* The standard URL `<http://www.example.com>` is not valid
+
 ### Mdx
 
 Mdx pages are [Markdown page](#markdown) that accepts also JavaScript expressions such as:

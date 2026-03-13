@@ -1,9 +1,7 @@
 import type {Plugin} from 'vite';
+import type {PageProvider} from "../config/configSchema.js";
 
-export function vitePagesProviderManager(modules: {
-    importPath: string;
-    props?: Record<string, unknown>
-}[]): Plugin {
+export function vitePagesProviderManager(pageProviders: PageProvider[]): Plugin {
     const virtualId = 'interact:pages-provider-manager';
     //const resolvedId = '\0' + virtualId;
     const resolvedId = virtualId;
@@ -15,8 +13,8 @@ export function vitePagesProviderManager(modules: {
         load(id: string) {
             if (id !== resolvedId) return;
 
-            const imports = modules.map((m, i) => `import * as m${i} from '${m.importPath}';`).join('\n');
-            const handlers = modules.map((m, i) =>
+            const imports = pageProviders.map((m, i) => `import * as m${i} from '${m.importPath}';`).join('\n');
+            const handlers = pageProviders.map((m, i) =>
                 `await m${i}.handler(${JSON.stringify(m.props ?? {})})`
             ).join(', ');
 
