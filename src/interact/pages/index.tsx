@@ -3,27 +3,26 @@ import path from "path";
 
 import Holy from "#components/Holy";
 
-import getProgrammaticPageModule from 'interact:page-modules';
+import getPageModule from 'interact:page-modules';
 import {interactConfig} from "interact:config";
-import type {InteractConfigType} from "../config/configHandler.js";
+import type {InteractConfig} from "@combostrap/interact/types";
 import {getLayoutComponent, NotFound} from "interact:components";
-import type {PageModule} from "./pageModule.js";
 import React from "react";
-import createCmsPipeline from "../cms/cmsPipeline.js";
-import {cmsHandlers} from "interact:cms-provider"
+import createPagesProviderPipeline from "../pagesProviderManager/pagesHandlerPipeline.js";
+import {pagesProviderHandlers} from "interact:pages-provider-manager"
 
 /**
  * Otherwise we don't get any TypeScript error
  */
-let interactConfigTyped = interactConfig as InteractConfigType;
+let interactConfigTyped = interactConfig as InteractConfig;
 
 export interface PageFile {
     path: string;
     name: string;
 }
 
-const cmsPipeline = createCmsPipeline();
-cmsHandlers.forEach(cm => cmsPipeline.use(cm))
+const pageProviderPipeline = createPagesProviderPipeline();
+pagesProviderHandlers.forEach(cm => pageProviderPipeline.use(cm))
 
 export function getPagesRecursively(dir: string, startDir: string = dir): Record<string, PageFile> {
     const results: Record<string, PageFile> = {};
@@ -63,37 +62,42 @@ export async function getRootComponent(normalizedRequest: Request): Promise<Reac
 
     let url = new URL(normalizedRequest.url)
     /**
-     * Get a programmatic page module (jsx, tsx, ts, js)
+     * Get a page module (jsx, tsx, ts, js, mdx)
      */
-    let pageModule: PageModule | undefined = getProgrammaticPageModule({path: url.pathname});
+    let page = getPageModule({path: url.pathname});
 
-    if (pageModule == null) {
+    if (page == null) {
         /**
-         * Cms Module?
+         * Object Page Provider Module?
          */
-        pageModule = await cmsPipeline.run(normalizedRequest);
+        page = await pageProviderPipeline.run(normalizedRequest);
     }
 
-    if (pageModule == null) {
-        pageModule = NotFound;
+    if (page == null) {
+        page = NotFound;
     }
 
     /**
      * Layout
      */
     let layout = "holy"
-    let frontMatterLayout = pageModule?.frontmatter?.layout;
+    let frontMatterLayout = page?.frontmatter?.layout;
     if (frontMatterLayout) {
         layout = frontMatterLayout
     }
     const normalizedLayout = layout.toLowerCase().replace("-", "")
+    if (layout === "none") {
+        // the ! after the page variable is to say that we are sure it's defined
+        const InteractPageComponent = page!.default
+        return <InteractPageComponent request={normalizedRequest}/>
+    }
     let Layout = getLayoutComponent(normalizedLayout);
     if (Layout == null) {
         Layout = Holy;
         console.error(`Frontmatter layout ${layout} not found, holy layout was used instead`)
     }
 
-    return <Layout pageModule={pageModule} request={normalizedRequest}/>
+    return <Layout interactPage={page} request={normalizedRequest}/>
 
 }
 

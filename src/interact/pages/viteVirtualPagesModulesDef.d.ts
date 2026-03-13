@@ -1,11 +1,11 @@
 declare module 'interact:page-modules' {
-    import PageModule from "./pageModule.js";
+    import {InteractPage} from "@combostrap/interact/types";
 
     export function getModulePage(opts: {
         path: string;
         notFoundPath?: string;
-    }): PageModule | undefined;
+    }): InteractPage | undefined;
 
-    export const modulePages: Record<string, PageModule>;
+    export const modulePages: Record<string, InteractPage>;
     export default getModulePage;
 }

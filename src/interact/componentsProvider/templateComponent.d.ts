@@ -1,10 +1,10 @@
 // don't use the relative path (not resolved)
-import {PageModule} from "src/interact/types/pageModule.js"
+import type {InteractPageType} from "@combostrap/interact/types"
 
 /**
  * The props of a layout/partials component
  */
 export type TemplateProps = {
-    pageModule: PageModule,
+    page: InteractPageType,
     request: Request,
 };

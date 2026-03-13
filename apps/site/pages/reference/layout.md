@@ -25,7 +25,7 @@ layout: holy
 ---
 ```
 
-* for a [programmatic page](programmatic-page.md)
+* for a [programmatic page](page-module.md)
 
 ```javascript
 export const frontmatter = {

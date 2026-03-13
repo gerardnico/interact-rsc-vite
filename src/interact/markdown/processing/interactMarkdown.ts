@@ -16,13 +16,14 @@ import {mdxJsx} from 'micromark-extension-mdx-jsx'
 import {mdxJsxFromMarkdown} from 'mdast-util-mdx-jsx'
 import * as acorn from "acorn";
 import type {Element as HastElement} from "hast";
+import type {Page} from "../../pages/interactPage.js";
 
 // Markdown processing to react component via rehypeReact
 // Why?
 // because Mdx use rehypeRecma as compiler (ie the hast goes to the JavaScript Tree)
 // See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
-const interactMd = {
-    process: async (content: string | VFile) => {
+const interactMarkdown = {
+    toPage: async (content: string | VFile): Promise<Page> => {
 
         const mandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfig)
 
@@ -141,6 +142,7 @@ const interactMd = {
                 // to resolve: Cannot handle MDX estrees without `createEvaluater`
                 // https://github.com/syntax-tree/hast-util-to-jsx-runtime#createevaluater
                 createEvaluater() {
+                    // noinspection JSUnusedGlobalSymbols - mandatory otherwise we get a the error above
                     return {
                         evaluateExpression(expression: any) {
                             // return undefined or implement actual eval
@@ -163,4 +165,4 @@ const interactMd = {
         }
     }
 }
-export default interactMd
+export default interactMarkdown

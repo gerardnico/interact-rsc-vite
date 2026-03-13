@@ -4,17 +4,17 @@
 
 import type {ComponentType} from "react";
 
-export type PageModuleComponent = ComponentType<{ request: Request }>
+export type PageComponent = ComponentType<{ request: Request }>
 
-export interface TocEntry {
+export interface TocNode {
     value: string;
     depth: number;
     id: string;
     data?: Record<string, unknown>;
-    children?: TocEntry[];
+    children?: TocNode[];
 }
 
-export interface InteractFrontmatter {
+export interface Frontmatter {
     name?: string;
     title?: string;
     description?: string;
@@ -28,23 +28,23 @@ export interface InteractFrontmatter {
 /**
  * A page module exports optionally a frontmatter and a toc
  */
-export interface PageModule {
-    frontmatter?: InteractFrontmatter;
-    toc?: TocEntry[];
-    default: PageModuleComponent;
+export interface Page {
+    frontmatter?: Frontmatter;
+    toc?: TocNode[];
+    default: PageComponent;
 }
 
 declare module '*.mdx' {
     const defaultType: ComponentType;
-    export const frontmatter: InteractFrontmatter;
-    export const toc: TocEntry[];
+    export const frontmatter: Frontmatter;
+    export const toc: TocNode[];
     export default defaultType;
 }
 
 declare module '*.md' {
     const defaultType: ComponentType;
-    export const frontmatter: InteractFrontmatter;
-    export const toc: TocEntry[];
+    export const frontmatter: Frontmatter;
+    export const toc: TocNode[];
     export default defaultType;
 }
 
@@ -52,16 +52,16 @@ declare module '*.md' {
  * All tsx file in pages directory are
  */
 declare module "*/pages/*.tsx" {
-    const module: PageModuleComponent;
-    export const frontmatter: InteractFrontmatter | undefined;
-    export const toc: TocEntry[] | undefined;
+    const module: PageComponent;
+    export const frontmatter: Frontmatter | undefined;
+    export const toc: TocNode[] | undefined;
     export default module.default;
 }
 
 
 declare module "*/pages/*.jsx" {
-    const module: PageModuleComponent;
-    export const frontmatter: InteractFrontmatter | undefined;
-    export const toc: TocEntry[] | undefined;
+    const module: PageComponent;
+    export const frontmatter: Frontmatter | undefined;
+    export const toc: TocNode[] | undefined;
     export default module.default;
 }

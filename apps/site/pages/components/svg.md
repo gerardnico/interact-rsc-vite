@@ -23,7 +23,7 @@ Output example:
 
 ### Programmatic Page
 
-In a [programmatic page](../reference/programmatic-page.md), importing a svg will return
+In a [programmatic page](../reference/page-module.md), importing a svg will return
 an [optimized](#optimization) [React Svg Component](https://react-svgr.com/docs/what-is-svgr/)
 
 Example:

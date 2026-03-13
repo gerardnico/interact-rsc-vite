@@ -1,12 +1,14 @@
 import type {Plugin} from 'vite';
 
-export function viteCmsMiddlewareProvider(modules: { importPath: string; props?: Record<string, unknown> }[]): Plugin {
-    const virtualId = 'interact:cms-provider';
+export function vitePagesProviderManager(modules: {
+    importPath: string;
+    props?: Record<string, unknown>
+}[]): Plugin {
+    const virtualId = 'interact:pages-provider-manager';
     //const resolvedId = '\0' + virtualId;
     const resolvedId = virtualId;
     return {
-        name: 'interact-cms-provider',
-        enforce: "post",// runs after as we depend on the component plugin
+        name: 'interact-pages-provider-manager',
         resolveId(id: string) {
             if (id === virtualId) return resolvedId;
         },
@@ -20,7 +22,7 @@ export function viteCmsMiddlewareProvider(modules: { importPath: string; props?:
 
             return `
 ${imports}
-export const cmsHandlers = [${handlers}];
+export const pagesProviderHandlers = [${handlers}];
       `;
         }
     };

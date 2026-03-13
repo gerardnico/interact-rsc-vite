@@ -6,7 +6,7 @@ We pinned it with resolutions.
 ## ts-node
 
 `ts-node` is mandatory when working with `oclif` has command library
-for the [dev](src/interact/cli/dev.js) script
+for the [dev](../../src/interact/cli/dev.js) script
 
 ## Component Import
 
@@ -44,3 +44,13 @@ The only code that needs to be build is the cli.
 
 Is mandatory for development otherwise you get error such
 unable to find `./cjs/react-server-dom-webpack-client.browser.development.js`
+
+## Prettier
+
+Was added to get the type resolve `skipLibCheck` error:
+```
+node_modules/@svgr/core/dist/index.d.ts:1:25 - error TS2307: Cannot find module 'prettier' or its corresponding type declarations.
+
+1 import { Options } from 'prettier';
+                          ~~~~~~~~
+```

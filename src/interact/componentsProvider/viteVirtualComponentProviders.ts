@@ -1,6 +1,6 @@
 import type {Plugin} from 'vite';
 import path from 'path';
-import type {InteractConfigType} from "../config/configHandler.js";
+import type {InteractConfig} from "../config/configHandler.js";
 
 /**
  * Print without any quote so that the object can be added to virtual module
@@ -39,7 +39,7 @@ function toJsString(value: any, indent = 0): any {
     return String(value);
 }
 
-export function generateComponentProvider(interactConfig: InteractConfigType): string {
+export function generateComponentProvider(interactConfig: InteractConfig): string {
 
     let imports = [];
     let layoutComponents: Record<string, string> = {};
@@ -134,7 +134,7 @@ export { ${[...exports].join(', ')} };
 
 export default function viteMdxComponentProvider({moduleName = 'interact:mdx-component-provider', interactConfig}: {
     moduleName: string,
-    interactConfig: InteractConfigType
+    interactConfig: InteractConfig
 }): Plugin {
 
     /**

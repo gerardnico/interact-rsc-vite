@@ -13,7 +13,7 @@ import path from "node:path";
  * Configuration source information
  */
 export interface ConfigSource {
-    config: InteractConfigType;
+    config: InteractConfig;
     loaded: boolean;
 }
 
@@ -186,7 +186,7 @@ export function resolveInteractConfPath(confPath: string | undefined): ConfPathR
 
 }
 
-let interactConfig: InteractConfigType | null = null
+let interactConfig: InteractConfig | null = null
 
 /**
  * To resolve only once
@@ -243,7 +243,7 @@ function deepMerge(target: any, source: any) {
  * The config seen by the client
  * (no schema field and configFile and Root directory)
  */
-export type InteractConfigType = {
+export type InteractConfig = {
     style: styleConfigType,
     site: siteConfigType
     plugins: pluginsConfigType,
@@ -272,7 +272,7 @@ class ConfigHandler {
 
     private readonly configFile: string;
     private readonly rootDirectory: string;
-    private readonly interactConfig: InteractConfigType;
+    private readonly interactConfig: InteractConfig;
 
     constructor(confPathResolved: ConfPathResolvedType) {
         this.configFile = confPathResolved.filePath;
@@ -280,7 +280,7 @@ class ConfigHandler {
         this.interactConfig = this.#process()
     }
 
-    #addDefaultAndRuntime(finalConfigData: InteractConfigType) {
+    #addDefaultAndRuntime(finalConfigData: InteractConfig) {
 
 
         finalConfigData.site.favicons = updateFavicon(finalConfigData?.site?.favicons);
@@ -353,7 +353,7 @@ class ConfigHandler {
             throw new Error("Configuration error")
         }
 
-        let finalConfigData = (result.data as InteractConfigType)
+        let finalConfigData = (result.data as InteractConfig)
         this.#addDefaultAndRuntime(finalConfigData)
 
         return finalConfigData;
@@ -362,7 +362,7 @@ class ConfigHandler {
     /**
      * Load configuration with fallback to defaults
      */
-    #process(): InteractConfigType {
+    #process(): InteractConfig {
 
 
         let configContent: string;
@@ -394,7 +394,7 @@ class ConfigHandler {
 
     }
 
-    getConfig(): InteractConfigType {
+    getConfig(): InteractConfig {
         return this.interactConfig
     }
 

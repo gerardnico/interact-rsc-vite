@@ -7,7 +7,7 @@ A page is a file that is wrapped in a [layout](layout.md) and served as HTML.
 It can be written in:
 
 * [markdown](markdown.md) (md or mdx)
-* [programmatically](programmatic-page.md) (jsx, mdx)
+* [programmatically](page-module.md) (jsx, mdx)
 
 
 ## Pages Directory

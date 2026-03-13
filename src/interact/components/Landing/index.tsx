@@ -3,9 +3,9 @@ import type {TemplateProps} from "../../types/index.js";
 /**
  * Landing Layout
  */
-export default async function Landing({pageModule}: TemplateProps) {
-    let Component = pageModule.default
-    let frontmatter = pageModule.frontmatter || {}
+export default async function Landing({page}: TemplateProps) {
+    let Component = page.default
+    let frontmatter = page.frontmatter || {}
     return (
         <html lang="en">
         <head>

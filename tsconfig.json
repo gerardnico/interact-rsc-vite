@@ -4,27 +4,34 @@
     //"allowImportingTsExtensions": true,
     "strict": true,
     "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true, // 'targetWidth' is possibly 'undefined'.
+    "noUncheckedIndexedAccess": true,
+    // 'targetWidth' is possibly 'undefined'.
     "noUnusedLocals": true,
-    "noImplicitAny": true,  // allows implicit any
+    // no implicit any, the user needs to add any if it's intended
+    "noImplicitAny": true,
     "noUnusedParameters": true,
-    "skipLibCheck": true,
+    // skipLibCheck = false to check bad import in d.ts file
+    // such as import type {DoesNotExist} from "@combostrap/interact/types"
+    "skipLibCheck": false,
     "rootDir": "src",
     "verbatimModuleSyntax": true,
     //    "noEmit": true,
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "target": "ESNext",
-    "sourceMap": true, // create the js.map files
-    "declaration": true, // copy also the d.ts file at compilation
-    "declarationMap": true, // create the d.ts.map file
+    "sourceMap": true,
+    // create the js.map files
+    "declaration": true,
+    // copy also the d.ts file at compilation
+    "declarationMap": true,
+    // create the d.ts.map file
     "lib": [
       "ESNext",
       "DOM",
       "DOM.Iterable"
     ],
     "types": [
-      "vite/client",
+      "react",
       "@vitejs/plugin-rsc/types"
     ],
     "jsx": "react-jsx",
@@ -34,6 +41,11 @@
   },
   "include": [
     "src/**/*"
+  ],
+  "exclude": [
+    // don't check on node_modules
+    // to avoid lib check such as node_modules/@svgr/core/dist/index.d.ts:1:25 - error TS2307: Cannot find module 'prettier' or its corresponding type declarations.
+    "node_modules"
   ],
   // Options for file/directory watching
   // https://www.typescriptlang.org/docs/handbook/configuring-watch.html
@@ -48,7 +60,10 @@
     "synchronousWatchDirectory": true,
     // Finally, two additional settings for reducing the amount of possible
     // files to track  work from these directories
-    "excludeDirectories": ["**/node_modules", "dist"],
+    "excludeDirectories": [
+      "**/node_modules",
+      "dist"
+    ]
     //"excludeFiles": ["build/fileWhichChangesOften.ts"]
   }
 }

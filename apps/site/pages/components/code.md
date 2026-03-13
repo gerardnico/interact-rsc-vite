@@ -26,7 +26,7 @@ let counter = 1 + 1
 
 ### Programmatic Page
 
-You can also use it directly in a [programmatic page](../reference/programmatic-page.md)
+You can also use it directly in a [programmatic page](../reference/page-module.md)
 
 ```jsx
 import Code from "interact:components";

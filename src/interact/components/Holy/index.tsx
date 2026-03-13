@@ -9,17 +9,17 @@ import {Header} from "../Header/Header.js";
 import Toc from "../Toc/index.js";
 import NavBar from "../NavBar/index.js";
 import {interactConfig} from "interact:config";
-import type {InteractConfigType} from "../../config/configHandler.js";
+import type {InteractConfig} from "../../config/configHandler.js";
 /**
  * Otherwise we don't get any TypeScript error
  */
-let interactConfigTyped = interactConfig as InteractConfigType;
+let interactConfigTyped = interactConfig as InteractConfig;
 /**
  * Holy Layout Components
  */
 export default async function Holy(layoutProps: TemplateProps) {
 
-    const PageComponent = layoutProps.pageModule.default;
+    const PageComponent = layoutProps.page.default;
     return (
         <html lang="en" dir="ltr">
         <Head {...layoutProps} />

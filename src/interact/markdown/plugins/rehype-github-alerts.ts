@@ -116,7 +116,7 @@ export default function rehypeGithubAlert() {
                     // Exit if there’s no following element.
                     if (
                         headIndex + 1 === node.children.length ||
-                        node.children[headIndex + 1].type !== 'element'
+                        node.children[headIndex + 1]?.type !== 'element'
                     ) {
                         return
                     }
@@ -158,18 +158,19 @@ export default function rehypeGithubAlert() {
             }
 
             // Add mb-0 class to the last element
-            if (lastElementIndex >= 0 && alertChildren[lastElementIndex].type === 'element') {
+            if (lastElementIndex >= 0 && alertChildren[lastElementIndex]?.type === 'element') {
                 const lastElement = alertChildren[lastElementIndex] as Element;
                 if (!lastElement.properties) {
                     lastElement.properties = {};
                 }
-                if (!lastElement.properties.className) {
-                    lastElement.properties.className = [];
-                } else if (!Array.isArray(lastElement.properties.className)) {
+                let classNameProp = 'className';
+                if (!lastElement.properties[classNameProp]) {
+                    lastElement.properties[classNameProp] = [];
+                } else if (!Array.isArray(lastElement.properties[classNameProp])) {
                     // Convert string className to array
-                    lastElement.properties.className = [lastElement.properties.className as string];
+                    lastElement.properties[classNameProp] = [lastElement.properties[classNameProp] as string];
                 }
-                lastElement.properties.className.push('mb-0');
+                lastElement.properties[classNameProp].push('mb-0');
             }
 
             parent.children[index] = {

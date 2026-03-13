@@ -6,13 +6,13 @@
 import {type SVGProps} from "react";
 import {optimize, type Config} from "svgo";
 import interactConfig from "interact:config";
-import type {InteractConfigType} from "../../config/configHandler.js";
+import type {InteractConfig} from "../../config/configHandler.js";
 import {readFile} from "node:fs/promises";
 
 /**
  * Otherwise we don't get any TypeScript error
  */
-let interactConfigTyped = interactConfig as InteractConfigType;
+let interactConfigTyped = interactConfig as InteractConfig;
 
 
 interface SvgComponentProps extends SVGProps<SVGSVGElement> {

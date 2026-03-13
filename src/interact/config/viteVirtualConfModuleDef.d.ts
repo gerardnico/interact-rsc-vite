@@ -4,9 +4,9 @@
  * seen as the definition of the module file instead
  */
 declare module 'interact:config' {
-    import {type InteractConfigType} from "./configHandler.js";
+    import {type InteractConfig} from "@combostrap/interact/types";
 
-    export const interactConfig: InteractConfigType;
+    export const interactConfig: InteractConfig;
     // noinspection JSUnusedGlobalSymbols - no idea why but it's not seen as used
     export default interactConfig;
 }

@@ -1,19 +1,22 @@
-import type {PageModule} from "@combostrap/interact/client";
+import type {Page} from "@combostrap/interact/types";
 import path from "node:path";
 import {fsGetTextAsync} from "../utils/fs.js";
 
-import type {CmsMiddlewareHandlerType} from "./cmsMiddleware.js";
-import interactMd from "../markdown/processing/interactMd.js";
+import type {pagesMiddlewareType} from "../pagesProviderManager/pagesProvider.js";
+import interactMarkdown from "@combostrap/interact/markdown";
 import {VFile} from "vfile";
 
 
+/**
+ * A pages middleware handler that returns pages from Markdown file located in a local directory
+ */
 // noinspection JSUnusedGlobalSymbols - loaded dynamically via alias
 export async function handler({pagesDirectory}: {
     pagesDirectory: string
-}): Promise<CmsMiddlewareHandlerType> {
+}): Promise<pagesMiddlewareType> {
     const pagesDir = pagesDirectory;
 
-    return async function (request: Request): Promise<PageModule | undefined> {
+    return async function (request: Request): Promise<Page | undefined> {
 
         let url = new URL(request.url)
         // it's path.join and not path.resolve because pathname is an absolute path
@@ -31,7 +34,7 @@ export async function handler({pagesDirectory}: {
             path: page,
             value: content,
         })
-        return interactMd.process(file);
+        return interactMarkdown.toPage(file);
 
     }
 }

@@ -1,13 +1,13 @@
 ---
-title: CMS
+title: Page Provider and CMS Binding
 ---
 
-## Provider Plugin
+## Page Provider
 
-You can create a provider plugin with a file:
+You can create a provider plugin with a module:
 
 * that exports a handler function that accepts optionally, a props object (only data, no functions)
-* and returns a function that accepts a web api request and returns an object:
+* and returns a function that accepts a web api request and returns a [page](page.md) as object:
   * with as default, a mandatory React Element
   * and optionally, a [frontmatter](frontmatter.md) and a `toc`
 

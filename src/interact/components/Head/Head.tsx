@@ -2,19 +2,19 @@ import type {TemplateProps} from "../../types/index.js";
 import {PAGE_CONTAINER} from "../classNames.js";
 import type {FaviconSetSchemaType} from "../../config/configSchema.js";
 import {interactConfig} from "interact:config";
-import type {InteractConfigType} from "../../config/configHandler.js";
+import type {InteractConfig} from "../../config/configHandler.js";
 
 /**
  * Otherwise we don't get any TypeScript error
  */
-let interactConfigTyped = interactConfig as InteractConfigType;
+let interactConfigTyped = interactConfig as InteractConfig;
 
-export default function Head({pageModule, request}: TemplateProps) {
+export default function Head({page, request}: TemplateProps) {
 
-    let title = pageModule.frontmatter?.title;
-    let description = pageModule.frontmatter?.description;
-    let keyWords = pageModule.frontmatter?.keyWords;
-    let robots = pageModule.frontmatter?.robots;
+    let title = page.frontmatter?.title;
+    let description = page.frontmatter?.description;
+    let keyWords = page.frontmatter?.keyWords;
+    let robots = page.frontmatter?.robots;
 
     const primary = interactConfigTyped.site.colorPrimary
 

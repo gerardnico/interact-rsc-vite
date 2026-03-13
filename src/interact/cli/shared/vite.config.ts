@@ -13,7 +13,7 @@ import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "
 import viteMdxComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
 import svgReactPlugin from "vite-plugin-svgr";
 import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
-import {viteCmsMiddlewareProvider} from "../../cms/viteCmsMiddlewareProvider.js";
+import {vitePagesProviderManager} from "../../pagesProviderManager/vitePagesProviderManager.js";
 import {getMandatoryUnifiedPlugins} from "../../markdown/conf/markdownBasePlugins.js";
 import type {InteractMarkdownConfigType} from "@interact/markdown-config";
 
@@ -230,14 +230,17 @@ export async function resolveViteConfig(
                 },
             }),
             viteOutlineNumberingStylesPlugin(interactConfigTyped),
-            viteCmsMiddlewareProvider(
-                [{
-                    importPath: path.resolve(interactPackageDir, 'cms/localPageCmsMiddleware.js'),
-                    props: {
-                        pagesDirectory: interactConfigTyped.paths.pagesDirectory
-                    }
-                }]
-            ),
+            {
+                enforce: "post", // runs after as we depend on the component plugin
+                ...vitePagesProviderManager(
+                    [{
+                        importPath: path.resolve(interactPackageDir, 'pagesProvider/localPagesProvider.js'),
+                        props: {
+                            pagesDirectory: interactConfigTyped.paths.pagesDirectory
+                        }
+                    }]
+                )
+            },
             // Rsc
             // At the end because the client import the outline numbering css virtual vite module
             // Note: you can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)

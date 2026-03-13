@@ -1,19 +1,19 @@
-import type {TemplateProps, TocEntry} from "../../types/index.js";
+import type {TemplateProps, TocNode} from "../../types/index.js";
 import "./toc.css"
 import interactConfig from "interact:config";
-import type {InteractConfigType} from "../../config/configHandler.js";
+import type {InteractConfig} from "../../config/configHandler.js";
 
 /**
  * Otherwise we don't get any TypeScript error
  */
-let interactConfigTyped = interactConfig as InteractConfigType;
+let interactConfigTyped = interactConfig as InteractConfig;
 
 interface TocProps extends TemplateProps {
     maxDepth?: number;
 }
 
 function TocItems({entries, maxDepth, currentDepth = 1}: {
-    entries: TocEntry[],
+    entries: TocNode[],
     maxDepth: number,
     currentDepth?: number
 }) {
@@ -42,7 +42,7 @@ export default function Toc({maxDepth, ...layoutProps}: TocProps) {
             maxDepth = 3
         }
     }
-    const toc: TocEntry[] | undefined = layoutProps.pageModule?.toc;
+    const toc: TocNode[] | undefined = layoutProps.page?.toc;
     /**
      * The selector is a class so that we can put more than one
      * for documentation purposes

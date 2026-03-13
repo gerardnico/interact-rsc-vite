@@ -1,8 +1,8 @@
 ---
-title: How to create a programmatic page (Jsx, Tsx, Js)?
+title: How to create a module page (Jsx, Tsx, Js, Mdx)?
 ---
 
-A programmatic page is a [page](page.md) created in one of the following language: `Jsx`, `Tsx`, `Js`
+A `module page` is a [page](page.md) created from a `Jsx`, `Tsx`, `Js`, `Mdx` file.
 
 ## Example
 
@@ -37,3 +37,10 @@ export default function MyPage() {
     )
 }
 ```
+
+## Properties
+
+They:
+
+* allows `import` and `export`
+* are added to the final bundle

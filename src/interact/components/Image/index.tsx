@@ -9,11 +9,11 @@ import {ImageError, ImageErrors} from "../../images/imageErrorsDictionary.js";
 
 import {brokenImage} from "../../images/imageSharedCode.js";
 import {interactConfig} from "interact:config";
-import type {InteractConfigType} from "../../config/configHandler.js";
+import type {InteractConfig} from "../../config/configHandler.js";
 /**
  * Otherwise we don't get any TypeScript error
  */
-let interactConfigTyped = interactConfig as InteractConfigType;
+let interactConfigTyped = interactConfig as InteractConfig;
 
 
 export type ImageProps =

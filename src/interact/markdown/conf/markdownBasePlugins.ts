@@ -5,7 +5,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeExtractToc from "@stefanprobst/rehype-extract-toc";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import rehypeHrefRewrite from "../plugins/rehype-href-rewrite.js";
-import type {InteractConfigType} from "../../config/configHandler.js";
+import type {InteractConfig} from "../../config/configHandler.js";
 import path from "node:path";
 import remarkLocalLinkChecker from "../plugins/remark-local-link-checker.js";
 
@@ -13,7 +13,7 @@ import remarkLocalLinkChecker from "../plugins/remark-local-link-checker.js";
  * Mandatory unified plugin
  * for the outline, toc and heading management
  */
-export function getMandatoryUnifiedPlugins(interactConfig: InteractConfigType) {
+export function getMandatoryUnifiedPlugins(interactConfig: InteractConfig) {
     const basePublicName = path.basename(interactConfig.paths.publicDirectory)
 
     return {

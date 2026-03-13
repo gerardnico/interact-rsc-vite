@@ -3,7 +3,7 @@ import {PAGE_CONTAINER} from "../classNames.js";
 import interactConfig from "interact:config";
 import Image from "../Image/index.js"
 import type {TemplateProps} from "../../types/index.js";
-import type {InteractConfigType} from "../../config/configHandler.js";
+import type {InteractConfig} from "../../config/configHandler.js";
 
 // @ts-ignore
 export default function NavBar(props:TemplateProps) {
@@ -11,7 +11,7 @@ export default function NavBar(props:TemplateProps) {
     /**
      * Otherwise TypeScript does not errored for unknown propertie
      */
-    const interactConfigCasted = (interactConfig as InteractConfigType)
+    const interactConfigCasted = (interactConfig as InteractConfig)
 
     let homeUrl = ""
     const isDev = process.env['NODE_ENV'] === 'development';

@@ -18,10 +18,9 @@
     "dist/interact/**/*.js.map"
   ],
   "exports": {
-    "./client": {
-      "types": "./src/interact/types/index.d.ts"
-    },
-    "./components/*": "./src/interact/components/*/index.js"
+    "./types": "./src/interact/types/index.d.ts",
+    "./components/*": "./src/interact/components/*/index.js",
+    "./markdown": "./src/interact/markdown/processing/interactMarkdown.js"
   },
   "imports": {
     "#components/*": "./src/interact/components/*/index.js"
@@ -35,6 +34,8 @@
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/plugin-svgo": "^8.1.0",
+    "@vitejs/plugin-react": "5.1.4",
+    "@vitejs/plugin-rsc": "0.5.20",
     "clsx": "2.1.1",
     "etag": "1.8.1",
     "glob": "13.0.6",
@@ -56,8 +57,6 @@
     "ts-node": "10.9.2",
     "vite": "7.3.1",
     "vite-plugin-svgr": "4.5.0",
-    "@vitejs/plugin-react": "5.1.4",
-    "@vitejs/plugin-rsc": "0.5.20",
     "zod": "4.3.6"
   },
   "devDependencies": {
@@ -68,6 +67,7 @@
     "@types/node": "25.3.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "prettier": "^3.8.1",
     "typescript": "5.9.3",
     "vitest": "4.0.18"
   },
@@ -81,6 +81,9 @@
     "topicSeparator": " "
   },
   "resolutions": {
-    "sharp": "0.34.5"
+    "sharp": "0.34.5",
+    "@types/react": "19.2.14",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
   }
 }

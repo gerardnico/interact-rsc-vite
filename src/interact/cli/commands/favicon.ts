@@ -10,14 +10,14 @@ import {
 } from '@realfavicongenerator/generate-favicon';
 import {getNodeImageAdapter, loadAndConvertToSvg} from "@realfavicongenerator/image-adapter-node";
 import {BaseCommand} from "../baseCommand.js";
-import {type InteractConfigType, resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
+import {type InteractConfig, resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
 
 
 async function generateImage({masterFilePath, dryRun, outputDirectory, interactConfig: config}: {
     masterFilePath?: string,
     dryRun: boolean,
     outputDirectory: string
-    interactConfig: InteractConfigType
+    interactConfig: InteractConfig
 }) {
     if (masterFilePath == null) {
         masterFilePath = config.site.faviconMaster
