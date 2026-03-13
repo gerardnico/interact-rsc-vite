@@ -23,10 +23,12 @@ const layoutComponents: Record<string, ComponentType<TemplateProps>> = {
  * See https://mdxjs.com/guides/injecting-components/
  */
 export function useMDXComponents(): MDXComponents {
+
     return {
         Planet() {
             return 'Pluto'
         },
+        // @ts-ignore
         pre: Code,
         Svg: Svg
     }

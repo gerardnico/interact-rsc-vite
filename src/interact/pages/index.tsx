@@ -97,7 +97,7 @@ export async function getRootComponent(normalizedRequest: Request): Promise<Reac
         console.error(`Frontmatter layout ${layout} not found, holy layout was used instead`)
     }
 
-    return <Layout interactPage={page} request={normalizedRequest}/>
+    return <Layout page={page} request={normalizedRequest}/>
 
 }
 

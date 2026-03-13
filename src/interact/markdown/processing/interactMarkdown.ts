@@ -16,7 +16,7 @@ import {mdxJsx} from 'micromark-extension-mdx-jsx'
 import {mdxJsxFromMarkdown} from 'mdast-util-mdx-jsx'
 import * as acorn from "acorn";
 import type {Element as HastElement} from "hast";
-import type {Page} from "../../pages/interactPage.js";
+import type {Page, TocNode} from "../../pages/interactPage.js";
 
 // Markdown processing to react component via rehypeReact
 // Why?
@@ -134,31 +134,14 @@ const interactMarkdown = {
             .use(mandatoryUnifiedPlugins.markdown.rehypePlugins || [])
             .use(markdownConfig.rehypePlugins || [])
             .use(rehypeReact, {         // hast → React element tree
-                jsx,
-                jsxs,
-                createElement,
-                Fragment,
-                components: components,
-                // to resolve: Cannot handle MDX estrees without `createEvaluater`
-                // https://github.com/syntax-tree/hast-util-to-jsx-runtime#createevaluater
-                createEvaluater() {
-                    // noinspection JSUnusedGlobalSymbols - mandatory otherwise we get a the error above
-                    return {
-                        evaluateExpression(expression: any) {
-                            // return undefined or implement actual eval
-                            console.log(expression);
-                            return undefined
-                        },
-                        evaluateProgram(program: any) {
-                            console.log(program);
-                            return undefined
-                        },
-                    }
-                },
+                jsx: jsx,
+                jsxs: jsxs,
+                Fragment: Fragment,
+                components: components
             }).process(content);
         return {
             frontmatter: frontmatter,
-            toc: vFile.data?.toc || {},
+            toc: vFile.data?.toc as TocNode[] || [],
             default: () => {
                 return vFile.result
             }

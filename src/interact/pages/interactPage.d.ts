@@ -14,16 +14,14 @@ export interface TocNode {
     children?: TocNode[];
 }
 
-export interface Frontmatter {
+export type Frontmatter = {
     name?: string;
     title?: string;
     description?: string;
     layout?: string;
     keyWords?: string;
     robots?: string;
-
-    [key: string]: string;
-}
+} & Record<string, string | undefined>
 
 /**
  * A page module exports optionally a frontmatter and a toc
@@ -32,36 +30,4 @@ export interface Page {
     frontmatter?: Frontmatter;
     toc?: TocNode[];
     default: PageComponent;
-}
-
-declare module '*.mdx' {
-    const defaultType: ComponentType;
-    export const frontmatter: Frontmatter;
-    export const toc: TocNode[];
-    export default defaultType;
-}
-
-declare module '*.md' {
-    const defaultType: ComponentType;
-    export const frontmatter: Frontmatter;
-    export const toc: TocNode[];
-    export default defaultType;
-}
-
-/**
- * All tsx file in pages directory are
- */
-declare module "*/pages/*.tsx" {
-    const module: PageComponent;
-    export const frontmatter: Frontmatter | undefined;
-    export const toc: TocNode[] | undefined;
-    export default module.default;
-}
-
-
-declare module "*/pages/*.jsx" {
-    const module: PageComponent;
-    export const frontmatter: Frontmatter | undefined;
-    export const toc: TocNode[] | undefined;
-    export default module.default;
 }

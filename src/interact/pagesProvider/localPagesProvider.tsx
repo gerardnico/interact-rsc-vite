@@ -2,7 +2,7 @@ import type {Page} from "@combostrap/interact/types";
 import path from "node:path";
 import {fsGetTextAsync} from "../utils/fs.js";
 
-import type {pagesMiddlewareType} from "../pagesProviderManager/pagesProvider.js";
+import type {PagesHandler} from "../pagesProviderManager/pagesProvider.js";
 import interactMarkdown from "@combostrap/interact/markdown";
 import {VFile} from "vfile";
 
@@ -13,7 +13,7 @@ import {VFile} from "vfile";
 // noinspection JSUnusedGlobalSymbols - loaded dynamically via alias
 export async function handler({pagesDirectory}: {
     pagesDirectory: string
-}): Promise<pagesMiddlewareType> {
+}): Promise<PagesHandler> {
     const pagesDir = pagesDirectory;
 
     return async function (request: Request): Promise<Page | undefined> {

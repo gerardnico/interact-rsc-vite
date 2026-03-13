@@ -1,15 +1,15 @@
-import type {pagesMiddlewareType} from "./pagesProvider.js";
+import type {PagesHandler} from "./pagesProvider.js";
 import type {Page} from "../pages/interactPage.js";
 
 type cmsPipelineType = {
-    use: (middleWareHandler: pagesMiddlewareType) => cmsPipelineType
+    use: (middleWareHandler: PagesHandler) => cmsPipelineType
     run: (ctx: Request) => Promise<Page | undefined>
 }
 
 export default function createPagesProviderPipeline(): cmsPipelineType {
-    const pagesProviderMiddlewares: pagesMiddlewareType[] = [];
+    const pagesProviderMiddlewares: PagesHandler[] = [];
 
-    function use(this: cmsPipelineType, middleWareHandler: pagesMiddlewareType): cmsPipelineType {
+    function use(this: cmsPipelineType, middleWareHandler: PagesHandler): cmsPipelineType {
         pagesProviderMiddlewares.push(middleWareHandler);
         return this; // chainable
     }

@@ -25,7 +25,7 @@ import {isHastAnchorElement, isHastImgElement, removePublicPart} from "../util/u
 export default function rehypeHrefRewrite({publicDirName = 'public', base = ''}: {
     publicDirName: string,
     base: string
-}): ((publicPattern: string) => void) | any {
+}){
     return function transformer(tree: Root) {
         visit(tree, "element", node => {
 

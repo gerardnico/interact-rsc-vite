@@ -1,10 +1,19 @@
-// don't drop the .d.ts extension, ts extension should be js
-export * from "../config/viteVirtualConfModuleDef.d.ts"
-export * from "../pages/interactPage.d.ts";
-export * from "../pages/viteVirtualPagesModulesDef.d.ts"
-export * from "../componentsProvider/templateComponent.d.ts"
-export * from "../componentsProvider/componentProviderModule.d.ts"
-export * from "../markdown/conf/markdownConfModule.js"
+/// <reference types="./vite-env-override.d.ts" />
+/// <reference types="vite/client" />
+// ambient virtual declare module file
+/// <reference types="../markdown/conf/markdownConfModule.d.ts" />
+/// <reference types="../componentsProvider/componentProviderModule.d.ts" />
+/// <reference types="../pages/viteVirtualPagesModulesDef.d.ts" />
+/// <reference types="../pages/interactPageModules.d.ts" />
+/// <reference types="../config/viteVirtualConfModuleDef.d.ts" />
+
+
+import type {PagesHandler} from "../pagesProviderManager/pagesProvider.d.ts"
+import type {Page,Frontmatter,TocNode} from "../pages/interactPage.js";
+import type{TemplateProps} from "../componentsProvider/templateComponent.js";
+
 import {type InteractConfig} from "../config/configHandler.js"
 
-export {InteractConfig}
+export {InteractConfig, PagesHandler, Page,TemplateProps, Frontmatter, TocNode}
+
+

@@ -3,7 +3,7 @@ import type {TemplateProps} from "../../types/index.js";
 /**
  * Landing Layout
  */
-export default async function Landing({page}: TemplateProps) {
+export default async function Landing({page, request}: TemplateProps) {
     let Component = page.default
     let frontmatter = page.frontmatter || {}
     return (
@@ -23,7 +23,7 @@ export default async function Landing({page}: TemplateProps) {
           </span>
         </header>
         <main>
-            <Component/>
+            <Component request={request}/>
         </main>
         </body>
         </html>

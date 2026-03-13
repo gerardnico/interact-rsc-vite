@@ -1,4 +1,5 @@
 import type React from 'react'
+import type {ReactFormState} from "react-dom/client";
 
 
 // The schema of payload which is serialized into RSC stream on rsc environment

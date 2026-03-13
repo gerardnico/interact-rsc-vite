@@ -17,7 +17,7 @@ export default function remarkLocalLinkChecker({
     pagesDir: string,
 }) {
     if (process.env['NODE_ENV'] === "production") {
-        return null;
+        return;
     }
     const strict = true
     return function (tree: Root, vFile: VFile) {
