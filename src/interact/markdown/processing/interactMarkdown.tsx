@@ -13,11 +13,13 @@ import interactConfig from "interact:config";
 import {type Compatible, VFile, type VFile as VFileType} from "vfile";
 import {useMDXComponents} from "interact:components";
 import {mdxJsx} from 'micromark-extension-mdx-jsx'
+import {mdxMd} from 'micromark-extension-mdx-md'
 import type {Element as HastElement} from "hast";
 import type {Page, TocNode} from "@combostrap/interact/types";
 import {VFileMessage} from 'vfile-message'
 import {compile, run} from '@mdx-js/mdx'
 import * as jsxRuntime from 'react/jsx-runtime'
+import rehypeRaw from "rehype-raw"
 
 
 // Markdown processing to react component via rehypeReact
@@ -62,6 +64,9 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
             // https://github.com/micromark/micromark-extension-mdx-jsx
             // List: https://github.com/syntax-tree/mdast-util-from-markdown#list-of-extensions
             data.micromarkExtensions.push(mdxJsx())
+
+            // Disallow indented code
+            data.micromarkExtensions.push(mdxMd())
 
             // extensions to change how tokens are turned into a tree
             // https://github.com/syntax-tree/mdast-util-mdx-jsx
@@ -141,6 +146,7 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
                 }
             }
         })
+        .use(rehypeRaw)
         .use(mandatoryUnifiedPlugins.markdown.rehypePlugins || [])
         .use(markdownConfig.rehypePlugins || [])
         .use(rehypeReact, {         // hast → React element tree
@@ -159,6 +165,13 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
     }
 }
 
+/**
+ * ie on demand processing
+ * https://mdxjs.com/guides/mdx-on-demand/
+ * @param vFileCompatible
+ * @param options
+ * @param options.format
+ */
 async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx'}: {
     format?: 'mdx' | 'md'
 }): Promise<Page> {
@@ -180,11 +193,10 @@ async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'm
         format: format,
     }))
     // Create the {default: Content}
-    let mdxModule = await run(code, {
+    return await run(code, {
         ...jsxRuntime,
         useMDXComponents
     });
-    return mdxModule;
 }
 
 // See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
