@@ -1,0 +1,16 @@
+.preStyle {
+    margin: 0!important;
+    border-radius: 0!important;
+    font-size: 1rem;
+    line-height: 1.7;
+    max-height: 520px;
+}
+
+.showOnHover {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.shell:hover .showOnHover {
+    opacity: 1;
+}

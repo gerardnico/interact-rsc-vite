@@ -2,7 +2,7 @@
 
 import React, {useState, useEffect, useRef, useCallback} from "react";
 import clsx from "clsx";
-
+import styles from "./code.module.css"
 
 declare global {
     interface Window {
@@ -180,7 +180,11 @@ function getLanguage(children: React.ReactElement<React.HTMLAttributes<HTMLPreEl
     let lang = "txt"
     if (children == null) {
         // code wraps directly
+        debugger;
         return null
+    }
+    if (children?.props == null) {
+        return null;
     }
     lang = children.props['className'] as string; // language-jsx, ...
     if (lang == null) {
@@ -191,6 +195,15 @@ function getLanguage(children: React.ReactElement<React.HTMLAttributes<HTMLPreEl
         return lang.slice(sep + 1);
     }
     return lang;
+}
+
+function isLazyComponent(child: unknown): child is React.LazyExoticComponent<React.ComponentType<any>> {
+    return (
+        typeof child === 'object' &&
+        child !== null &&
+        '$$typeof' in child &&
+        (child as any).$$typeof === Symbol.for('react.lazy')
+    );
 }
 
 export default function Code({
@@ -204,6 +217,16 @@ export default function Code({
                                  normalize = true,
                                  ...rest
                              }: CodeProps) {
+
+
+    // No idea why?
+    // this is mapped to pre, so the underlying code element is lazied???
+    if (isLazyComponent(children)) {
+        if (import.meta.env.MODE !== "production"){
+            return "Lazy bug";
+        }
+        return "";
+    }
 
     let themeProp;
     const [currentMode, setCurrentMode] = useState<colorMode>("light");
@@ -250,8 +273,19 @@ export default function Code({
         highlight();
     }, [highlight]);
 
+
+    let code: string | null = null;
+    if (children?.props?.children != null) {
+        {/*  Trim because the IDE default format may add line before and after */
+        }
+        code = (children.props.children as string).trim()
+    } else {
+        debugger;
+    }
+
+
     const handleCopy = async () => {
-        await navigator.clipboard.writeText(String(children.props.children));
+        await navigator.clipboard.writeText(code || "");
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -384,15 +418,6 @@ export default function Code({
         letterSpacing: "0.02em",
     };
 
-    const preStyle: React.CSSProperties = {
-        margin: 0,
-        borderRadius: 0,
-        fontSize: "13.5px",
-        lineHeight: 1.7,
-        whiteSpace: wrap ? "pre-wrap" : "pre",
-        overflowX: wrap ? "hidden" : "auto",
-        maxHeight: "520px",
-    };
 
     return (
         <>
@@ -402,7 +427,10 @@ export default function Code({
                 rel="stylesheet"
             />
 
-            <div className={"position-relative"} style={shell} {...rest}>
+            <div className={
+                clsx("position-relative",
+                    styles["shell"]
+                )} style={shell} {...rest}>
                 {/* ── Toolbar ── */}
                 {toolbar && (
                     <>
@@ -459,15 +487,20 @@ export default function Code({
                         </div>
                     </>
                 )}
-                <div className="position-absolute top-0 end-0 p-2">
+                <div className={
+                    clsx(
+                        "position-absolute top-0 end-0 p-2",
+                        styles["showOnHover"]
+                    )}
+                >
                     <span style={langBadge}>{currentLang}</span>
                     <button style={copyBtnStyle} onClick={handleCopy}>{copied ? "✓ Copied" : "⎘ Copy"}</button>
                 </div>
                 {/* ── Code Block ── */}
                 <pre
-                    style={preStyle}
                     className={clsx(
-                        lineNums ?? "line-numbers"
+                        lineNums ?? "line-numbers",
+                        styles["preStyle"]
                     )}
                 >
                       <code
@@ -475,7 +508,7 @@ export default function Code({
                           className={`language-${currentLang}`}
                           style={{opacity: ready ? 1 : 0.4, transition: "opacity 0.2s"}}
                       >
-                        {children.props.children}
+                        {code}
                       </code>
                 </pre>
             </div>

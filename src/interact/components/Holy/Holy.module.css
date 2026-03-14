@@ -1,4 +1,4 @@
-main > *, .pageCore {
+.pageMain > *, .pageCore {
     min-width: 0; /** not auto */
 }
 
