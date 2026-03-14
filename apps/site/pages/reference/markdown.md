@@ -21,6 +21,9 @@ Note that because we allow custom elements:
 * All element should be closed
 * The standard URL `<http://www.example.com>` is not valid
 
+Standard HTML Markdown element: a, blockquote, br, code, em, h1, h2, h3, h4, h5, h6, hr, img, li, ol, p, pre, strong, ul
+All other elements found in Markdown has no component mapping.
+
 ### Mdx
 
 Mdx pages are [Markdown page](#markdown) that accepts also JavaScript expressions such as:

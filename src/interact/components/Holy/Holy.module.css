@@ -26,11 +26,11 @@ main > *, .pageCore {
 
 @media (min-width: 992px) {
 
-    #page-core {
+    .pageCore {
         grid-template-columns: minmax(min-content, 1fr) 5fr;
     }
 
-    main {
+    .pageMain {
 
         grid-area: page-main;
         display: grid;
@@ -44,7 +44,7 @@ main > *, .pageCore {
 
     }
 
-    #main-toc {
+    .mainToc {
         grid-column: side;
         grid-row: 1 / span 5;
         position: sticky;
@@ -54,19 +54,19 @@ main > *, .pageCore {
         overflow-y: auto;
     }
 
-    #main-header {
+    .mainHeader {
         grid-column: main;
     }
 
-    #main-content {
+    .mainContent {
         grid-column: main;
     }
 
-    #main-footer {
+    .mainFooter {
         grid-column: main;
     }
 
-    #main-side {
+    .mainSide {
         grid-area: unset;
     }
 

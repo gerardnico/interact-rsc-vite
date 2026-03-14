@@ -8,7 +8,7 @@ export function Header(layoutProps: TemplateProps) {
         title = new URL(layoutProps.request.url).pathname.slice(1);
     }
     return (
-        <header id="main-header">
+        <header>
             {title &&
                 <h1 className="h1 outline-heading-cs heading-cs heading-h1-cs">{title}</h1>
             }

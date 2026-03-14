@@ -31,16 +31,26 @@ export default async function Holy(layoutProps: TemplateProps) {
                 <Aside {...layoutProps}/>
             </aside>
             <main id="page-main" className={styles['pageMain']}>
-                <Header {...layoutProps} />
-                <div id="main-toc">
+                <div id="main-header" className={styles['mainHeader']}>
+                    <Header {...layoutProps} />
+                </div>
+                <div id="main-toc" className={styles['mainToc']}>
                     <Toc {...layoutProps} />
                 </div>
-                <div id="main-content">
+                <div id="main-content" className={styles['mainContent']}>
                     {PageComponent && <PageComponent request={layoutProps.request}/>}
                 </div>
-                <div id="main-side" className="d-print-none">
+                <div id="main-side" className={
+                    clsx(
+                        styles['mainSide'],
+                        "d-print-none"
+                    )}>
                 </div>
-                <footer id="main-footer" className="d-print-none">
+                <footer id="main-footer" className={
+                    clsx(
+                        styles['mainFooter'],
+                        "d-print-none"
+                    )}>
                 </footer>
             </main>
         </div>

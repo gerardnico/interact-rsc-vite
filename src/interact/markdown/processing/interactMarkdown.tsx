@@ -2,153 +2,202 @@ import {unified} from "unified";
 import remarkParse from "remark-parse";
 import type {Root} from "mdast";
 import type {MdxJsxFlowElement, MdxJsxTextElement} from 'mdast-util-mdx-jsx'
+import {mdxJsxFromMarkdown} from 'mdast-util-mdx-jsx'
 import YAML from "yaml";
 import remarkRehype from "remark-rehype";
 import rehypeReact from "rehype-react";
 import {Fragment, type ReactNode} from "react";
-import {jsx, jsxs} from "react/jsx-runtime";
 import {getMandatoryUnifiedPlugins} from "../conf/markdownBasePlugins.js";
 import {markdownConfig} from "@interact/markdown-config";
 import interactConfig from "interact:config";
-import type {VFile} from "vfile";
+import {type Compatible, VFile, type VFile as VFileType} from "vfile";
 import {useMDXComponents} from "interact:components";
 import {mdxJsx} from 'micromark-extension-mdx-jsx'
-import {mdxJsxFromMarkdown} from 'mdast-util-mdx-jsx'
 import type {Element as HastElement} from "hast";
 import type {Page, TocNode} from "@combostrap/interact/types";
 import {VFileMessage} from 'vfile-message'
+import {compile, run} from '@mdx-js/mdx'
+import * as jsxRuntime from 'react/jsx-runtime'
+
 
 // Markdown processing to react component via rehypeReact
 // Why?
 // because Mdx use rehypeRecma as compiler (ie the hast goes to the JavaScript Tree)
+async function markdownPlusProcessing(vFileCompatible: Compatible) {
+    const mandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfig)
+
+    let strictYamlParsing = false
+    if (process.env['NODE_ENV'] !== "production") {
+        strictYamlParsing = true
+    }
+    let components = useMDXComponents()
+
+    let frontmatter = {}
+
+    // Delete comments
+    // Not supported by MDX even if we choose only JSX (micromark-extension-mdx-jsx)
+    if (typeof vFileCompatible === "string") {
+        vFileCompatible = vFileCompatible.replace(/<!--[\s\S]*?-->/g, '')
+    } else {
+        if ('value' in vFileCompatible) {
+            vFileCompatible.value = (vFileCompatible.value as string).replace(/<!--[\s\S]*?-->/g, '')
+        }
+    }
+
+    let vFile: VFileType
+    // noinspection JSUnusedGlobalSymbols - some property such as jsxs or createEvaluater are needed
+    vFile = await unified()
+        .use(remarkParse)  // Parse markdown into mdast
+        .use(function () {
+            /**
+             * We set configuration for the remark parse
+             * https://github.com/remarkjs/remark/blob/6c18384e9731146a3e8dffe79d1d8e59316c6bf7/packages/remark-parse/lib/index.js#L37
+             */
+            const data = this.data()
+            data.micromarkExtensions = data.micromarkExtensions || []
+            data.fromMarkdownExtensions = data.fromMarkdownExtensions || []
+
+            // Micromark extensions to change how Markdown is parsed
+            // When working with mdast-util-from-markdown, you must combine this package with micromark-extension-mdx-jsx.
+            // https://github.com/micromark/micromark-extension-mdx-jsx
+            // List: https://github.com/syntax-tree/mdast-util-from-markdown#list-of-extensions
+            data.micromarkExtensions.push(mdxJsx())
+
+            // extensions to change how tokens are turned into a tree
+            // https://github.com/syntax-tree/mdast-util-mdx-jsx
+            data.fromMarkdownExtensions.push(mdxJsxFromMarkdown())
+
+        })
+        .use(mandatoryUnifiedPlugins.markdown.remarkPlugins || [])
+        .use(markdownConfig.remarkPlugins || [])
+        .use(function () {
+            /**
+             * Capture Frontmatter
+             * The order is important because the Yaml node disappears
+             * at the end of the pipeline
+             */
+            return function (tree: Root) {
+                for (const node of tree.children) {
+                    if (node?.type == 'yaml') {
+                        frontmatter = YAML.parse(node.value, {strict: strictYamlParsing});
+                    }
+                }
+            }
+        })
+        .use(remarkRehype, {        // mdast → hast
+            allowDangerousHtml: true,
+            // We pass the element as seen here
+            // https://github.com/syntax-tree/mdast-util-mdx-jsx#html
+            passThrough: ['mdxJsxFlowElement', 'mdxJsxTextElement'],
+            // https://github.com/syntax-tree/mdast-util-to-hast#handler
+            // Transform Mdast element into Hast element
+            // We transform the mdxElement
+            handlers: {
+                /**
+                 *
+                 * @param state https://github.com/syntax-tree/mdast-util-to-hast#state
+                 * @param node tttps://github.com/syntax-tree/mdast#nodes
+                 * @param _parent https://github.com/syntax-tree/mdast#parent
+                 */
+                mdxJsxFlowElement(state: any, node: MdxJsxFlowElement, _parent: any): HastElement {
+                    let properties: Record<string, any> = {};
+                    for (const attribute of node.attributes) {
+                        let value = attribute.value;
+                        if (!('name' in attribute)) {
+                            // MdxJsxExpressionAttribute do not have name attribute
+                            continue
+                        }
+                        if (value === null) {
+                            value = "true";
+                        }
+                        properties[attribute.name] = value;
+                    }
+                    return {
+                        type: 'element',
+                        tagName: node.name || 'unknown',
+                        properties: properties,
+                        children: state.all(node)
+                    }
+                },
+                mdxJsxTextElement(state: any, node: MdxJsxTextElement): HastElement {
+                    let properties: Record<string, any> = {};
+                    for (const attribute of node.attributes) {
+                        let value = attribute.value;
+                        if (!('name' in attribute)) {
+                            // MdxJsxExpressionAttribute do not have name attribute
+                            continue
+                        }
+                        if (value === null) {
+                            value = 'true';
+                        }
+                        properties[attribute.name] = value;
+                    }
+                    return {
+                        type: 'element',
+                        tagName: node.name || 'unknown',
+                        properties: properties,
+                        children: state.all(node)
+                    }
+                }
+            }
+        })
+        .use(mandatoryUnifiedPlugins.markdown.rehypePlugins || [])
+        .use(markdownConfig.rehypePlugins || [])
+        .use(rehypeReact, {         // hast → React element tree
+            ...jsxRuntime,
+            Fragment: Fragment,
+            components: components
+        })
+        .process(vFileCompatible);
+
+    return {
+        frontmatter: frontmatter,
+        toc: vFile.data?.toc as TocNode[] || [],
+        default: () => {
+            return vFile.result as ReactNode
+        }
+    }
+}
+
+async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx'}: {
+    format?: 'mdx' | 'md'
+}): Promise<Page> {
+    const mandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfig)
+    // Source: https://mdxjs.com/packages/mdx/#example
+    const code = String(await compile(vFileCompatible, {
+        outputFormat: 'function-body',
+        remarkPlugins:
+            [
+                ...mandatoryUnifiedPlugins.markdown.remarkPlugins,
+                ...mandatoryUnifiedPlugins.mdx.remarkPlugins, // for the frontmatter
+            ],
+        rehypePlugins:
+            [
+                ...mandatoryUnifiedPlugins.markdown.rehypePlugins,
+                ...mandatoryUnifiedPlugins.mdx.rehypePlugins// for the toc
+            ]
+        ,
+        format: format,
+    }))
+    // Create the {default: Content}
+    let mdxModule = await run(code, {
+        ...jsxRuntime,
+        useMDXComponents
+    });
+    return mdxModule;
+}
+
 // See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
 const interactMarkdown = {
-    toPage: async (content: string | VFile): Promise<Page> => {
-
-        const mandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfig)
-
-        let strictYamlParsing = false
-        if (process.env['NODE_ENV'] !== "production") {
-            strictYamlParsing = true
-        }
-        let components = useMDXComponents()
-
-        let frontmatter = {}
-
-        // Delete comments
-        // Not supported by MDX even if we choose only JSX
-        if (typeof content === "string") {
-            content = content.replace(/<!--[\s\S]*?-->/g, '')
-        } else {
-            content.value = (content.value as string).replace(/<!--[\s\S]*?-->/g, '')
-        }
-
-        let vFile: VFile
+    toPage: async (vFileCompatible: Compatible, options?: {
+        format: 'md' | 'mdx' | 'md+'
+    }): Promise<Page> => {
+        const format = options?.format || 'md+';
         try {
-            // noinspection JSUnusedGlobalSymbols - some property such as jsxs or createEvaluater are needed
-            vFile = await unified()
-                .use(remarkParse)  // Parse markdown into mdast
-                .use(function () {
-                    /**
-                     * We set configuration for the remark parse
-                     * https://github.com/remarkjs/remark/blob/6c18384e9731146a3e8dffe79d1d8e59316c6bf7/packages/remark-parse/lib/index.js#L37
-                     */
-                    const data = this.data()
-                    data.micromarkExtensions = data.micromarkExtensions || []
-                    data.fromMarkdownExtensions = data.fromMarkdownExtensions || []
-
-                    // Micromark extensions to change how Markdown is parsed
-                    // When working with mdast-util-from-markdown, you must combine this package with micromark-extension-mdx-jsx.
-                    // https://github.com/micromark/micromark-extension-mdx-jsx
-                    // List: https://github.com/syntax-tree/mdast-util-from-markdown#list-of-extensions
-                    data.micromarkExtensions.push(mdxJsx())
-
-                    // extensions to change how tokens are turned into a tree
-                    // https://github.com/syntax-tree/mdast-util-mdx-jsx
-                    data.fromMarkdownExtensions.push(mdxJsxFromMarkdown())
-
-                })
-                // .use(mandatoryUnifiedPlugins.markdown.remarkPlugins || [])
-                // .use(markdownConfig.remarkPlugins || [])
-                .use(function () {
-                    /**
-                     * Capture Frontmatter
-                     * The order is important because the Yaml node disappears
-                     * at the end of the pipeline
-                     */
-                    return function (tree: Root) {
-                        for (const node of tree.children) {
-                            if (node?.type == 'yaml') {
-                                frontmatter = YAML.parse(node.value, {strict: strictYamlParsing});
-                            }
-                        }
-                    }
-                })
-                .use(remarkRehype, {        // mdast → hast
-                    allowDangerousHtml: true,
-                    // We pass the element as seen here
-                    // https://github.com/syntax-tree/mdast-util-mdx-jsx#html
-                    passThrough: ['mdxJsxFlowElement', 'mdxJsxTextElement'],
-                    // https://github.com/syntax-tree/mdast-util-to-hast#handler
-                    // Transform Mdast element into Hast element
-                    // We transform the mdxElement
-                    handlers: {
-                        /**
-                         *
-                         * @param state https://github.com/syntax-tree/mdast-util-to-hast#state
-                         * @param node tttps://github.com/syntax-tree/mdast#nodes
-                         * @param _parent https://github.com/syntax-tree/mdast#parent
-                         */
-                        mdxJsxFlowElement(state: any, node: MdxJsxFlowElement, _parent: any): HastElement {
-                            let properties: Record<string, any> = {};
-                            for (const attribute of node.attributes) {
-                                let value = attribute.value;
-                                if (!('name' in attribute)) {
-                                    // MdxJsxExpressionAttribute do not have name attribute
-                                    continue
-                                }
-                                if (value === null) {
-                                    value = "true";
-                                }
-                                properties[attribute.name] = value;
-                            }
-                            return {
-                                type: 'element',
-                                tagName: node.name || 'unknown',
-                                properties: properties,
-                                children: state.all(node)
-                            }
-                        },
-                        mdxJsxTextElement(state: any, node: MdxJsxTextElement): HastElement {
-                            let properties: Record<string, any> = {};
-                            for (const attribute of node.attributes) {
-                                let value = attribute.value;
-                                if (!('name' in attribute)) {
-                                    // MdxJsxExpressionAttribute do not have name attribute
-                                    continue
-                                }
-                                if (value === null) {
-                                    value = 'true';
-                                }
-                                properties[attribute.name] = value;
-                            }
-                            return {
-                                type: 'element',
-                                tagName: node.name || 'unknown',
-                                properties: properties,
-                                children: state.all(node)
-                            }
-                        }
-                    }
-                })
-                .use(mandatoryUnifiedPlugins.markdown.rehypePlugins || [])
-                .use(markdownConfig.rehypePlugins || [])
-                .use(rehypeReact, {         // hast → React element tree
-                    jsx: jsx,
-                    jsxs: jsxs,
-                    Fragment: Fragment,
-                    components: components
-                }).process(content);
+            if (format == 'mdx' || format == 'md') {
+                return await mdxProcessing(vFileCompatible, {format: format});
+            }
+            return await markdownPlusProcessing(vFileCompatible);
         } catch (e) {
             return {
                 default: () => {
@@ -166,30 +215,23 @@ const interactMarkdown = {
                                     {e.url && (<p>Url: <a href={e.url}>{e.ruleId}</a></p>)}
                                 </>
                             )}
-                            {typeof content === "string" && (
+                            {typeof vFileCompatible === "string" && (
                                 <>
                                     <p>Content:</p>
-                                    <pre dangerouslySetInnerHTML={{__html: content}}></pre>
+                                    <pre dangerouslySetInnerHTML={{__html: vFileCompatible}}></pre>
                                 </>
                             )}
-                            {typeof content !== "string" && (
+                            {(vFileCompatible instanceof VFile) && (
                                 <>
-                                    <p>Path: {content.path}</p>
+                                    <p>Path: {vFileCompatible.path}</p>
                                     <p>Content:</p>
-                                    <pre dangerouslySetInnerHTML={{__html: content.value}}></pre>
+                                    <pre dangerouslySetInnerHTML={{__html: vFileCompatible.value}}></pre>
                                 </>
                             )}
 
                         </>
                     )
                 }
-            }
-        }
-        return {
-            frontmatter: frontmatter,
-            toc: vFile.data?.toc as TocNode[] || [],
-            default: () => {
-                return vFile.result as ReactNode
             }
         }
     }

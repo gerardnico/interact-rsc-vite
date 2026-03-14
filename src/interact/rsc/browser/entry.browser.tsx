@@ -98,7 +98,7 @@ async function main() {
   }
 }
 
-// a little helper to setup events interception for client side navigation
+// a little helper to set up events interception for client side navigation
 function listenNavigation(onNavigation: () => void) {
 
   // When the user clicks the back button, navigate with RSC.
@@ -120,8 +120,17 @@ function listenNavigation(onNavigation: () => void) {
 
   function onClick(e: MouseEvent) {
     let link = (e.target as Element).closest('a')
+    if (!link) return;
+
+    // Navigation in the same page
+    const isAnchorNav =
+        link.href &&
+        link.origin === window.location.origin &&
+        link.pathname === window.location.pathname &&
+        link.hash !== '';
+
     if (
-        link &&
+        !isAnchorNav &&
         link instanceof HTMLAnchorElement &&
         link.href &&
         (!link.target || link.target === '_self') &&

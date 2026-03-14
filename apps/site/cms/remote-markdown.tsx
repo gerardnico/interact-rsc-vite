@@ -22,7 +22,7 @@ export async function handler({
 
         // parse and return
         try {
-            return await interactMarkdown.toPage(markdown)
+            return await interactMarkdown.toPage(markdown, {format: 'md'});
         } catch (e) {
             return {
                 default: () => {
