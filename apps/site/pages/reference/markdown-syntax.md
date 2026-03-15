@@ -12,17 +12,25 @@ the [GitHub Syntax](https://github.github.com/gfm/)
 
 ## List
 
-<table class="table">
+<table class="table" style="color: red">
     <thead>
-      <tr>
-        <th scope="col">Name</th>
-        <th scope="col">Markdown syntax</th>
-        <th scope="col">Equivalent HTML</th>
-      </tr>
+  <tr>
+    <th scope="col">
+      Name
+    </th>
+    <th scope="col">
+      Markdown syntax
+    </th>
+    <th scope="col">
+      Equivalent HTML
+    </th>
+  </tr>
     </thead>
     <tbody>
       <tr>
-        <th scope="row">`a`</th>
+        <th scope="row">
+          `a`
+        </th>
         <td>
 ```markdown
 [Combo](https://combostrap.com "title")
@@ -35,7 +43,9 @@ the [GitHub Syntax](https://github.github.com/gfm/)
         </td>
       </tr>
       <tr>
-        <th scope="row">`blockquote`</th>
+        <th scope="row">
+          `blockquote`
+        </th>
         <td>
 ```markdown
 > A greater than…
@@ -50,7 +60,9 @@ the [GitHub Syntax](https://github.github.com/gfm/)
         </td>
       </tr>
       <tr>
-        <th scope="row">`br`</th>
+        <th scope="row">
+          `br`
+        </th>
         <td>
           ```markdown
           A backslash\
@@ -67,7 +79,9 @@ the [GitHub Syntax](https://github.github.com/gfm/)
         </td>
       </tr>
       <tr>
-        <th scope="row">`code`</th>
+        <th scope="row">
+          `code`
+        </th>
         <td>
 ````markdown
 Some `backticks` for inline.
@@ -90,7 +104,9 @@ backtick.fences('for blocks')
         </td>
       </tr>
       <tr>
-        <th scope="row">`em`</th>
+        <th scope="row">
+           `em`
+        </th>
         <td>
 ```markdown
 Some *asterisks* for emphasis.
@@ -103,7 +119,9 @@ Some *asterisks* for emphasis.
         </td>
       </tr>
       <tr>
-        <th scope="row">`h1`</th>
+        <th scope="row">
+        `h1`
+        </th>
         <td>
 ```markdown
 # One number sign…
@@ -116,7 +134,9 @@ Some *asterisks* for emphasis.
         </td>
       </tr>
       <tr>
-        <th scope="row">`h2`</th>
+        <th scope="row">
+          `h2`
+        </th>
         <td>
 ```markdown
 ## Two number signs…
@@ -129,7 +149,9 @@ Some *asterisks* for emphasis.
         </td>
       </tr>
       <tr>
-        <th scope="row">`h3`</th>
+        <th scope="row">
+          `h3`
+        </th>
         <td>
 ```markdown
 ### Three number signs…
@@ -142,7 +164,9 @@ Some *asterisks* for emphasis.
         </td>
       </tr>
       <tr>
-        <th scope="row">`h4`</th>
+        <th scope="row">
+          `h4`
+        </th>
         <td>
 ```markdown
 #### Four number signs…
@@ -155,7 +179,9 @@ Some *asterisks* for emphasis.
         </td>
       </tr>
       <tr>
-        <th scope="row">`h5`</th>
+        <th scope="row">
+          `h5`
+        </th>
         <td>
 ```markdown
 ##### Five number signs…
@@ -168,7 +194,9 @@ Some *asterisks* for emphasis.
       </td>
       </tr>
       <tr>
-        <th scope="row">`h6`</th>
+        <th scope="row">
+          `h6`
+        </th>
         <td>
 ```markdown
 ###### Six number signs…
@@ -181,7 +209,9 @@ Some *asterisks* for emphasis.
         </td>
       </tr>
       <tr>
-        <th scope="row">`hr`</th>
+        <th scope="row">
+          `hr`
+        </th>
         <td>
 ```markdown
 Three asterisks for a thematic break:
@@ -197,7 +227,9 @@ Three asterisks for a thematic break:
         </td>
       </tr>
       <tr>
-        <th scope="row">`img`</th>
+        <th scope="row">
+          `img`
+        </th>
         <td>
 ```markdown
 ![Alt text](/logo.png "title")
@@ -210,7 +242,9 @@ Three asterisks for a thematic break:
         </td>
       </tr>
       <tr>
-        <th scope="row">`li`</th>
+        <th scope="row">
+          `li`
+        </th>
         <td>
 ```markdown
 * asterisks for unordered items
@@ -232,7 +266,9 @@ Three asterisks for a thematic break:
         </td>
       </tr>
       <tr>
-        <th scope="row">`ol`</th>
+        <th scope="row">
+          `ol`
+        </th>
         <td>
 
 ```markdown
@@ -252,7 +288,9 @@ Three asterisks for a thematic break:
         </td>
       </tr>
       <tr>
-        <th scope="row">`p`</th>
+        <th scope="row">
+          `p`
+        </th>
         <td>
 
 ```markdown
@@ -269,7 +307,9 @@ Just some text…
         </td>
       </tr>
       <tr>
-        <th scope="row">`pre`</th>
+        <th scope="row">
+          `pre`
+        </th>
         <td>
 
 ````markdown
@@ -290,7 +330,9 @@ backtick.fences('for blocks')
         </td>
       </tr>
       <tr>
-        <th scope="row">`strong`</th>
+        <th scope="row">
+          `strong`
+        </th>
         <td>
 
 ```markdown
@@ -307,7 +349,9 @@ Two **asterisks** for strong.
         </td>
       </tr>
       <tr>
-        <th scope="row">`ul`</th>
+        <th scope="row">
+          `ul`
+        </th>
         <td>
 
 ```markdown

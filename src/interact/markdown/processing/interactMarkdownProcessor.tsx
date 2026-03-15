@@ -9,7 +9,7 @@
 import {useMDXComponents} from "interact:components";
 import {unified} from "unified";
 import remarkParse from "remark-parse";
-import type {Root} from "mdast";
+import type {Root as MdastRoot} from "mdast";
 import type {MdxJsxFlowElement, MdxJsxTextElement} from 'mdast-util-mdx-jsx'
 import {mdxJsxFromMarkdown} from 'mdast-util-mdx-jsx'
 import YAML from "yaml";
@@ -19,13 +19,14 @@ import {Fragment, type ReactNode} from "react";
 import {type Compatible, VFile, type VFile as VFileType} from "vfile";
 import {mdxJsx} from 'micromark-extension-mdx-jsx'
 import {mdxMd} from 'micromark-extension-mdx-md'
-import type {Element as HastElement} from "hast";
+import type {Root as HastRoot, Element as HastElement} from "hast";
 import type {Page, TocNode} from "@combostrap/interact/types";
 import {VFileMessage} from 'vfile-message'
 import {compile, run} from '@mdx-js/mdx'
 import * as jsxRuntime from 'react/jsx-runtime'
 import {getMarkdownConfig} from "../conf/markdownConfig.js";
 import type {markdownFormat} from "../../config/configSchema.js";
+
 
 
 // Markdown processing to react component via rehypeReact
@@ -69,7 +70,13 @@ async function markdownReactProcessing(vFileCompatible: Compatible) {
             // List: https://github.com/syntax-tree/mdast-util-from-markdown#list-of-extensions
             data.micromarkExtensions.push(mdxJsx())
 
-            // Disallow indented code
+            // Disallow
+            // [
+            //   "autolink",
+            //   "codeIndented",
+            //   "htmlFlow",
+            //   "htmlText"
+            // ]
             data.micromarkExtensions.push(mdxMd())
 
             // extensions to change how tokens are turned into a tree
@@ -84,7 +91,7 @@ async function markdownReactProcessing(vFileCompatible: Compatible) {
              * The order is important because the Yaml node disappears
              * at the end of the pipeline
              */
-            return function (tree: Root) {
+            return function (tree: MdastRoot) {
                 for (const node of tree.children) {
                     if (node?.type == 'yaml') {
                         frontmatter = YAML.parse(node.value, {strict: strictYamlParsing});
@@ -149,7 +156,7 @@ async function markdownReactProcessing(vFileCompatible: Compatible) {
                 }
             }
         })
-        // rehypeRaw Not needed all HTML element are already mdxJsxElement
+        // rehypeRaw - not needed all HTML element are already mdxJsxElement
         // !!! and it turns custom element name in lowercase !!!
         //.use(rehypeRaw)
         .use(getMarkdownConfig().getMdConfig().rehypePlugins || [])
@@ -203,7 +210,7 @@ async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'm
 export async function markdownToPage(vFileCompatible: Compatible, options?: {
     format: markdownFormat
 }): Promise<Page> {
-    const format = options?.format || getMarkdownConfig().getDefaultMarkdownFormat;
+    const format: markdownFormat = options?.format || getMarkdownConfig().getDefaultMarkdownFormat();
     try {
         if (format == 'mdx' || format == 'md') {
             return await mdxProcessing(vFileCompatible, {format: format});
