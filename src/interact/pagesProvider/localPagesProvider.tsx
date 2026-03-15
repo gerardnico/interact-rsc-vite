@@ -3,8 +3,8 @@ import path from "node:path";
 import {fsGetTextAsync} from "../utils/fs.js";
 
 import type {PagesHandler} from "../pagesProviderManager/pagesProvider.js";
-import interactMarkdown from "@combostrap/interact/markdown";
 import {VFile} from "vfile";
+import {markdownToPage} from "../markdown/processing/interactMarkdownProcessor.js";
 
 
 /**
@@ -34,7 +34,7 @@ export async function handler({pagesDirectory}: {
             path: page,
             value: content,
         })
-        return interactMarkdown.toPage(file, {format: 'mdx'});
+        return markdownToPage(file);
 
     }
 }

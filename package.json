@@ -20,7 +20,7 @@
   "exports": {
     "./types": "./src/interact/types/index.d.ts",
     "./components/*": "./src/interact/components/*/index.js",
-    "./markdown": "./src/interact/markdown/processing/interactMarkdown.js"
+    "./markdown": "./src/interact/markdown/processing/interactMarkdownProcessor.js"
   },
   "imports": {
     "#components/*": "./src/interact/components/*/index.js"

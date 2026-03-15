@@ -320,9 +320,14 @@ export type pluginsConfigType = z.output<typeof PluginConfigSetSchema>;
 const OutlineSchema = z.object({
     numbering: outlineNumberingSchema.default(outlineNumberingSchema.parse({})),
 })
+let markdownFormat = z.enum(["md", "mdr", "mdx"]);
+export type markdownFormat = z.output<typeof markdownFormat>;
+
 let MarkdownConfigSchema = z.object({
     configImportPath: z.string().describe("The import path of the config file. For a local path, the value should start with a point otherwise it's considered a package name").optional(),
+    defaultMarkdownFormat: markdownFormat.describe("What is the format of md files").default("mdr"),
 });
+
 /**
  * The JSON Schema used to parse the Json file
  */

@@ -5,7 +5,6 @@ import rsc from "@vitejs/plugin-rsc";
 import pageModulesPlugin from "../../pages/viteVirtualPagesModules.js";
 import viteVirtualConfModule from "../../config/viteVirtualConfModule.js";
 import viteImageService from "../../images/imageViteDevMiddleware.js";
-import {fileURLToPath} from "node:url";
 import type {InlineConfig} from "vite";
 import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
 import {resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
@@ -14,17 +13,10 @@ import viteMdxComponentProvider from "../../componentsProvider/viteVirtualCompon
 import svgReactPlugin from "vite-plugin-svgr";
 import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
 import {vitePagesProviderManager} from "../../pagesProviderManager/vitePagesProviderManager.js";
-import {getMandatoryUnifiedPlugins} from "../../markdown/conf/markdownBasePlugins.js";
-import type {InteractMarkdownConfigType} from "@interact/markdown-config";
+import {createMarkdownConfig, setMarkdownConfigGlobally} from "../../markdown/conf/markdownConfig.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-/**
- * Directory of the code
- */
-const interactPackageDir = path.resolve(__dirname, '../..');
 
-type InteractCommand = 'start' | 'build' | 'preview';
+export type InteractCommand = 'start' | 'build' | 'preview';
 type LogLevel = 'info' | 'warn' | 'error' | 'silent';
 type InteractConfig = {
     confPath: string,
@@ -33,6 +25,7 @@ type InteractConfig = {
     outDir?: string;
     logLevel?: LogLevel;
 };
+
 
 export async function resolveViteConfig(
     {
@@ -78,36 +71,14 @@ export async function resolveViteConfig(
      */
     const componentsProviderModuleName = "interact:components"
 
-    const mandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfigTyped)
-
     /**
-     * Markdown Configuration file
+     * Markdown Config with a
      */
-    let markdownConfigImportPath = path.resolve(interactPackageDir, "markdown/conf/markdownConfigDefault.js");
-    let configImportPath = interactConfigTyped.markdown.configImportPath;
-    if (configImportPath != null) {
-        if (configImportPath.startsWith(".")) {
-            markdownConfigImportPath = path.resolve(confPath, configImportPath);
-        }
-    }
-
-    let markdownConfModule;
-    try {
-        markdownConfModule = await import(markdownConfigImportPath);
-    } catch (err) {
-        if (err instanceof Error) {
-            let message = err.message;
-            if ((err as NodeJS.ErrnoException).code === 'ERR_MODULE_NOT_FOUND') {
-                message += `The module ${markdownConfigImportPath} was not found`;
-            }
-            throw new Error(message);
-        }
-    }
-    let markdownConfig = 'markdownConfig';
-    if (!(markdownConfig in markdownConfModule)) {
-        throw new Error(`The markdown configuration module (${markdownConfigImportPath}) has no ${markdownConfig} export`)
-    }
-    let markdownConf: InteractMarkdownConfigType = markdownConfModule.markdownConfig
+    const markdownConfig = await createMarkdownConfig({
+        componentsProviderModuleName: componentsProviderModuleName,
+        interactConfig: interactConfigTyped
+    })
+    setMarkdownConfigGlobally(markdownConfig)
 
     return {
         mode: command == "build" ? "production" : "development",
@@ -120,9 +91,7 @@ export async function resolveViteConfig(
         resolve: {
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
-            alias: {
-                "@interact/markdown-config": markdownConfigImportPath,
-            }
+            alias: {}
         },
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
@@ -153,7 +122,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactPackageDir, 'rsc/server/entry.rsc.js'),
+                            index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/server/entry.rsc.js'),
                         },
                     },
                 },
@@ -167,7 +136,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactPackageDir, 'rsc/server/entry.ssr.js'),
+                            index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/server/entry.ssr.js'),
                         },
                     },
                 },
@@ -183,7 +152,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactPackageDir, 'rsc/browser/entry.browser.js'),
+                            index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/browser/entry.browser.js'),
                         },
                     },
                 },
@@ -201,23 +170,7 @@ export async function resolveViteConfig(
             // used by mdx
             viteMdxComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
             // https://mdxjs.com/packages/mdx/#processoroptions
-            mdx({
-                development: command == "start",
-                mdExtensions: [], // When treated as Markdown, the custom elements are deleted
-                mdxExtensions: ['.mdx', '.md'],
-                //providerImportSource: import.meta.resolve('../../componentsProvider/componentsProvider.js')
-                providerImportSource: componentsProviderModuleName,
-                remarkPlugins: [
-                    ...mandatoryUnifiedPlugins.markdown.remarkPlugins,
-                    ...(markdownConf.remarkPlugins || []),
-                    ...mandatoryUnifiedPlugins.mdx.remarkPlugins,
-                ],
-                rehypePlugins: [
-                    ...mandatoryUnifiedPlugins.markdown.rehypePlugins,
-                    ...(markdownConf.rehypePlugins || []),
-                    ...mandatoryUnifiedPlugins.mdx.rehypePlugins,
-                ]
-            }),
+            mdx(markdownConfig.getMdxRollupConfig(command)),
             react(),
             // https://www.npmjs.com/package/vite-plugin-svgr
             svgReactPlugin({
@@ -236,7 +189,7 @@ export async function resolveViteConfig(
                     [
                         ...interactConfigTyped.pages.providers || [],
                         {
-                            importPath: path.resolve(interactPackageDir, 'pagesProvider/localPagesProvider.js'),
+                            importPath: path.resolve(interactConfigTyped.paths.srcDirectory, 'pagesProvider/localPagesProvider.js'),
                             props: {
                                 pagesDirectory: interactConfigTyped.paths.pagesDirectory
                             }

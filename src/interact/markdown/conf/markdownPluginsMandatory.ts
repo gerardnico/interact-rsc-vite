@@ -9,11 +9,22 @@ import type {InteractConfig} from "../../config/configHandler.js";
 import path from "node:path";
 import remarkLocalLinkChecker from "../plugins/remark-local-link-checker.js";
 
+export type MandatoryUnifiedPlugins = {
+    markdown: {
+        remarkPlugins: PluggableList,
+        rehypePlugins: PluggableList
+    }
+    mdx: {
+        remarkPlugins: PluggableList,
+        rehypePlugins: PluggableList
+    }
+}
+
 /**
  * Mandatory unified plugin
  * for the outline, toc and heading management
  */
-export function getMandatoryUnifiedPlugins(interactConfig: InteractConfig) {
+export function getMandatoryUnifiedPlugins(interactConfig: InteractConfig): MandatoryUnifiedPlugins {
     const basePublicName = path.basename(interactConfig.paths.publicDirectory)
 
     return {
@@ -51,4 +62,4 @@ export function getMandatoryUnifiedPlugins(interactConfig: InteractConfig) {
             ] satisfies PluggableList,
         }
     }
-};
+}

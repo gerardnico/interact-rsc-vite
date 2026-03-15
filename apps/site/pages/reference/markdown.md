@@ -1,29 +1,36 @@
 ---
-title: Markdown Page
+title: Markdown Pages
 ---
 
+`Markdown` pages are [pages](page.md) that are written based on the [Markdown syntax](markdown-syntax.md)
 
-This page is about [pages](page.md) created with the Markdown extension (`.md`).
-For `Markdown Jsx Page` with the `.mdx` extension, see the [mdx page](mdx.md)
+## File Types
 
-## Format
+We support the following 2 Markdown files type:
 
-We support 3 markdowns format.
+* [Markdown (.md)](md-page.md)
+* [Mdx (.mdx)](mdx.md)
 
-| Format | Description   | [Accepts Content component ?](content-component.md) | HTML  Compatibility      | Javascript                 |
-|--------|---------------|-----------------------------------------------------|--------------------------|----------------------------|
-| `md`   | Markdown      | No                                                  | HTML                     | No                         |
-| `md+`  | Markdown Plus | Yes                                                 | [XHTML](#xhtml-markdown) | No                         |
-| `mdx`  | Mardown Jsx   | Yes                                                 | [XHTML](#xhtml-markdown) | Yes, without import/export |
+## Common
 
-### XHTML Markdown
+### Common Syntax
 
-Because the `md+` and `mdx` format supports [content component](content-component.md) like `<Foo />`
+They all share the common [Markdown syntax](markdown-syntax.md)
 
-* All element should be closed. `<br>` is not valid `<br/>` is
-* The standard URL bracket syntax `<http://www.example.com>` is not valid
-* No Markdown indented code or indented list, you need to use xhtml element
+Note that you can add support for more with [unified plugins](remark-rehype-unified.md).
+By [default](remark-rehype-unified.md#default), we apply the [Remark Gfm](https://github.com/remarkjs/remark-gfm) to add
+the [GitHub Syntax](https://github.github.com/gfm/)
 
-## Remark and Rehype Plugins
+### Content components
 
-All format applies the [remark and rehype plugins](remark-rehype-unified.md)
+You can create your own components to be used in Markdown content.
+
+We call them [content component](content-component.md).
+
+They are recognized by the [2 Markdown files](#file-types)
+
+### Remark and Rehype Plugins
+
+You can change how Markdown is parsed with [remark and rehype plugins](remark-rehype-unified.md).
+
+They will be applied to all Markdown files.

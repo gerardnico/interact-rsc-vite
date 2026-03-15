@@ -1,3 +1,12 @@
+/**
+ * The processor
+ * We don't have a full processor factory pattern
+ * in one file because the useMdxComponents is dynamic
+ * given by vite called interact:components
+ * Because the markdown config is used in vite, we must
+ * create the module in 2 steps
+ */
+import {useMDXComponents} from "interact:components";
 import {unified} from "unified";
 import remarkParse from "remark-parse";
 import type {Root} from "mdast";
@@ -7,11 +16,7 @@ import YAML from "yaml";
 import remarkRehype from "remark-rehype";
 import rehypeReact from "rehype-react";
 import {Fragment, type ReactNode} from "react";
-import {getMandatoryUnifiedPlugins} from "../conf/markdownBasePlugins.js";
-import {markdownConfig} from "@interact/markdown-config";
-import interactConfig from "interact:config";
 import {type Compatible, VFile, type VFile as VFileType} from "vfile";
-import {useMDXComponents} from "interact:components";
 import {mdxJsx} from 'micromark-extension-mdx-jsx'
 import {mdxMd} from 'micromark-extension-mdx-md'
 import type {Element as HastElement} from "hast";
@@ -19,13 +24,14 @@ import type {Page, TocNode} from "@combostrap/interact/types";
 import {VFileMessage} from 'vfile-message'
 import {compile, run} from '@mdx-js/mdx'
 import * as jsxRuntime from 'react/jsx-runtime'
+import {getMarkdownConfig} from "../conf/markdownConfig.js";
+import type {markdownFormat} from "../../config/configSchema.js";
 
 
 // Markdown processing to react component via rehypeReact
 // Why?
 // because Mdx use rehypeRecma as compiler (ie the hast goes to the JavaScript Tree)
-async function markdownPlusProcessing(vFileCompatible: Compatible) {
-    const mandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfig)
+async function markdownReactProcessing(vFileCompatible: Compatible) {
 
     let strictYamlParsing = false
     if (process.env['NODE_ENV'] !== "production") {
@@ -71,8 +77,7 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
             data.fromMarkdownExtensions.push(mdxJsxFromMarkdown())
 
         })
-        .use(mandatoryUnifiedPlugins.markdown.remarkPlugins || [])
-        .use(markdownConfig.remarkPlugins || [])
+        .use(getMarkdownConfig().getMdConfig().remarkPlugins || [])
         .use(function () {
             /**
              * Capture Frontmatter
@@ -124,7 +129,6 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
                 },
                 mdxJsxTextElement(state: any, node: MdxJsxTextElement): HastElement {
                     let properties: Record<string, any> = {};
-                    debugger;
                     for (const attribute of node.attributes) {
                         let value = attribute.value;
                         if (!('name' in attribute)) {
@@ -145,9 +149,10 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
                 }
             }
         })
-        //.use(rehypeRaw) : !!! turn custom element name in lowercase !!!
-        .use(mandatoryUnifiedPlugins.markdown.rehypePlugins || [])
-        .use(markdownConfig.rehypePlugins || [])
+        // rehypeRaw Not needed all HTML element are already mdxJsxElement
+        // !!! and it turns custom element name in lowercase !!!
+        //.use(rehypeRaw)
+        .use(getMarkdownConfig().getMdConfig().rehypePlugins || [])
         .use(rehypeReact, {         // hast → React element tree
             ...jsxRuntime,
             Fragment: Fragment,
@@ -164,6 +169,7 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
     }
 }
 
+
 /**
  * ie on demand processing
  * https://mdxjs.com/guides/mdx-on-demand/
@@ -174,26 +180,16 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
 async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx'}: {
     format?: 'mdx' | 'md'
 }): Promise<Page> {
-    const mandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfig)
     // Source: https://mdxjs.com/packages/mdx/#example
     const code = String(await compile(vFileCompatible, {
         outputFormat: 'function-body',
-        remarkPlugins:
-            [
-                ...mandatoryUnifiedPlugins.markdown.remarkPlugins,
-                ...mandatoryUnifiedPlugins.mdx.remarkPlugins, // for the frontmatter
-            ],
-        rehypePlugins:
-            [
-                ...mandatoryUnifiedPlugins.markdown.rehypePlugins,
-                ...mandatoryUnifiedPlugins.mdx.rehypePlugins// for the toc
-            ]
-        ,
+        remarkPlugins: getMarkdownConfig().getMdxConfig().remarkPlugins,
+        rehypePlugins: getMarkdownConfig().getMdxConfig().rehypePlugins,
         format: format,
         // providerImportSource: '@mdx-js/react', // mandatory to use useMDXComponents below
         // @mdx-js/mdx expects a providerImportSource to have been set at compile time in order for useMDXComponents to be used at runtime.
         // If you compiled the MDX without providerImportSource: '@mdx-js/react' (or equivalent), the generated code never calls useMDXComponents() at all — it simply doesn't know components can be injected that way. So the useMDXComponents option in run is silently ignored.
-        providerImportSource: 'interact:components', // mandatory to use useMDXComponents below
+        providerImportSource: getMarkdownConfig().getProviderImportSource(), // mandatory to use useMDXComponents below
     }))
     // Create the {default: Content}
     return await run(code, {
@@ -202,53 +198,56 @@ async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'm
     });
 }
 
-// See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
-const interactMarkdown = {
-    toPage: async (vFileCompatible: Compatible, options?: {
-        format: 'md' | 'mdx' | 'mde'
-    }): Promise<Page> => {
-        const format = options?.format || 'mde';
-        try {
-            if (format == 'mdx' || format == 'md') {
-                return await mdxProcessing(vFileCompatible, {format: format});
-            }
-            return await markdownPlusProcessing(vFileCompatible);
-        } catch (e) {
-            return {
-                default: () => {
-                    return (
-                        <>
-                            <p>Error seen while parsing Markdown:</p>
-                            <p>Message: {String(e)}</p>
-                            {e instanceof VFileMessage && (
-                                <>
-                                    {e.line && (<p>Starting line: {e.line}</p>)}
-                                    {e.column && (<p>Starting column: {e.column}</p>)}
-                                    {e.place != null && (<p>Point | Position: {JSON.stringify(e.place)}</p>)}
-                                    <p>Source: {e.source}</p>
-                                    <p>RuleId: {e.ruleId}</p>
-                                    {e.url && (<p>Url: <a href={e.url}>{e.ruleId}</a></p>)}
-                                </>
-                            )}
-                            {typeof vFileCompatible === "string" && (
-                                <>
-                                    <p>Content:</p>
-                                    <pre dangerouslySetInnerHTML={{__html: vFileCompatible}}></pre>
-                                </>
-                            )}
-                            {(vFileCompatible instanceof VFile) && (
-                                <>
-                                    <p>Path: {vFileCompatible.path}</p>
-                                    <p>Content:</p>
-                                    <pre dangerouslySetInnerHTML={{__html: vFileCompatible.value}}></pre>
-                                </>
-                            )}
 
-                        </>
-                    )
-                }
+// See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
+export async function markdownToPage(vFileCompatible: Compatible, options?: {
+    format: markdownFormat
+}): Promise<Page> {
+    const format = options?.format || getMarkdownConfig().getDefaultMarkdownFormat;
+    try {
+        if (format == 'mdx' || format == 'md') {
+            return await mdxProcessing(vFileCompatible, {format: format});
+        }
+        return await markdownReactProcessing(vFileCompatible);
+    } catch (e) {
+        return {
+            default: () => {
+                return (
+                    <>
+                        <p>Error seen while parsing Markdown:</p>
+                        <p>Message: {String(e)}</p>
+                        {e instanceof VFileMessage && (
+                            <>
+                                {e.line && (<p>Starting line: {e.line}</p>)}
+                                {e.column && (<p>Starting column: {e.column}</p>)}
+                                {e.place != null && (<p>Point | Position: {JSON.stringify(e.place)}</p>)}
+                                <p>Source: {e.source}</p>
+                                <p>RuleId: {e.ruleId}</p>
+                                {e.url && (<p>Url: <a href={e.url}>{e.ruleId}</a></p>)}
+                            </>
+                        )}
+                        {typeof vFileCompatible === "string" && (
+                            <>
+                                <p>Content:</p>
+                                <pre dangerouslySetInnerHTML={{__html: vFileCompatible}}></pre>
+                            </>
+                        )}
+                        {(vFileCompatible instanceof VFile) && (
+                            <>
+                                <p>Path: {vFileCompatible.path}</p>
+                                <p>Content:</p>
+                                <pre dangerouslySetInnerHTML={{__html: vFileCompatible.value}}></pre>
+                            </>
+                        )}
+
+                    </>
+                )
             }
         }
     }
 }
-export default interactMarkdown
+
+
+
+
+

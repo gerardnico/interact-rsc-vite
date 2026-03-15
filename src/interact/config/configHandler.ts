@@ -7,7 +7,15 @@ import {
 import fs from 'fs'
 import {readFileSync} from "node:fs";
 import path from "node:path";
+import {fileURLToPath} from "node:url";
 
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+/**
+ * Directory of the code
+ */
+const interactPackageDir = path.resolve(__dirname, '..');
 
 /**
  * Configuration source information
@@ -193,6 +201,7 @@ let interactConfig: InteractConfig | null = null
  * Why? We need the conf on initialization for vite
  * and just after to create the virtual module
  * This way we process the file once
+ * and we avoid https://github.com/oclif/core/issues/997
  */
 export function resolveInteractConfig(resolvedConf: ConfPathResolvedType) {
     if (interactConfig != null) {
@@ -262,6 +271,8 @@ export type InteractConfig = {
         // Example with vite
         // https://vite.dev/guide/dep-pre-bundling#file-system-cache
         cacheDirectory: string
+        // The path or the interact src directory
+        srcDirectory: string
     }
 }
 
@@ -303,7 +314,8 @@ class ConfigHandler {
             pagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.pagesDirectory),
             publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
             imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
-            cacheDirectory: path.resolve(this.rootDirectory, ".interact")
+            cacheDirectory: path.resolve(this.rootDirectory, ".interact"),
+            srcDirectory: interactPackageDir
         }
 
         /**
