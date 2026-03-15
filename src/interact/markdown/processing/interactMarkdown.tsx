@@ -19,7 +19,6 @@ import type {Page, TocNode} from "@combostrap/interact/types";
 import {VFileMessage} from 'vfile-message'
 import {compile, run} from '@mdx-js/mdx'
 import * as jsxRuntime from 'react/jsx-runtime'
-import rehypeRaw from "rehype-raw"
 
 
 // Markdown processing to react component via rehypeReact
@@ -33,7 +32,6 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
         strictYamlParsing = true
     }
     let components = useMDXComponents()
-
     let frontmatter = {}
 
     // Delete comments
@@ -126,6 +124,7 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
                 },
                 mdxJsxTextElement(state: any, node: MdxJsxTextElement): HastElement {
                     let properties: Record<string, any> = {};
+                    debugger;
                     for (const attribute of node.attributes) {
                         let value = attribute.value;
                         if (!('name' in attribute)) {
@@ -146,13 +145,13 @@ async function markdownPlusProcessing(vFileCompatible: Compatible) {
                 }
             }
         })
-        .use(rehypeRaw)
+        //.use(rehypeRaw) : !!! turn custom element name in lowercase !!!
         .use(mandatoryUnifiedPlugins.markdown.rehypePlugins || [])
         .use(markdownConfig.rehypePlugins || [])
         .use(rehypeReact, {         // hast → React element tree
             ...jsxRuntime,
             Fragment: Fragment,
-            components: components
+            components: components,
         })
         .process(vFileCompatible);
 
@@ -191,6 +190,10 @@ async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'm
             ]
         ,
         format: format,
+        // providerImportSource: '@mdx-js/react', // mandatory to use useMDXComponents below
+        // @mdx-js/mdx expects a providerImportSource to have been set at compile time in order for useMDXComponents to be used at runtime.
+        // If you compiled the MDX without providerImportSource: '@mdx-js/react' (or equivalent), the generated code never calls useMDXComponents() at all — it simply doesn't know components can be injected that way. So the useMDXComponents option in run is silently ignored.
+        providerImportSource: 'interact:components', // mandatory to use useMDXComponents below
     }))
     // Create the {default: Content}
     return await run(code, {
@@ -202,9 +205,9 @@ async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'm
 // See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
 const interactMarkdown = {
     toPage: async (vFileCompatible: Compatible, options?: {
-        format: 'md' | 'mdx' | 'md+'
+        format: 'md' | 'mdx' | 'mde'
     }): Promise<Page> => {
-        const format = options?.format || 'md+';
+        const format = options?.format || 'mde';
         try {
             if (format == 'mdx' || format == 'md') {
                 return await mdxProcessing(vFileCompatible, {format: format});

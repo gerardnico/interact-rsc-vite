@@ -26,6 +26,7 @@ The author writes [page](page.md) components while the designer designs `layout`
 | `page`              | `page`     | Components that exports a frontmatter and a toc (Example: [NotFound page](404.md)) |
 | `content`           | `content`  | Components made available in Markdown files (`md` or `mdx`))                       |
 
+
 ### Server vs Client
 
 Interact is built on top of [React Server Components](https://react.dev/reference/rsc/server-components).

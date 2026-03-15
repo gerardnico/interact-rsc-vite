@@ -34,7 +34,7 @@ export async function handler({pagesDirectory}: {
             path: page,
             value: content,
         })
-        return interactMarkdown.toPage(file, {compiler: 'mdx'});
+        return interactMarkdown.toPage(file, {format: 'mdx'});
 
     }
 }
