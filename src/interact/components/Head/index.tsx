@@ -94,7 +94,7 @@ export default function Head({page, request, ...props}: HeadProps) {
             {/* Rendered at: */}
             <meta name="date" content={new Date().toISOString()}/>
             {/* Last modified*/}
-            {lastModified && (<meta http-equiv="last-modified" content={lastModified.toUTCString()}/>)}
+            {lastModified && (<meta httpEquiv="last-modified" content={lastModified.toUTCString()}/>)}
             {/* Base */}
             <base href={baseHeadURL}/>
             {description && <meta name="description" content={description}/>}

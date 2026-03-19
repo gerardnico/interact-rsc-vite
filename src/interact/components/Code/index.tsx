@@ -60,7 +60,7 @@ const DARK_THEMES: PrismTheme[] = [
     "vsDark",
 ];
 
-let cdnBase = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0";
+let cdnBase = "https://cdn.jsdelivr.net/npm/prismjs@1.30.0";
 
 const THEME_CDN: Record<PrismTheme, string> = {
     default: "prism.min.css",
@@ -104,7 +104,6 @@ const SUPPORTED_LANGUAGES = [
 let prismCoreLoaded = false;
 let prismCorePromise: Promise<void> | null = null;
 const loadedPlugins = new Set<string>();
-const loadedLangs = new Set<string>();
 
 function loadScript(src: string): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -121,24 +120,28 @@ function loadScript(src: string): Promise<void> {
     });
 }
 
-function loadStylesheet(href: string, id: string): void {
-    const existing = document.getElementById(id);
-    if (existing) {
-        (existing as HTMLLinkElement).href = href;
-        return;
-    }
-    const link = document.createElement("link");
-    link.id = id;
-    link.rel = "stylesheet";
-    link.href = href;
-    document.head.appendChild(link);
+function loadStylesheet(href: string, id: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const existing = document.getElementById(id);
+        if (existing) {
+            (existing as HTMLLinkElement).href = href;
+            return;
+        }
+        const link = document.createElement("link");
+        link.id = id;
+        link.rel = "stylesheet";
+        link.href = href;
+        link.onload = () => resolve();
+        link.onerror = () => reject(new Error(`Failed to load: ${href}`));
+        document.head.appendChild(link);
+    });
 }
 
 async function loadPrismCore(): Promise<void> {
     if (prismCoreLoaded) return;
     if (prismCorePromise) return prismCorePromise;
 
-    prismCorePromise = loadScript(`${cdnBase}/prism.min.js`
+    prismCorePromise = loadScript(`${cdnBase}/components/prism-core.min.js`
     ).then(() => {
         prismCoreLoaded = true;
     });
@@ -146,30 +149,16 @@ async function loadPrismCore(): Promise<void> {
     return prismCorePromise;
 }
 
-async function loadPrismLanguage(lang: string): Promise<void> {
-    if (loadedLangs.has(lang)) return;
-    const base = `${cdnBase}/components/prism-`;
-    const map: Record<string, string> = {
-        js: "javascript",
-        html: "markup",
-    };
-    const file = map[lang] ?? lang;
-    try {
-        await loadScript(`${base}${file}.min.js`);
-        loadedLangs.add(lang);
-    } catch {
-        // silently ignore unknown langs
-    }
-}
-
-async function loadPrismPlugin(plugin: string): Promise<void> {
+async function loadPrismPlugin(plugin: string, withStyleSheet: boolean = true): Promise<void> {
     if (loadedPlugins.has(plugin)) return;
     const base = `${cdnBase}/plugins/`;
-    await loadScript(`${base}${plugin}/${plugin}.min.js`);
-    loadStylesheet(
-        `${base}${plugin}/prism-${plugin}.min.css`,
-        `prism-plugin-${plugin}`
-    );
+    await loadScript(`${base}${plugin}/prism-${plugin}.min.js`);
+    if (withStyleSheet) {
+        await loadStylesheet(
+            `${base}${plugin}/prism-${plugin}.min.css`,
+            `prism-plugin-${plugin}`
+        );
+    }
     loadedPlugins.add(plugin);
 }
 
@@ -251,14 +240,19 @@ export default function Code({
 
     // Load CSS theme
     useEffect(() => {
+        // noinspection JSIgnoredPromiseFromCall
         loadStylesheet(`${cdnBase}/themes/${THEME_CDN[currentTheme]}`, "prism-theme");
     }, [currentTheme]);
 
     // Load Prism + plugins + language, then highlight
     const highlight = useCallback(async () => {
         await loadPrismCore();
+
+        // autoloader is needed to load the language dependencies
+        // example: tsx depends on ts
+        await loadPrismPlugin("autoloader", false);
+
         if (lineNums) await loadPrismPlugin("line-numbers");
-        await loadPrismLanguage(currentLang);
 
         if (codeRef.current && window.Prism) {
             setReady(true);
