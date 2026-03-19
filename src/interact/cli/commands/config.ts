@@ -1,7 +1,8 @@
 import {Flags} from '@oclif/core'
 import yaml from 'yaml'
 import {BaseCommand} from "../baseCommand.js";
-import {resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
+import {createInteractConfig} from "../../config/interactConfig.js";
+
 
 
 /**
@@ -135,14 +136,12 @@ export default class Config extends BaseCommand<typeof Config> {
     const format = flags.json ? 'json' : 'yaml'
     const pretty = !flags['no-pretty'] && !flags.plain
 
-    const resolvedConfPath = resolveInteractConfPath(flags.confPath);
-    let configToPrint = resolveInteractConfig(resolvedConfPath);
+    let configToPrint = createInteractConfig(flags.confPath);
     if (flags.filter) {
       const filtered = filterByKey(configToPrint, flags.filter)
       if (filtered === undefined) {
         this.error(`Key '${flags.filter}' not found in configuration`)
       }
-
       configToPrint = filtered
     }
 

@@ -8,7 +8,7 @@ import {Aside} from "../Aside/Aside.js";
 import {Header} from "../Header/Header.js";
 import Toc from "../Toc/index.js";
 import NavBar from "../NavBar/index.js";
-import {interactConfig} from "interact:config";
+import {getInteractConfig} from "@combostrap/interact/config";
 
 /**
  * Holy Layout Components
@@ -24,7 +24,7 @@ export default async function Holy(layoutProps: TemplateProps) {
         <div id="page-core" className={
             clsx(styles['pageCore'],
                 PAGE_CONTAINER,
-                interactConfig.style.container.containerClass,
+                getInteractConfig().style.container.containerClass,
                 "position-relative mt-3"
             )}>
             <aside id="page-side" className={clsx(styles['pageSide'], "d-print-none")}>

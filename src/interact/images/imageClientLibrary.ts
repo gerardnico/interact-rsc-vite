@@ -13,7 +13,7 @@ import {
 import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
 import fsPromises from "fs/promises";
 import crypto from "crypto";
-import {interactConfig} from "interact:config";
+import {getInteractConfig} from "@combostrap/interact/config";
 import {imageEndPointEnvName, imageViteOutDirEnvName} from "./imageMiddlewareHandler.js";
 
 
@@ -46,6 +46,7 @@ type ImageRequestProps = {
  *
  * @return bool
  */
+const interactConfig = getInteractConfig()
 const withDpiCorrection = interactConfig.images.defaultValues?.dpiCorrection || false
 
 function getSizes(screenWidth: number, imageWidth: number) {

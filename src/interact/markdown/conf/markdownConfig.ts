@@ -8,7 +8,7 @@ type MarkdownConfig = Awaited<ReturnType<typeof createMarkdownConfig>>
 const GLOBAL_KEY = "__interactMarkdownProcessor"
 
 import type {PluggableList} from "unified";
-import type {InteractConfig} from "../../config/configHandler.js";
+import type {InteractConfig} from "../../config/interactConfig.js";
 
 /**
  * User config type

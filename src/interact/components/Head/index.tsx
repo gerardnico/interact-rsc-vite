@@ -1,7 +1,7 @@
 import type {TemplateProps} from "../../types/index.js";
 import {PAGE_CONTAINER} from "../classNames.js";
 import type {FaviconSetSchemaType} from "../../config/configSchema.js";
-import {interactConfig} from "interact:config";
+import {getInteractConfig} from "@combostrap/interact/config";
 import React from "react";
 
 export type HeadProps = React.HTMLAttributes<HTMLHeadElement> & TemplateProps;
@@ -21,7 +21,7 @@ export default function Head({page, request, ...props}: HeadProps) {
     if (frontmatter?.lastModified != null) {
         lastModified = new Date(frontmatter.lastModified);
     }
-
+    const interactConfig = getInteractConfig();
     const primary = interactConfig.site.colorPrimary
 
     const hexToRgb = (hex: string) => {

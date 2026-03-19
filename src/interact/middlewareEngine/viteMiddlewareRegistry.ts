@@ -1,6 +1,6 @@
 import type {Plugin} from 'vite';
 import type {MiddlewareConfig} from "../config/configSchema.js";
-import type {InteractConfig} from "../config/configHandler.js";
+import type {InteractConfig} from "../config/interactConfig.js";
 import path from "node:path";
 
 export function viteMiddlewareRegistry(interactConfig: InteractConfig,middlewareConfigs: MiddlewareConfig[]): Plugin {

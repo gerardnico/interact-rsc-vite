@@ -11,7 +11,7 @@ import type {MiddlewareHandler, Middleware, MiddlewarePageResponse} from "../mid
 import type {Page, Frontmatter, TocNode} from "../pages/interactPage.js";
 import type {TemplateProps} from "../componentsProvider/templateComponent.js";
 
-import {type InteractConfig} from "../config/configHandler.js"
+import {type InteractConfig} from "../config/interactConfig.js"
 
 
 export {

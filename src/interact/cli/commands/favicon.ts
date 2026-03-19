@@ -10,8 +10,9 @@ import {
 } from '@realfavicongenerator/generate-favicon';
 import {getNodeImageAdapter, loadAndConvertToSvg} from "@realfavicongenerator/image-adapter-node";
 import {BaseCommand} from "../baseCommand.js";
-import {type InteractConfig, resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
-
+import type {InteractConfig} from "@combostrap/interact/types";
+// interactConfig should be relative path and not the package.json export as this is used by the client
+import {createInteractConfig} from "../../config/interactConfig.js";
 
 async function generateImage({masterFilePath, dryRun, outputDirectory, interactConfig: config}: {
     masterFilePath?: string,
@@ -140,12 +141,7 @@ export default class Favicon extends BaseCommand<typeof Favicon> {
     async run(): Promise<void> {
         const {args, flags} = await this.parse(Favicon)
 
-        /**
-         * If on top of the file, it's loaded in dev
-         * https://github.com/oclif/core/issues/997
-         */
-        const resolvedConfPath = resolveInteractConfPath(flags.confPath);
-        const interactConfigTyped = resolveInteractConfig(resolvedConfPath);
+        const interactConfigTyped = createInteractConfig(flags.confPath);
         const filePath = args.filePath
         const dryRun = flags.dryRun
         const outputDirectory = flags.outputDirectory

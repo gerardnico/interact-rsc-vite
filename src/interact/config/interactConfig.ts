@@ -1,3 +1,7 @@
+/**
+ * We set it globally to avoid https://github.com/oclif/core/issues/997
+ */
+
 import {
     JsonConfigSchema,
     type FaviconSetSchemaType,
@@ -12,25 +16,19 @@ import {fileURLToPath} from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 /**
  * Directory of the code
  */
 const interactPackageDir = path.resolve(__dirname, '..');
 
-/**
- * Configuration source information
- */
-export interface ConfigSource {
-    config: InteractConfig;
-    loaded: boolean;
-}
 
 /**
  * #components is declared in the package.json imports property
  */
 //const privateComponent = `#components`
 const publicComponent = `@combostrap/interact/components`
-const defaultComponentsValue: ComponentsSet = {
+export const defaultComponentsValue: ComponentsSet = {
     "a": {
         importPath: `${publicComponent}/Anchor`,
         type: "content"
@@ -178,11 +176,6 @@ function updateFavicon(favicons?: FaviconSetSchemaType | undefined): FaviconSetS
     return favicons;
 }
 
-
-export type ConfigHandlerProps = {
-    rootPath?: string
-};
-
 const configFileName = 'interact.config.json'
 
 export interface ConfPathResolvedType {
@@ -194,7 +187,7 @@ export interface ConfPathResolvedType {
  * The interact conf path may be the config file or a directory
  * @param confPath
  */
-export function resolveInteractConfPath(confPath: string | undefined): ConfPathResolvedType {
+function resolveInteractConfPath(confPath: string | undefined): ConfPathResolvedType {
 
     const finalConfPath = confPath || process.env['INTERACT_CONF_PATH'] || process.cwd();
     if (finalConfPath.endsWith(configFileName)) {
@@ -210,22 +203,6 @@ export function resolveInteractConfPath(confPath: string | undefined): ConfPathR
 
 }
 
-let interactConfig: InteractConfig | null = null
-
-/**
- * To resolve only once
- * Why? We need the conf on initialization for vite
- * and just after to create the virtual module
- * This way we process the file once
- * and we avoid https://github.com/oclif/core/issues/997
- */
-export function resolveInteractConfig(resolvedConf: ConfPathResolvedType) {
-    if (interactConfig != null) {
-        return interactConfig
-    }
-    interactConfig = new ConfigHandler(resolvedConf).getConfig();
-    return interactConfig;
-}
 
 /**
  * Deep merge two objects
@@ -292,11 +269,39 @@ export type InteractConfig = {
     }
 }
 
+const GLOBAL_KEY = "__interactConfig"
+
+export function setInteractConfigGlobally(processor: InteractConfig) {
+    const g = globalThis as any
+
+    if (g[GLOBAL_KEY]) {
+        throw new Error("Interact Config already initialized")
+    }
+
+    g[GLOBAL_KEY] = processor
+}
+
+// noinspection JSUnusedGlobalSymbols - used via package.json export
+export function getInteractConfig(): InteractConfig {
+    const g = globalThis as any
+
+    if (!g[GLOBAL_KEY]) {
+        throw new Error("Interact Config not initialized")
+    }
+
+    return g[GLOBAL_KEY]
+}
+
+
+export function createInteractConfig(confPath: string) {
+    const confPathResolved = resolveInteractConfPath(confPath);
+    return new InteractConfigHandler(confPathResolved).getConfig();
+}
+
 /**
  * The main function
  */
-// noinspection JSUnusedGlobalSymbols - It's used in a virtual module, so never detected as imported by the IDE
-class ConfigHandler {
+class InteractConfigHandler {
 
     private readonly configFile: string;
     private readonly rootDirectory: string;

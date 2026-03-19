@@ -5,7 +5,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeExtractToc from "@stefanprobst/rehype-extract-toc";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import rehypeHrefRewrite from "../plugins/rehype-href-rewrite.js";
-import type {InteractConfig} from "../../config/configHandler.js";
+import type {InteractConfig} from "../../config/interactConfig.js";
 import path from "node:path";
 import remarkLocalLinkChecker from "../plugins/remark-local-link-checker.js";
 

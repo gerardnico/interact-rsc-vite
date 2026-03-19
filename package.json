@@ -15,15 +15,15 @@
     "preview": "src/interact/cli/dev.js preview --confPath=apps/site"
   },
   "files": [
-    "dist/interact/cli/**/*.js",
-    "dist/interact/cli/**/*.js.map",
-    "dist/interact/cli/**/*.d.ts",
+    "dist/interact/cli/**/*",
+    "dist/interact/config/**/*",
     "src/**/*"
   ],
   "exports": {
     "./types": "./src/interact/types/index.d.ts",
     "./components/*": "./src/interact/components/*/index.js",
-    "./markdown": "./src/interact/markdown/processing/interactMarkdownProcessor.js"
+    "./markdown": "./src/interact/markdown/processing/interactMarkdownProcessor.js",
+    "./config": "./src/interact/config/interactConfig.js"
   },
   "dependencies": {
     "@mdx-js/rollup": "3.1.1",

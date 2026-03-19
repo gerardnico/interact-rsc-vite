@@ -3,17 +3,19 @@ import mdx from "@mdx-js/rollup";
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import pageModulesPlugin from "../../pages/viteVirtualPagesModules.js";
-import viteVirtualConfModule from "../../config/viteVirtualConfModule.js";
+import viteReloadOnConfChange from "../../config/viteReloadOnConfChange.js";
 import viteImageService from "../../images/imageViteDevMiddleware.js";
 import type {InlineConfig} from "vite";
 import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
-import {resolveInteractConfig, resolveInteractConfPath} from "../../config/configHandler.js";
+
 import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
 import viteComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
 import svgReactPlugin from "vite-plugin-svgr";
 import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
 import {viteMiddlewareRegistry} from "../../middlewareEngine/viteMiddlewareRegistry.js";
 import {createMarkdownConfig, setMarkdownConfigGlobally} from "../../markdown/conf/markdownConfig.js";
+// interactConfig should be a relative path and not the package.json export as this is used by the client
+import {createInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -35,12 +37,12 @@ export async function resolveViteConfig(
         outDir = "dist"
     }: InteractConfig): Promise<InlineConfig> {
 
-    const resolvedConfPath = resolveInteractConfPath(confPath);
-    const interactConfigTyped = resolveInteractConfig(resolvedConfPath);
+
+    const interactConfigTyped = createInteractConfig(confPath);
+    setInteractConfigGlobally(interactConfigTyped);
 
     // https://vite.dev/guide/build#public-base-path
     let publicBasePath = interactConfigTyped.site.base;
-
 
     let cachePath = path.resolve(interactConfigTyped.paths.cacheDirectory, "cache")
 
@@ -49,7 +51,7 @@ export async function resolveViteConfig(
     // https://vite.dev/guide/api-javascript#mergeconfig
     let outDistDir;
     if (!outDir.startsWith("/")) {
-        outDistDir = path.resolve(resolvedConfPath.rootDirectory, outDir);
+        outDistDir = path.resolve(interactConfigTyped.paths.rootDirectory, outDir);
     } else {
         outDistDir = outDir;
     }
@@ -166,7 +168,7 @@ export async function resolveViteConfig(
                 secret: process.env[imageSecretEnvName],
                 endPoint: imageMiddlewareEndPoint
             }),
-            viteVirtualConfModule(resolvedConfPath),
+            viteReloadOnConfChange(interactConfigTyped),
             // used by mdx
             viteComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
             // https://mdxjs.com/packages/mdx/#processoroptions

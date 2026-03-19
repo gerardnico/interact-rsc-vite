@@ -4,7 +4,7 @@ import path from "path";
 import Holy from "@combostrap/interact/components/Holy";
 
 import getPageModule from 'interact:page-modules';
-import {interactConfig} from "interact:config";
+import {getInteractConfig} from "@combostrap/interact/config";
 import {getLayoutComponent, NotFound} from "interact:components";
 import createMiddlewarePipeline from "../middlewareEngine/middlewareHandlerPipeline.js";
 import {middlewares} from "interact:middleware-registry"
@@ -129,10 +129,31 @@ export async function getRootResponse(normalizedRequest: Request): Promise<React
  * can use it to render each page
  */
 export function getStaticPaths() {
-    return Object.keys(getPagesRecursively(interactConfig.paths.pagesDirectory))
+    return Object.keys(getPagesRecursively(getInteractConfig().paths.pagesDirectory))
 }
 
 
 export function getPages() {
-    return getPagesRecursively(interactConfig.paths.pagesDirectory)
+    let interactConfig = getInteractConfig();
+    let pages = getPagesRecursively(interactConfig.paths.pagesDirectory)
+
+    /**
+     * Delete the 404 pages if set
+     */
+    let importPath = interactConfig.components?.NotFound?.importPath;
+    if (importPath != null) {
+        let pagesWord = "pages";
+        let indexOf = importPath.indexOf(pagesWord);
+        if (indexOf != -1) {
+            let notFoundPath = importPath.slice(indexOf + pagesWord.length);
+            const extensionIndex = notFoundPath.indexOf(".");
+            if (extensionIndex != -1) {
+                notFoundPath = notFoundPath.slice(0, extensionIndex);
+            }
+            delete pages[notFoundPath];
+        }
+    }
+
+
+    return pages
 }

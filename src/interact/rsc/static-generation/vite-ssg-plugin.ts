@@ -3,7 +3,8 @@ import path from "node:path";
 import {pathToFileURL} from "node:url";
 import fs from "node:fs";
 import {Readable} from "node:stream";
-import interactConfig from "interact:config";
+// interactConfig should be a relative path and not the package.json export as this is used by the client
+import {getInteractConfig, defaultComponentsValue} from "../../config/interactConfig.js";
 
 const RSC_POSTFIX = '_.rsc'
 
@@ -53,7 +54,8 @@ async function renderStatic(config: ResolvedConfig) {
     /**
      * Add the 404 if not set
      */
-    if (!interactConfig.components?.NotFound?.importPath?.includes("pages")) {
+    const interactConfig = getInteractConfig();
+    if (interactConfig.components?.NotFound?.importPath == defaultComponentsValue.NotFound?.importPath) {
         // 404 is the default for GitHub
         // https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-custom-404-page-for-your-github-pages-site
         staticPaths.push("/404");

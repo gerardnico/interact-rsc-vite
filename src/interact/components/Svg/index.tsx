@@ -5,7 +5,7 @@
 
 import {type SVGProps} from "react";
 import {optimize, type Config} from "svgo";
-import interactConfig from "interact:config";
+import {getInteractConfig} from "@combostrap/interact/config";
 import {readFile} from "node:fs/promises";
 
 
@@ -40,7 +40,7 @@ export default async function Svg({
 
     try {
 
-        const svgFile = interactConfig.paths.imagesDirectory + "/" + src;
+        const svgFile = getInteractConfig().paths.imagesDirectory + "/" + src;
         const svgCode = await readFile(svgFile, "utf-8");
         // https://svgo.dev/docs/preset-default/
         // https://svgo.dev/docs/plugins/

@@ -8,7 +8,7 @@ import {getHtmlImageAttributes, type HtmlImageAttributes} from "../../images/ima
 import {ImageError, ImageErrors} from "../../images/imageErrorsDictionary.js";
 
 import {brokenImage} from "../../images/imageSharedCode.js";
-import {interactConfig} from "interact:config";
+import {getInteractConfig} from "@combostrap/interact/config";
 
 
 export type ImageProps =
@@ -106,6 +106,7 @@ export default async function Image({
                                         ...imgAttributesProps
                                     }: ImageProps) {
     let htmlImageAttributes: HtmlImageAttributes;
+    const interactConfig = getInteractConfig();
     const finalImageType: ImageType = type ?? interactConfig.images.defaultValues.type;
     const finalCompression = compression ?? interactConfig.images.defaultValues.compression;
     const finalFit = fit ?? interactConfig.images.defaultValues.fit;

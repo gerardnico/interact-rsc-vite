@@ -1,6 +1,6 @@
 import type {Plugin} from 'vite';
 import path from 'path';
-import type {InteractConfig} from "../config/configHandler.js";
+import type {InteractConfig} from "../config/interactConfig.js";
 
 /**
  * Print without any quote so that the object can be added to virtual module

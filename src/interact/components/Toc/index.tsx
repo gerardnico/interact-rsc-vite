@@ -1,6 +1,6 @@
 import type {TemplateProps, TocNode} from "../../types/index.js";
 import "./toc.css"
-import interactConfig from "interact:config";
+import {getInteractConfig} from "@combostrap/interact/config";
 
 
 
@@ -33,7 +33,7 @@ function TocItems({entries, maxDepth, currentDepth = 1}: {
 
 export default function Toc({maxDepth, ...layoutProps}: TocProps) {
     if (maxDepth == null) {
-        maxDepth = interactConfig.components.Toc?.props?.maxDepth;
+        maxDepth = getInteractConfig().components.Toc?.props?.maxDepth;
         if (maxDepth == null) {
             maxDepth = 3
         }

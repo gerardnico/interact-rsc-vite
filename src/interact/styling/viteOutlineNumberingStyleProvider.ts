@@ -1,5 +1,5 @@
 import type {Plugin} from 'vite';
-import type {InteractConfig} from "../config/configHandler.js";
+import type {InteractConfig} from "../config/interactConfig.js";
 
 
 export default function viteOutlineNumberingStylesPlugin(interactConfig: InteractConfig): Plugin {
