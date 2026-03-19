@@ -4,6 +4,20 @@ name: Deploy Website with Interact
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Ref to checkout (tag: vx.x.x or early-access, or branch name)'
+        required: true
+        type: string
+        default: 'main'
+
+  # Trigger on tag push
+  push:
+    # A tag is a commit name (as a branch)
+    # We can't filter by default if a branch contains a tag
+    tags:
+      - 'v*'
+      - 'early-access'
 
 
 # Allow only one concurrent deployment
@@ -25,6 +39,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref_name }}
+          fetch-depth: 0
 
       - name: Enable Corepack
         run: corepack enable
@@ -41,15 +58,26 @@ jobs:
         run: |
           yarn install --immutable
 
+      - name: Check bin
+        # GitHub Actions adds node_modules/.bin to the PATH automatically
+        run: ls -la node_modules/.bin
+
+      - name: Build the typescript files
+        # so that the `interact` cli will work
+        # GitHub Actions adds node_modules/.bin to the PATH automatically
+        # tsc is silent on success, there simply won't be anything to show.
+        run: tsc --listEmittedFiles
+
       - name: Build the website
         #working-directory: ${{ env.APP_DIR }}
-        run: yarn ssg
+        # GitHub Actions adds node_modules/.bin to the PATH automatically
+        run: ./node_modules/.bin/interact build --confPath=${{ env.APP_DIR }}
 
       # actions/deploy-pages expect a zip
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.APP_DIR }}/client
+          path: ${{ env.APP_DIR }}/dist/client
 
   # https://github.com/actions/deploy-pages
   deploy:

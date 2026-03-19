@@ -45,6 +45,7 @@ const FaviconSetSchema: z.ZodType<FaviconSetSchemaType> = z.record(
  */
 const SiteSchema = z.object({
     url: z.coerce.string().describe("The URL (Used in the sitemap)").optional(),
+    // `/` in base is mandatory as default, this is the root
     base: z.coerce.string().describe("The base path added to the site URL (Example: /docs)").default("/"),
     name: z.coerce.string().describe("The short name (used in the app manifest)").default("Website"),
     title: z.coerce.string().describe("The title (used on the logo description, as index page title, in the app manifest as name)").default("Website"),
@@ -288,6 +289,7 @@ const NavBarSchema = BaseComponentSchema.extend({
 const ComponentsConfigSetSchema = z.object({
     NavBar: NavBarSchema.optional(),
     Toc: TocSchema.optional(),
+    NotFound: BaseComponentSchema.optional(),
 }).catchall(BaseComponentSchema); // unknown keys fall back to base schema
 
 

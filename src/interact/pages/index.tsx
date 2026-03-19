@@ -8,8 +8,7 @@ import {interactConfig} from "interact:config";
 import {getLayoutComponent, NotFound} from "interact:components";
 import createMiddlewarePipeline from "../middlewareEngine/middlewareHandlerPipeline.js";
 import {middlewares} from "interact:middleware-registry"
-import type {MiddlewarePageResponse, ReactNodeResponse} from "../middlewareEngine/interactMiddleware.js";
-
+import type {ReactNodeResponse} from "../middlewareEngine/interactMiddleware.js";
 
 export interface PageFile {
     path: string;
@@ -48,6 +47,27 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
 }
 
 
+async function getPageResponse(normalizedRequest: Request) {
+
+    let url = new URL(normalizedRequest.url)
+
+    /**
+     * Get a page module (jsx, tsx, ts, js, mdx)
+     */
+    let page = getPageModule({path: url.pathname});
+    if (page != null) {
+        return {
+            page: page
+        }
+    }
+
+    /**
+     * Object Page Provider Module?
+     */
+    return await pageProviderPipeline.run(normalizedRequest);
+
+}
+
 /**
  * The root component should return the entire document including the root <html> tag.
  * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
@@ -55,33 +75,12 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
  */
 export async function getRootResponse(normalizedRequest: Request): Promise<ReactNodeResponse | Response> {
 
-    let url = new URL(normalizedRequest.url)
 
-    let pageResponse: MiddlewarePageResponse | null = null;
-
-    /**
-     * Get a page module (jsx, tsx, ts, js, mdx)
-     */
-    let page = getPageModule({path: url.pathname});
-    if (page != null) {
-        pageResponse = {
-            page: page
-        }
+    let middlewareResponse = await getPageResponse(normalizedRequest);
+    if (middlewareResponse instanceof Response) {
+        return middlewareResponse;
     }
-
-
-    if (pageResponse == null) {
-        /**
-         * Object Page Provider Module?
-         */
-        let middlewareResponse = await pageProviderPipeline.run(normalizedRequest);
-        if (middlewareResponse != null) {
-            if (middlewareResponse instanceof Response) {
-                return middlewareResponse;
-            }
-            pageResponse = middlewareResponse
-        }
-    }
+    let pageResponse = middlewareResponse;
 
     if (pageResponse == null) {
         pageResponse = {

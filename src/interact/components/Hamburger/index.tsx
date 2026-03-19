@@ -2,6 +2,7 @@ import type {TemplateProps} from "@combostrap/interact/types";
 import {Head, Html, Body} from "interact:components";
 import clsx from "clsx";
 import interactConfig from "interact:config";
+import NavBar from "../NavBar/index.js";
 
 
 /**
@@ -14,6 +15,7 @@ export default function Hamburger(templateProps: TemplateProps) {
         <Html {...templateProps}>
             <Head {...templateProps}/>
             <Body {...templateProps}>
+                <NavBar {...templateProps} />
                 <div id="page-core" className={
                     clsx(
                         interactConfig.style.container.containerClass,

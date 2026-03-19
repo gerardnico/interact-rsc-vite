@@ -3,6 +3,7 @@ import path from "node:path";
 import {pathToFileURL} from "node:url";
 import fs from "node:fs";
 import {Readable} from "node:stream";
+import interactConfig from "interact:config";
 
 const RSC_POSTFIX = '_.rsc'
 
@@ -49,6 +50,14 @@ async function renderStatic(config: ResolvedConfig) {
         throw new Error("The client env environment does not exist.");
     }
     const baseDir = clientEnv.build.outDir
+    /**
+     * Add the 404 if not set
+     */
+    if (!interactConfig.components?.NotFound?.importPath?.includes("pages")) {
+        // 404 is the default for GitHub
+        // https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-custom-404-page-for-your-github-pages-site
+        staticPaths.push("/404");
+    }
     for (const staticPatch of staticPaths) {
         config.logger.info('[vite-rsc:ssg] -> ' + staticPatch)
         let fakeRequest = new Request(new URL(staticPatch, 'http://ssg.local'));

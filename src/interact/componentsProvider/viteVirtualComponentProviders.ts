@@ -62,16 +62,8 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
         /**
          * Import name
          */
-        let importName = path.basename(importPath)
-        // Delete the tsx, jsx, js extension
-        const lastPoint = importName.lastIndexOf(".");
-        if (lastPoint != -1) {
-            importName = importName.substring(0, lastPoint);
-        }
-        // if it's index.js or index.ts takes the directory name
-        if (importName == "index") {
-            importName = path.basename(path.dirname(importPath));
-        }
+        // Cannot comes from the path "./pages/404.js",404 is a number and is not valid as component name but valid as path
+        let importName = key;
 
         if (!exports.has(importName)) {
 

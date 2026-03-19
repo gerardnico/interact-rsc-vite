@@ -8,6 +8,10 @@
     "Planet": {
       "importPath": "./components/Planet.js",
       "type": "content"
+    },
+    "NotFound": {
+      "importPath": "./pages/404.js",
+      "type": "page"
     }
   },
   "pages": {
