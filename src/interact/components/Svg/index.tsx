@@ -7,9 +7,7 @@ import {type SVGProps} from "react";
 import {optimize, type Config} from "svgo";
 import {getInteractConfig} from "@combostrap/interact/config";
 import {readFile} from "node:fs/promises";
-
-
-
+import favicon from "../../resources/letter-i-3-colors.svg?raw"
 
 interface SvgComponentProps extends SVGProps<SVGSVGElement> {
     /** SVG file path from the img directory */
@@ -19,29 +17,44 @@ interface SvgComponentProps extends SVGProps<SVGSVGElement> {
 }
 
 
-function spanElementError(error: string) {
+function spanElementError(error: string, label: string = "SVG error") {
     return (
         <span
             role="img"
-            aria-label="SVG error"
-            title={error ? "Unknown error" : String(error)}
+            aria-label={label}
+            title={error}
             style={{color: "red", fontSize: 12}}
         >
-        ⚠ SVG error
+        ⚠ {label}
       </span>);
 }
 
 export default async function Svg({
-                                       src,
-                                       svgoOptions,
-                                       ...svgProps
-                                   }: SvgComponentProps) {
+                                      src,
+                                      svgoOptions,
+                                      ...svgProps
+                                  }: SvgComponentProps) {
 
 
     try {
-
+        if (src.startsWith("/")) {
+            src = src.slice(1);
+        }
         const svgFile = getInteractConfig().paths.imagesDirectory + "/" + src;
-        const svgCode = await readFile(svgFile, "utf-8");
+        let svgCode
+        try {
+            svgCode = await readFile(svgFile, "utf-8");
+        } catch (error) {
+            const err = error as NodeJS.ErrnoException;
+            if (err.code !== "ENOENT") {
+                return spanElementError(String(error), `Unknown error`);
+            }
+            if (src != "favicon.svg") {
+
+                return spanElementError(String(error), `${src} not found`);
+            }
+            svgCode = favicon;
+        }
         // https://svgo.dev/docs/preset-default/
         // https://svgo.dev/docs/plugins/
         const {data: optimisedSvg} = optimize(svgCode, {
@@ -56,12 +69,12 @@ export default async function Svg({
         //    render the element ourselves and forward any extra props cleanly.
         const match = optimisedSvg.match(/<svg([^>]*)>([\s\S]*?)<\/svg>\s*$/i);
         if (!match) {
-            return spanElementError(`SvgComponent: failed to parse SVG source in ${src}`);
+            return spanElementError(`SvgComponent: failed to parse SVG source in ${src}`, 'Bad Svg Syntax');
         }
 
         const [, rawAttrs, innerContent] = match;
         if (innerContent == null) {
-            return spanElementError(`SvgComponent: no svg content found in ${src}`);
+            return spanElementError(`SvgComponent: no svg content found in ${src}`, 'No content');
         }
 
         // Extract the attributes we want to preserve from the original SVG tag.
@@ -86,7 +99,6 @@ export default async function Svg({
         );
 
     } catch (error) {
-
         return spanElementError(`Svg Component: an unexpected error occurred on the file ${src}. Error: ${error}`);
     }
 

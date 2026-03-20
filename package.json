@@ -17,6 +17,7 @@
   "files": [
     "dist/interact/cli/**/*",
     "dist/interact/config/**/*",
+    "dist/interact/images/**/*",
     "src/**/*"
   ],
   "exports": {

@@ -11,7 +11,7 @@ Within a Markdown page, you can use the `Svg` component to:
 * [optimize](#optimization)
 * and include your svg in your document
 
-The `src` attribute indicates the relative path to the file in the `images` directory.
+The `src` attribute indicates the relative path to the file in the [images directory](../reference/directory-layout.md).
 
 ```markdown
 <Svg src="arrow-right-circle.svg" width="40"/>

@@ -169,6 +169,7 @@ export async function resolveViteConfig(
             react(),
             // https://www.npmjs.com/package/vite-plugin-svgr
             svgReactPlugin({
+                // If the content needs to be imported as string add the `?raw` property
                 include: '**/*.svg',
                 svgrOptions: {
                     plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx'],
