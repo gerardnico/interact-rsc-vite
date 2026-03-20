@@ -48,9 +48,32 @@ unable to find `./cjs/react-server-dom-webpack-client.browser.development.js`
 ## Prettier
 
 Was added to get the type resolve `skipLibCheck` error:
+
 ```
 node_modules/@svgr/core/dist/index.d.ts:1:25 - error TS2307: Cannot find module 'prettier' or its corresponding type declarations.
 
 1 import { Options } from 'prettier';
                           ~~~~~~~~
+```
+
+## Files
+
+We need:
+
+* all compiled js files in dist because the cli needs them.
+* the src file so that vite will load them
+
+```json
+{
+  "files": [
+    "dist/interact/**/*",
+    "src/**/*"
+  ]
+}
+```
+
+otherwise we get this kind of error, when starting the cli:
+
+```
+message: [MODULE_NOT_FOUND] import() failed to load client-project/node_modules/@combostrap/interact/dist/interact/cli/commands/start.js: Cannot find module 'client-project/node_modules/@combostrap/interact/dist/interact/pages/viteVirtualPagesModules.js' imported from client-project/node_modules/@combostrap/interact/dist/interact/cli/shared/vite.config.js
 ```

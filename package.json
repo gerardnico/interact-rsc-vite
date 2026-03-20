@@ -15,9 +15,7 @@
     "preview": "src/interact/cli/dev.js preview --confPath=apps/site"
   },
   "files": [
-    "dist/interact/cli/**/*",
-    "dist/interact/config/**/*",
-    "dist/interact/images/**/*",
+    "dist/interact/**/*",
     "src/**/*"
   ],
   "exports": {
