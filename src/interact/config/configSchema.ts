@@ -87,6 +87,8 @@ const PathsSchema = z.object({
     // https://vite.dev/guide/assets#the-public-directory
     publicDirectory: z.coerce.string<string>().describe("The path of the public directory").default("public"),
     imagesDirectory: z.coerce.string<string>().describe("The path of the image directory").default("images"),
+    // https://vite.dev/config/build-options#build-outdir
+    buildDirectory: z.coerce.string<string>().describe("The path of the output directory relative to the project root").default("dist"),
 })
 
 

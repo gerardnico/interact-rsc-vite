@@ -33,8 +33,7 @@ export async function resolveViteConfig(
     {
         confPath,
         port,
-        command,
-        outDir = "dist"
+        command
     }: InteractConfig): Promise<InlineConfig> {
 
 
@@ -47,19 +46,13 @@ export async function resolveViteConfig(
     let cachePath = path.resolve(interactConfigTyped.paths.cacheDirectory, "cache")
 
 
-    // Note: You can merge also
-    // https://vite.dev/guide/api-javascript#mergeconfig
-    let outDistDir;
-    if (!outDir.startsWith("/")) {
-        outDistDir = path.resolve(interactConfigTyped.paths.rootDirectory, outDir);
-    } else {
-        outDistDir = outDir;
-    }
+
 
     /**
      * Use to generate image into the static build
      */
-    process.env[imageViteOutDirEnvName] = outDistDir
+    process.env[imageViteOutDirEnvName] = interactConfigTyped.paths.buildDirectory;
+
     /**
      * Used to generate the URL in dev
      * The endpoint of the local service endpoint ("/_images")
@@ -112,7 +105,7 @@ export async function resolveViteConfig(
                 ]
             },
             // https://vite.dev/config/build-options#build-outdir
-            outDir: outDistDir
+            outDir: interactConfigTyped.paths.buildDirectory
         },
         // specify entry point for each environment.
         environments: {

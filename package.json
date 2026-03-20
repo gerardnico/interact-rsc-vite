@@ -7,7 +7,7 @@
   "bin": "src/interact/cli/run.js",
   "repository": "https://github.com/combostrap/interact",
   "scripts": {
-    "build": "tsc",
+    "build": "tsx contrib/scripts/build.ts",
     "watch": "tsc --watch",
     "start": "src/interact/cli/dev.js start --confPath=apps/site",
     "site": "src/interact/cli/dev.js start --confPath=../../gerardnico/com-gerardnico",

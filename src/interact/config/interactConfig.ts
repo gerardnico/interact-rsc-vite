@@ -317,17 +317,6 @@ class InteractConfigHandler {
 
 
         finalConfigData.site.favicons = updateFavicon(finalConfigData?.site?.favicons);
-        // let rehypeHrefRewrite = finalConfigData.plugins["rehype-href-rewrite"];
-        // if (rehypeHrefRewrite != null) {
-        //     let baseValue = finalConfigData.site?.base;
-        //     if (typeof rehypeHrefRewrite.props === 'undefined') {
-        //         rehypeHrefRewrite.props = {
-        //             base: baseValue,
-        //         }
-        //     } else {
-        //         rehypeHrefRewrite.props['base'] = baseValue;
-        //     }
-        // }
 
         finalConfigData.paths = {
             configFile: this.configFile,
@@ -335,8 +324,9 @@ class InteractConfigHandler {
             pagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.pagesDirectory),
             publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
             imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
-            cacheDirectory: path.resolve(this.rootDirectory, ".interact"),
-            srcDirectory: interactPackageDir
+            cacheDirectory: this.#qualifiedDirectoryPath( ".interact"),
+            srcDirectory: interactPackageDir,
+            buildDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.buildDirectory),
         }
 
         /**

@@ -46,10 +46,13 @@ function getFormatFromAcceptHeader(req: Request, sourceFile: string): keyof Form
 
 
 type ImageHandlerProps = {
+    // where to find the images
     baseDir: string,
+    // where to cache the images
     cacheDir?: string,
+    // the http endpoint
     endPoint: string;
-    // if the service is running locally, there is no need to sign and secret can be empty
+    // if the service is running locally, there is no need to sign the URL and secret can be empty
     secret?: string
 };
 
