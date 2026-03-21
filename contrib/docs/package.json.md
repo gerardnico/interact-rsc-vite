@@ -8,25 +8,6 @@ We pinned it with resolutions.
 `ts-node` is mandatory when working with `oclif` has command library
 for the [dev](../../src/interact/cli/dev.js) script
 
-## Component Import
-
-```json
-{
-  "imports": {
-    "#components/*": "./src/interact/components/*/index.js"
-  }
-}
-```
-
-This import declaration permits to keep the component private
-and to refer to them like that:
-
-```javascript
-import Code from "#components/Code"
-```
-
-It's used in the `interact:component-provider` module
-
 ## Component Export
 
 ```json
@@ -37,8 +18,10 @@ It's used in the `interact:component-provider` module
 }
 ```
 
-Why not the `dist` directory? Because vite does the bundling.
-The only code that needs to be build is the cli.
+Components Export are not the compiled (dist) one, they are compiled by Vite so that the
+import of CSS file works.
+The only code that needs to be build is the code called by the cli to start vite
+(ie all middleware and plugins)
 
 ## Vite as direct dependency
 
@@ -55,6 +38,12 @@ node_modules/@svgr/core/dist/index.d.ts:1:25 - error TS2307: Cannot find module 
 1 import { Options } from 'prettier';
                           ~~~~~~~~
 ```
+
+## DevDependencies
+
+They include all dependencies to compile with tsc.
+so that we can download the GitHub tarball, install only the devDependencies
+and compile.
 
 ## Files
 
@@ -77,3 +66,7 @@ otherwise we get this kind of error, when starting the cli:
 ```
 message: [MODULE_NOT_FOUND] import() failed to load client-project/node_modules/@combostrap/interact/dist/interact/cli/commands/start.js: Cannot find module 'client-project/node_modules/@combostrap/interact/dist/interact/pages/viteVirtualPagesModules.js' imported from client-project/node_modules/@combostrap/interact/dist/interact/cli/shared/vite.config.js
 ```
+
+## Typescript - tsx
+
+`tsx` is used to run `ts` file. `yarn build` script is a good example.
