@@ -17,8 +17,8 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
             summary: 'Specify level for logging.',
         })(),
         confPath: Flags.string({
-            description: 'Project root directory or configuration file path',
-            default: process.cwd(),
+            // no default, the default is derived, cli, env or current dir
+            description: 'Project root directory or configuration file path'
         }),
         outDir: Flags.string({
             description: 'The output directory',

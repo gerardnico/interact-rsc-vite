@@ -10,7 +10,7 @@
     "build": "tsx contrib/scripts/build.ts",
     "watch": "tsc --watch",
     "start": "src/interact/cli/dev.js start --confPath=apps/site",
-    "site": "src/interact/cli/dev.js start --confPath=../../gerardnico/com-gerardnico",
+    "site": "INTERACT_CONF_PATH=../../gerardnico/com-gerardnico src/interact/cli/dev.js start",
     "ssg": "src/interact/cli/dev.js build --confPath=apps/site",
     "preview": "src/interact/cli/dev.js preview --confPath=apps/site"
   },
@@ -33,7 +33,7 @@
     "@svgr/core": "8.1.0",
     "@svgr/plugin-jsx": "8.1.0",
     "@svgr/plugin-svgo": "8.1.0",
-    "@vitejs/plugin-react": "6.0.1",
+    "@vitejs/plugin-react": "5.1.4",
     "@vitejs/plugin-rsc": "0.5.21",
     "clsx": "2.1.1",
     "etag": "1.8.1",
@@ -54,7 +54,7 @@
     "sharp": "0.34.5",
     "svgo": "4.0.1",
     "ts-node": "10.9.2",
-    "vite": "8.0.1",
+    "vite": "7.3.1",
     "vite-plugin-svgr": "4.5.0",
     "zod": "4.3.6"
   },

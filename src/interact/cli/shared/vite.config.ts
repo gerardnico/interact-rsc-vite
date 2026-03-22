@@ -21,7 +21,7 @@ import {createInteractConfig, setInteractConfigGlobally} from "../../config/inte
 export type InteractCommand = 'start' | 'build' | 'preview';
 type LogLevel = 'info' | 'warn' | 'error' | 'silent';
 type InteractConfig = {
-    confPath: string,
+    confPath?: string,
     command?: InteractCommand;
     port?: number,
     outDir?: string;
@@ -78,7 +78,7 @@ export async function resolveViteConfig(
     return {
         mode: command == "build" ? "production" : "development",
         logLevel: 'info', // or 'warn' — try 'info' first
-        root: confPath,
+        root: interactConfigTyped.paths.rootDirectory,
         base: publicBasePath,
         server: {
             port: port,
@@ -86,7 +86,15 @@ export async function resolveViteConfig(
         resolve: {
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
-            alias: {}
+            alias: {},
+            // To resolve: TypeError: Cannot read properties of null (reading 'useRef')
+            // When using yarn portal protocol: "@combostrap/interact": "portal:../../combostrap/interact"
+            // to have `Interact` as a dependency
+            // Why? Rules of hook: You can't have 2 react instance
+            // The portal: protocol creates a symlink, and Vite ends up resolving React from two different paths:
+            // * From your app: node_modules/react
+            // * From the portal package: ../../combostrap/interact/node_modules/react
+            dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
         },
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
@@ -120,6 +128,8 @@ export async function resolveViteConfig(
                             index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/server/entry.rsc.js'),
                         },
                     },
+                    outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "rsc"),
+                    emptyOutDir: true
                 },
             },
 
@@ -134,6 +144,8 @@ export async function resolveViteConfig(
                             index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/server/entry.ssr.js'),
                         },
                     },
+                    outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "ssr"),
+                    emptyOutDir: true
                 },
             },
 
@@ -150,6 +162,8 @@ export async function resolveViteConfig(
                             index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/browser/entry.browser.js'),
                         },
                     },
+                    outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),
+                    emptyOutDir: true
                 },
             },
         },
@@ -194,7 +208,7 @@ export async function resolveViteConfig(
                 )
             },
             // Rsc
-            // At the end because the client import the outline numbering css virtual vite module
+            // At the end because the client import the outline numbering CSS virtual vite module
             // Note: you can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
             // to understand how "use client" and "use server" directives are transformed internally.
             // import("vite-plugin-inspect").then(m => m.default()),

@@ -23,10 +23,13 @@ import of CSS file works.
 The only code that needs to be build is the code called by the cli to start vite
 (ie all middleware and plugins)
 
-## Vite as direct dependency
+## Vite
 
-Is mandatory for development otherwise you get error such
+As direct dependency, it is mandatory for development otherwise you get error such
 unable to find `./cjs/react-server-dom-webpack-client.browser.development.js`
+
+After upgrading test a ssg
+(tested vite 8.0.1 and it was breaking)
 
 ## Prettier
 

@@ -37,6 +37,7 @@ async function renderStatic(config: ResolvedConfig) {
     if (!rscEnv) {
         throw new Error("The rsc env environment does not exist.");
     }
+    console.log(`Static rendering from the rsc build located at: ${rscEnv.build.outDir}`);
     /**
      * Import the created rsc build
      */
