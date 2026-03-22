@@ -161,7 +161,10 @@ let defaultFavicons: FaviconSetSchemaType = {
     }
 };
 
-function updateFavicon(favicons?: FaviconSetSchemaType | undefined): FaviconSetSchemaType {
+function updateFavicon({favicons, publicDirectory}: {
+    favicons?: FaviconSetSchemaType | undefined,
+    publicDirectory: string
+}): FaviconSetSchemaType {
     if (!favicons) {
         favicons = {}
     }
@@ -169,7 +172,7 @@ function updateFavicon(favicons?: FaviconSetSchemaType | undefined): FaviconSetS
         if (faviconName in Object.keys(favicons)) {
             continue
         }
-        if (fs.existsSync(`public/${faviconName}`)) {
+        if (fs.existsSync(`${publicDirectory}/${faviconName}`)) {
             favicons[faviconName] = faviconProperties
         }
     }
@@ -316,18 +319,24 @@ class InteractConfigHandler {
     #addDefaultAndRuntime(finalConfigData: InteractConfig) {
 
 
-        finalConfigData.site.favicons = updateFavicon(finalConfigData?.site?.favicons);
-
         finalConfigData.paths = {
             configFile: this.configFile,
             rootDirectory: this.rootDirectory,
             pagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.pagesDirectory),
             publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
             imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
-            cacheDirectory: this.#qualifiedDirectoryPath( ".interact"),
+            cacheDirectory: this.#qualifiedDirectoryPath(".interact"),
             srcDirectory: interactPackageDir,
             buildDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.buildDirectory),
         }
+
+        finalConfigData.site.favicons = updateFavicon(
+            {
+                favicons: finalConfigData?.site?.favicons,
+                publicDirectory: finalConfigData.paths.publicDirectory
+            }
+        );
+
 
         /**
          * Default plugins
@@ -355,72 +364,87 @@ class InteractConfigHandler {
 
     }
 
-    #qualifiedDirectoryPath(basePath: string) {
-        if (!basePath.startsWith("/")) {
-            return path.resolve(this.rootDirectory, basePath);
-        }
-        return path.resolve(basePath);
-
-    }
-
-    #parseAndAddDefaults(param: {}) {
-        const result = JsonConfigSchema.safeParse(param);
-        if (!result.success) {
-            let errorMessage = result.error.issues
-                .map(issue => {
-                    const path = issue.path.join('.');
-                    return `• ${path}: ${issue.message}`;
-                })
-                .join('\n');
-            console.error('Configuration errors:\n' + errorMessage);
-            // noinspection ExceptionCaughtLocallyJS
-            throw new Error("Configuration error")
-        }
-
-        let finalConfigData = (result.data as InteractConfig)
-        this.#addDefaultAndRuntime(finalConfigData)
-
-        return finalConfigData;
-    }
-
-    /**
-     * Load configuration with fallback to defaults
-     */
-    #process(): InteractConfig {
-
-
-        let configContent: string;
-        try {
-            // Try to import the config file
-            configContent = readFileSync(this.configFile, 'utf-8');
-        } catch (error) {
-            const err = error as NodeJS.ErrnoException;
-            if (err.code === 'ENOENT') {
-                // Config file doesn't exist
-                console.warn(`No ${(this.configFile)} found, using default configuration`);
-                return this.#parseAndAddDefaults({});
+        #qualifiedDirectoryPath(basePath
+    :
+        string
+    )
+        {
+            if (!basePath.startsWith("/")) {
+                return path.resolve(this.rootDirectory, basePath);
             }
-            console.error(`Unexpected error ${err.code} while reading the config file: ${(this.configFile)}`);
-            throw error;
-        }
-        console.log(`${(this.configFile)} found`);
-        let data: Object;
-        try {
-            data = JSON.parse(configContent)
-        } catch (error) {
-            console.error(`The config file is not a valid Json file: ${(this.configFile)}`);
-            console.error(`Error: ${String(error)}`);
-            throw error;
+            return path.resolve(basePath);
+
         }
 
-        return this.#parseAndAddDefaults(data);
+        #parseAndAddDefaults(param
+    :
+        {
+        }
+    )
+        {
+            const result = JsonConfigSchema.safeParse(param);
+            if (!result.success) {
+                let errorMessage = result.error.issues
+                    .map(issue => {
+                        const path = issue.path.join('.');
+                        return `• ${path}: ${issue.message}`;
+                    })
+                    .join('\n');
+                console.error('Configuration errors:\n' + errorMessage);
+                // noinspection ExceptionCaughtLocallyJS
+                throw new Error("Configuration error")
+            }
 
+            let finalConfigData = (result.data as InteractConfig)
+            this.#addDefaultAndRuntime(finalConfigData)
+
+            return finalConfigData;
+        }
+
+        /**
+         * Load configuration with fallback to defaults
+         */
+        #process()
+    :
+        InteractConfig
+        {
+
+
+            let configContent: string;
+            try {
+                // Try to import the config file
+                configContent = readFileSync(this.configFile, 'utf-8');
+            } catch (error) {
+                const err = error as NodeJS.ErrnoException;
+                if (err.code === 'ENOENT') {
+                    // Config file doesn't exist
+                    console.warn(`No ${(this.configFile)} found, using default configuration`);
+                    return this.#parseAndAddDefaults({});
+                }
+                console.error(`Unexpected error ${err.code} while reading the config file: ${(this.configFile)}`);
+                throw error;
+            }
+            console.log(`${(this.configFile)} found`);
+            let data: Object;
+            try {
+                data = JSON.parse(configContent)
+            } catch (error) {
+                console.error(`The config file is not a valid Json file: ${(this.configFile)}`);
+                console.error(`Error: ${String(error)}`);
+                throw error;
+            }
+
+            return this.#parseAndAddDefaults(data);
+
+
+        }
+
+        getConfig()
+    :
+        InteractConfig
+        {
+            return this.interactConfig
+        }
 
     }
-
-    getConfig(): InteractConfig {
-        return this.interactConfig
-    }
-
-}
 

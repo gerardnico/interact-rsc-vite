@@ -69,7 +69,6 @@ export default function Head({page, request, ...props}: HeadProps) {
         }
     }
 
-
     return (
         <head {...props}>
             <meta charSet="UTF-8"/>
