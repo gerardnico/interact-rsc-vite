@@ -29,6 +29,10 @@ const interactPackageDir = path.resolve(__dirname, '..');
 //const privateComponent = `#components`
 const publicComponent = `@combostrap/interact/components`
 export const defaultComponentsValue: ComponentsSet = {
+    "Avatar": {
+        importPath: `${publicComponent}/Avatar`,
+        type: "content"
+    },
     "a": {
         importPath: `${publicComponent}/Anchor`,
         type: "content"

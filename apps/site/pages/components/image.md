@@ -2,11 +2,15 @@
 title: Image
 ---
 
+
+<Image src="card_puncher_data_processing.jpg" alt="Card Puncher" height="300" ratio="16:9"/>
+
+
 ## Image Component
 
 | Name   | Default | Possible values  | Description                                                    |
 |--------|---------|------------------|----------------------------------------------------------------|
-| Type   | `fluid` | fluid`, `none`   | The type of image to apply dedicated styling                   |
+| Type   | `fluid` | `fluid`, `none`  | The type of image to apply dedicated styling                   |
 | Width  |         | Positive Integer | The requested width in pixel                                   |
 | Height |         | Postiive Integer | The requested height in pixel                                  |
 | Ratio  |         | `number:number`  | The requested ratio (Most common: `21:9`,`16:9`, `4:3`, `1:1`) |
@@ -40,7 +44,7 @@ Example of image component error
 
 In case of a bad input in the image component:
 
-* the default fallback image is show en with the error title
+* the default fallback image is shown en with the error title
 * and the image description (`alt` attribute) get the exact error.
 
 Example of Image that will show an error:
@@ -53,6 +57,11 @@ width="-1"
 ```
 
 * For a image error that is created by:
+
+<Image src="card_puncher_data_processing.jpg"
+alt="Card Puncher"
+width="-1"
+/>
 
 ### Transformation Service Error
 

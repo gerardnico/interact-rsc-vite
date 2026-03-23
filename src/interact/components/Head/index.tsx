@@ -97,7 +97,7 @@ export default function Head({page, request, ...props}: HeadProps) {
             })}
             {interactConfig.site.colorPrimary &&
                 <meta name="theme-color" content={interactConfig.site.colorPrimary}/>}
-            <meta name="robots" content={robots ? robots : "index,follow"}/>
+            <meta name="robots" content={robots ? robots : "index, follow"}/>
             {keyWords && <meta name="keywords" content={keyWords}/>}
             {layoutStyle && (<style dangerouslySetInnerHTML={{__html: layoutStyle}}/>)}
             <HeadBootstrap/>

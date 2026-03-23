@@ -9,6 +9,7 @@ import {getLayoutComponent, NotFound} from "interact:components";
 import createMiddlewarePipeline from "../middlewareEngine/middlewareHandlerPipeline.js";
 import {middlewares} from "interact:middleware-registry"
 import type {ReactNodeResponse} from "../middlewareEngine/interactMiddleware.js";
+import {InteractErrorData, InteractError} from "../errors/index.js"
 
 export interface PageFile {
     path: string;
@@ -87,6 +88,13 @@ export async function getRootResponse(normalizedRequest: Request): Promise<React
             status: 404,
             page: NotFound
         };
+    }
+
+    /**
+     * Check that the default export is not null
+     */
+    if (pageResponse.page.default == null) {
+        throw new InteractError(InteractErrorData.PageWithNullAsDefault)
     }
 
     /**

@@ -1,12 +1,12 @@
 import {markdownToPage} from "@combostrap/interact/markdown";
-import type {PageResponse} from "@combostrap/interact/types";
+import type {MiddlewarePageResponse} from "@combostrap/interact/types";
 
 // noinspection JSUnusedGlobalSymbols - loaded dynamically
 export async function handler({
                                   basePath = "https://raw.githubusercontent.com",
                                   prefix = "/github"
                               }: { basePath: string, prefix: string }) {
-    return async (request: Request): Promise<PageResponse | undefined> => {
+    return async (request: Request): Promise<MiddlewarePageResponse | undefined> => {
 
         const pathname = new URL(request.url).pathname
 

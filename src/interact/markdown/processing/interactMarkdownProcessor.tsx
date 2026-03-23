@@ -33,7 +33,7 @@ import type {Frontmatter} from "../../pages/interactPage.js";
 // Markdown processing to react component via rehypeReact
 // Why?
 // because Mdx use rehypeRecma as compiler (ie the hast goes to the JavaScript Tree)
-async function markdownReactProcessing(vFileCompatible: Compatible) {
+function markdownReactProcessing(vFileCompatible: Compatible) {
 
     let strictYamlParsing = false
     if (process.env['NODE_ENV'] !== "production") {
@@ -54,7 +54,7 @@ async function markdownReactProcessing(vFileCompatible: Compatible) {
 
     let vFile: VFileType
     // noinspection JSUnusedGlobalSymbols - some property such as jsxs or createEvaluater are needed
-    vFile = await unified()
+    vFile = unified()
         .use(remarkParse)  // Parse markdown into mdast
         .use(function () {
             /**
@@ -166,7 +166,7 @@ async function markdownReactProcessing(vFileCompatible: Compatible) {
             Fragment: Fragment,
             components: components,
         })
-        .process(vFileCompatible);
+        .processSync(vFileCompatible);
 
     if (vFile?.path != null) {
         const stat = statSync(vFile?.path);
@@ -221,7 +221,7 @@ export async function markdownToPage(vFileCompatible: Compatible, options?: {
         if (format == 'mdx' || format == 'md') {
             return await mdxProcessing(vFileCompatible, {format: format});
         }
-        return await markdownReactProcessing(vFileCompatible);
+        return markdownReactProcessing(vFileCompatible);
     } catch (e) {
         return {
             default: () => {

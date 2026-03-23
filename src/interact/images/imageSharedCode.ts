@@ -37,11 +37,17 @@ export function castWidthToNumber(width: string | null | undefined | number): nu
     }
 }
 
-export function castFit(fit: string | null | undefined | number): keyof FitEnum {
+/**
+ * undefined is the default value for sharp
+ */
+export function castFit(fit: string | null | undefined | number): keyof FitEnum | undefined {
+    if (fit == null) {
+        return
+    }
     try {
         return ImageFitSchema.parse(fit) as unknown as keyof FitEnum;
     } catch (e) {
-        throw new ImageError({message: `bad fit value ${fit}: ${e}`, ...ImageErrors.BAD_WIDTH});
+        throw new ImageError({message: `bad fit value ${fit}: ${e}`, ...ImageErrors.BAD_FIT});
     }
 }
 
@@ -106,7 +112,7 @@ export async function processImageWithSharp({
     sharpPipeline: sharp.Sharp,
     targetWidth: number,
     targetHeight: number,
-    requestedFit: keyof FitEnum,
+    requestedFit: keyof FitEnum|undefined,
     requestedFormat: keyof FormatEnum,
     requestedCompression: ImageCompressionType
 }): Promise<Buffer> {

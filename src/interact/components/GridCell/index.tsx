@@ -52,7 +52,14 @@ export type GridCellType = BlockType & {
  * https://getbootstrap.com/docs/5.3/layout/grid/#row-columns
  */
 // noinspection JSUnusedGlobalSymbols - imported dynamically
-export default function GridCell({children, size, className, blockYAlign, ...rest}: GridCellType): React.JSX.Element {
+export default function GridCell({
+                                     children,
+                                     size,
+                                     className,
+                                     blockYAlign,
+                                     blockXAlign = ["center"], // we always want that mostly
+                                     ...rest
+                                 }: GridCellType): React.JSX.Element {
     const alignArray: BlockYAlignType[] | undefined = Array.isArray(blockYAlign) ? blockYAlign : (blockYAlign != undefined ? ((blockYAlign as string).split(" ") as BlockYAlignType[]) : undefined);
 
     return (
@@ -62,6 +69,7 @@ export default function GridCell({children, size, className, blockYAlign, ...res
                 alignArray != undefined && alignArray.map((yAlignValue) => `align-self-${yAlignValue}`),
                 className
             )}
+            blockXAlign={blockXAlign}
             {...rest}>
             {children}
         </Block>
