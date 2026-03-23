@@ -3,7 +3,7 @@ import {fsGetTextAsync} from "../utils/fs.js";
 
 import type {MiddlewareHandler, MiddlewarePageResponse} from "../middlewareEngine/interactMiddleware.js";
 import {VFile} from "vfile";
-import {markdownToPage} from "../markdown/processing/interactMarkdownProcessor.js";
+import {markdownToPageSync} from "../markdown/processing/interactMarkdownProcessor.js";
 
 
 /**
@@ -34,7 +34,7 @@ export async function handler({pagesDirectory}: {
             value: content,
         })
         return {
-            page: await markdownToPage(file)
+            page: markdownToPageSync(file)
         };
 
     }

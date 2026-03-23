@@ -19,17 +19,17 @@ You can create a provider plugin with a module:
 // ./src/cms/my-provider.js
 export async function handler(props) {
     return async (request) => {
-        
+
         const pathname = new URL(request.url).pathname
-        
+
         // check if you handle the request
-        if(!pathname.startsWith("/my-provider")){
+        if (!pathname.startsWith("/my-provider")) {
             return
         }
-        
+
         // Fetch your data
         const data = await fetch(new URL(request.url).pathname)
-        
+
         return {
             frontmatter: {
                 layout: "holy"
@@ -45,8 +45,12 @@ export async function handler(props) {
 }
 ```
 
-You can take a look to the `localPagesMiddleware.tsx` file, it's a CMS plugin
-that returns local [Markdown](markdown.md) file as page.
+## Example
+
+* You can take a look to the `localPagesMiddleware.tsx` file, it's a CMS plugin that returns
+  local [Markdown file as page](md-page.md).
+* The [remote markdown example](https://github.com/combostrap/interact/blob/main/apps/site/cms/remote-markdown.tsx) page
+  provider that returns Markdown page from GitHub.
 
 ## Registration
 
@@ -70,4 +74,5 @@ Example:
 }
 ```
 
-They are executed in order.
+* They are executed in order.
+* The import path is relative to the [root directory](directory-layout.md)

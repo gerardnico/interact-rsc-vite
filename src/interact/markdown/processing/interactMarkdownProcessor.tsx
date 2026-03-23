@@ -15,14 +15,14 @@ import {mdxJsxFromMarkdown} from 'mdast-util-mdx-jsx'
 import YAML from "yaml";
 import remarkRehype from "remark-rehype";
 import rehypeReact from "rehype-react";
-import {Fragment, type ReactNode} from "react";
+import {type ComponentType, Fragment, type ReactNode} from "react";
 import {type Compatible, VFile, type VFile as VFileType} from "vfile";
 import {mdxJsx} from 'micromark-extension-mdx-jsx'
 import {mdxMd} from 'micromark-extension-mdx-md'
 import type {Element as HastElement} from "hast";
 import type {Page, TocNode} from "@combostrap/interact/types";
 import {VFileMessage} from 'vfile-message'
-import {compile, run} from '@mdx-js/mdx'
+import {compileSync, runSync} from '@mdx-js/mdx'
 import * as jsxRuntime from 'react/jsx-runtime'
 import {getMarkdownConfig} from "../conf/markdownConfig.js";
 import type {markdownFormat} from "../../config/configSchema.js";
@@ -190,11 +190,11 @@ function markdownReactProcessing(vFileCompatible: Compatible) {
  * @param options
  * @param options.format
  */
-async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx'}: {
+function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx'}: {
     format?: 'mdx' | 'md'
-}): Promise<Page> {
+}): Page {
     // Source: https://mdxjs.com/packages/mdx/#example
-    const code = String(await compile(vFileCompatible, {
+    const code = String(compileSync(vFileCompatible, {
         outputFormat: 'function-body',
         remarkPlugins: getMarkdownConfig().getMdxConfig().remarkPlugins,
         rehypePlugins: getMarkdownConfig().getMdxConfig().rehypePlugins,
@@ -205,21 +205,32 @@ async function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'm
         providerImportSource: getMarkdownConfig().getProviderImportSource(), // mandatory to use useMDXComponents below
     }))
     // Create the {default: Content}
-    return await run(code, {
+    return runSync(code, {
         ...jsxRuntime,
         useMDXComponents
     });
 }
 
 
-// See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
-export async function markdownToPage(vFileCompatible: Compatible, options?: {
+/**
+ * From a markdown fragment to a React component
+ */
+// noinspection JSUnusedGlobalSymbols - exported in package.json
+export function markdownToComponentSync(vFileCompatible: Compatible, options?: {
     format: markdownFormat
-}): Promise<Page> {
+}):ComponentType {
+    return markdownToPageSync(vFileCompatible, options).default as ComponentType;
+}
+
+// Sync because this is on the server
+// See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
+export function markdownToPageSync(vFileCompatible: Compatible, options?: {
+    format: markdownFormat
+}): Page {
     const format: markdownFormat = options?.format || getMarkdownConfig().getDefaultMarkdownFormat();
     try {
         if (format == 'mdx' || format == 'md') {
-            return await mdxProcessing(vFileCompatible, {format: format});
+            return mdxProcessing(vFileCompatible, {format: format});
         }
         return markdownReactProcessing(vFileCompatible);
     } catch (e) {

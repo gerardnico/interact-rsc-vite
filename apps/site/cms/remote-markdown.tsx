@@ -1,5 +1,5 @@
-import {markdownToPage} from "@combostrap/interact/markdown";
 import type {MiddlewarePageResponse} from "@combostrap/interact/types";
+import {markdownToPageSync} from "@combostrap/interact/markdown";
 
 // noinspection JSUnusedGlobalSymbols - loaded dynamically
 export async function handler({
@@ -23,7 +23,7 @@ export async function handler({
         // parse and return
         try {
             return {
-                page: await markdownToPage(markdown, {format: 'md'})
+                page: markdownToPageSync(markdown, {format: 'md'})
             };
         } catch (e) {
             return {
