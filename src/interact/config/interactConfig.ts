@@ -73,6 +73,10 @@ export const defaultComponentsValue: ComponentsSet = {
         importPath: `${publicComponent}/Holy`,
         type: "layout"
     },
+    "HolyMedium": {
+        importPath: `${publicComponent}/HolyMedium`,
+        type: "layout"
+    },
     "Html": {
         importPath: `${publicComponent}/Html`,
         type: "partial"

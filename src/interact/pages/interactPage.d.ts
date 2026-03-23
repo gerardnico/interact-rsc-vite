@@ -19,6 +19,9 @@ export type Frontmatter = {
     title?: string;
     description?: string;
     layout?: string;
+    // no page header / hero
+    layoutHeroDisabled?: string;
+    // keywords for search
     keyWords?: string;
     robots?: string;
     // order in a list

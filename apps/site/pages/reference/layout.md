@@ -8,9 +8,10 @@ It's also known as the `root` component because it returns the entire document i
 
 ## Built-in List
 
-* Holy
-* Hamburger
-* Landing
+* Holy - Full layout
+* HolyMedium - Holy layout without the sidebar
+* Hamburger - Top navbar, page and footer
+* Landing - Hamburger where the page is not constrained
 * None: No layout applied, your page should return the `html` root element
 
 ## How to set a layout
