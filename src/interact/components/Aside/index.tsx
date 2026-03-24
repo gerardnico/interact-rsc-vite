@@ -1,8 +1,9 @@
 import type {Frontmatter, Page, TemplateProps} from "@combostrap/interact/types";
+import React from "react";
 
 const pages = import.meta.glob<Page<Frontmatter>>(
     "./pages/**/*.ts",
-    { eager: true }
+    {eager: true}
 )
 
 function toRoute(path: string) {
@@ -21,9 +22,11 @@ export const nav = Object.entries(pages)
     }))
     .sort((a, b) => a.order - b.order)
 
-// @ts-ignore
-export function Aside(layoutProps: TemplateProps) {
+export type AsideProps = React.HTMLAttributes<HTMLElement> & TemplateProps
+
+// @ts-ignore -- exported
+export default function Aside({page, request, ...props}: AsideProps) {
     return (
-        <></>
+        <div {...props}></div>
     )
 }

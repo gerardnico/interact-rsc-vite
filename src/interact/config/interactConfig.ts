@@ -29,6 +29,10 @@ const interactPackageDir = path.resolve(__dirname, '..');
 //const privateComponent = `#components`
 const publicComponent = `@combostrap/interact/components`
 export const defaultComponentsValue: ComponentsSet = {
+    "Aside": {
+        importPath: `${publicComponent}/Aside`,
+        type: "partial"
+    },
     "Avatar": {
         importPath: `${publicComponent}/Avatar`,
         type: "content"
@@ -67,6 +71,10 @@ export const defaultComponentsValue: ComponentsSet = {
     },
     "Head": {
         importPath: `${publicComponent}/Head`,
+        type: "partial"
+    },
+    "Hero": {
+        importPath: `${publicComponent}/Hero`,
         type: "partial"
     },
     "Holy": {

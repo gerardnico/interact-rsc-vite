@@ -1,8 +1,7 @@
 import type {TemplateProps} from "@combostrap/interact/types";
-import {Head, Html, Body} from "interact:components";
+import {Head, Html, Body, NavBar} from "interact:components";
 import clsx from "clsx";
 import {getInteractConfig} from "@combostrap/interact/config";
-import NavBar from "../NavBar/index.js";
 
 
 /**

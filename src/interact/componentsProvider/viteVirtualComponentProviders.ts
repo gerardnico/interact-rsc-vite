@@ -45,7 +45,7 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
     let layoutComponents: Record<string, string> = {};
 
     // component may be registered multiple time
-    // for instance, code is registered for the pre element and itself as Code
+    // for instance, code is registered for the pre element and itself as Code,
     // but it should be exported only once
     let exports = new Set<string>();
     let mdxMappingElementNameComponentName: Record<string, string> = {};
@@ -62,7 +62,7 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
         /**
          * Import name
          */
-        // Cannot comes from the path "./pages/404.js",404 is a number and is not valid as component name but valid as path
+        // Cannot come from the path "./pages/404.js",404 is a number and is not valid as component name but valid as path
         let importName = key;
 
         if (!exports.has(importName)) {
@@ -130,8 +130,8 @@ export function getLayoutComponent(name) {
 export { ${[...exports].join(', ')} };
 
 // to not return null
-const defaultComponent = () => "Don't use the default export";
-export default defaultComponent 
+const dontUse = () => "Don't use the default export";
+export default dontUse 
 `;
 }
 

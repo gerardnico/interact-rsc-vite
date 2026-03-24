@@ -1,10 +1,11 @@
 import type {TemplateProps, TocNode} from "../../types/index.js";
 import "./toc.css"
 import {getInteractConfig} from "@combostrap/interact/config";
+import React from "react";
+import clsx from "clsx";
 
 
-
-interface TocProps extends TemplateProps {
+export type TocProps = React.HTMLAttributes<HTMLElement> & TemplateProps & {
     maxDepth?: number;
 }
 
@@ -31,20 +32,20 @@ function TocItems({entries, maxDepth, currentDepth = 1}: {
     );
 }
 
-export default function Toc({maxDepth, ...layoutProps}: TocProps) {
+export default function Toc({maxDepth, page, request, className, ...navProps}: TocProps) {
     if (maxDepth == null) {
         maxDepth = getInteractConfig().components.Toc?.props?.maxDepth;
         if (maxDepth == null) {
             maxDepth = 3
         }
     }
-    const toc: TocNode[] | undefined = layoutProps.page?.toc;
+    const toc: TocNode[] | undefined = page?.toc;
     /**
      * The selector is a class so that we can put more than one
      * for documentation purposes
      */
     return (
-        <nav className="toc">
+        <nav className={clsx("toc", className)} {...navProps}>
             <p className="toc-header">Table of Contents</p>
             {toc && <TocItems entries={toc} maxDepth={maxDepth}/>}
         </nav>
