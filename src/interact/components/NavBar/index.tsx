@@ -1,12 +1,11 @@
-import {PAGE_CONTAINER_CLASS_NAME} from "../classNames.js";
 import {getInteractConfig} from "@combostrap/interact/config";
 import Image from "../Image/index.js"
-import type {TemplateProps} from "@combostrap/interact/types";
+import type {ContextProps} from "@combostrap/interact/types";
 import Svg from "../Svg/index.js";
 import React from "react";
 import clsx from "clsx";
 
-export type NavBarProps = React.HtmlHTMLAttributes<HTMLHtmlElement> & TemplateProps;
+export type NavBarProps = React.HtmlHTMLAttributes<HTMLHtmlElement> & ContextProps;
 
 export default function NavBar({request, page, className, ...props}: NavBarProps) {
 
@@ -51,7 +50,7 @@ export default function NavBar({request, page, className, ...props}: NavBarProps
         <header id="page-header" className={clsx(className, "d-print-none")} {...props}>
             <nav className="navbar navbar-expand-md navbar-light" data-type="fixed-top"
                  style={{backgroundColor: "var(--bs-light)"}}>
-                <div className={PAGE_CONTAINER_CLASS_NAME + " " + containerClass}>
+                <div className={containerClass}>
                     <a className="link-primary"
                        href={homeUrl} title={interactConfig.site.title}
                        accessKey="h" style={{fontWeight: 700}}>

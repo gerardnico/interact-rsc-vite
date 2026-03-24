@@ -16,6 +16,7 @@ import {viteMiddlewareRegistry} from "../../middlewareEngine/viteMiddlewareRegis
 import {createMarkdownConfig, setMarkdownConfigGlobally} from "../../markdown/conf/markdownConfig.js";
 // interactConfig should be a relative path and not the package.json export as this is used by the client
 import {createInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
+import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -176,8 +177,10 @@ export async function resolveViteConfig(
                 endPoint: imageMiddlewareEndPoint
             }),
             viteReloadOnConfChange(interactConfigTyped),
-            // used by mdx
+            // Component provider (provide also the MdxComponent for mdx)
             viteComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
+            // Layout provider (provide the layouts dynamically)
+            viteLayoutProvider({interactConfig: interactConfigTyped}),
             // https://mdxjs.com/packages/mdx/#processoroptions
             mdx(markdownConfig.getMdxRollupConfig(command)),
             react(),

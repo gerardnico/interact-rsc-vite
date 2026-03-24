@@ -1,11 +1,11 @@
-import type {TemplateProps, TocNode} from "../../types/index.js";
+import type {ContextProps, TocNode} from "../../types/index.js";
 import "./toc.css"
 import {getInteractConfig} from "@combostrap/interact/config";
 import React from "react";
 import clsx from "clsx";
 
 
-export type TocProps = React.HTMLAttributes<HTMLElement> & TemplateProps & {
+export type TocProps = React.HTMLAttributes<HTMLElement> & ContextProps & {
     maxDepth?: number;
 }
 

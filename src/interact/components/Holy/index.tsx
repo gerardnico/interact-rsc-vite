@@ -1,23 +1,14 @@
-
-import type {TemplateProps} from "@combostrap/interact/types";
+import type {ContextProps} from "@combostrap/interact/types";
 import styles from "./Holy.module.css"
 import clsx from "clsx";
-/**
- * Before using import from interact:component, we need to
- * delete the layouts from them otherwise there is a infinite recursion
- */
-import NavBar from "@combostrap/interact/components/NavBar"
-import Toc from "@combostrap/interact/components/Toc"
-import Head from "@combostrap/interact/components/Head"
-import Aside from "@combostrap/interact/components/Aside"
-import Hero from "@combostrap/interact/components/Hero"
-
+import {NavBar, Toc, Head, Aside, Hero} from "interact:components"
 import {getInteractConfig} from "@combostrap/interact/config";
 
 /**
  * Holy Layout Components
  */
-export default async function Holy(layoutProps: TemplateProps) {
+// noinspection JSUnusedGlobalSymbols - dynamically imported
+export default async function Holy(layoutProps: ContextProps) {
 
     const PageComponent = layoutProps.page.default;
     return (

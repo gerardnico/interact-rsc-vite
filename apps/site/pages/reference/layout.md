@@ -1,8 +1,9 @@
 ---
 title: Layout
+description: A layout is the top component that wraps a page to render a full HTML page.
 ---
 
-A `layout` is the top [component](component.md) that wraps a [page](page.md)
+A `layout` is the top [component](component.md) that wraps a [page](page.md) to render a full HTML page.
 
 It's also known as the `root` component because it returns the entire document including the root `<html>` tag.
 

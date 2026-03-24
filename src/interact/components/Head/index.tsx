@@ -1,10 +1,10 @@
-import type {TemplateProps} from "../../types/index.js";
+import type {ContextProps} from "../../types/index.js";
 import {PAGE_CONTAINER_CLASS_NAME} from "../classNames.js";
 import {getInteractConfig} from "@combostrap/interact/config";
 import React from "react";
 import HeadBootstrap from "../Bootstrap/index.js";
 
-export type HeadProps = React.HTMLAttributes<HTMLHeadElement> & TemplateProps;
+export type HeadProps = React.HTMLAttributes<HTMLHeadElement> & ContextProps;
 
 // noinspection JSUnusedGlobalSymbols - imported via package.json export
 export default function Head({page, request, ...props}: HeadProps) {

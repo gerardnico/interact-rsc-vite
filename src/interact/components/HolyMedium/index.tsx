@@ -1,4 +1,4 @@
-import type {TemplateProps} from "@combostrap/interact/types";
+import type {ContextProps} from "@combostrap/interact/types";
 import styles from "./holyMedium.module.css"
 import clsx from "clsx";
 import {Toc, NavBar, Head, Html, Hero, Body} from "interact:components";
@@ -9,14 +9,14 @@ import {getInteractConfig} from "@combostrap/interact/config";
  * Holy Layout Components without the sidebar
  */
 // noinspection JSUnusedGlobalSymbols -
-export default async function HolyMedium(layoutProps: TemplateProps) {
+export default async function HolyMedium(contextProps: ContextProps) {
 
-    const PageComponent = layoutProps.page.default;
+    const PageComponent = contextProps.page.default;
     return (
-        <Html {...layoutProps}>
-            <Head {...layoutProps} />
-            <Body className={"holy-medium"} {...layoutProps}>
-            <NavBar {...layoutProps} />
+        <Html {...contextProps}>
+            <Head {...contextProps} />
+            <Body className={"holy-medium"} {...contextProps}>
+            <NavBar {...contextProps} />
             <div id="page-core" className={
                 clsx(styles['pageCore'],
                     getInteractConfig().style.container.containerClass,
@@ -24,20 +24,14 @@ export default async function HolyMedium(layoutProps: TemplateProps) {
                 )}>
                 <main id="page-main" className={styles["pageMain"]}>
                     <div id="main-header" className={styles['mainHeader']}>
-                        <Hero {...layoutProps} />
+                        <Hero {...contextProps} />
                     </div>
                     <div id="main-toc" className={styles['mainToc']}>
-                        <Toc {...layoutProps} />
+                        <Toc {...contextProps} />
                     </div>
                     <div id="main-content" className={styles['mainContent']}>
-                        {PageComponent && <PageComponent request={layoutProps.request}/>}
+                        {PageComponent && <PageComponent request={contextProps.request}/>}
                     </div>
-                    <footer id="main-footer" className={
-                        clsx(
-                            styles['mainFooter'],
-                            "d-print-none"
-                        )}>
-                    </footer>
                 </main>
             </div>
             </Body>

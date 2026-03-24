@@ -39,25 +39,25 @@ function toJsString(value: any, indent = 0): any {
     return String(value);
 }
 
-export function generateComponentProvider(interactConfig: InteractConfig): string {
+export function generateLayoutProvider(interactConfig: InteractConfig): {
+    content: string;
+    layouts: Record<string, string>
+} {
 
     let imports = [];
+    let layoutComponents: Record<string, string> = {};
 
     // component may be registered multiple time
     // for instance, code is registered for the pre element and itself as Code,
     // but it should be exported only once
     let exports = new Set<string>();
-    let mdxMappingElementNameComponentName: Record<string, string> = {};
     for (const [key, value] of Object.entries(interactConfig.components)) {
 
         /**
-         * Layout are not here
-         * because they import this virtual module
-         * to get the partials. It would then create a cycle
-         * They are in the layout virtual provider module
+         * Layout
          */
-        if (value.type == "layout") {
-            continue
+        if (value.type != "layout") {
+            continue;
         }
 
         /**
@@ -65,14 +65,20 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
          */
         let importPath = value.importPath;
         if (importPath == null) {
-            throw new Error(`Import ${importPath} not defined for the component ${key}`);
+            throw new Error(`Import ${importPath} not defined for the layout component ${key}`);
         }
 
         /**
          * Import name
+         * Cannot come from the path "./pages/404.js",404 is a number and is not valid as component name but valid as path
          */
-        // Cannot come from the path "./pages/404.js",404 is a number and is not valid as component name but valid as path
         let importName = key;
+
+        /**
+         * Map
+         */
+        let layoutKey = key.toLowerCase();
+        layoutComponents[layoutKey] = importName;
 
         if (!exports.has(importName)) {
 
@@ -91,21 +97,9 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
             /**
              * Import statement
              */
-            if (value.type == "page") {
-                imports.push(`import * as ${importName} from ${JSON.stringify(importPath)};`);
-            } else {
-                imports.push(`import ${importName} from ${JSON.stringify(importPath)};`);
-            }
+            imports.push(`import ${importName} from ${JSON.stringify(importPath)};`);
 
         }
-        /**
-         * Markdown Function Providers get only the content component
-         */
-        if (value.type == "content") {
-            mdxMappingElementNameComponentName[key] = importName
-        }
-
-
 
 
     }
@@ -116,13 +110,13 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
      * See https://mdxjs.com/guides/injecting-components/
      */
 
-    let mdMappingAsJavascriptStringObject = toJsString(mdxMappingElementNameComponentName);
-
-    return `
+    let layoutComponentAsJavascriptStringObject = toJsString(layoutComponents);
+    let virtualModuleContent = `
 ${imports.join('\n')}
 
-export function useMDXComponents() {
-  return ${mdMappingAsJavascriptStringObject}
+const layoutComponents = ${layoutComponentAsJavascriptStringObject};
+export function getLayoutComponent(name) {
+  return layoutComponents[name];
 }
 
 export { ${[...exports].join(', ')} };
@@ -131,12 +125,21 @@ export { ${[...exports].join(', ')} };
 const dontUse = () => "Don't use the default export";
 export default dontUse 
 `;
+    return {
+        content: virtualModuleContent,
+        layouts: layoutComponents
+    }
 }
 
-export default function viteComponentProvider({moduleName = 'interact:components', interactConfig}: {
-    moduleName: string,
+export default function viteLayoutProvider({interactConfig}: {
     interactConfig: InteractConfig
 }): Plugin {
+
+    /**
+     * The name used in the import
+     * ie import .... from 'interact:layouts'
+     */
+    let moduleName = 'interact:layouts';
 
     /**
      * We don't prefix with \0 as specified here:
@@ -146,6 +149,7 @@ export default function viteComponentProvider({moduleName = 'interact:components
      * * And the module is not found anymore jn the module grpah
      */
     const resolvedVirtualModuleId = moduleName;
+
 
     return {
         name: moduleName,
@@ -162,9 +166,10 @@ export default function viteComponentProvider({moduleName = 'interact:components
                 return null;
             }
 
-            console.log(`${moduleName} module loaded with ${Object.keys(interactConfig.components).length} components`);
-            let provider = generateComponentProvider(interactConfig);
-            return provider;
+            let layoutProvider = generateLayoutProvider(interactConfig);
+            console.log(`${moduleName} module loaded with ${Object.keys(layoutProvider.layouts).length} layouts`);
+
+            return layoutProvider.content;
         }
     };
 }

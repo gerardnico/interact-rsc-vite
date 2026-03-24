@@ -1,4 +1,4 @@
-import type {TemplateProps} from "@combostrap/interact/types";
+import type {ContextProps} from "@combostrap/interact/types";
 import {Head, Html, Body} from "interact:components";
 
 
@@ -6,14 +6,14 @@ import {Head, Html, Body} from "interact:components";
  * Landing Layout
  */
 // noinspection JSUnusedGlobalSymbols - imported dynamically
-export default async function Landing(templateProps: TemplateProps) {
-    let Component = templateProps.page.default
+export default async function Landing(contextProps: ContextProps) {
+    let Component = contextProps.page.default
     return (
-        <Html {...templateProps}>
-            <Head {...templateProps}/>
-            <Body {...templateProps}>
+        <Html {...contextProps}>
+            <Head {...contextProps}/>
+            <Body {...contextProps}>
                 <main>
-                    <Component request={templateProps.request}/>
+                    <Component request={contextProps.request}/>
                 </main>
             </Body>
         </Html>

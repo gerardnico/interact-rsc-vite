@@ -1,11 +1,11 @@
-import type {TemplateProps} from "@combostrap/interact/types";
+import type {ContextProps} from "@combostrap/interact/types";
 import React from "react";
 
 interface LocaleWithTextInfo extends Intl.Locale {
     textInfo?: { direction: 'ltr' | 'rtl' };
 }
 
-export type HtmlProps = React.HtmlHTMLAttributes<HTMLHtmlElement> & TemplateProps;
+export type HtmlProps = React.HtmlHTMLAttributes<HTMLHtmlElement> & ContextProps;
 
 // noinspection JSUnusedGlobalSymbols - imported via exports
 export default function Html({request, page, ...props}: HtmlProps) {

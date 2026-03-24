@@ -2,9 +2,9 @@
 import type {Page} from "@combostrap/interact/types"
 
 /**
- * The props of a layout/partials component
+ * These props are passed to layout and partials component
  */
-export type TemplateProps = {
+export type ContextProps = {
     page: Page,
     request: Request,
 };

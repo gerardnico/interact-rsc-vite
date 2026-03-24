@@ -1,7 +1,7 @@
-import type {TemplateProps} from "../../types/index.js";
+import type {ContextProps} from "../../types/index.js";
 import React from "react";
 
-export type HeroProps = React.HTMLAttributes<HTMLElement> & TemplateProps
+export type HeroProps = React.HTMLAttributes<HTMLElement> & ContextProps
 
 /**
  * Called the hero and not header so that

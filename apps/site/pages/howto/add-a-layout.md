@@ -28,6 +28,12 @@ export function MyLayout(props: TemplateProps) {
 }
 ```
 
+### Reuse a layout
+
+If you want to make a small changes, the easiest is to copy the actual interact layout.
+They are all under the [components directory](https://github.com/combostrap/interact/tree/main/src/interact/components)
+
+
 ### Register it
 
 You can register it by defining it in the [configuration file](../reference/conf.md).
@@ -45,7 +51,7 @@ You can register it by defining it in the [configuration file](../reference/conf
 
 ### Use it
 
-You can now use it.
+You can now use it by referencing it in your [frontmatter](../reference/frontmatter.md)
 
 For instance, in a [markdown page](../reference/markdown.md)
 
