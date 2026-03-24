@@ -46,9 +46,6 @@ export async function resolveViteConfig(
 
     let cachePath = path.resolve(interactConfigTyped.paths.cacheDirectory, "cache")
 
-
-
-
     /**
      * Use to generate image into the static build
      */
@@ -85,6 +82,12 @@ export async function resolveViteConfig(
             port: port,
         },
         resolve: {
+            /**
+             * Order of precedence
+             * By default, tsc compilation writes the js file next to the ts file
+             * Works only without extension in the import
+             */
+            extensions: ['.ts', '.tsx', '.mts', '.jsx', '.js', '.mjs'],
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
             alias: {},

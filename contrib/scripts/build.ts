@@ -12,6 +12,7 @@ execSync('tsc', {stdio: 'inherit'});
  * ie src/interact/images/broken-heart.svg
  * Vite is started with the oclif client that calls the compiled tsc files in dist
  * so the image should also be in dist
+ * Note that we could skip this step if we compile in place (ie the default outDir is not set in tsconfig.json)
  */
 console.log('Copying files')
 for (const src of globSync('src/interact/images/*.svg')) {
