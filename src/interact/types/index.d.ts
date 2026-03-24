@@ -4,8 +4,6 @@
 /// <reference types="../componentsProvider/componentProviderModule.d.ts" />
 /// <reference types="../pages/viteVirtualPagesModulesDef.d.ts" />
 /// <reference types="../pages/interactPageModules.d.ts" />
-/// <reference types="../config/viteVirtualConfModuleDef.d.ts" />
-
 
 import type {MiddlewareHandler, Middleware, MiddlewarePageResponse} from "../middlewareEngine/interactMiddleware.d.ts"
 import type {Page, Frontmatter, TocNode} from "../pages/interactPage.js";

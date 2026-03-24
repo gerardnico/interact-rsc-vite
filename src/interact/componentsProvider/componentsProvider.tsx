@@ -41,3 +41,7 @@ export function getLayoutComponent(name: string): ComponentType<TemplateProps> |
 }
 
 export {Code, Holy, Landing, Head, Html}
+
+// to not return null
+const defaultComponent = ()=> "Don't use the default export";
+export default defaultComponent

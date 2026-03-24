@@ -3,9 +3,12 @@ import {getInteractConfig} from "@combostrap/interact/config";
 import Image from "../Image/index.js"
 import type {TemplateProps} from "@combostrap/interact/types";
 import Svg from "../Svg/index.js";
+import React from "react";
+import clsx from "clsx";
 
-// @ts-ignore
-export default function NavBar(props: TemplateProps) {
+export type NavBarProps = React.HtmlHTMLAttributes<HTMLHtmlElement> & TemplateProps;
+
+export default function NavBar({request, page, className, ...props}: NavBarProps) {
 
     const interactConfig = getInteractConfig();
     let homeUrl = interactConfig.site.base
@@ -45,7 +48,7 @@ export default function NavBar(props: TemplateProps) {
     }
     const containerClass = interactConfig.style.container.containerClass
     return (
-        <header id="page-header" className="d-print-none">
+        <header id="page-header" className={clsx(className, "d-print-none")} {...props}>
             <nav className="navbar navbar-expand-md navbar-light" data-type="fixed-top"
                  style={{backgroundColor: "var(--bs-light)"}}>
                 <div className={PAGE_CONTAINER_CLASS_NAME + " " + containerClass}>

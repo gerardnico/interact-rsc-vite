@@ -18,7 +18,6 @@ import Html from "../Html/index.js";
 export default async function HolyMedium(layoutProps: TemplateProps) {
 
     const PageComponent = layoutProps.page.default;
-    const noHero = (layoutProps.page.frontmatter?.layoutHeroDisabled || "false") == "true"
     return (
         <Html {...layoutProps}>
             <Head {...layoutProps} />
@@ -31,11 +30,9 @@ export default async function HolyMedium(layoutProps: TemplateProps) {
                     "position-relative mt-3"
                 )}>
                 <main id="page-main" className={styles["pageMain"]}>
-                    {!noHero && (
-                        <div id="main-header" className={styles['mainHeader']}>
-                            <Header {...layoutProps} />
-                        </div>
-                    )}
+                    <div id="main-header" className={styles['mainHeader']}>
+                        <Header {...layoutProps} />
+                    </div>
                     <div id="main-toc" className={styles['mainToc']}>
                         <Toc {...layoutProps} />
                     </div>

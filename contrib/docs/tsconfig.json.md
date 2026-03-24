@@ -1,3 +1,5 @@
+# Typescript
+
 ## type vite/client
 
 https://vite.dev/guide/features#client-types
@@ -24,6 +26,7 @@ message: Cannot find module '/interact-rsc-vite/src/interact/config/jsonConfigSc
 ## Source map
 
 So that the stack trace line number are not the compiled one.
+
 ```json
 {
   "compilerOptions": {
@@ -45,3 +48,7 @@ To help IDE find the right code place.
   }
 }
 ```
+
+## Debug
+
+For any debug, set the `"skipLibCheck": false` temporarily

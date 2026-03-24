@@ -10,7 +10,7 @@
     // no implicit any, the user needs to add any if it's intended
     "noImplicitAny": true,
     "noUnusedParameters": true,
-    // skipLibCheck = false to check our d.ts file
+    // Set skipLibCheck to `false` to check our d.ts file
     // such as import type {DoesNotExist} from "@combostrap/interact/types"
     "skipLibCheck": true,
     "rootDir": "src",
@@ -31,7 +31,8 @@
       "DOM.Iterable"
     ],
     "types": [
-      "@vitejs/plugin-rsc/types"
+      "@vitejs/plugin-rsc/types",
+      "mdx"
     ],
     "jsx": "react-jsx",
     // or "react-jsx" for React 17+
