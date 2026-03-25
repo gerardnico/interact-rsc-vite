@@ -10,7 +10,7 @@
     "build": "tsx contrib/scripts/build.ts",
     "watch": "tsc --watch",
     "start": "src/interact/cli/dev.js start --confPath=apps/site",
-    "site": "INTERACT_CONF_PATH=../../gerardnico/com-gerardnico src/interact/cli/dev.js start",
+    "site": "cd ../../gerardnico/com-gerardnico && node_modules/@combostrap/interact/src/interact/cli/dev.js start",
     "ssg": "src/interact/cli/dev.js build --confPath=apps/site",
     "preview": "src/interact/cli/dev.js preview --confPath=apps/site"
   },

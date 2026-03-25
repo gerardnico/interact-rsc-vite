@@ -95,15 +95,7 @@ export async function resolveViteConfig(
                 // shadcn alias
                 // https://ui.shadcn.com/docs/installation/vite#update-viteconfigts
                 "@": path.resolve(interactConfigTyped.paths.rootDirectory, "./src"),
-            },
-            // To resolve: TypeError: Cannot read properties of null (reading 'useRef')
-            // When using yarn portal protocol: "@combostrap/interact": "portal:../../combostrap/interact"
-            // to have `Interact` as a dependency
-            // Why? Rules of hook: You can't have 2 react instance
-            // The portal: protocol creates a symlink, and Vite ends up resolving React from two different paths:
-            // * From your app: node_modules/react
-            // * From the portal package: ../../combostrap/interact/node_modules/react
-            dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
+            }
         },
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
