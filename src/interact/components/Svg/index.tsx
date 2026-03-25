@@ -9,13 +9,12 @@ import {getInteractConfig} from "@combostrap/interact/config";
 import {readFile} from "node:fs/promises";
 import favicon from "../../resources/letter-i-3-colors.svg?raw"
 
-interface SvgComponentProps extends SVGProps<SVGSVGElement> {
+export type SvgComponentProps = SVGProps<SVGSVGElement> & {
     /** SVG file path from the img directory */
     src: string;
     /** Optional SVGR config overrides */
     svgoOptions?: Config
 }
-
 
 function spanElementError(error: string, label: string = "SVG error") {
     return (

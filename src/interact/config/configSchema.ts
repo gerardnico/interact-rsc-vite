@@ -44,7 +44,7 @@ const FaviconSetSchema: z.ZodType<FaviconSetSchemaType> = z.record(
  * Site Section in JSON
  */
 const SiteSchema = z.object({
-    url: z.coerce.string().describe("The URL (Used in the sitemap)").optional(),
+    url: z.coerce.string().describe("The URL (used in the sitemap and open in ai)").optional(),
     // `/` in base is mandatory as default, this is the root
     base: z.coerce.string().describe("The base path added to the site URL (Example: /docs)").default("/"),
     name: z.coerce.string().describe("The short name (used in the app manifest)").default("Website"),
