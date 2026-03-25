@@ -2,6 +2,7 @@
 title: Svg Component
 ---
 
+
 ## Usage
 
 ### Markdown Page
@@ -37,6 +38,13 @@ export default function svgPage() {
     )
 }
 ````
+
+## Props
+
+Because icons render as SVG elements, all standard SVG attributes
+can also be applied as props.
+
+See the list of SVG Presentation Attributes on [MDN](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation).
 
 ## Optimization
 

@@ -17,6 +17,7 @@ import {createMarkdownConfig, setMarkdownConfigGlobally} from "../../markdown/co
 // interactConfig should be a relative path and not the package.json export as this is used by the client
 import {createInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
 import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
+import tailwindcss from "@tailwindcss/vite"
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -90,7 +91,11 @@ export async function resolveViteConfig(
             extensions: ['.ts', '.tsx', '.mts', '.jsx', '.js', '.mjs'],
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
-            alias: {},
+            alias: {
+                // shadcn alias
+                // https://ui.shadcn.com/docs/installation/vite#update-viteconfigts
+                "@": path.resolve(interactConfigTyped.paths.rootDirectory, "./src"),
+            },
             // To resolve: TypeError: Cannot read properties of null (reading 'useRef')
             // When using yarn portal protocol: "@combostrap/interact": "portal:../../combostrap/interact"
             // to have `Interact` as a dependency
@@ -187,6 +192,8 @@ export async function resolveViteConfig(
             // https://mdxjs.com/packages/mdx/#processoroptions
             mdx(markdownConfig.getMdxRollupConfig(command)),
             react(),
+            // Tailwind
+            tailwindcss(),
             // https://www.npmjs.com/package/vite-plugin-svgr
             svgReactPlugin({
                 // If the content needs to be imported as string add the `?raw` property
