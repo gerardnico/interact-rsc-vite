@@ -6,6 +6,9 @@ https://vite.dev/guide/features#client-types
 
 ## module resolution
 
+We don't have the module resolution set to `bundler` because
+we don't bundle the cli as vite does. We just emit js file with typescript.
+
 ```json
 {
   "moduleResolution": "NodeNext",
@@ -13,11 +16,10 @@ https://vite.dev/guide/features#client-types
 }
 ```
 
-All files should have a `js` even the TypeScript one.
+The constraint is that in this project all files should have a `js` even the TypeScript one.
+(Note that the users of interact have not this constraint)
 
-Why ?
-
-To avoid:
+Why ? Note: Without bundler, we would get this error:
 
 ```html
 message: Cannot find module '/interact-rsc-vite/src/interact/config/jsonConfigSchema' imported from /interact-rsc-vite/src/interact/cli/commands/schema.ts
