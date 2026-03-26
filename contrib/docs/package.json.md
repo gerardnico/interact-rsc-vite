@@ -73,3 +73,11 @@ message: [MODULE_NOT_FOUND] import() failed to load client-project/node_modules/
 ## Typescript - tsx
 
 `tsx` is used to run `ts` file. `yarn build` script is a good example.
+
+## Styling, tailwind and Shadcn
+
+* tw-animate-css
+* shadcn 
+* class-variance-authority 
+* tailwind-merge
+

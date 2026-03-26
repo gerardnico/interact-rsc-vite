@@ -7,8 +7,11 @@ type MarkdownConfig = Awaited<ReturnType<typeof createMarkdownConfig>>
 
 const GLOBAL_KEY = "__interactMarkdownProcessor"
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 import type {PluggableList} from "unified";
 import type {InteractConfig} from "../../config/interactConfig.js";
+import {fileURLToPath} from "node:url";
+import {dirname} from "path";
 
 /**
  * User config type
@@ -51,7 +54,7 @@ export async function createMarkdownConfig(props: InteractMarkdownInit) {
     /**
      * Markdown Configuration file
      */
-    let markdownConfigImportPath = path.resolve(props.interactConfig.paths.srcDirectory, "markdown/conf/markdownPluginsUserDefault.js");
+    let markdownConfigImportPath = path.resolve(__dirname, "markdownPluginsUserDefault.js");
     let configImportPath = props.interactConfig.markdown.configImportPath;
     if (configImportPath != null) {
         if (configImportPath.startsWith(".")) {

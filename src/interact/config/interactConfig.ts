@@ -286,7 +286,7 @@ export type InteractConfig = {
         // https://vite.dev/guide/dep-pre-bundling#file-system-cache
         cacheDirectory: string
         // The path or the interact src directory
-        srcDirectory: string
+        interactDirectory: string
     }
 }
 
@@ -344,8 +344,9 @@ class InteractConfigHandler {
             publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
             imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
             cacheDirectory: this.#qualifiedDirectoryPath(".interact"),
-            srcDirectory: interactPackageDir,
+            interactDirectory: interactPackageDir,
             buildDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.buildDirectory),
+            cssFile: this.#qualifiedDirectoryPath(finalConfigData.paths.cssFile),
         }
 
         finalConfigData.site.favicons = updateFavicon(

@@ -11,13 +11,14 @@ import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
 import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
 import viteComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
 import svgReactPlugin from "vite-plugin-svgr";
-import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
+import viteStylingOutlineNumberingPlugin from "../../styling/viteStylingOutlineNumbering.js";
 import {viteMiddlewareRegistry} from "../../middlewareEngine/viteMiddlewareRegistry.js";
 import {createMarkdownConfig, setMarkdownConfigGlobally} from "../../markdown/conf/markdownConfig.js";
 // interactConfig should be a relative path and not the package.json export as this is used by the client
 import {createInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
 import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
 import tailwindcss from "@tailwindcss/vite"
+import viteStylingGlobalStylesheet from "../../styling/viteStylingGlobalStylesheet.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -126,7 +127,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/server/entry.rsc.js'),
+                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'rsc/server/entry.rsc.js'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "rsc"),
@@ -142,7 +143,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/server/entry.ssr.js'),
+                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'rsc/server/entry.ssr.js'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "ssr"),
@@ -160,7 +161,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/browser/entry.browser.js'),
+                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'rsc/browser/entry.browser.js'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),
@@ -197,7 +198,8 @@ export async function resolveViteConfig(
                     },
                 },
             }),
-            viteOutlineNumberingStylesPlugin(interactConfigTyped),
+            viteStylingGlobalStylesheet(interactConfigTyped),
+            viteStylingOutlineNumberingPlugin(interactConfigTyped),
             {
                 enforce: "post", // runs after as we depend on the component plugin
                 ...viteMiddlewareRegistry(
@@ -205,7 +207,7 @@ export async function resolveViteConfig(
                     [
                         ...interactConfigTyped.pages.providers || [],
                         {
-                            importPath: path.resolve(interactConfigTyped.paths.srcDirectory, 'middleware/localPagesMiddleware.js'),
+                            importPath: path.resolve(interactConfigTyped.paths.interactDirectory, 'middleware/localPagesMiddleware.js'),
                             props: {
                                 pagesDirectory: interactConfigTyped.paths.pagesDirectory
                             }
