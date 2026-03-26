@@ -28,6 +28,18 @@ a [default one](https://github.com/combostrap/interact/tree/main/src/interact/st
 
 We follow the [shadcn convention with CSS Variable](https://ui.shadcn.com/docs/theming).
 
+Note that in your own global CSS file, you also need
+to [register interact as source](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources)
+
+```css
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@source "../node_modules/@combostrap/interact";
+
+```
+
 ### Outline Numbering
 
 We also support [heading numbering styling](outline.md#numbering)

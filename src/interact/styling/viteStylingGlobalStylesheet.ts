@@ -12,6 +12,14 @@ export default function viteStylingGlobalStylesheet(interactConfig: InteractConf
     const moduleId = "interact:global.css"
     //const resolvedId = "\0" + moduleId
     const resolvedId = moduleId;
+    let filePath = interactConfig.paths.cssFile
+    if (!existsSync(filePath)) {
+        filePath = path.resolve(__dirname, "global.css");
+    }
+    if (!existsSync(filePath)) {
+        throw new Error("A global css file should have been found");
+    }
+
     return {
         name: moduleId,
         resolveId(id) {
@@ -21,15 +29,20 @@ export default function viteStylingGlobalStylesheet(interactConfig: InteractConf
             if (id !== resolvedId) {
                 return null;
             }
-            let filePath = interactConfig.paths.cssFile
-            if (!existsSync(filePath)) {
-                filePath = path.resolve(__dirname, "global.css");
-            }
-            try {
-                return readFileSync(filePath, 'utf-8');
-            } catch {
-                throw new Error("A global css file should have been found");
-            }
-        }
+            return readFileSync(filePath, 'utf-8');
+        },
+        configureServer(server) {
+
+            server.watcher.add(filePath)
+            server.watcher.on('change', (file) => {
+
+                if (!file.endsWith(filePath)) return
+
+                // trigger HMR update
+                // full refresh, no?
+                server.ws.send({type: 'full-reload'})
+
+            })
+        },
     }
 }

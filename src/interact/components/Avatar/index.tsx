@@ -2,9 +2,9 @@
 // That set the following properties automatically
 // * Making it round: `border-radius: 50%` or `rounded-circle` class in bs turns it into a circle. This only works well when width and height are equal (a square).
 // *  Covering the frame — `object-fit: cover` ensures the image fills the square without distortion, cropping from the center if needed.
-import clsx from "clsx";
 import Image, {type ImageProps} from '@combostrap/interact/components/Image';
 import {InteractError, InteractErrorData} from "../../errors/index.js";
+import {cn} from "../../styling/cnUtil.js";
 
 // noinspection JSUnusedGlobalSymbols - exported at the package level
 export type AvatarType = ImageProps & {
@@ -37,7 +37,7 @@ export default async function Avatar({size, width, height, className, ...props}:
         <Image
             width={size}
             height={size}
-            className={clsx(className, "rounded-circle")}
+            className={cn(className, "rounded-full")}
             fit="cover"
             style={{objectFit: "cover"}}
             {...props}
