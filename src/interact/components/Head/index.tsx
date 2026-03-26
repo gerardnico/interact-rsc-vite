@@ -2,7 +2,6 @@ import type {ContextProps} from "../../types/index.js";
 import {PAGE_CONTAINER_CLASS_NAME} from "../classNames.js";
 import {getInteractConfig} from "@combostrap/interact/config";
 import React from "react";
-import HeadBootstrap from "../Bootstrap/index.js";
 
 export type HeadProps = React.HTMLAttributes<HTMLHeadElement> & ContextProps;
 
@@ -100,7 +99,6 @@ export default function Head({page, request, ...props}: HeadProps) {
             <meta name="robots" content={robots ? robots : "index, follow"}/>
             {keyWords && <meta name="keywords" content={keyWords}/>}
             {layoutStyle && (<style dangerouslySetInnerHTML={{__html: layoutStyle}}/>)}
-            <HeadBootstrap/>
         </head>
     )
 }

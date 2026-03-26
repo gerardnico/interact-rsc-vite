@@ -45,3 +45,36 @@ export default function MyComponent() {
 const width = typeof window !== "undefined" ? window.innerWidth : 0;
 ```
 
+## Support
+
+### Only plain objects error
+
+You may get this error
+
+```text
+Error: Only plain objects, and a few built-ins, can be passed to Client Components from Server Components. Classes or null prototypes are not supported.
+  <... page={Module} request={Request}>
+            ^^^^^^^^
+    at renderModelDestructive (/home/admin/code/combostrap/interact/apps/site/.interact/.vite/deps_rsc/@vitejs_plugin-rsc_vendor_react-server-dom_server__edge.js:4602:19)
+    at renderModel (/home/admin/code/combostrap/interact/apps/site/.interact/.vite/deps_rsc/@vitejs_plugin-rsc_vendor_react-server-dom_server__edge.js:4393:18)
+    at Object.toJSON (/home/admin/code/combostrap/interact/apps/site/.interact/.vite/deps_rsc/@vitejs_plugin-rsc_vendor_react-server-dom_server__edge.js:4189:20)
+    at stringify (<anonymous>)
+    at node:internal/process/task_queues:151:7
+    at AsyncResource.runInAsyncScope (node:async_hooks:211:14) {stack: "Error: Only plain objects, and a few built-ins, ca…esource.runInAsyncScope (node:async_hooks:211:14)",
+message: "Only plain objects, and a few built-ins, can be pa…={Module} request={Request}>\n            ^^^^^^^^"}
+```
+
+This error is mostly due because an imported component has the value `null`.
+
+Example, the imported `NavBar` value below is `null`
+
+```javascript
+import {NavBar} from "interact:components";
+```
+
+Why? Here are the possible reasons:
+
+* the component does not exist in the imported module.
+* The imported component from the `interact:components` module was not registered in
+  the [component section of the configuration file](conf.md)
+* your [layout component](layout.md) is a [client component](#use-client) and it should not. 

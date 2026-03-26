@@ -40,6 +40,13 @@ to [register interact as source](https://tailwindcss.com/docs/detecting-classes-
 
 ```
 
+### CSS Variables
+
+The `css variables` are known as token and present in the [global CSS file](#global-css-file).
+
+The standard `shadcn` variables are listed [here](https://ui.shadcn.com/docs/theming#theme-tokens).
+
+
 ### Outline Numbering
 
 We also support [heading numbering styling](outline.md#numbering)

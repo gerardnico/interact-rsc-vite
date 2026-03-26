@@ -1,13 +1,22 @@
+/**
+ * Navbar.
+ * How it works, the container is a flex
+ * In mobile screen, the label are pushed to the next line
+ * via a flex grow
+ */
 import {getInteractConfig} from "@combostrap/interact/config";
 import Image from "../Image/index.js"
 import type {ContextProps} from "@combostrap/interact/types";
-import Svg from "../Svg/index.js";
 import React from "react";
-import clsx from "clsx";
+import {cn} from "../../styling/cnUtil.js";
+import {NavBarToggle} from "./NavbarToggle.js";
+import Icon from "../Icon/index.js";
 
 export type NavBarProps = React.HtmlHTMLAttributes<HTMLHtmlElement> & ContextProps;
 
+// noinspection JSUnusedGlobalSymbols - imported dynamically
 export default function NavBar({request, page, className, ...props}: NavBarProps) {
+
 
     const interactConfig = getInteractConfig();
     let homeUrl = interactConfig.site.base
@@ -26,7 +35,7 @@ export default function NavBar({request, page, className, ...props}: NavBarProps
             logoSrc = `${logoSrc}`
         }
         const isSvg = logoSrc.endsWith('.svg');
-        logoClass = "d-inline-block align-text-top"
+        logoClass = "align-middle"
         logoAlt = navBarConfig?.props?.logoAlt;
         if (typeof logoAlt == 'undefined') {
             logoAlt = interactConfig.site.name;
@@ -35,11 +44,11 @@ export default function NavBar({request, page, className, ...props}: NavBarProps
             src: logoSrc,
             alt: logoAlt,
             className: logoClass,
-            width: navBarConfig?.props?.logoWidth,
-            height: navBarConfig?.props?.logoHeight
+            width: navBarConfig?.props?.logoWidth || 24,
+            height: navBarConfig?.props?.logoHeight || 24
         }
         if (isSvg) {
-            logo = <Svg {...imageProps} />
+            logo = <Icon {...imageProps} />
         } else {
             logo = <Image {...imageProps}/>
         }
@@ -47,25 +56,22 @@ export default function NavBar({request, page, className, ...props}: NavBarProps
     }
     const containerClass = interactConfig.style.container.containerClass
     return (
-        <header id="page-header" className={clsx(className, "d-print-none")} {...props}>
-            <nav className="navbar navbar-expand-md navbar-light" data-type="fixed-top"
-                 style={{backgroundColor: "var(--bs-light)"}}>
-                <div className={containerClass}>
-                    <a className="link-primary"
+        <header className={cn(className, "print:hidden")} {...props}>
+            <nav className="border-b border-gray-200 px-4 py-2">
+                <div className={cn(containerClass, "flex items-center justify-between md:flex-nowrap flex-wrap gap-4")}>
+                    {/* Brand - flex because otherwise, the brand name goes next line */}
+                    <a className="link-primary flex items-center gap-1"
                        href={homeUrl} title={interactConfig.site.title}
                        accessKey="h" style={{fontWeight: 700}}>
                         {logo}
                         {navBarConfig?.props?.brandName != null &&
                             <span
-                                className="btn navbar-brand text-primary">{navBarConfig?.props?.brandName}</span>}
+                                className="text-xl font-semibold text-primary">{navBarConfig?.props?.brandName}</span>}
                     </a>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#navbarcollapse"
-                            aria-controls="navbarcollapse" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div id="navbarcollapse" className="collapse navbar-collapse">
-                    </div>
+
+                    {/* Toggle (in another component because it is a client component and that's forbidden in a layout component) */}
+                    <NavBarToggle/>
+
                 </div>
             </nav>
         </header>

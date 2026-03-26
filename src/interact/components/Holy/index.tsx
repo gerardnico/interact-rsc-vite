@@ -21,7 +21,7 @@ export default async function Holy(layoutProps: ContextProps) {
                 getInteractConfig().style.container.containerClass,
                 "position-relative mt-3"
             )}>
-            <aside id="page-side" className={clsx(styles['pageSide'], "d-print-none")}>
+            <aside id="page-side" className={clsx(styles['pageSide'], "print:hidden")}>
                 <Aside {...layoutProps}/>
             </aside>
             <main id="page-main" className={styles['pageMain']}>
@@ -37,13 +37,13 @@ export default async function Holy(layoutProps: ContextProps) {
                 <div id="main-side" className={
                     clsx(
                         styles['mainSide'],
-                        "d-print-none"
+                        "print:hidden"
                     )}>
                 </div>
                 <footer id="main-footer" className={
                     clsx(
                         styles['mainFooter'],
-                        "d-print-none"
+                        "print:hidden"
                     )}>
                 </footer>
             </main>

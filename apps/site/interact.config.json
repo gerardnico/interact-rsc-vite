@@ -12,6 +12,12 @@
     "NotFound": {
       "importPath": "./pages/404.js",
       "type": "page"
+    },
+    "NavBar": {
+      "props": {
+        "brandName": "Interact",
+        "logoWidth": 20
+      }
     }
   },
   "pages": {

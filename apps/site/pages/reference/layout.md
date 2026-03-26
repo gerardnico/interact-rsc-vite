@@ -40,3 +40,8 @@ export const frontmatter = {
 ## How to create a layout
 
 See [How to create a layout](../howto/add-a-layout.md)
+
+## Not a Client Component Restriction
+
+Layout and partial component cannot be [client component](../reference/rsc.md#use-client)
+otherwise you get the [fatal rsc error](../reference/rsc.md#only-plain-objects-error)

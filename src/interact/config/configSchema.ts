@@ -95,7 +95,7 @@ const PathsSchema = z.object({
 
 let container = z.object({
     // https://getbootstrap.com/docs/5.3/layout/containers/
-    containerClass: z.enum(['container', 'container-fluid', 'container-sm', 'container-md', 'container-lg', 'container-xl', 'container-xxl']).default('container'),
+    containerClass: z.string().describe("The classes applied to contained the layout").default('container mx-auto px-4'),
     // with the unit please
     containerMaxWidth: z.coerce.string<string>().optional()
 });
