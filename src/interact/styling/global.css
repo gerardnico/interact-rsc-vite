@@ -130,7 +130,29 @@
     }
 
     /* Ul are not styled by default */
-    ul {
-        @apply list-disc;
+    main ul {
+        @apply list-disc mb-3 mt-0;
+        padding-left: 2rem;
+    }
+
+    /* No margin of 3 when there is a list afterward */
+    main p:has(+ ul) {
+        margin-bottom: 2px;
+    }
+
+    /* Fighting the Preflight reset  */
+    main h1,
+    main h2,
+    main h3,
+    main h4,
+    main h5,
+    main h6 {
+        font-size: revert;
+        font-weight: revert;
+        @apply mb-3;
+    }
+
+    main p {
+        @apply mb-3;
     }
 }
