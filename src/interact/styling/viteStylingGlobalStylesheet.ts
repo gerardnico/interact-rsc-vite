@@ -3,7 +3,6 @@ import type {InteractConfig} from "../config/interactConfig.js";
 import {existsSync} from "fs";
 import path, {dirname} from "path";
 import {fileURLToPath} from "node:url";
-import {readFileSync} from "node:fs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -23,13 +22,10 @@ export default function viteStylingGlobalStylesheet(interactConfig: InteractConf
     return {
         name: moduleId,
         resolveId(id) {
-            if (id === moduleId) return resolvedId
-        },
-        load(id) {
-            if (id !== resolvedId) {
-                return null;
-            }
-            return readFileSync(filePath, 'utf-8');
+            // file path is mandatory, we don't load the content in the load function
+            // because the path in the file are relative to the file
+            // This is equivalent to a redirect
+            if (id === resolvedId) return filePath
         },
         configureServer(server) {
 

@@ -1,4 +1,4 @@
-@import "tailwindcss" source("./src/interact/components");
+@import "tailwindcss" source("../components");
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
