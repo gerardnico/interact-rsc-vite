@@ -167,7 +167,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
     } catch (err) {
         throw new ImageError({
             ...ImageErrors.NOT_FOUND,
-            message: `Error while reading the file ${props.src}: ${String(err)}`
+            message: `Error while reading the image file ${props.src}: ${String(err)}`
         })
     }
 
@@ -179,6 +179,15 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         intrinsicHeight
     });
     let {targetWidth, targetHeight} = originalRequestDimensionHelper.getTargetDimensions()
+
+    const isSsg = import.meta.env.MODE === 'production'
+    if (isSsg) {
+        // in ssg, the dimension are mandatory
+        // ie we may have width or height and ratio but
+        // for the image generation, sharp will throw an error if width or height is missing
+        serviceProperties.width = String(targetWidth);
+        serviceProperties.height = String(targetHeight);
+    }
 
     if (props.compression != null && props.compression != "none") {
         serviceProperties.compression = props.compression

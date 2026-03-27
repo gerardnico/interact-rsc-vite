@@ -1,11 +1,15 @@
 import type {Plugin} from "vite";
-import {type InteractConfig} from "./interactConfig.js";
+import {
+    getInteractConfig
+} from "./interactConfig.js";
+import {setGlobalsConf} from "../cli/shared/vite.config.js";
 
 /**
  * Reload on config change
  */
-export default function viteReloadOnConfChange(interactConfig: InteractConfig): Plugin {
+export default function viteReloadOnConfChange(): Plugin {
 
+    let interactConfig = getInteractConfig()
     const watchedFile = interactConfig.paths.configFile;
 
     return {
@@ -14,12 +18,19 @@ export default function viteReloadOnConfChange(interactConfig: InteractConfig): 
         configureServer(server) {
 
             server.watcher.add(watchedFile)
-
-            server.watcher.on('change', (file) => {
+            console.log(`Watching the Interact configuration file ${watchedFile}`)
+            server.watcher.on('change', async (file) => {
 
                 if (!file.endsWith(watchedFile)) return
 
-                server.restart().then(() => console.log("Server restarted due to interact configuration change."))
+                /**
+                 * Set the globals again
+                 */
+                await setGlobalsConf(watchedFile, true)
+
+                console.log("Interact configuration changed, restarting the http server.")
+                console.log("Note that the init server configurations have not changed. If it does not work, stop and execute the start command again")
+                server.restart().then(() => console.log("Interact configuration changed, dev server restarted"));
 
             })
         },

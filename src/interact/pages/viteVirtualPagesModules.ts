@@ -1,6 +1,7 @@
 import type {Plugin} from 'vite';
 import {glob} from 'glob';
 import path from 'path';
+import {getInteractConfig} from "../config/interactConfig.js";
 
 export function generatePageModulesCode(pagesDir: string, files: string[]): string {
 
@@ -43,8 +44,12 @@ export default getModulePage;
   `.trim();
 }
 
-export default function pageModulesPlugin(pagesDir: string, extensions: string[] = ['mdx', 'tsx', 'jsx']): Plugin {
+export default function pageModulesPlugin( extensions: string[] = ['mdx', 'tsx', 'jsx']): Plugin {
     const virtualModuleId = 'interact:page-modules';
+
+    let interactConfig = getInteractConfig()
+    let pagesDir = interactConfig.paths.pagesDirectory
+
     /**
      * We don't prefix with \0 as specified here:
      * https://vite.dev/guide/api-plugin#virtual-modules-convention

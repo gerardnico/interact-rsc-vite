@@ -310,11 +310,13 @@ export type InteractConfig = {
 
 const GLOBAL_KEY = "__interactConfig"
 
-export function setInteractConfigGlobally(processor: InteractConfig) {
+export function setInteractConfigGlobally(processor: InteractConfig, force: boolean = false) {
     const g = globalThis as any
 
     if (g[GLOBAL_KEY]) {
-        throw new Error("Interact Config already initialized")
+        if (!force) {
+            throw new Error("Interact Config already initialized")
+        }
     }
 
     g[GLOBAL_KEY] = processor

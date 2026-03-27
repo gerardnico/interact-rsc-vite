@@ -42,7 +42,7 @@ async function renderStatic(config: ResolvedConfig) {
      * Import the created rsc build
      */
     const rscIndexFilePath = path.join(rscEnv.build.outDir, 'index.js')
-    const entryRscModule: typeof import('../server/entry.rsc.js') = await import(pathToFileURL(rscIndexFilePath).href)
+    const entryRscModule: typeof import('../server/entry.rsc.js') = await import(/* @vite-ignore */ pathToFileURL(rscIndexFilePath).href)
 
     // entry provides a list of static paths
     const staticPaths = entryRscModule.getStaticPaths()

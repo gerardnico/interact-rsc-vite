@@ -9,14 +9,15 @@ import {getInteractConfig} from "@combostrap/interact/config";
 // noinspection JSUnusedGlobalSymbols - imported dynamically
 export default function Hamburger(contextProps: ContextProps) {
     let Component = contextProps.page.default
+    let interactConfig = getInteractConfig();
     return (
         <Html {...contextProps}>
             <Head {...contextProps}/>
             <Body {...contextProps}>
                 <NavBar {...contextProps} />
-                <div className={
+                <div id="page-trunk" className={
                     clsx(
-                        getInteractConfig().style.container.containerClass,
+                        interactConfig.style.container.containerClass,
                         "position-relative"
                     )}>
                     <main>

@@ -13,9 +13,13 @@ import viteComponentProvider from "../../componentsProvider/viteVirtualComponent
 import svgReactPlugin from "vite-plugin-svgr";
 import viteStylingOutlineNumberingPlugin from "../../styling/viteStylingOutlineNumbering.js";
 import {viteMiddlewareRegistry} from "../../middlewareEngine/viteMiddlewareRegistry.js";
-import {createMarkdownConfig, setMarkdownConfigGlobally} from "../../markdown/conf/markdownConfig.js";
+import {
+    createMarkdownConfig,
+    getMarkdownConfig,
+    setMarkdownConfigGlobally
+} from "../../markdown/conf/markdownConfig.js";
 // interactConfig should be a relative path and not the package.json export as this is used by the client
-import {createInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
+import {createInteractConfig, getInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
 import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
 import tailwindcss from "@tailwindcss/vite"
 import viteStylingGlobalStylesheet from "../../styling/viteStylingGlobalStylesheet.js";
@@ -32,6 +36,22 @@ type InteractConfig = {
     logLevel?: LogLevel;
 };
 
+/**
+ * Globals Conf are set and reused in each plugin
+ * Why? If they change, we set them and we restart the dev server
+ */
+export async function setGlobalsConf(confPath: string | undefined, force:boolean=false) {
+    const interactConfigTyped = createInteractConfig(confPath);
+    setInteractConfigGlobally(interactConfigTyped, force);
+    const markdownConfig = await createMarkdownConfig()
+    setMarkdownConfigGlobally(markdownConfig, force)
+}
+
+/**
+ * The components provider name
+ * (for mdx and layout)
+ */
+export const componentsProviderModuleName = "interact:components"
 
 export async function resolveViteConfig(
     {
@@ -40,9 +60,15 @@ export async function resolveViteConfig(
         command
     }: InteractConfig): Promise<InlineConfig> {
 
+    /**
+     * Set the globals config
+     */
+    await setGlobalsConf(confPath)
 
-    const interactConfigTyped = createInteractConfig(confPath);
-    setInteractConfigGlobally(interactConfigTyped);
+    /**
+     * Use them
+     */
+    let interactConfigTyped = getInteractConfig();
 
     // https://vite.dev/guide/build#public-base-path
     let publicBasePath = interactConfigTyped.site.base;
@@ -61,20 +87,6 @@ export async function resolveViteConfig(
     let imageMiddlewareEndPoint = "/_images";
     process.env[imageEndPointEnvName] = imageMiddlewareEndPoint
 
-    /**
-     * The components provider name
-     * (for mdx and layout)
-     */
-    const componentsProviderModuleName = "interact:components"
-
-    /**
-     * Markdown Config with a
-     */
-    const markdownConfig = await createMarkdownConfig({
-        componentsProviderModuleName: componentsProviderModuleName,
-        interactConfig: interactConfigTyped
-    })
-    setMarkdownConfigGlobally(markdownConfig)
 
     return {
         mode: command == "build" ? "production" : "development",
@@ -93,11 +105,7 @@ export async function resolveViteConfig(
             extensions: ['.ts', '.tsx', '.mts', '.jsx', '.js', '.mjs'],
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
-            alias: {
-                // shadcn alias
-                // https://ui.shadcn.com/docs/installation/vite#update-viteconfigts
-                "@": path.resolve(interactConfigTyped.paths.rootDirectory, "./src"),
-            }
+            alias: {}
         },
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
@@ -171,25 +179,25 @@ export async function resolveViteConfig(
             },
         },
         plugins: [
-            pageModulesPlugin(interactConfigTyped.paths.pagesDirectory, ['mdx', 'tsx', 'jsx']),
+            pageModulesPlugin(['mdx', 'tsx', 'jsx']),
             viteImageService({
                 baseDir: interactConfigTyped.paths.imagesDirectory,
                 cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),
                 secret: process.env[imageSecretEnvName],
                 endPoint: imageMiddlewareEndPoint
             }),
-            viteReloadOnConfChange(interactConfigTyped),
+            viteReloadOnConfChange(),
             // Component provider (provide also the MdxComponent for mdx)
-            viteComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
+            viteComponentProvider({moduleName: componentsProviderModuleName}),
             // Layout provider (provide the layouts dynamically)
-            viteLayoutProvider({interactConfig: interactConfigTyped}),
+            viteLayoutProvider(),
             // https://mdxjs.com/packages/mdx/#processoroptions
-            mdx(markdownConfig.getMdxRollupConfig(command)),
+            mdx(getMarkdownConfig().getMdxRollupConfig(command)),
             react(),
             // Tailwind
             tailwindcss(),
             // Resolve the @/ in a cascading way
-            viteAtSrcAliasCascadingResolution({interactConfig: interactConfigTyped}),
+            viteAtSrcAliasCascadingResolution(),
             // https://www.npmjs.com/package/vite-plugin-svgr
             svgReactPlugin({
                 // If the content needs to be imported as string add the `?raw` property
@@ -201,21 +209,11 @@ export async function resolveViteConfig(
                     },
                 },
             }),
-            viteStylingGlobalStylesheet(interactConfigTyped),
-            viteStylingOutlineNumberingPlugin(interactConfigTyped),
+            viteStylingGlobalStylesheet(),
+            viteStylingOutlineNumberingPlugin(),
             {
                 enforce: "post", // runs after as we depend on the component plugin
-                ...viteMiddlewareRegistry(
-                    interactConfigTyped,
-                    [
-                        ...interactConfigTyped.pages.providers || [],
-                        {
-                            importPath: path.resolve(interactConfigTyped.paths.interactDirectory, 'middleware/localPagesMiddleware.js'),
-                            props: {
-                                pagesDirectory: interactConfigTyped.paths.pagesDirectory
-                            }
-                        }]
-                )
+                ...viteMiddlewareRegistry()
             },
             // Rsc
             // At the end because the client import the outline numbering CSS virtual vite module

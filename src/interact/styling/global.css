@@ -7,9 +7,6 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Pages */
-@source "/home/admin/code/combostrap/interact/apps/site/pages";
-
 /*
 @source inline will add the class even if not used
   They are the container class default configuration

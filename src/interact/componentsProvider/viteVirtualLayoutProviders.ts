@@ -1,6 +1,6 @@
 import type {Plugin} from 'vite';
 import path from 'path';
-import type {InteractConfig} from "../config/interactConfig.js";
+import {getInteractConfig, type InteractConfig} from "../config/interactConfig.js";
 
 /**
  * Print without any quote so that the object can be added to virtual module
@@ -131,10 +131,13 @@ export default dontUse
     }
 }
 
-export default function viteLayoutProvider({interactConfig}: {
-    interactConfig: InteractConfig
-}): Plugin {
+export default function viteLayoutProvider(): Plugin {
 
+    /**
+     * interact config is not a props so that on dev server
+     * restart the new configuration is read
+     */
+    let interactConfig = getInteractConfig();
     /**
      * The name used in the import
      * ie import .... from 'interact:layouts'

@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import type {Plugin} from "vite";
-import type {InteractConfig} from "../config/interactConfig.js";
+import {getInteractConfig} from "../config/interactConfig.js";
 
 function isInteractAlias(importer: string) {
     return importer?.includes("interact");
@@ -11,8 +11,10 @@ let alias = "@"
 
 /**
  * A plugin to resolve the at sign alias from our code or the code of the site
+ * Shadcn alias: https://ui.shadcn.com/docs/installation/vite#update-viteconfigts
  */
-export function viteAtSrcAliasCascadingResolution({interactConfig}: { interactConfig: InteractConfig }): Plugin {
+export function viteAtSrcAliasCascadingResolution(): Plugin {
+    let interactConfig = getInteractConfig()
     return {
         name: 'cascade-alias',
         // importer: the absolute path of the file that contains the import.

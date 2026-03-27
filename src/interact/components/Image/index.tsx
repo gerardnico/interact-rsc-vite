@@ -72,8 +72,11 @@ function createImageElement(
     )
 }
 
-async function BrokenImage({error, altMessage}: { error: ImageError, altMessage?: string }) {
-
+async function BrokenImage({src, error, altMessage}: { src: string, error: ImageError, altMessage?: string }) {
+    const isBuild = import.meta.env.MODE === 'production'
+    if (isBuild) {
+        throw new Error(`The processing of the image ${src} returned an error`, {cause: error});
+    }
     let htmlImageAttributes = await getHtmlImageAttributes({
         src: brokenImage,
         height: 300,
@@ -110,12 +113,19 @@ export default async function Image({
     const finalImageType: ImageType = type ?? interactConfig.images.defaultValues.type;
     const finalCompression = compression ?? interactConfig.images.defaultValues.compression;
     const finalFit = fit ?? interactConfig.images.defaultValues.fit;
-    if (imgAttributesProps.alt === undefined || imgAttributesProps.alt === null) {
-        return BrokenImage({error: new ImageError(ImageErrors.ALT_MISSING)})
-    }
 
     if (src == null) {
-        return BrokenImage({error: new ImageError(ImageErrors.SRC_MISSING)})
+        return BrokenImage({
+            src: "unknow",
+            error: new ImageError(ImageErrors.SRC_MISSING)
+        })
+    }
+
+    if (imgAttributesProps.alt === undefined || imgAttributesProps.alt === null) {
+        return BrokenImage({
+            src: src,
+            error: new ImageError(ImageErrors.ALT_MISSING)
+        })
     }
     try {
         htmlImageAttributes = await getHtmlImageAttributes({
@@ -128,7 +138,10 @@ export default async function Image({
             ratio: ratio,
         });
     } catch (error) {
-        return BrokenImage({error: (error as ImageError)});
+        return BrokenImage({
+            src: src,
+            error: (error as ImageError)
+        });
     }
 
     return createImageElement({htmlImageAttributes, type: finalImageType, ...imgAttributesProps});

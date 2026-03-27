@@ -1,6 +1,6 @@
 import type {Plugin} from 'vite';
 import path from 'path';
-import type {InteractConfig} from "../config/interactConfig.js";
+import {getInteractConfig, type InteractConfig} from "../config/interactConfig.js";
 
 /**
  * Print without any quote so that the object can be added to virtual module
@@ -133,11 +133,11 @@ export default dontUse
 `;
 }
 
-export default function viteComponentProvider({moduleName = 'interact:components', interactConfig}: {
-    moduleName: string,
-    interactConfig: InteractConfig
+export default function viteComponentProvider({moduleName = 'interact:components'}: {
+    moduleName: string
 }): Plugin {
 
+    let interactConfig = getInteractConfig()
     /**
      * We don't prefix with \0 as specified here:
      * https://vite.dev/guide/api-plugin#virtual-modules-convention

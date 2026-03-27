@@ -56,12 +56,6 @@ width="-1"
 />
 ```
 
-* For a image error that is created by:
-
-<Image src="card_puncher_data_processing.jpg"
-alt="Card Puncher"
-width="-1"
-/>
 
 ### Transformation Service Error
 

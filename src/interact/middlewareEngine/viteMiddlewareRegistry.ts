@@ -1,10 +1,21 @@
 import type {Plugin} from 'vite';
 import type {MiddlewareConfig} from "../config/configSchema.js";
-import type {InteractConfig} from "../config/interactConfig.js";
+import {getInteractConfig} from "../config/interactConfig.js";
 import path from "node:path";
 
-export function viteMiddlewareRegistry(interactConfig: InteractConfig,middlewareConfigs: MiddlewareConfig[]): Plugin {
+export function viteMiddlewareRegistry(): Plugin {
     const virtualId = 'interact:middleware-registry';
+
+    let interactConfig = getInteractConfig()
+
+    let middlewareConfigs: MiddlewareConfig[] = [
+        ...interactConfig.pages.providers || [],
+        {
+            importPath: path.resolve(interactConfig.paths.interactDirectory, 'middleware/localPagesMiddleware.js'),
+            props: {
+                pagesDirectory: interactConfig.paths.pagesDirectory
+            }
+        }]
     //const resolvedId = '\0' + virtualId;
     const resolvedId = virtualId;
     return {

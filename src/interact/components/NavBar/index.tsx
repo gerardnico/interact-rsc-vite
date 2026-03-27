@@ -63,7 +63,8 @@ export default function NavBar({request, page, className, ...props}: NavBarProps
                 <div className={cn(containerClass, "flex items-center justify-between md:flex-nowrap flex-wrap gap-4")}>
                     {/* Brand - flex because otherwise, the brand name goes next line */}
                     <a className="link-primary flex no-underline"
-                       href={homeUrl} title={interactConfig.site.title}
+                       href={homeUrl}
+                       title={logoAlt}
                        accessKey="h" style={{fontWeight: 700}}>
                         {logo}
                         {navBarConfig?.props?.brandName != null &&
