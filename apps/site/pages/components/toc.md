@@ -26,4 +26,4 @@ You can set the maximum level printed in the components section of the [configur
 
 ## Numbering
 
-The numbering follows the [outline configuration](../reference/outline.md#numbering).
+The numbering follows the [outline configuration](../reference/outline.md#numbering-style).

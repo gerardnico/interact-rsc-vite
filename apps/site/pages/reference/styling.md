@@ -1,11 +1,13 @@
-# Styling
+---
+title: Styling
+---
 
 This page is about the options that you have to style your project.
 
-On a high level, we use [tailwind](https://tailwindcss.com/) with
+On a high level, we use [Tailwind](https://tailwindcss.com/) with
 the [shadcn convention](https://ui.shadcn.com/docs/theming).
 
-## List
+## Options List
 
 ### Tailwind
 
@@ -19,37 +21,41 @@ So you can:
 
 ### Global CSS File
 
-The global CSS file path is by default `src/styling/global.css` from the [root path](directory-layout.md)
-
-You can change it in the [paths.cssFile property of the configuration file](conf.md).
+The global CSS file path is by default `src/styling/global.css` from the [root path](directory-layout.md) (You can [change it](#configuration)).
 
 If the file does not exist, we apply
 a [default one](https://github.com/combostrap/interact/tree/main/src/interact/styling/global.css).
 
 We follow the [shadcn convention with CSS Variable](https://ui.shadcn.com/docs/theming).
 
-Note that in your own global CSS file, you also need
-to [register interact as source](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources)
+Note that if you create your own global CSS file, you also need
+to [register as source](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources):
+
+* the `interact components`
+* and your [pages directory](directory-layout.md)
+
+Example:
 
 ```css
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@source "../node_modules/@combostrap/interact";
-
+@source "../node_modules/@combostrap/interact/src/interact/components";
+@source "./src/pages";
 ```
 
 ### CSS Variables
 
-The `css variables` are known as token and present in the [global CSS file](#global-css-file).
+The `CSS variables` are known as `token` and are present in the [global CSS file](#global-css-file).
 
-The standard `shadcn` variables are listed [here](https://ui.shadcn.com/docs/theming#theme-tokens).
+The standard `Shadcn` variables are listed [here](https://ui.shadcn.com/docs/theming#theme-tokens).
 
+You can also [add your own CSS variables](../howto/add-new-css-variables.md)
 
 ### Outline Numbering
 
-We also support [heading numbering styling](outline.md#numbering)
+We support [heading numbering styling](outline.md#numbering-style).
 
 ### Apply styles Object
 
@@ -65,3 +71,11 @@ return (
     <button style={styles.button}></button>
 )
 ```
+
+## How to add CSS Variables and Classes
+
+In this [tutorial](../howto/add-new-css-variables.md), we explain how to define CSS variables, create new TailWind Classes and use them.
+
+## Configuration
+
+You can change the location of the [global CSS file](#global-css-file) in the `paths.css` property of the [configuration file](conf.md).

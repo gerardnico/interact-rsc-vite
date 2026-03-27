@@ -55,12 +55,14 @@ export default function NavBar({request, page, className, ...props}: NavBarProps
 
     }
     const containerClass = interactConfig.style.container.containerClass
+    // pb-0 is for the alignment with the brand text and logo
+    const elementClass= "flex py-1 text-primary-700 no-underline pb-0"
     return (
         <header className={cn(className, "print:hidden")} {...props}>
             <nav className="border-b border-gray-200 px-4 py-2">
                 <div className={cn(containerClass, "flex items-center justify-between md:flex-nowrap flex-wrap gap-4")}>
                     {/* Brand - flex because otherwise, the brand name goes next line */}
-                    <a className="link-primary flex items-center gap-1"
+                    <a className="link-primary flex gap-1 no-underline"
                        href={homeUrl} title={interactConfig.site.title}
                        accessKey="h" style={{fontWeight: 700}}>
                         {logo}
@@ -70,8 +72,11 @@ export default function NavBar({request, page, className, ...props}: NavBarProps
                     </a>
 
                     {/* Toggle (in another component because it is a client component and that's forbidden in a layout component) */}
-                    <NavBarToggle/>
-
+                    <NavBarToggle>
+                        <a href="#" className={elementClass}>Todo</a>
+                        <a href="#" className={elementClass}>Todo</a>
+                        <a href="#" className={elementClass}>Todo</a>
+                    </NavBarToggle>
                 </div>
             </nav>
         </header>
