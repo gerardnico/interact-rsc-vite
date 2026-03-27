@@ -19,6 +19,7 @@ import {createInteractConfig, setInteractConfigGlobally} from "../../config/inte
 import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
 import tailwindcss from "@tailwindcss/vite"
 import viteStylingGlobalStylesheet from "../../styling/viteStylingGlobalStylesheet.js";
+import {viteAtSrcAliasCascadingResolution} from "../../resolution/viteAtSrcAliasCascadingResolution.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -187,6 +188,8 @@ export async function resolveViteConfig(
             react(),
             // Tailwind
             tailwindcss(),
+            // Resolve the @/ in a cascading way
+            viteAtSrcAliasCascadingResolution({interactConfig: interactConfigTyped}),
             // https://www.npmjs.com/package/vite-plugin-svgr
             svgReactPlugin({
                 // If the content needs to be imported as string add the `?raw` property

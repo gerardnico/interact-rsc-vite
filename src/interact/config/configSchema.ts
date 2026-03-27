@@ -51,6 +51,7 @@ const SiteSchema = z.object({
     title: z.coerce.string().describe("The title (used on the logo description, as index page title, in the app manifest as name)").default("Website"),
     faviconMaster: z.coerce.string().describe("The master svg file used to generate the favicons relative to the image path").default("favicon.svg"),
     favicons: FaviconSetSchema.describe("The favicons (logos)").optional(),
+    manifest: z.string().describe("The manifest file path from the public directory (Example: /site.webmanifest)").optional(),
     colorMode: z.enum(['light', 'dark']).describe("The color mode").default('light'),
     colorPrimary: z.coerce.string().describe("The primary color (known also as the theme color)").default("#906296"),
 }).describe("The site properties")

@@ -19,9 +19,7 @@ export default function viteReloadOnConfChange(interactConfig: InteractConfig): 
 
                 if (!file.endsWith(watchedFile)) return
 
-                // trigger HMR update
-                // full refresh, no?
-                server.ws.send({type: 'full-reload'})
+                server.restart().then(() => console.log("Server restarted due to interact configuration change."))
 
             })
         },

@@ -1,5 +1,9 @@
 {
   "$schema": ".interact/interact.schema.json",
+  "site": {
+    "name": "Interact",
+    "title": "Interact Documentation (that feels like an App)"
+  },
   "components": {
     "Counter": {
       "importPath": "./components/Counter.js",
@@ -15,8 +19,9 @@
     },
     "NavBar": {
       "props": {
-        "brandName": "Interact",
-        "logoWidth": 20
+        "brandName": "nteract",
+        "logoWidth": 24,
+        "logoHeight": 24
       }
     }
   },

@@ -195,6 +195,24 @@ function updateFavicon({favicons, publicDirectory}: {
     return favicons;
 }
 
+function updateManifest({manifestFileName, publicDirectory}: {
+    manifestFileName: string | undefined,
+    publicDirectory: string
+}): string | undefined {
+    let fileToCheck = manifestFileName;
+    if (fileToCheck == null) {
+        fileToCheck = "/site.webmanifest"
+    }
+    let manifestPath = `${publicDirectory}/${manifestFileName}`;
+    if (fs.existsSync(manifestPath)) {
+        return fileToCheck
+    }
+    if (manifestFileName != null) {
+        throw new Error(`The given site manifest ${manifestFileName} was not found. Files ${manifestPath} does not exist.`)
+    }
+    return;
+}
+
 const configFileName = 'interact.config.json'
 
 export interface ConfPathResolvedType {
@@ -352,6 +370,12 @@ class InteractConfigHandler {
         finalConfigData.site.favicons = updateFavicon(
             {
                 favicons: finalConfigData?.site?.favicons,
+                publicDirectory: finalConfigData.paths.publicDirectory
+            }
+        );
+        finalConfigData.site.manifest = updateManifest(
+            {
+                manifestFileName: finalConfigData.site.manifest,
                 publicDirectory: finalConfigData.paths.publicDirectory
             }
         );

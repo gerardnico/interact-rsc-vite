@@ -1,9 +1,13 @@
-@import "tailwindcss" source("../not-only-vite-as-source    ");
+/*
+ We need to use the source directive after import
+ because the component are referenced with external import path
+ (ie @combostrap/interact/components) and TailWind don't parse them
+*/
+@import "tailwindcss" source("../components");
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Relative to the stylesheet if redirected otherwise relative to the current directory */
-@source "../components"
+/* Pages */
 @source "/home/admin/code/combostrap/interact/apps/site/pages";
 
 /*

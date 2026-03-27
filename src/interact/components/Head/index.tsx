@@ -40,12 +40,12 @@ export default function Head({page, request, ...props}: HeadProps) {
      */
     const url = new URL(request.url);
     const base = interactConfig.site.base
-    const isBrowserPathRoot = url.pathname === base;
+    const isBrowserPathRoot = url.pathname === base || url.pathname === `${base}index`;
     let headPageTitle = title ? title : "";
     if (!headPageTitle && isBrowserPathRoot) {
         headPageTitle = interactConfig.site.title || 'Default'
     }
-    let pageTitle = headPageTitle + " | " + interactConfig.site.name
+    let pageTitle = headPageTitle + (!isBrowserPathRoot ? " | " + interactConfig.site.name : "")
 
     /**
      * Head base meta
@@ -94,6 +94,7 @@ export default function Head({page, request, ...props}: HeadProps) {
                     />
                 )
             })}
+            {interactConfig.site.manifest && <link rel="manifest" href={interactConfig.site.manifest}/>}
             {interactConfig.site.colorPrimary &&
                 <meta name="theme-color" content={interactConfig.site.colorPrimary}/>}
             <meta name="robots" content={robots ? robots : "index, follow"}/>

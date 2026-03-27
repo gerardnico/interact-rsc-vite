@@ -15,14 +15,12 @@ import type {InteractConfig} from "@combostrap/interact/types";
 import {createInteractConfig} from "../../config/interactConfig.js";
 
 async function generateImage({masterFilePath, dryRun, outputDirectory, interactConfig: config}: {
-    masterFilePath?: string,
+    masterFilePath: string,
     dryRun: boolean,
     outputDirectory: string
     interactConfig: InteractConfig
 }) {
-    if (masterFilePath == null) {
-        masterFilePath = config.site.faviconMaster
-    }
+
     console.log(`Generating Favicons and Manifest with the master file: ${masterFilePath}`)
 
     const imageAdapter = await getNodeImageAdapter();
@@ -71,6 +69,8 @@ async function generateImage({masterFilePath, dryRun, outputDirectory, interactC
             }
         },
         imageDirectory: "/",
+        path: config.site.base
+
     };
 
 
@@ -127,8 +127,7 @@ export default class Favicon extends BaseCommand<typeof Favicon> {
         }),
         outputDirectory: Flags.string({
             aliases: ["o"],
-            description: "The output directory (default to the public directory)",
-            default: "public"
+            description: "The output directory (default to the public directory)"
         }),
     }
     static args = {
@@ -142,9 +141,9 @@ export default class Favicon extends BaseCommand<typeof Favicon> {
         const {args, flags} = await this.parse(Favicon)
 
         const interactConfigTyped = createInteractConfig(flags.confPath);
-        const filePath = args.filePath
+        const filePath = args.filePath || path.resolve(interactConfigTyped.paths.imagesDirectory, interactConfigTyped.site.faviconMaster);
         const dryRun = flags.dryRun
-        const outputDirectory = flags.outputDirectory
+        const outputDirectory = flags.outputDirectory || interactConfigTyped.paths.publicDirectory
         await generateImage({interactConfig: interactConfigTyped, masterFilePath: filePath, dryRun, outputDirectory})
     }
 }
