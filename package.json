@@ -16,15 +16,16 @@
   },
   "files": [
     "dist/interact/**/*",
-    "src/**/*"
+    "src/interact/**/*"
   ],
   "exports": {
     "./types": "./src/interact/types/index.d.ts",
-    "./components/*": "./src/interact/components/*/index.js",
+    "./components/*": "./src/interact/components/*.js",
     "./markdown": "./src/interact/markdown/processing/interactMarkdownProcessor.js",
     "./config": "./src/interact/config/interactConfig.js"
   },
   "dependencies": {
+    "@base-ui/react": "1.3.0",
     "@mdx-js/rollup": "3.1.1",
     "@oclif/core": "4.8.2",
     "@realfavicongenerator/generate-favicon": "0.6.3",
@@ -41,6 +42,7 @@
     "etag": "1.8.1",
     "glob": "13.0.6",
     "hastscript": "9.0.1",
+    "lucide-react": "1.7.0",
     "mrmime": "2.0.1",
     "picocolors": "*",
     "react": "19.2.4",

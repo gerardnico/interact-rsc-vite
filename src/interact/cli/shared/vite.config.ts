@@ -11,7 +11,7 @@ import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
 import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
 import viteComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
 import svgReactPlugin from "vite-plugin-svgr";
-import viteStylingOutlineNumberingPlugin from "../../styling/viteStylingOutlineNumbering.js";
+import viteStylingOutlineNumberingPlugin from "../../styles/viteStylingOutlineNumbering.js";
 import {viteMiddlewareRegistry} from "../../middlewareEngine/viteMiddlewareRegistry.js";
 import {
     createMarkdownConfig,
@@ -22,7 +22,7 @@ import {
 import {createInteractConfig, getInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
 import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
 import tailwindcss from "@tailwindcss/vite"
-import viteStylingGlobalStylesheet from "../../styling/viteStylingGlobalStylesheet.js";
+import viteStylingGlobalStylesheet from "../../styles/viteStylingGlobalStylesheet.js";
 import {viteAtSrcAliasCascadingResolution} from "../../resolution/viteAtSrcAliasCascadingResolution.js";
 
 

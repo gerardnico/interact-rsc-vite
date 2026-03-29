@@ -18,7 +18,7 @@ to make it a client component with the [use client](#use-client) directive.
 ## Use client
 
 The `use client` directive when found at the top of a script
-makes it a `Client component`
+makes it a `Client component` (ie [interactive component](interactive-component.md))
 
 A `React Client component` will:
 
@@ -29,7 +29,7 @@ Example: If you use the `window` global, you may:
 
 * move it into a `useEffect` (client-only)
 
-```tsx 
+```tsx
 `use client`
 export default function MyComponent() {
     const [width, setWidth] = useState(0);

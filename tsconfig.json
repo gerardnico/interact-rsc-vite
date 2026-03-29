@@ -34,6 +34,9 @@
       "@vitejs/plugin-rsc/types",
       "mdx"
     ],
+    "paths": {
+      "@/*": ["./src/interact/*"]
+    },
     "jsx": "react-jsx",
     // or "react-jsx" for React 17+
     "outDir": "./dist/",

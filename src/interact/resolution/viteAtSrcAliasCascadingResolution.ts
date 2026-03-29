@@ -1,10 +1,9 @@
-import path from "path";
 import fs from "fs";
 import type {Plugin} from "vite";
 import {getInteractConfig} from "../config/interactConfig.js";
 
 function isInteractAlias(importer: string) {
-    return importer?.includes("interact");
+    return importer?.includes("combostrap/interact");
 }
 
 let alias = "@"
@@ -23,12 +22,18 @@ export function viteAtSrcAliasCascadingResolution(): Plugin {
             if (importer == null) return null;
 
             // strip `@/`
-            const relative = id.slice(alias.length + 1)
-            if (isInteractAlias(importer)) {
-                return `${interactConfig.paths.interactDirectory}/${relative}`
+            let relative = id.slice(alias.length + 1)
+            // delete extension if any
+            let lastPoint = relative.lastIndexOf(".")
+            if (lastPoint != -1) {
+                relative = relative.slice(0, lastPoint)
             }
-
-            const candidate = path.resolve(`${interactConfig.paths.rootDirectory}/src`, relative)
+            let candidate;
+            if (isInteractAlias(importer)) {
+                candidate = `${interactConfig.paths.interactDirectory}/${relative}`
+            } else {
+                candidate = `${interactConfig.paths.rootDirectory}/src/${relative}`;
+            }
             // try common extensions
             for (const ext of ['', '.ts', '.tsx', '.js', '.jsx']) {
                 if (fs.existsSync(candidate + ext)) {

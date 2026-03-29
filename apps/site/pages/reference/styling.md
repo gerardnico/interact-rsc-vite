@@ -21,7 +21,8 @@ So you can:
 
 ### Global CSS File
 
-The global CSS file path is by default `src/styling/global.css` from the [root path](directory-layout.md) (You can [change it](#configuration)).
+The global CSS file path is by default `src/styling/global.css` from the [root path](directory-layout.md) (You
+can [change it](#configuration)).
 
 If the file does not exist, we apply
 a [default one](https://github.com/combostrap/interact/tree/main/src/interact/styling/global.css).
@@ -74,8 +75,35 @@ return (
 
 ## How to add CSS Variables and Classes
 
-In this [tutorial](../howto/add-new-css-variables.md), we explain how to define CSS variables, create new TailWind Classes and use them.
+In this [tutorial](../howto/add-new-css-variables.md), we explain how to define CSS variables, create new TailWind
+Classes and use them.
 
 ## Configuration
 
-You can change the location of the [global CSS file](#global-css-file) in the `paths.css` property of the [configuration file](conf.md).
+### Location of the Global Css file
+
+You can change the location of the [global CSS file](#global-css-file) in the `paths.css` property of
+the [configuration file](conf.md).
+
+### Dark/Light mode
+
+Dark/Light mode is handled by adding or removing the `dark` class
+to the HTML element.
+
+Code fragment from the default `ModeToggle` button.
+
+```tsx
+const [theme, setThemeState] = React.useState<
+    "theme-light" | "dark" | "system"
+>("theme-light")
+
+React.useEffect(() => {
+    const isDark =
+        theme === "dark" ||
+        (theme === "system" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+    document.documentElement.classList[isDark ? "add" : "remove"]("dark")
+}, [theme])
+```
+
+The full example can be seen in the [shadcn Astro documentation](https://ui.shadcn.com/docs/dark-mode/astro)
