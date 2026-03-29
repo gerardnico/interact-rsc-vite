@@ -28,49 +28,51 @@ export function NavBarCollapse({children, className, ...props}: React.HTMLAttrib
     return (
         <>
             {/* Hamburger (mobile only) */}
-                <button
-                    id="nav-toggle"
-                    style={toggleButton}
-                    className="md:hidden flex flex-col"
-                    aria-label="Toggle navigation"
-                    onClick={() => setIsOpen(!isOpen)}
-                >
+            <button
+                id="nav-toggle"
+                style={toggleButton}
+                className="md:hidden flex flex-col"
+                aria-label="Toggle navigation"
+                onClick={() => setIsOpen(!isOpen)}
+            >
                 <span style={{
                     ...hamburgerLine,
                     ...(isOpen ? {
                         transform: "translateY(7px) rotate(45deg)"
                     } : {})
                 }}/>
-                    <span style={
-                        {
-                            ...hamburgerLine,
-                            ...(isOpen ? {opacity: "0"} : {})
-                        }
-                    }/>
-                    <span style={{
+                <span style={
+                    {
                         ...hamburgerLine,
-                        ...(isOpen ? {
-                            transform: "translateY(-7px) rotate(-45deg)"
-                        } : {})
-                    }}/>
-                </button>
+                        ...(isOpen ? {opacity: "0"} : {})
+                    }
+                }/>
+                <span style={{
+                    ...hamburgerLine,
+                    ...(isOpen ? {
+                        transform: "translateY(-7px) rotate(-45deg)"
+                    } : {})
+                }}/>
+            </button>
 
             {/* Collapsible content at md */}
-                <div
-                    className={
-                        cn(
-                            "grow basis-full md:flex gap-2",
-                            isOpen ? "" : "hidden",
-                            className
-                        )}
-                    style={{
-                        alignItems: "flex-end",
-                        flexDirection: "row",
-                    }}
-                    {...props}>
-                    {children}
+            <div
+                className={
+                    cn(
+                        "grow basis-full md:flex gap-2",
+                        isOpen ? "" : "hidden",
+                        className
+                    )}
+                style={{
+                    alignItems: "flex-end",
+                    flexDirection: "row",
+                }}
+                {...props}>
+                {children}
+                <div className={"ml-auto "}>
                     <ModeToggle/>
                 </div>
+            </div>
         </>
     )
 
