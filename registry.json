@@ -10,7 +10,7 @@
       "description": "A dark/ligt toggle",
       "files": [
         {
-          "path": "src/lib/components/ModeToggle.tsx",
+          "path": "src/resources/components/ModeToggle.tsx",
           "type": "registry:component"
         }
       ],
