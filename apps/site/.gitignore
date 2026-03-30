@@ -10,3 +10,15 @@ public/site.webmanifest
 
 # Registry
 public/r
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+
+# all files LF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+* text eol=lf
