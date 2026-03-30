@@ -37,9 +37,7 @@ export default async function Avatar({size, width, height, className, ...props}:
         <Raster
             width={size}
             height={size}
-            className={cn(className, "rounded-full")}
-            fit="cover"
-            style={{objectFit: "cover"}}
+            className={cn(className, "aspect-square size-full rounded-full object-cover")}
             {...props}
         />
     )

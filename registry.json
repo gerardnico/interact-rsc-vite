@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "Interact",
+  "homepage": "https://interact.combostrap.com",
+  "items": [
+    {
+      "name": "ModeToggle",
+      "type": "registry:block",
+      "title": "Mode Toggle",
+      "description": "A simple hello world component.",
+      "files": [
+        {
+          "path": "src/interact/components/ModeToggle.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button"
+      ]
+    }
+  ]
+}
