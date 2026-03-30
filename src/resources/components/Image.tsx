@@ -73,9 +73,9 @@ function createImageElement(
 }
 
 async function BrokenImage({src, error, altMessage}: { src: string, error: ImageError, altMessage?: string }) {
-    const isBuild = import.meta.env.MODE === 'production'
-    if (isBuild) {
-        throw new Error(`The processing of the image ${src} returned an error`, {cause: error});
+    const isSsg = import.meta.env.MODE === 'production'
+    if (isSsg) {
+        throw new Error(`Ssg: The processing of the image ${src} returned an error`, {cause: error});
     }
     let htmlImageAttributes = await getHtmlImageAttributes({
         src: brokenImage,

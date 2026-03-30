@@ -96,7 +96,15 @@ const BadFit: ImageErrorData = {
     message: 'A fit value should be one of ' + ImageFitSet.options.join(", "),
 };
 
+const SharpError: ImageErrorData = {
+    code: 1012,
+    status: 500,
+    title: 'Sharp could not read the image file',
+    message: 'An unexpected error has occur while trying to read the file with sharp'
+};
+
 export const ImageErrors = Object.freeze({
+    SHARP_ERROR: SharpError,
     NOT_FOUND: ResourceNoteFound,
     ALT_MISSING: ImageAltMissing,
     SRC_MISSING: ImageSrcMissing,

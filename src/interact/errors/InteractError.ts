@@ -4,6 +4,7 @@ export interface InteractErrorData {
     status?: number;
     message?: string | ((...params: any) => string);
     hint?: string | ((...params: any) => string);
+    options?: ErrorOptions
 }
 
 function getString(message: string | ((...params: any) => string) | undefined) {
@@ -19,8 +20,8 @@ export class InteractError extends Error {
     hint?: string;
     status?: number;
 
-    constructor({code, title, message, hint, status}: InteractErrorData) {
-        super(getString(message));
+    constructor({code, title, message, hint, status, options}: InteractErrorData) {
+        super(getString(message), options);
         this.code = code;
         this.title = title;
         this.hint = getString(hint);

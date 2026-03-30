@@ -15,6 +15,7 @@ import fsPromises from "fs/promises";
 import crypto from "crypto";
 import {getInteractConfig} from "@combostrap/interact/config";
 import {imageEndPointEnvName, imageViteOutDirEnvName} from "./imageMiddlewareHandler.js";
+import fs from "fs";
 
 
 export type HtmlImageAttributes = {
@@ -157,6 +158,12 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
     }
 
     const sourceFile = path.resolve(interactConfig.paths.imagesDirectory, props.src);
+    if (!fs.existsSync(sourceFile)) {
+        throw new ImageError({
+            ...ImageErrors.NOT_FOUND,
+            message: `The image file ${props.src} was not found at ${sourceFile}`,
+        })
+    }
     let intrinsicWidth, intrinsicHeight;
     let sharpPipeline;
     try {
@@ -166,8 +173,11 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         intrinsicWidth = metadata.width;
     } catch (err) {
         throw new ImageError({
-            ...ImageErrors.NOT_FOUND,
-            message: `Error while reading the image file ${props.src}: ${String(err)}`
+            ...ImageErrors.SHARP_ERROR,
+            message: `Sharp error while reading the image file ${props.src}/${sourceFile}`,
+            options: {
+                cause: err
+            }
         })
     }
 
