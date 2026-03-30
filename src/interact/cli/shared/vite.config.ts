@@ -136,7 +136,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/server/entry.rsc.tsx'),
+                            index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/server/entry.rsc.tsx'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "rsc"),
@@ -152,7 +152,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/server/entry.ssr.tsx'),
+                            index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/server/entry.ssr.tsx'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "ssr"),
@@ -170,7 +170,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/browser/entry.browser.tsx'),
+                            index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/browser/entry.browser.tsx'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),
@@ -184,6 +184,7 @@ export async function resolveViteConfig(
                 baseDir: interactConfigTyped.paths.imagesDirectory,
                 cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),
                 secret: process.env[imageSecretEnvName],
+                resourcesDir: interactConfigTyped.paths.resourcesDirectory,
                 endPoint: imageMiddlewareEndPoint
             }),
             viteReloadOnConfChange(),

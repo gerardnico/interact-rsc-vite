@@ -9,8 +9,6 @@ import {verifyUrlAndDeleteVerificationProperties} from "./urlSignature.js";
 import crypto from "crypto";
 import * as mime from "mrmime";
 import {ImageDimensionHelper} from "./imageDimensionHelper.js";
-import {fileURLToPath} from "node:url";
-import {dirname, join} from "path";
 import {optimize} from 'svgo';
 import {
     brokenImage,
@@ -23,7 +21,6 @@ import {
 } from "./imageSharedCode.js";
 import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function hash(input: crypto.BinaryLike) {
     return crypto.createHash("sha1").update(input).digest("hex");
@@ -50,6 +47,8 @@ type ImageHandlerProps = {
     baseDir: string,
     // where to cache the images
     cacheDir?: string,
+    // the directory of the resources (ie image)
+    resourcesDir: string,
     // the http endpoint
     endPoint: string;
     // if the service is running locally, there is no need to sign the URL and secret can be empty
@@ -57,10 +56,10 @@ type ImageHandlerProps = {
 };
 
 export function createImageHandler(config: ImageHandlerProps) {
-    const {endPoint, secret, cacheDir, baseDir} = config;
+    const {endPoint, secret, cacheDir, resourcesDir, baseDir} = config;
 
 
-    const fallBackSvgString = fs.readFileSync(join(__dirname, brokenImage), 'utf-8');
+    const fallBackSvgString = fs.readFileSync(path.resolve(resourcesDir, brokenImage), 'utf-8');
 
     return async function (req: Request): Promise<Response> {
 

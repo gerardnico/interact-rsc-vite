@@ -10,7 +10,7 @@
     "build": "tsx contrib/scripts/build.ts",
     "check:cli": "tsc -p src/interact/tsconfig.json",
     "check:contrib": "tsc -p contrib/scripts/tsconfig.json",
-    "check:lib": "tsc -p src/lib/tsconfig.json",
+    "check:resources": "tsc -p src/resources/tsconfig.json",
     "watch": "tsc --watch",
     "deploy": "git tag -f early-access && git push -f origin early-access",
     "start": "src/interact/cli/dev.js start --confPath=apps/site",
@@ -21,13 +21,13 @@
   },
   "files": [
     "dist/interact/**/*",
-    "src/lib/**/*",
+    "src/resources/**/*",
     "src/types/**/*"
   ],
   "exports": {
     "./types": "./src/types/index.d.ts",
-    "./components/*": "./src/lib/components/*.tsx",
-    "./markdown": "./src/lib/markdown/interactMarkdownProcessor.tsx",
+    "./components/*": "./src/resources/components/*.tsx",
+    "./markdown": "./src/resources/markdown/interactMarkdownProcessor.tsx",
     "./config": "./src/interact/config/interactConfig.ts"
   },
   "dependencies": {

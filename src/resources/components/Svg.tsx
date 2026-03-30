@@ -7,7 +7,7 @@ import {type SVGProps} from "react";
 import {optimize, type Config} from "svgo";
 import {getInteractConfig} from "@combostrap/interact/config";
 import {readFile} from "node:fs/promises";
-import favicon from "../resources/letter-i-3-colors.svg?raw"
+import favicon from "../images/letter-i-3-colors.svg?raw"
 
 export type SvgComponentProps = SVGProps<SVGSVGElement> & {
     /** SVG file path from the img directory */

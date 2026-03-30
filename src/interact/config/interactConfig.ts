@@ -17,11 +17,7 @@ import {fileURLToPath} from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- * Directory of the code, this module will be in dist distributed so we go back until the root
- * to find src again
- */
-const srcPackageDir = path.resolve(__dirname, '../../../src');
+
 
 
 /**
@@ -304,8 +300,8 @@ export type InteractConfig = {
         // Example with vite
         // https://vite.dev/guide/dep-pre-bundling#file-system-cache
         cacheDirectory: string
-        // The path or the interact src directory
-        interactDirectory: string
+        // The path or the resources src directory
+        resourcesDirectory: string
     }
 }
 
@@ -365,7 +361,11 @@ class InteractConfigHandler {
             publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
             imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
             cacheDirectory: this.#qualifiedDirectoryPath(".interact"),
-            interactDirectory: srcPackageDir,
+            /**
+             * Directory of the code, this module will be in src and dist when distributed so we go back until the root
+             * to find src again
+             */
+            resourcesDirectory: path.resolve(__dirname, '../../../src/resources'),
             buildDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.buildDirectory),
             cssFile: this.#qualifiedDirectoryPath(finalConfigData.paths.cssFile),
         }

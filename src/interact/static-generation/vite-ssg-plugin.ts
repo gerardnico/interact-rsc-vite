@@ -43,7 +43,7 @@ async function renderStatic(config: ResolvedConfig) {
      */
     const rscIndexFilePath = path.join(rscEnv.build.outDir, 'index.js')
     // @ts-ignore - error TS6142: Module 'entry.rsc.js' was resolved to entry.rsc.tsx', but '--jsx' is not set.
-    const entryRscModule: typeof import('../../lib/rsc/server/entry.rsc.js') = await import(/* @vite-ignore */ pathToFileURL(rscIndexFilePath).href)
+    const entryRscModule: typeof import('../../resources/rsc/server/entry.rsc.tsx') = await import(/* @vite-ignore */ pathToFileURL(rscIndexFilePath).href)
 
     // entry provides a list of static paths
     const staticPaths = entryRscModule.getStaticPaths()

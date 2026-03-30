@@ -1,10 +1,8 @@
 import type {Plugin} from 'vite';
 import {getInteractConfig} from "../config/interactConfig.js";
 import {existsSync} from "fs";
-import path, {dirname} from "path";
-import {fileURLToPath} from "node:url";
+import path from "path";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default function viteStylingGlobalStylesheet(): Plugin {
     // The .css extension on the virtual module ID is the key — it tells Vite to handle the returned string as a CSS stylesheet rather than JavaScript.
@@ -14,7 +12,7 @@ export default function viteStylingGlobalStylesheet(): Plugin {
     let interactConfig = getInteractConfig()
     let confCssFilePath = interactConfig.paths.cssFile
     if (!existsSync(confCssFilePath)) {
-        confCssFilePath = path.resolve(__dirname, "global.css");
+        confCssFilePath = path.resolve(interactConfig.paths.resourcesDirectory, "styles", "global.css");
     }
     if (!existsSync(confCssFilePath)) {
         throw new Error(`A global CSS file should have been found`);

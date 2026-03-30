@@ -37,9 +37,6 @@
       "@vitejs/plugin-rsc/types",
       "mdx"
     ],
-    "paths": {
-      "@/*": ["./src/lib/*"]
-    },
     "esModuleInterop": true
   },
   "include": [],
