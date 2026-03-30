@@ -1,9 +1,9 @@
 import path from "node:path";
-import {fsGetTextAsync} from "../utils/fs.js";
+import {fsGetTextAsync} from "../../interact/utils/fs";
 
-import type {MiddlewareHandler, MiddlewarePageResponse} from "../middlewareEngine/interactMiddleware.js";
+import type {MiddlewareHandler, MiddlewarePageResponse} from "../../interact/middlewareEngine/interactMiddleware";
 import {VFile} from "vfile";
-import {markdownToPageSync} from "../markdown/processing/interactMarkdownProcessor.js";
+import {markdownToPageSync} from "../markdown/interactMarkdownProcessor";
 
 
 /**

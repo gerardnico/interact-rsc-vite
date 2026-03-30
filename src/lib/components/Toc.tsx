@@ -1,4 +1,4 @@
-import type {ContextProps, TocNode} from "../types/index.js";
+import type {ContextProps, TocNode} from "@combostrap/interact/types";
 import "./toc.css"
 import {getInteractConfig} from "@combostrap/interact/config";
 import React from "react";

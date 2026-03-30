@@ -2,7 +2,7 @@
 
 import type {Frontmatter} from "@combostrap/interact/types";
 // @ts-ignore -- not under rootDir, we know
-import GoBackButton from "../components/ButtonGoBack.js";
+import GoBackButton from "../components/ButtonGoBack";
 import Block from "@combostrap/interact/components/Block";
 import {getInteractConfig} from "@combostrap/interact/config";
 

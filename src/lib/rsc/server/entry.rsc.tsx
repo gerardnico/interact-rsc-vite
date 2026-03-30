@@ -13,7 +13,7 @@ import {
 import {parseRenderRequest} from '../shared/request.js'
 import type {RscPayload} from '../shared/types.js'
 import type {ReactFormState} from 'react-dom/client'
-import {getRootResponse, getStaticPaths} from "../../pages/index.js";
+import {getRootResponse, getStaticPaths} from "./pages.js";
 
 /**
  * We export it so that static rendering (SSG)

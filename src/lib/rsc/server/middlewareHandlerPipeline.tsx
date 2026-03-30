@@ -1,4 +1,4 @@
-import type {MiddlewareResult, MiddlewarePageResponse, Middleware} from "./interactMiddleware.js";
+import type {MiddlewareResult, MiddlewarePageResponse, Middleware} from "../../../interact/middlewareEngine/interactMiddleware";
 
 type middlewarePipelineType = {
     use: (middleWare: Middleware) => middlewarePipelineType

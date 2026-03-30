@@ -62,16 +62,13 @@ jobs:
         # GitHub Actions adds node_modules/.bin to the PATH automatically
         run: ls -la node_modules/.bin
 
-      - name: Build the typescript files
-        # so that the `interact` cli will work
-        # GitHub Actions adds node_modules/.bin to the PATH automatically
-        # tsc is silent on success, there simply won't be anything to show.
-        run: tsc --listEmittedFiles
+      - name: Build the interact cli
+        run: yarn build
 
-      - name: Build the website
-        #working-directory: ${{ env.APP_DIR }}
-        # GitHub Actions adds node_modules/.bin to the PATH automatically
-        run: ./node_modules/.bin/interact build --confPath=${{ env.APP_DIR }}
+      - name: Build the components registry and website
+        run: |
+          yarn registry:build
+          ./node_modules/.bin/interact build --confPath=${{ env.APP_DIR }}
 
       # actions/deploy-pages expect a zip
       - name: Upload Pages artifact

@@ -4,7 +4,7 @@ import {pathToFileURL} from "node:url";
 import fs from "node:fs";
 import {Readable} from "node:stream";
 // interactConfig should be a relative path and not the package.json export as this is used by the client
-import {getInteractConfig, defaultComponentsValue} from "../../config/interactConfig.js";
+import {getInteractConfig, defaultComponentsValue} from "../config/interactConfig.js";
 
 const RSC_POSTFIX = '_.rsc'
 
@@ -42,7 +42,8 @@ async function renderStatic(config: ResolvedConfig) {
      * Import the created rsc build
      */
     const rscIndexFilePath = path.join(rscEnv.build.outDir, 'index.js')
-    const entryRscModule: typeof import('../server/entry.rsc.js') = await import(/* @vite-ignore */ pathToFileURL(rscIndexFilePath).href)
+    // @ts-ignore - error TS6142: Module 'entry.rsc.js' was resolved to entry.rsc.tsx', but '--jsx' is not set.
+    const entryRscModule: typeof import('../../lib/rsc/server/entry.rsc.js') = await import(/* @vite-ignore */ pathToFileURL(rscIndexFilePath).href)
 
     // entry provides a list of static paths
     const staticPaths = entryRscModule.getStaticPaths()

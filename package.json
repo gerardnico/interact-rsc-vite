@@ -8,6 +8,9 @@
   "repository": "https://github.com/combostrap/interact",
   "scripts": {
     "build": "tsx contrib/scripts/build.ts",
+    "check:cli": "tsc -p src/interact/tsconfig.json",
+    "check:contrib": "tsc -p contrib/scripts/tsconfig.json",
+    "check:lib": "tsc -p src/lib/tsconfig.json",
     "watch": "tsc --watch",
     "start": "src/interact/cli/dev.js start --confPath=apps/site",
     "site": "cd ../../gerardnico/com-gerardnico && node_modules/@combostrap/interact/src/interact/cli/dev.js start",
@@ -17,13 +20,14 @@
   },
   "files": [
     "dist/interact/**/*",
-    "src/interact/**/*"
+    "src/lib/**/*",
+    "src/types/**/*"
   ],
   "exports": {
-    "./types": "./src/interact/types/index.d.ts",
-    "./components/*": "./src/interact/components/*.js",
-    "./markdown": "./src/interact/markdown/processing/interactMarkdownProcessor.js",
-    "./config": "./src/interact/config/interactConfig.js"
+    "./types": "./src/types/index.d.ts",
+    "./components/*": "./src/lib/components/*.tsx",
+    "./markdown": "./src/lib/markdown/interactMarkdownProcessor.tsx",
+    "./config": "./src/interact/config/interactConfig.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.3.0",

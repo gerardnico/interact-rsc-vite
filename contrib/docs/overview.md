@@ -4,12 +4,10 @@
 
 This project is built on top of React Server Component.
 
-A server component environment is special because it needs to run:
+We have 3 parts:
 
-* in the browser
-* and in the server
+* all code in src/interact is the Interact cli and is compiled by TypeScript
+* all code in src/lib is bundled by vite
+* and the types
 
-Therefore, there is not 2 projects, there is only one. 
-
-Trying to split client code and the code vite bundle is futile because
-most of the components are imported in the client code.
+Why 2 resolution? Because with the shadcn registry, the path should not have any extension (ie bundler)  

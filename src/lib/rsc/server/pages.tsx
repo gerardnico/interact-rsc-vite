@@ -6,10 +6,10 @@ import Holy from "@combostrap/interact/components/Holy";
 import getPageModule from 'interact:page-modules';
 import {getInteractConfig} from "@combostrap/interact/config";
 import {NotFound} from "interact:components";
-import createMiddlewarePipeline from "../middlewareEngine/middlewareHandlerPipeline.js";
+import createMiddlewarePipeline from "./middlewareHandlerPipeline";
 import {middlewares} from "interact:middleware-registry"
-import type {ReactNodeResponse} from "../middlewareEngine/interactMiddleware.js";
-import {InteractErrorData, InteractError} from "../errors/index.js"
+import type {ReactNodeResponse} from "../../../interact/middlewareEngine/interactMiddleware.js";
+import {InteractErrorData, InteractError} from "../../../interact/errors"
 import {getLayoutComponent} from "interact:layouts";
 
 export interface PageFile {

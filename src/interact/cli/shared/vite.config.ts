@@ -6,7 +6,7 @@ import pageModulesPlugin from "../../pages/viteVirtualPagesModules.js";
 import viteReloadOnConfChange from "../../config/viteReloadOnConfChange.js";
 import viteImageService from "../../images/imageViteDevMiddleware.js";
 import type {InlineConfig} from "vite";
-import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
+import viteSsgPlugin from "../../static-generation/vite-ssg-plugin.js";
 
 import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
 import viteComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
@@ -136,7 +136,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'rsc/server/entry.rsc.js'),
+                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/server/entry.rsc.js'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "rsc"),
@@ -152,7 +152,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'rsc/server/entry.ssr.js'),
+                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/server/entry.ssr.js'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "ssr"),
@@ -170,7 +170,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'rsc/browser/entry.browser.js'),
+                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/browser/entry.browser.js'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),

@@ -1,13 +1,18 @@
 # Typescript
 
+## tsconfig.json location and naming
+
+They are not at the root and called `tsconfig.cli.json` or `tsconfig.lib.json`
+because it's not supported by IntelliJ.
+
 ## type vite/client
 
 https://vite.dev/guide/features#client-types
 
-## module resolution
+## cli module resolution
 
-We don't have the module resolution set to `bundler` because
-we don't bundle the cli as vite does. We just emit js file with typescript.
+We don't have the [module resolution](../../src/interact/tsconfig.json) set to `bundler` because
+we don't bundle the cli as vite does. We just emit js file with TypeScript.
 
 ```json
 {

@@ -6,7 +6,7 @@
   },
   "components": {
     "Counter": {
-      "importPath": "./components/Counter.js",
+      "importPath": "./components/Counter.tsx",
       "type": "content"
     },
     "Planet": {
@@ -14,7 +14,7 @@
       "type": "content"
     },
     "NotFound": {
-      "importPath": "./pages/404.js",
+      "importPath": "./pages/404.tsx",
       "type": "page"
     },
     "NavBar": {
@@ -28,7 +28,7 @@
   "pages": {
     "providers": [
       {
-        "importPath": "./cms/remote-markdown.js",
+        "importPath": "./cms/remote-markdown.tsx",
         "props": {
           "basePath": "https://raw.githubusercontent.com",
           "prefix": "/github"

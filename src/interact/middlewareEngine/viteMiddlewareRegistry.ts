@@ -11,7 +11,7 @@ export function viteMiddlewareRegistry(): Plugin {
     let middlewareConfigs: MiddlewareConfig[] = [
         ...interactConfig.pages.providers || [],
         {
-            importPath: path.resolve(interactConfig.paths.interactDirectory, 'middleware/localPagesMiddleware.js'),
+            importPath: path.resolve(interactConfig.paths.interactDirectory, 'lib/middleware/localPagesMiddleware'),
             props: {
                 pagesDirectory: interactConfig.paths.pagesDirectory
             }

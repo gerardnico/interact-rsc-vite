@@ -24,10 +24,10 @@ import type {Page, TocNode} from "@combostrap/interact/types";
 import {VFileMessage} from 'vfile-message'
 import {compileSync, runSync} from '@mdx-js/mdx'
 import * as jsxRuntime from 'react/jsx-runtime'
-import {getMarkdownConfig} from "../conf/markdownConfig.js";
-import type {markdownFormat} from "../../config/configSchema.js";
+import {getMarkdownConfig} from "../../interact/markdown/conf/markdownConfig";
+import type {markdownFormat} from "../../interact/config/configSchema";
 import {statSync} from "node:fs";
-import type {Frontmatter} from "../../pages/interactPage.js";
+import type {Frontmatter} from "../../interact/pages/interactPage";
 
 
 // Markdown processing to react component via rehypeReact

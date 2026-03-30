@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 /**
  * Directory of the code
  */
-const interactPackageDir = path.resolve(__dirname, '..');
+const srcPackageDir = path.resolve(__dirname, '../..');
 
 
 /**
@@ -364,7 +364,7 @@ class InteractConfigHandler {
             publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
             imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
             cacheDirectory: this.#qualifiedDirectoryPath(".interact"),
-            interactDirectory: interactPackageDir,
+            interactDirectory: srcPackageDir,
             buildDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.buildDirectory),
             cssFile: this.#qualifiedDirectoryPath(finalConfigData.paths.cssFile),
         }

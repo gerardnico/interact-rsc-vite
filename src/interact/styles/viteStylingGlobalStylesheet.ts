@@ -12,12 +12,12 @@ export default function viteStylingGlobalStylesheet(): Plugin {
     //const resolvedId = "\0" + moduleId
     const resolvedId = moduleId;
     let interactConfig = getInteractConfig()
-    let filePath = interactConfig.paths.cssFile
-    if (!existsSync(filePath)) {
-        filePath = path.resolve(__dirname, "global.css");
+    let confCssFilePath = interactConfig.paths.cssFile
+    if (!existsSync(confCssFilePath)) {
+        confCssFilePath = path.resolve(__dirname, "global.css");
     }
-    if (!existsSync(filePath)) {
-        throw new Error("A global css file should have been found");
+    if (!existsSync(confCssFilePath)) {
+        throw new Error(`A global CSS file should have been found`);
     }
 
     return {
@@ -26,14 +26,14 @@ export default function viteStylingGlobalStylesheet(): Plugin {
             // file path is mandatory, we don't load the content in the load function
             // because the path in the file are relative to the file
             // This is equivalent to a redirect
-            if (id === resolvedId) return filePath
+            if (id === resolvedId) return confCssFilePath
         },
         configureServer(server) {
 
-            server.watcher.add(filePath)
+            server.watcher.add(confCssFilePath)
             server.watcher.on('change', (file) => {
 
-                if (!file.endsWith(filePath)) return
+                if (!file.endsWith(confCssFilePath)) return
 
                 // trigger HMR update
                 // full refresh, no?
@@ -42,11 +42,11 @@ export default function viteStylingGlobalStylesheet(): Plugin {
             })
             server.watcher.on('delete', (file) => {
 
-                if (!file.endsWith(filePath)) return
+                if (!file.endsWith(confCssFilePath)) return
 
                 // trigger HMR update
                 // full refresh, no?
-                server.restart().then(() => console.log(`The server was restarted because the styling file (${filePath}) was deleted`));
+                server.restart().then(() => console.log(`The server was restarted because the styling file (${confCssFilePath}) was deleted`));
 
             })
         },

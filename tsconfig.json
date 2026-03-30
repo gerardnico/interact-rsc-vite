@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    // needed by oclif dev command
+    "rootDir": "src",
+    // needed by oclif dev command
+    "outDir": "dist",
     "erasableSyntaxOnly": true,
     //"allowImportingTsExtensions": true,
     "strict": true,
@@ -13,11 +17,10 @@
     // Set skipLibCheck to `false` to check our d.ts file
     // such as import type {DoesNotExist} from "@combostrap/interact/types"
     "skipLibCheck": true,
-    "rootDir": "src",
     "verbatimModuleSyntax": true,
     //    "noEmit": true,
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
+//    "moduleResolution": "NodeNext",
+//    "module": "NodeNext",
     "target": "ESNext",
     "sourceMap": true,
     // create the js.map files
@@ -35,16 +38,11 @@
       "mdx"
     ],
     "paths": {
-      "@/*": ["./src/interact/*"]
+      "@/*": ["./src/lib/*"]
     },
-    "jsx": "react-jsx",
-    // or "react-jsx" for React 17+
-    "outDir": "./dist/",
     "esModuleInterop": true
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": [],
   // Options for file/directory watching
   // https://www.typescriptlang.org/docs/handbook/configuring-watch.html
   "watchOptions": {

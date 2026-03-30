@@ -143,7 +143,7 @@ export default function viteComponentProvider({moduleName = 'interact:components
      * https://vite.dev/guide/api-plugin#virtual-modules-convention
      * because it does not work
      * * We saw this error: [vite] Internal server error: The argument 'path' must be a string, Uint8Array, or URL without null bytes. Received '\x00interact:page-modules'
-     * * And the module is not found anymore jn the module grpah
+     * * And the module is not found anymore jn the module graph
      */
     const resolvedVirtualModuleId = moduleName;
 

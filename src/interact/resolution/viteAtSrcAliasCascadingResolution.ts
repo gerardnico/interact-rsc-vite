@@ -30,7 +30,7 @@ export function viteAtSrcAliasCascadingResolution(): Plugin {
             }
             let candidate;
             if (isInteractAlias(importer)) {
-                candidate = `${interactConfig.paths.interactDirectory}/${relative}`
+                candidate = `${interactConfig.paths.interactDirectory}/lib/${relative}`
             } else {
                 candidate = `${interactConfig.paths.rootDirectory}/src/${relative}`;
             }

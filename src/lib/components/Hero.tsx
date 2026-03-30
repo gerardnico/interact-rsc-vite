@@ -1,4 +1,4 @@
-import type {ContextProps} from "../types/index.js";
+import type {ContextProps} from "@combostrap/interact/types";
 import React from "react";
 
 export type HeroProps = React.HTMLAttributes<HTMLElement> & ContextProps

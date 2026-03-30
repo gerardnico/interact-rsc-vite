@@ -3,7 +3,7 @@
  because the component are referenced with external import path
  (ie @combostrap/interact/components) and TailWind don't parse them
 */
-@import "tailwindcss" source("../components");
+@import "tailwindcss" source("../../lib/components");
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 

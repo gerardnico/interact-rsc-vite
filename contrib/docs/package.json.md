@@ -10,10 +10,12 @@ for the [dev](../../src/interact/cli/dev.js) script
 
 ## Component Export
 
+The exports are meant to be used/bundled by vite, so they live in `src`
+
 ```json
 {
   "exports": {
-    "./components/*": "./src/interact/components/*/index.js"
+    "./components/*": "./src/interact/components/*.tsx"
   }
 }
 ```
@@ -21,7 +23,7 @@ for the [dev](../../src/interact/cli/dev.js) script
 Components Export are not the compiled (dist) one, they are compiled by Vite so that the
 import of CSS file works.
 The only code that needs to be build is the code called by the cli to start vite
-(ie all middleware and plugins)
+(ie all middleware and plugins) located in `src/interact`
 
 ## Vite
 
@@ -31,16 +33,6 @@ unable to find `./cjs/react-server-dom-webpack-client.browser.development.js`
 After upgrading test a ssg
 (tested vite 8.0.1 and it was breaking)
 
-## Prettier
-
-Was added to get the type resolve `skipLibCheck` error:
-
-```
-node_modules/@svgr/core/dist/index.d.ts:1:25 - error TS2307: Cannot find module 'prettier' or its corresponding type declarations.
-
-1 import { Options } from 'prettier';
-                          ~~~~~~~~
-```
 
 ## DevDependencies
 
@@ -53,13 +45,15 @@ and compile.
 We need:
 
 * all compiled js files in dist because the cli needs them.
-* the src file so that vite will load them
+* the src lib file so that vite will load them
+* the type
 
 ```json
 {
   "files": [
     "dist/interact/**/*",
-    "src/**/*"
+    "src/lib/**/*",
+    "src/types/**/*"
   ]
 }
 ```
@@ -77,7 +71,7 @@ message: [MODULE_NOT_FOUND] import() failed to load client-project/node_modules/
 ## Styling, tailwind and Shadcn
 
 * tw-animate-css
-* shadcn 
-* class-variance-authority 
+* shadcn
+* class-variance-authority
 * tailwind-merge
 
