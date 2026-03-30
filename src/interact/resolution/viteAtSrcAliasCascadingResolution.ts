@@ -2,8 +2,12 @@ import fs from "fs";
 import type {Plugin} from "vite";
 import {getInteractConfig} from "../config/interactConfig.js";
 
+/**
+ * Local Laptop: /home/admin/code/combostrap/interact/src/lib/components/Avatar.tsx
+ * CI: /home/runner/work/interact/interact/src/lib/components/Avatar.tsx
+ */
 function isInteractAlias(importer: string) {
-    return importer?.includes("combostrap/interact");
+    return importer?.includes("combostrap/interact") || importer?.includes("interact/interact");
 }
 
 let alias = "@"
@@ -14,20 +18,27 @@ let alias = "@"
  */
 export function viteAtSrcAliasCascadingResolution(): Plugin {
     let interactConfig = getInteractConfig()
+    console.log("at alias resolution plugin loaded")
     return {
         name: 'cascade-alias',
         // importer: the absolute path of the file that contains the import.
-        resolveId(id, importer) {
-            if (!id.startsWith('@/')) return null
+        /**
+         * https://github.com/rolldown/rolldown/blob/3e4eaa0a919bbd36db14ff6fffa448e28505e002/packages/rolldown/src/plugin/index.ts#L272
+         * source example: @/lib/utils as seen in the import
+         * importer: /home/admin/code/combostrap/interact/src/lib/components/Avatar.tsx
+         */
+        resolveId(source, importer) {
+            if (!source.startsWith('@/')) return null
             if (importer == null) return null;
 
             // strip `@/`
-            let relative = id.slice(alias.length + 1)
+            let relative = source.slice(alias.length + 1)
             // delete extension if any
             let lastPoint = relative.lastIndexOf(".")
             if (lastPoint != -1) {
                 relative = relative.slice(0, lastPoint)
             }
+            // Just the import path is not enough
             let candidate;
             if (isInteractAlias(importer)) {
                 candidate = `${interactConfig.paths.interactDirectory}/lib/${relative}`
@@ -36,11 +47,13 @@ export function viteAtSrcAliasCascadingResolution(): Plugin {
             }
             // try common extensions
             for (const ext of ['', '.ts', '.tsx', '.js', '.jsx']) {
-                if (fs.existsSync(candidate + ext)) {
-                    return candidate + ext
+                let candidateFull = candidate + ext;
+                if (fs.existsSync(candidateFull)) {
+                    return candidateFull
                 }
             }
             // let Vite handle it (will likely error)
+            console.error(`The ${source} could not be resolved from the importer (${importer}) with the candidate (${candidate})`);
             return null
         }
     }

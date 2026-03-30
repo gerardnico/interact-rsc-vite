@@ -18,9 +18,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
- * Directory of the code
+ * Directory of the code, this module will be in dist distributed so we go back until the root
+ * to find src again
  */
-const srcPackageDir = path.resolve(__dirname, '../..');
+const srcPackageDir = path.resolve(__dirname, '../../../src');
 
 
 /**

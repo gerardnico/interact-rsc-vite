@@ -136,7 +136,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/server/entry.rsc.js'),
+                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/server/entry.rsc.tsx'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "rsc"),
@@ -152,7 +152,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/server/entry.ssr.js'),
+                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/server/entry.ssr.tsx'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "ssr"),
@@ -170,7 +170,7 @@ export async function resolveViteConfig(
                 build: {
                     rollupOptions: {
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/browser/entry.browser.js'),
+                            index: path.resolve(interactConfigTyped.paths.interactDirectory, 'lib/rsc/browser/entry.browser.tsx'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),

@@ -12,6 +12,7 @@
     "check:contrib": "tsc -p contrib/scripts/tsconfig.json",
     "check:lib": "tsc -p src/lib/tsconfig.json",
     "watch": "tsc --watch",
+    "deploy": "git tag -f early-access && git push -f origin early-access",
     "start": "src/interact/cli/dev.js start --confPath=apps/site",
     "site": "cd ../../gerardnico/com-gerardnico && node_modules/@combostrap/interact/src/interact/cli/dev.js start",
     "ssg": "src/interact/cli/dev.js build --confPath=apps/site",
