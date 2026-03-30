@@ -174,7 +174,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
     } catch (err) {
         throw new ImageError({
             ...ImageErrors.SHARP_ERROR,
-            message: `Sharp error while reading the image file ${props.src}/${sourceFile}`,
+            message: `Sharp error while reading the image file ${props.src} (${sourceFile})`,
             options: {
                 cause: err
             }

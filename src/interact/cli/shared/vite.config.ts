@@ -40,7 +40,7 @@ type InteractConfig = {
  * Globals Conf are set and reused in each plugin
  * Why? If they change, we set them and we restart the dev server
  */
-export async function setGlobalsConf(confPath: string | undefined, force:boolean=false) {
+export async function setGlobalsConf(confPath: string | undefined, force: boolean = false) {
     const interactConfigTyped = createInteractConfig(confPath);
     setInteractConfigGlobally(interactConfigTyped, force);
     const markdownConfig = await createMarkdownConfig()
@@ -112,17 +112,6 @@ export async function resolveViteConfig(
         // https://vite.dev/config/shared-options#cachedir
         cacheDir: path.resolve(interactConfigTyped.paths.cacheDirectory, ".vite"),
         build: {
-            // https://rollupjs.org/configuration-options/
-            rollupOptions: {
-                external: [
-                    // Ensure image service dependency (present in our vite-image-service.ts file)
-                    // such as sharp, mime and etag is excluded from bundling
-                    // https://sharp.pixelplumbing.com/install/#vite
-                    "sharp",
-                    "mime",
-                    "etag"
-                ]
-            },
             // https://vite.dev/config/build-options#build-outdir
             outDir: interactConfigTyped.paths.buildDirectory
         },
@@ -172,6 +161,15 @@ export async function resolveViteConfig(
                         input: {
                             index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/browser/entry.browser.tsx'),
                         },
+                        // https://rollupjs.org/configuration-options/
+                        external: [
+                            // Ensure image service dependency (present in our vite-image-service.ts file)
+                            // such as sharp, mime and etag is excluded from browser bundling
+                            // https://sharp.pixelplumbing.com/install/#vite
+                            "sharp",
+                            "mime",
+                            "etag"
+                        ]
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),
                     emptyOutDir: true
