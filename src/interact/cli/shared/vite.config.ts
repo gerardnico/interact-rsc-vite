@@ -23,7 +23,7 @@ import {createInteractConfig, getInteractConfig, setInteractConfigGlobally} from
 import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
 import tailwindcss from "@tailwindcss/vite"
 import viteStylingGlobalStylesheet from "../../styles/viteStylingGlobalStylesheet.js";
-import {viteAtSrcAliasCascadingResolution} from "../../resolution/viteAtSrcAliasCascadingResolution.js";
+import {viteAtSrcAliasResolution} from "../../resolution/viteAtSrcAliasResolution.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -38,7 +38,7 @@ type InteractConfig = {
 
 /**
  * Globals Conf are set and reused in each plugin
- * Why? If they change, we set them and we restart the dev server
+ * Why? If they change, we set them, and we restart the dev server
  */
 export async function setGlobalsConf(confPath: string | undefined, force: boolean = false) {
     const interactConfigTyped = createInteractConfig(confPath);
@@ -177,6 +177,11 @@ export async function resolveViteConfig(
             },
         },
         plugins: [
+            // Resolve the @/ in a cascading way
+            {
+                enforce: "pre", // should be first
+                ...viteAtSrcAliasResolution(),
+            },
             pageModulesPlugin(['mdx', 'tsx', 'jsx']),
             viteImageService({
                 baseDir: interactConfigTyped.paths.imagesDirectory,
@@ -195,8 +200,6 @@ export async function resolveViteConfig(
             react(),
             // Tailwind
             tailwindcss(),
-            // Resolve the @/ in a cascading way
-            viteAtSrcAliasCascadingResolution(),
             // https://www.npmjs.com/package/vite-plugin-svgr
             svgReactPlugin({
                 // If the content needs to be imported as string add the `?raw` property

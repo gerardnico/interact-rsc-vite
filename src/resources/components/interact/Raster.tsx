@@ -1,13 +1,13 @@
 import React from "react";
 
 
-import type {ImageCompressionType} from "../../interact/images/imageCompressionType";
-import type {ImageFitType, ImageType} from "../../interact/config/configSchema";
+import type {ImageCompressionType} from "../../../interact/images/imageCompressionType.js";
+import type {ImageFitType, ImageType} from "../../../interact/config/configSchema.js";
 import clsx from "clsx";
-import {getHtmlImageAttributes, type HtmlImageAttributes} from "../../interact/images/imageClientLibrary";
-import {ImageError, ImageErrors} from "../../interact/images/imageErrorsDictionary";
+import {getHtmlImageAttributes, type HtmlImageAttributes} from "../../../interact/images/imageClientLibrary.js";
+import {ImageError, ImageErrors} from "../../../interact/images/imageErrorsDictionary.js";
 
-import {brokenImage} from "../../interact/images/imageSharedCode";
+import {brokenImage} from "../../../interact/images/imageSharedCode.js";
 import {getInteractConfig} from "@combostrap/interact/config";
 
 
@@ -98,7 +98,7 @@ type AllImageProps = {
 /**
  * An Image React component
  */
-export default async function Image({
+export default async function Raster({
                                         type,
                                         compression,
                                         fit,

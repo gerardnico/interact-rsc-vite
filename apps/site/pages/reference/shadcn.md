@@ -13,7 +13,7 @@ If you want only Radix-UI, you need to:
 * build your own [layouts](layout.md) without any base-ui component (mostly navbar and sidebar)
 * or
   * use Radix-Ui components in your project at `@/components/ui`
-  * set the `layout.atAliasResolution` [configuration](conf.md) to `cascade`.
+  * set the `layout.uiAliasResolution` [configuration](conf.md) to `cascade`.
 
 With `cascade` as resolution, the UI import such as `import {Button} from "@/components/ui/button.js"` will
 be resolved first against your project.  

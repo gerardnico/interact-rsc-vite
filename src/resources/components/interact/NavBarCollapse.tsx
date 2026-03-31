@@ -1,10 +1,9 @@
 'use client'
 
 import {useState} from "react";
-import {cn} from "../lib/utils.js";
-import {ModeToggle} from "@/components/ModeToggle.js";
+import {cn} from "@/lib/utils";
 
-export function NavBarCollapse({children, className, ...props}: React.HTMLAttributes<HTMLDivElement>) {
+export default function NavBarCollapse({children, className, ...props}: React.HTMLAttributes<HTMLDivElement>) {
     const [isOpen, setIsOpen] = useState(false);
 
     let hamburgerLine: React.CSSProperties = {
@@ -69,9 +68,6 @@ export function NavBarCollapse({children, className, ...props}: React.HTMLAttrib
                 }}
                 {...props}>
                 {children}
-                <div className={"ml-auto "}>
-                    <ModeToggle/>
-                </div>
             </div>
         </>
     )

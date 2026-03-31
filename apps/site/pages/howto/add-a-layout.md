@@ -11,43 +11,35 @@ The layout should return the `html` element wrapping a [page component](../refer
 Example of minimal implementations:
 
 ```tsx
-import type {TemplateProps} from "@combostrap/interact/client";
-import Head from "@combostrap/interact/components/Head";
+import type {ContextProps} from "@combostrap/interact/types";
+import Head from "@combostrap/interact/components/partials/Head";
+import Html from "@combostrap/interact/components/partials/Html";
+import Body from "@combostrap/interact/components/partials/Body";
 
-export function MyLayout(props: TemplateProps) {
+export function MyLayout(props: ContextProps) {
     const PageComponent = layoutProps.page.default;
     const request = layoutProps.request;
     return (
-        <html lang="en" dir="ltr">
-        <Head {...layoutProps} />
-        <body>
-        {PageComponent && <PageComponent request={request}/>}
-        </body>
-        </html>
+        <Html {...contextProps}>
+            <Head {...contextProps} />
+            <Body {...contextProps}>
+                {PageComponent && <PageComponent request={request}/>}
+            </Body>
+        </Html>
     )
 }
 ```
 
+### Register it
+
+Interact expects all layout files to be stored in the directory `@/components/layouts` as `jsx` or `tsx` files
+
+Store the previous layout at : `@/components/layouts/myLayout.tsx`
+
 ### Reuse a layout
 
 If you want to make a small changes, the easiest is to copy the actual interact layout.
-They are all under the [components directory](https://github.com/combostrap/interact/tree/main/src/interact/components)
-
-
-### Register it
-
-You can register it by defining it in the [configuration file](../reference/conf.md).
-
-```json
-{
-  "components": {
-    "MyLayout": {
-      "importPath": "src/component/MyLayout.js",
-      "type": "layout"
-    }
-  }
-}
-```
+They are all under the [layouts components directory](https://github.com/combostrap/interact/tree/main/src/interact/components)
 
 ### Use it
 

@@ -91,6 +91,14 @@ const PathsSchema = z.object({
     // https://vite.dev/config/build-options#build-outdir
     buildDirectory: z.coerce.string<string>().describe("The path of the output directory relative to the project root").default("dist"),
     cssFile: z.coerce.string<string>().describe("The path to the global.css file").default("src/styles/global.css"),
+    atDirectory: z.coerce.string<string>().describe("The path of the at directory ").default("src"),
+})
+
+/**
+ * Aliases Schema
+ */
+const AliasesSchema = z.object({
+    ui: z.coerce.string<string>().describe("The alias to the shadcn component ui").default("@/components/ui"),
 })
 
 
@@ -251,7 +259,7 @@ let configStyleSchema = z.object({
 export type styleConfigType = z.output<typeof configStyleSchema>;
 
 let configLayoutSchema = z.object({
-    atAliasResolution: z.enum(['cascade', 'standard']).describe("Resolve the @ alias with cascade or not (ie check the site first for the ui then interact)").default('standard'),
+    uiAliasResolution: z.enum(['cascade', 'standard']).describe("Resolve the @/components/ui alias from an Interact components with cascade or not (with cascade, the resolution check the project directory then interact)").default('standard'),
 });
 export type layoutConfigType = z.output<typeof configLayoutSchema>;
 
@@ -274,6 +282,7 @@ const BaseComponentSchema = z.object({
 });
 
 const TocSchema = BaseComponentSchema.extend({
+    type: z.enum(["partial"]).default("partial"),
     props: BaseComponentSchema.shape.props.and(
         z.object({
             maxDepth: z.coerce.number<number>().describe("The maximum level printed").default(3),
@@ -282,7 +291,8 @@ const TocSchema = BaseComponentSchema.extend({
 });
 
 // Component-specific schemas that extend the base
-const NavBarSchema = BaseComponentSchema.extend({
+const Header = BaseComponentSchema.extend({
+    type: z.enum(["partial"]).default("partial"),
     props: BaseComponentSchema.shape.props.and(
         z.object({
             brandName: z.string().nullable().optional(),
@@ -296,7 +306,7 @@ const NavBarSchema = BaseComponentSchema.extend({
 
 
 const ComponentsConfigSetSchema = z.object({
-    NavBar: NavBarSchema.optional(),
+    Header: Header.optional(),
     Toc: TocSchema.optional(),
     NotFound: BaseComponentSchema.optional(),
 }).catchall(BaseComponentSchema); // unknown keys fall back to base schema
@@ -349,6 +359,7 @@ export const JsonConfigSchema = z.object({
     site: SiteSchema.default(SiteSchema.parse({})),
     outline: OutlineSchema.default(OutlineSchema.parse({})),
     paths: PathsSchema.default(PathsSchema.parse({})),
+    aliases: AliasesSchema.default(AliasesSchema.parse({})),
     pages: PagesConfigSchema.default(PagesConfigSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
@@ -360,6 +371,7 @@ export const JsonConfigSchema = z.object({
 
 export type imageConfigType = z.output<typeof ImageSchema>;
 export type pathsConfigType = z.output<typeof PathsSchema>;
+export type aliasesConfigType = z.output<typeof AliasesSchema>;
 export type siteConfigType = z.output<typeof SiteSchema>;
 export type outlineConfigType = z.output<typeof OutlineSchema>;
 export type markdownConfigType = z.output<typeof MarkdownConfigSchema>;

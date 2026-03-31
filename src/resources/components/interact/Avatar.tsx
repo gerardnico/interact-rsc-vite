@@ -3,8 +3,8 @@
 // * Making it round: `border-radius: 50%` or `rounded-circle` class in bs turns it into a circle. This only works well when width and height are equal (a square).
 // *  Covering the frame — `object-fit: cover` ensures the image fills the square without distortion, cropping from the center if needed.
 import Raster, {type ImageProps} from '@combostrap/interact/components/Image';
-import {InteractError, InteractErrorData} from "../../interact/errors/index";
-import {cn} from "@/lib/utils";
+import {InteractError, InteractErrorData} from "../../../interact/errors/index.js";
+import {cn} from "src/resources/lib/utils.js";
 
 // noinspection JSUnusedGlobalSymbols - exported at the package level
 export type AvatarType = ImageProps & {

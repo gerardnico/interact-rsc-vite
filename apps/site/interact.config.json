@@ -17,7 +17,7 @@
       "importPath": "./pages/404.tsx",
       "type": "page"
     },
-    "NavBar": {
+    "Header": {
       "props": {
         "brandName": "nteract",
         "logoWidth": 24,

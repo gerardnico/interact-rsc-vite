@@ -51,12 +51,12 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
     for (const [key, value] of Object.entries(interactConfig.components)) {
 
         /**
-         * Layout are not here
+         * Layout, partials are not here
          * because they import this virtual module
          * to get the partials. It would then create a cycle
          * They are in the layout virtual provider module
          */
-        if (value.type == "layout") {
+        if (value.type != "content" && value.type != "page") {
             continue
         }
 
@@ -65,13 +65,13 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
          */
         let importPath = value.importPath;
         if (importPath == null) {
-            throw new Error(`Import ${importPath} not defined for the component ${key}`);
+            throw new Error(`Import path not defined for the ${value.type} component ${key}`);
         }
 
         /**
          * Import name
          */
-        // Cannot come from the path "./pages/404.js",404 is a number and is not valid as component name but valid as path
+            // Cannot come from the path "./pages/404.js",404 is a number and is not valid as component name but valid as path
         let importName = key;
 
         if (!exports.has(importName)) {
@@ -104,8 +104,6 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
         if (value.type == "content") {
             mdxMappingElementNameComponentName[key] = importName
         }
-
-
 
 
     }

@@ -26,7 +26,9 @@
   ],
   "exports": {
     "./types": "./src/types/index.d.ts",
-    "./components/*": "./src/resources/components/*.tsx",
+    "./components/*": "./src/resources/components/interact/*.tsx",
+    "./components/layouts/*": "./src/resources/components/layouts/*.tsx",
+    "./components/partials/*": "./src/resources/components/partials/*.tsx",
     "./markdown": "./src/resources/markdown/interactMarkdownProcessor.tsx",
     "./config": "./src/interact/config/interactConfig.ts"
   },

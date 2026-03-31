@@ -1,6 +1,6 @@
 import React from "react";
 import clsx from "clsx";
-import {type SpacingSize} from "./Block.js";
+import {type SpacingSize} from "../Block.js";
 
 // https://getbootstrap.com/docs/5.0/utilities/vertical-align/
 type InlineVerticalAlignType = "baseline" | "top" | "middle" | "bottom" | "text-bottom" | "text-top";

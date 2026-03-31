@@ -11,8 +11,8 @@ It's also known as the `root` component because it returns the entire document i
 
 * Holy - Full layout
 * HolyMedium - Holy layout without the sidebar
-* Hamburger - Top navbar, page and footer
-* Landing - Hamburger where the page is not constrained
+* Hamburger - header, content and footer
+* Landing - Hamburger layout where the content is not constrained
 * None: No layout applied, your page should return the `html` root element
 
 ## How to set a layout
@@ -45,3 +45,23 @@ See [How to create a layout](../howto/add-a-layout.md)
 
 Layout and partial component cannot be [client component](../reference/rsc.md#use-client)
 otherwise you get the [fatal rsc error](../reference/rsc.md#only-plain-objects-error)
+
+## Partials
+
+Default layouts are composed of the following partials:
+
+* Html - the html tag
+* Head - the head tag
+* Body - the body tag
+* Header - the page header
+* Aside - the sidebar
+* Toc - the toc
+* Footer - the page footer
+
+If you want to override the default ones, you should create a partial with the same name and store it at:
+`@/components/partials`.
+
+They:
+
+* are and should be [server component](rsc.md)
+* accepts the context props (page and request)

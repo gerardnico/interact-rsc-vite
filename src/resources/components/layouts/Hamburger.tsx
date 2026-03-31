@@ -1,7 +1,10 @@
 import type {ContextProps} from "@combostrap/interact/types";
-import {Head, Html, Body, NavBar} from "interact:components";
-import clsx from "clsx";
 import {getInteractConfig} from "@combostrap/interact/config";
+import Header from "@/components/partials/Header";
+import Body from "@/components/partials/Body";
+import Html from "@/components/partials/Html";
+import Head from "@/components/partials/Head";
+import {cn} from "@/lib/utils";
 
 /**
  * Hamburger Layout
@@ -14,11 +17,11 @@ export default function Hamburger(contextProps: ContextProps) {
         <Html {...contextProps}>
             <Head {...contextProps}/>
             <Body {...contextProps}>
-                <NavBar {...contextProps} />
-                <div id="page-trunk" className={
-                    clsx(
+                <Header {...contextProps} />
+                <div className={
+                    cn(
                         interactConfig.style.container.containerClass,
-                        "position-relative"
+                        "position-relative",
                     )}>
                     <main>
                         <Component request={contextProps.request}/>

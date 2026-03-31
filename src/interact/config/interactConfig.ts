@@ -7,10 +7,10 @@ import {
     type FaviconSetSchemaType,
     type pluginsConfigType, type ComponentsSet, type pathsConfigType, type imageConfigType,
     type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType, type PagesConfig,
-    type layoutConfigType
+    type layoutConfigType, type aliasesConfigType
 } from "./configSchema.js";
-import fs from 'fs'
-import {readFileSync} from "node:fs";
+import fs, {existsSync} from 'fs'
+import {readdirSync, readFileSync} from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
 
@@ -19,120 +19,70 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-
-
 /**
  * #components is declared in the package.json imports property
  */
 //const privateComponent = `#components`
-const publicComponent = `@combostrap/interact/components`
+const atInteractComponentPath = "@/components/interact"
 export const defaultComponentsValue: ComponentsSet = {
-    "Aside": {
-        importPath: `${publicComponent}/Aside`,
-        type: "partial"
-    },
-    "Avatar": {
-        importPath: `${publicComponent}/Avatar`,
-        type: "content"
-    },
     "a": {
-        importPath: `${publicComponent}/Anchor`,
+        importPath: `${atInteractComponentPath}/Anchor`,
         type: "content"
     },
-    "Block": {
-        importPath: `${publicComponent}/Block`,
-        type: "content"
-    },
-    "Body": {
-        importPath: `${publicComponent}/Body`,
-        type: "partial"
-    },
+    // "Block": {
+    //     importPath: `${atInteractComponentPath}/Block`,
+    //     type: "content"
+    // },
     "Code": {
-        importPath: `${publicComponent}/Code`,
+        importPath: `${atInteractComponentPath}/Code`,
         type: "content"
     },
     "code": {
-        importPath: `${publicComponent}/Mark`,
+        importPath: `${atInteractComponentPath}/Mark`,
         type: "content"
     },
-    "Grid": {
-        importPath: `${publicComponent}/Grid`,
-        type: "content"
-    },
-    "GridCell": {
-        importPath: `${publicComponent}/GridCell`,
-        type: "content"
-    },
-    "Hamburger": {
-        importPath: `${publicComponent}/Hamburger`,
-        type: "layout"
-    },
-    "Head": {
-        importPath: `${publicComponent}/Head`,
-        type: "partial"
-    },
-    "Hero": {
-        importPath: `${publicComponent}/Hero`,
-        type: "partial"
-    },
-    "Holy": {
-        importPath: `${publicComponent}/Holy`,
-        type: "layout"
-    },
-    "HolyMedium": {
-        importPath: `${publicComponent}/HolyMedium`,
-        type: "layout"
-    },
-    "Html": {
-        importPath: `${publicComponent}/Html`,
-        type: "partial"
-    },
+    // "Grid": {
+    //     importPath: `${atInteractComponentPath}/Grid`,
+    //     type: "content"
+    // },
+    // "GridCell": {
+    //     importPath: `${atInteractComponentPath}/GridCell`,
+    //     type: "content"
+    // },
     "Image": {
-        importPath: `${publicComponent}/Image`,
+        importPath: `${atInteractComponentPath}/Image`,
         type: "content"
     },
-    "Landing": {
-        importPath: `${publicComponent}/Landing`,
-        type: "layout"
-    },
-    "Para": {
-        importPath: `${publicComponent}/Para`,
-        type: "content"
-    },
-    "NavBar": {
-        importPath: `${publicComponent}/NavBar`,
-        type: "partial"
-    },
+    // "Para": {
+    //     importPath: `${atInteractComponentPath}/Para`,
+    //     type: "content"
+    // },
     "pre": {
-        importPath: `${publicComponent}/Code`,
+        importPath: `${atInteractComponentPath}/Code`,
         type: "content"
     },
-    "RufflePlayer": {
-        importPath: `${publicComponent}/RufflePlayer`,
-        type: "content"
-    },
-    "StarRating": {
-        importPath: `${publicComponent}/StarRating`,
-        type: "content"
-    },
+    // "RufflePlayer": {
+    //     importPath: `${atInteractComponentPath}/RufflePlayer`,
+    //     type: "content"
+    // },
+    // "StarRating": {
+    //     importPath: `${atInteractComponentPath}/StarRating`,
+    //     type: "content"
+    // },
     "table": {
-        importPath: `${publicComponent}/Table`,
+        importPath: `${atInteractComponentPath}/Table`,
         type: "content"
     },
-    "Text": {
-        importPath: `${publicComponent}/Text`,
-        type: "content"
-    },
-    "Toc": {
-        importPath: `${publicComponent}/Toc`,
-        type: "partial"
-    },
+    // "Text": {
+    //     importPath: `${atInteractComponentPath}/Text`,
+    //     type: "content"
+    // },
     "NotFound": {
-        importPath: `${publicComponent}/NotFound`,
+        importPath: `@/components/NotFound`,
         type: "page"
     },
     "Svg": {
-        importPath: `${publicComponent}/Svg`,
+        importPath: `${atInteractComponentPath}/Svg`,
         type: "content"
     }
 }
@@ -292,6 +242,7 @@ export type InteractConfig = {
     images: imageConfigType,
     markdown: markdownConfigType,
     layout: layoutConfigType,
+    aliases: aliasesConfigType,
     paths: pathsConfigType & {
         configFile: string
         // "The root path of the site project"
@@ -370,6 +321,7 @@ class InteractConfigHandler {
             resourcesDirectory: path.resolve(__dirname, '../../../src/resources'),
             buildDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.buildDirectory),
             cssFile: this.#qualifiedDirectoryPath(finalConfigData.paths.cssFile),
+            atDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.atDirectory)
         }
 
         finalConfigData.site.favicons = updateFavicon(
@@ -392,9 +344,30 @@ class InteractConfigHandler {
         finalConfigData.plugins = deepMerge(defaultMarkdownUnifiedPlugins, finalConfigData.plugins)
 
         /**
-         * Default components
+         * Default ui components
          */
         finalConfigData.components = deepMerge(defaultComponentsValue, finalConfigData.components)
+
+        /**
+         * Add layout (partials are not needed)
+         */
+        const atDirectories = [finalConfigData.paths.resourcesDirectory, finalConfigData.paths.atDirectory];
+        const type = 'layout';
+        for (const atDirectory of atDirectories) {
+            let atPath = `components/${type}s`;
+            let layoutDirectory = `${atDirectory}/${atPath}`;
+            if (!existsSync(layoutDirectory)) {
+                continue
+            }
+            for (const file of readdirSync(layoutDirectory)) {
+                const {name, ext} = path.parse(file);
+                if (!/\.(jsx|tsx)$/.test(ext)) continue;
+                finalConfigData.components[name] = {
+                    importPath: `@/${atPath}/${name}`,
+                    type: type
+                }
+            }
+        }
 
         /**
          * Default Markdown

@@ -1,7 +1,9 @@
+'use client'
+
 import * as React from "react"
 import {Moon, Sun} from "lucide-react"
 
-import {Button} from "@/components/ui/button.js"
+import {Button} from "@/components/ui/button"
 
 export function ModeToggle() {
     const [theme, setThemeState] = React.useState<

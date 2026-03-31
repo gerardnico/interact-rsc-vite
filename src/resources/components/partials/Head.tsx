@@ -1,5 +1,5 @@
 import type {ContextProps} from "@combostrap/interact/types";
-import {PAGE_CONTAINER_CLASS_NAME} from "./classNames.js";
+import {PAGE_CONTAINER_CLASS_NAME} from "../classNames.js";
 import {getInteractConfig} from "@combostrap/interact/config";
 import React from "react";
 

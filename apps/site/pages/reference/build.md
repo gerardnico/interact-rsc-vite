@@ -1,10 +1,10 @@
 ---
-title: How to build the Interact website
+title: How to build your project website?
 ---
 
-## Favicons
+## Favicons and App Manifest
 
-If you want to generate the [favicon](favicons.md) from the master svg file at built time,
+If you want to generate the [favicons and app manifest](favicons.md) at built time,
 you need to add it in the build script.
 
 Example:

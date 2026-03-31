@@ -16,11 +16,11 @@ let alias = "@"
  * A plugin to resolve the at sign alias from our code or the code of the site
  * Shadcn alias: https://ui.shadcn.com/docs/installation/vite#update-viteconfigts
  */
-export function viteAtSrcAliasCascadingResolution(): Plugin {
+export function viteAtSrcAliasResolution(): Plugin {
     let interactConfig = getInteractConfig()
     console.log("at alias resolution plugin loaded")
     return {
-        name: 'cascade-alias',
+        name: 'at-alias-resolution',
         // importer: the absolute path of the file that contains the import.
         /**
          * https://github.com/rolldown/rolldown/blob/3e4eaa0a919bbd36db14ff6fffa448e28505e002/packages/rolldown/src/plugin/index.ts#L272
@@ -40,10 +40,13 @@ export function viteAtSrcAliasCascadingResolution(): Plugin {
             }
             // Just the import path is not enough
             let candidates = [];
-            let resolution = interactConfig.layout.atAliasResolution;
+            let resolution = interactConfig.layout.uiAliasResolution;
             let interactPath = `${interactConfig.paths.resourcesDirectory}/${relative}`;
-            let clientPath = `${interactConfig.paths.rootDirectory}/src/${relative}`;
-            if (resolution == 'standard') {
+            let clientPath = `${interactConfig.paths.atDirectory}/${relative}`;
+            // https://ui.shadcn.com/docs/components-json#aliasesui
+            let interactAlias = "@/components/ui";
+            let isUiImport = source.startsWith(interactAlias) || source.startsWith(interactConfig.aliases.ui);
+            if (resolution == 'standard' && isUiImport) {
                 if (isInteractAlias(importer)) {
                     candidates.push(interactPath)
                 } else {

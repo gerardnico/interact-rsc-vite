@@ -7,7 +7,7 @@
       "name": "ModeToggle",
       "type": "registry:component",
       "title": "Mode Toggle",
-      "description": "A dark/light color toggle",
+      "description": "A color mode toggle (dark/light)",
       "files": [
         {
           "path": "src/resources/components/ModeToggle.tsx",

@@ -1,19 +1,19 @@
 ---
-title: Components
+title: Components System
 ---
 
 Components are the blocks that builds the entire HTML document
 served to the user.
 
-The `layout` component is the top component
+The `layout` component is the top/root component:
 
 * that wraps one or more `partials`
 * that wraps a `page`
-* where `content` component can be used
+* where `content` components can be used
 
 ## Author and Designer
 
-The author writes [page](page.md) components while the designer designs `layout`, `partial` and `content` components.
+The author writes [page](page.md) content while the designer designs `layout`, `partial` and `content` components.
 
 ## Concept
 
@@ -28,12 +28,11 @@ The author writes [page](page.md) components while the designer designs `layout`
 
 ### Server vs Client
 
-Interact is built on top of [React Server Components](https://react.dev/reference/rsc/server-components).
+Interact is built on top of [React Server Components](rsc.md).
 
 By default, the components run on the server and are never included in a HTML document.
 If you want to make them interactive and ship them to the browser, you need to declare them as
-`client` component with
-the [client directive](https://react.dev/reference/rsc/server-components#adding-interactivity-to-server-components)
+`client` component with the [client directive](rsc.md#use-client)
 
 Example:
 
@@ -88,13 +87,6 @@ Example on how to change the `pre` component (for code block syntax highlighting
 }
 ```
 
-### Use a component
-
-All components are provided via the `components` module.
-
-```javascript
-import {Code} from "interact:components"
-```
 
 ## Support
 
