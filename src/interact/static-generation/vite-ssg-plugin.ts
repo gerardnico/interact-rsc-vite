@@ -4,7 +4,8 @@ import {pathToFileURL} from "node:url";
 import fs from "node:fs";
 import {Readable} from "node:stream";
 // interactConfig should be a relative path and not the package.json export as this is used by the client
-import {getInteractConfig, defaultComponentsValue} from "../config/interactConfig.js";
+import {getInteractConfig} from "../config/interactConfig.js";
+import {defaultComponentsValue} from "../config/interactConfigHandler.js";
 
 const RSC_POSTFIX = '_.rsc'
 

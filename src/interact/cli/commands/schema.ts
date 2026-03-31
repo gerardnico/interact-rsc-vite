@@ -5,7 +5,7 @@ import {join} from 'path'
 import {JsonConfigSchema} from "../../config/configSchema.js";
 import {BaseCommand} from "../baseCommand.js";
 // interactConfig should be relative path and not the package.json export as this is used by the client
-import {createInteractConfig} from "../../config/interactConfig.js";
+import {createInteractConfig} from "../../config/interactConfigHandler.js";
 
 
 

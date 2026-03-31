@@ -19,11 +19,12 @@ import {
     setMarkdownConfigGlobally
 } from "../../markdown/conf/markdownConfig.js";
 // interactConfig should be a relative path and not the package.json export as this is used by the client
-import {createInteractConfig, getInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
+import {createInteractConfig} from "../../config/interactConfigHandler.js";
 import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
 import tailwindcss from "@tailwindcss/vite"
 import viteStylingGlobalStylesheet from "../../styles/viteStylingGlobalStylesheet.js";
 import {viteAtSrcAliasResolution} from "../../resolution/viteAtSrcAliasResolution.js";
+import {getInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';

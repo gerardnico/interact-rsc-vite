@@ -12,7 +12,7 @@ import {getNodeImageAdapter, loadAndConvertToSvg} from "@realfavicongenerator/im
 import {BaseCommand} from "../baseCommand.js";
 import type {InteractConfig} from "@combostrap/interact/types";
 // interactConfig should be relative path and not the package.json export as this is used by the client
-import {createInteractConfig} from "../../config/interactConfig.js";
+import {createInteractConfig} from "../../config/interactConfigHandler.js";
 
 async function generateImage({masterFilePath, dryRun, outputDirectory, interactConfig: config}: {
     masterFilePath: string,

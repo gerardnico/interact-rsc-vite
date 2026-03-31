@@ -22,7 +22,8 @@
   "files": [
     "dist/interact/**/*",
     "src/resources/**/*",
-    "src/types/**/*"
+    "src/types/**/*",
+    "src/interact/config/interactConfig.ts"
   ],
   "exports": {
     "./types": "./src/types/index.d.ts",

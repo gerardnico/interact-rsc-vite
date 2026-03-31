@@ -1,7 +1,7 @@
 import {Flags} from '@oclif/core'
 import yaml from 'yaml'
 import {BaseCommand} from "../baseCommand.js";
-import {createInteractConfig} from "../../config/interactConfig.js";
+import {createInteractConfig} from "../../config/interactConfigHandler.js";
 
 
 
