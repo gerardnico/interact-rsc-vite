@@ -1,3 +1,4 @@
+'use server'
 import type {ContextProps} from "@combostrap/interact/types";
 import {PAGE_CONTAINER_CLASS_NAME} from "../classNames.js";
 import {getInteractConfig} from "@combostrap/interact/config";
@@ -6,7 +7,7 @@ import React from "react";
 export type HeadProps = React.HTMLAttributes<HTMLHeadElement> & ContextProps;
 
 // noinspection JSUnusedGlobalSymbols - imported via package.json export
-export default function Head({page, request, ...props}: HeadProps) {
+export default async function Head({page, request, ...props}: HeadProps) {
 
     let frontmatter = page?.frontmatter;
     let title = frontmatter?.title;

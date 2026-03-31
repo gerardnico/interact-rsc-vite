@@ -1,3 +1,5 @@
+'use server'
+
 import NavBar from "@/components/interact/NavBar";
 import NavBarCollapse from "@/components/interact/NavBarCollapse";
 import {getInteractConfig} from "@combostrap/interact/config";
@@ -7,7 +9,7 @@ import type {ContextProps} from "@combostrap/interact/types";
 
 
 // @ts-ignore - we don't use the request
-export default function Header(layoutProps: ContextProps) {
+export default async function Header(layoutProps: ContextProps) {
 
     const interactConfig = getInteractConfig();
     let homeUrl = interactConfig.site.base

@@ -106,9 +106,10 @@ export async function resolveViteConfig(
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
             alias: {},
-            // to avoid hooks fatal error, already done by plugin-react
+            // Trying to avoid hooks fatal error, already done by plugin-react
             // https://github.com/vitejs/vite/blob/f09299ce13b55d51456985b96d4c3b3a1f131acb/packages/plugin-react/src/index.ts#L339
-            dedupe: ['react', 'react-dom', '@base-ui/react', 'lucide-react', '@vitejs/plugin-react', '@vitejs/plugin-rsc']
+            // does not work because of @base-ui/react
+            dedupe: ['react', 'react-dom', '@base-ui/react', 'lucide-react', '@vitejs/plugin-react', '@vitejs/plugin-rsc', '@babel', 'rsc-html-stream', 'class-variance-authority', 'clsx']
         },
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
@@ -187,7 +188,6 @@ export async function resolveViteConfig(
                 enforce: "pre", // should be first
                 ...viteAtSrcAliasResolution(),
             },
-            pageModulesPlugin(['mdx', 'tsx', 'jsx']),
             viteImageService({
                 baseDir: interactConfigTyped.paths.imagesDirectory,
                 cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),
@@ -195,11 +195,6 @@ export async function resolveViteConfig(
                 resourcesDir: interactConfigTyped.paths.resourcesDirectory,
                 endPoint: imageMiddlewareEndPoint
             }),
-            viteReloadOnConfChange(),
-            // Component provider (provide also the MdxComponent for mdx)
-            viteComponentProvider({moduleName: componentsProviderModuleName}),
-            // Layout provider (provide the layouts dynamically)
-            viteLayoutProvider(),
             // https://mdxjs.com/packages/mdx/#processoroptions
             mdx(getMarkdownConfig().getMdxRollupConfig(command)),
             react(),
@@ -216,6 +211,13 @@ export async function resolveViteConfig(
                     },
                 },
             }),
+            viteReloadOnConfChange(),
+            // Component provider (provide also the MdxComponent for mdx)
+            viteComponentProvider({moduleName: componentsProviderModuleName}),
+            // Layout provider (provide the layouts dynamically)
+            viteLayoutProvider(),
+            // Pages (after layout)
+            pageModulesPlugin(['mdx', 'tsx', 'jsx']),
             viteStylingGlobalStylesheet(),
             viteStylingOutlineNumberingPlugin(),
             {
@@ -223,7 +225,7 @@ export async function resolveViteConfig(
                 ...viteMiddlewareRegistry()
             },
             // Rsc
-            // At the end because the client import the outline numbering CSS virtual vite module
+            // At the end because the client entry import the virtual CSS (outline and global)
             // Note: you can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
             // to understand how "use client" and "use server" directives are transformed internally.
             // import("vite-plugin-inspect").then(m => m.default()),

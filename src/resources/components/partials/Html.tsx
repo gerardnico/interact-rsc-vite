@@ -1,3 +1,5 @@
+'use server'
+
 import type {ContextProps} from "@combostrap/interact/types";
 import React from "react";
 
@@ -8,7 +10,7 @@ interface LocaleWithTextInfo extends Intl.Locale {
 export type HtmlProps = React.HtmlHTMLAttributes<HTMLHtmlElement> & ContextProps;
 
 // noinspection JSUnusedGlobalSymbols - imported via exports
-export default function Html({request, page, ...props}: HtmlProps) {
+export default async function Html({request, page, ...props}: HtmlProps) {
 
     let lang = "en";
     if (props.lang) {

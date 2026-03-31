@@ -1,3 +1,5 @@
+'use server'
+
 import type {ContextProps} from "@combostrap/interact/types";
 import React from "react";
 
@@ -7,7 +9,7 @@ export type HeroProps = React.HTMLAttributes<HTMLElement> & ContextProps
  * Called the hero and not header so that
  * it's less ambiguous (could also mean the site’s top navigation too)
  */
-export default function Hero({page, request, ...htmlProps}: HeroProps) {
+export default async function Hero({page, request, ...htmlProps}: HeroProps) {
 
     let title = page?.frontmatter?.title;
     if (!title) {

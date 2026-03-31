@@ -1,3 +1,5 @@
+'use server'
+
 import type {Frontmatter, Page, ContextProps} from "@combostrap/interact/types";
 import React from "react";
 
@@ -25,7 +27,7 @@ export const nav = Object.entries(pages)
 export type AsideProps = React.HTMLAttributes<HTMLElement> & ContextProps
 
 // @ts-ignore -- exported
-export default function Aside({page, request, ...props}: AsideProps) {
+export default async function Aside({page, request, ...props}: AsideProps) {
     return (
         <div {...props}></div>
     )
