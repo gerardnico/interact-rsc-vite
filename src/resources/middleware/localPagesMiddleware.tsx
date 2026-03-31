@@ -1,10 +1,22 @@
 import path from "node:path";
-import {fsGetTextAsync} from "../../interact/utils/fs";
 
 import type {MiddlewareHandler, MiddlewarePageResponse} from "../../interact/middlewareEngine/interactMiddleware";
 import {VFile} from "vfile";
 import {markdownToPageSync} from "../markdown/interactMarkdownProcessor";
 
+import { readFile } from "fs/promises";
+
+export async function fsGetTextAsync(path:string) {
+    try {
+        return await readFile(path, "utf8");
+    } catch (error) {
+        const err = error as NodeJS.ErrnoException;
+        if (err.code === "ENOENT") {
+            return null; // file does not exist
+        }
+        throw err;
+    }
+}
 
 /**
  * A pages middleware handler that returns pages from Markdown file located in a local directory
