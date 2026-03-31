@@ -25,7 +25,8 @@
     "src/types/**/*",
     "src/interact/config/**/*",
     "src/interact/images/**/*",
-    "src/interact/errors/**/*"
+    "src/interact/errors/**/*",
+    "src/interact/markdown/**/*"
   ],
   "exports": {
     "./types": "./src/types/index.d.ts",
