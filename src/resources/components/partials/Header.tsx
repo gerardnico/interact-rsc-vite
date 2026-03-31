@@ -1,5 +1,3 @@
-'use server'
-
 import NavBar from "@/components/interact/NavBar";
 import NavBarCollapse from "@/components/interact/NavBarCollapse";
 import {getInteractConfig} from "@combostrap/interact/config";

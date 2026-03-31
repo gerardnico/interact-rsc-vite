@@ -9,7 +9,7 @@ import Body from "@/components/partials/Body";
  * Landing Layout
  */
 // noinspection JSUnusedGlobalSymbols - imported dynamically
-export default async function Landing(contextProps: ContextProps) {
+export default function Landing(contextProps: ContextProps) {
     let Component = contextProps.page.default
     return (
         <Html {...contextProps}>

@@ -14,7 +14,7 @@ import Toc from "../partials/Toc.js";
  * Holy Layout Components
  */
 // noinspection JSUnusedGlobalSymbols - dynamically imported
-export default async function Holy(contextProps: ContextProps) {
+export default function Holy(contextProps: ContextProps) {
 
     const PageComponent = contextProps.page.default;
     return (

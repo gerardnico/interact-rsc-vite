@@ -1,5 +1,3 @@
-'use server'
-
 import type {ContextProps} from "@combostrap/interact/types";
 import React from "react";
 

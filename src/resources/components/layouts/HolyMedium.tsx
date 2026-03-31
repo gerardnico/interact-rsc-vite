@@ -15,7 +15,7 @@ import Toc from "@/components/partials/Toc";
  * Holy Layout Components without the sidebar
  */
 // noinspection JSUnusedGlobalSymbols -
-export default async function HolyMedium(contextProps: ContextProps) {
+export default function HolyMedium(contextProps: ContextProps) {
 
     const PageComponent = contextProps.page.default;
     return (
