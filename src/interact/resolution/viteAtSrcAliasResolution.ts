@@ -67,7 +67,11 @@ export function viteAtSrcAliasResolution(): Plugin {
                 }
             }
             // let Vite handle it (will likely error)
-            console.error(`The ${source} could not be resolved from the importer (${importer}) with the candidate (${candidates.join(', ')}) in ${resolution} resolution`);
+            let message = `The ${source} could not be resolved from the importer (${importer}) with the candidate (${candidates.join(', ')}) in ${resolution} resolution`;
+            if (process.env["NODE_ENV"] === 'development') {
+                throw new Error(message)
+            }
+            console.error(message);
             return null
         }
     }

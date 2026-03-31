@@ -105,7 +105,10 @@ export async function resolveViteConfig(
             extensions: ['.ts', '.tsx', '.mts', '.jsx', '.js', '.mjs'],
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
-            alias: {}
+            alias: {},
+            // to avoid hooks fatal error, already done by plugin-react
+            // https://github.com/vitejs/vite/blob/f09299ce13b55d51456985b96d4c3b3a1f131acb/packages/plugin-react/src/index.ts#L339
+            dedupe: ['react', 'react-dom', '@base-ui/react', 'lucide-react', '@vitejs/plugin-react', '@vitejs/plugin-rsc']
         },
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
@@ -113,7 +116,18 @@ export async function resolveViteConfig(
         cacheDir: path.resolve(interactConfigTyped.paths.cacheDirectory, ".vite"),
         build: {
             // https://vite.dev/config/build-options#build-outdir
-            outDir: interactConfigTyped.paths.buildDirectory
+            outDir: interactConfigTyped.paths.buildDirectory,
+            // https://rollupjs.org/configuration-options/
+            rollupOptions: {
+                external: [
+                    // Ensure image service dependency (present in our vite-image-service.ts file)
+                    // such as sharp, mime and etag is excluded from bundling
+                    // https://sharp.pixelplumbing.com/install/#vite
+                    "sharp",
+                    "mime",
+                    "etag"
+                ]
+            },
         },
         // specify entry point for each environment.
         environments: {
@@ -160,16 +174,7 @@ export async function resolveViteConfig(
                     rollupOptions: {
                         input: {
                             index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/browser/entry.browser.tsx'),
-                        },
-                        // https://rollupjs.org/configuration-options/
-                        external: [
-                            // Ensure image service dependency (present in our vite-image-service.ts file)
-                            // such as sharp, mime and etag is excluded from browser bundling
-                            // https://sharp.pixelplumbing.com/install/#vite
-                            "sharp",
-                            "mime",
-                            "etag"
-                        ]
+                        }
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),
                     emptyOutDir: true

@@ -59,7 +59,7 @@ export function createImageHandler(config: ImageHandlerProps) {
     const {endPoint, secret, cacheDir, resourcesDir, baseDir} = config;
 
 
-    const fallBackSvgString = fs.readFileSync(path.resolve(resourcesDir, brokenImage), 'utf-8');
+    const fallBackSvgString = fs.readFileSync(path.resolve(resourcesDir, "images", brokenImage), 'utf-8');
 
     return async function (req: Request): Promise<Response> {
 
