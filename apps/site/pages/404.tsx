@@ -3,7 +3,6 @@
 import type {Frontmatter} from "@combostrap/interact/types";
 // @ts-ignore -- not under rootDir, we know
 import GoBackButton from "../components/ButtonGoBack";
-import Block from "@combostrap/interact/components/Block";
 import {getInteractConfig} from "@combostrap/interact/config";
 
 export const frontmatter: Frontmatter = {
@@ -20,9 +19,9 @@ export default function NotFound404() {
 
     return (
 
-        <Block blockXAlign={["center"]} marginTop={["5"]}>
+        <div className={"mt-5 flex flex-col items-center justify-center"} >
 
-            <Block maxWidth={"600px"}>
+            <div className={"w-2xl"}>
                 <div className="badge text-bg-secondary">HTTP Error - 404 - Page Not Found</div>
 
                 <div className="divider"></div>
@@ -39,8 +38,8 @@ export default function NotFound404() {
                     <GoBackButton className="btn btn-secondary" style={styles['buttons']}>Go back</GoBackButton>
                 </div>
 
-            </Block>
-        </Block>
+            </div>
+        </div>
 
     )
 

@@ -10,7 +10,7 @@
       "description": "A color mode toggle (dark/light)",
       "files": [
         {
-          "path": "src/resources/components/ModeToggle.tsx",
+          "path": "src/resources/components/interact/ModeToggle.tsx",
           "type": "registry:component"
         }
       ],

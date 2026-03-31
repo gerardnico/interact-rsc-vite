@@ -1,5 +1,8 @@
 import type {ContextProps} from "@combostrap/interact/types";
-import {Head, Html, Body} from "interact:components";
+import Html from "@/components/partials/Html";
+import Head from "@/components/partials/Head";
+import Body from "@/components/partials/Body";
+
 
 
 /**
