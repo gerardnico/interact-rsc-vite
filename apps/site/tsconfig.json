@@ -5,8 +5,13 @@
     "module": "ESNext",
     "noEmit": true,
     "jsx": "react-jsx",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
   },
   "include": [
-    "**/*",
+    "**/*"
   ]
 }

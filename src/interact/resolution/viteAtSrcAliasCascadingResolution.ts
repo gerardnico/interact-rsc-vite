@@ -39,21 +39,32 @@ export function viteAtSrcAliasCascadingResolution(): Plugin {
                 relative = relative.slice(0, lastPoint)
             }
             // Just the import path is not enough
-            let candidate;
-            if (isInteractAlias(importer)) {
-                candidate = `${interactConfig.paths.resourcesDirectory}/${relative}`
+            let candidates = [];
+            let resolution = interactConfig.layout.atAliasResolution;
+            let interactPath = `${interactConfig.paths.resourcesDirectory}/${relative}`;
+            let clientPath = `${interactConfig.paths.rootDirectory}/src/${relative}`;
+            if (resolution == 'standard') {
+                if (isInteractAlias(importer)) {
+                    candidates.push(interactPath)
+                } else {
+                    candidates.push(clientPath);
+                }
             } else {
-                candidate = `${interactConfig.paths.rootDirectory}/src/${relative}`;
+                // cascade
+                candidates.push(clientPath);
+                candidates.push(interactPath)
             }
             // try common extensions
-            for (const ext of ['', '.ts', '.tsx', '.js', '.jsx']) {
-                let candidateFull = candidate + ext;
-                if (fs.existsSync(candidateFull)) {
-                    return candidateFull
+            for (const candidate of candidates) {
+                for (const ext of ['', '.ts', '.tsx', '.js', '.jsx']) {
+                    let candidateFull = candidate + ext;
+                    if (fs.existsSync(candidateFull)) {
+                        return candidateFull
+                    }
                 }
             }
             // let Vite handle it (will likely error)
-            console.error(`The ${source} could not be resolved from the importer (${importer}) with the candidate (${candidate})`);
+            console.error(`The ${source} could not be resolved from the importer (${importer}) with the candidate (${candidates.join(', ')}) in ${resolution} resolution`);
             return null
         }
     }

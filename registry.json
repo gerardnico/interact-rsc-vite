@@ -5,9 +5,9 @@
   "items": [
     {
       "name": "ModeToggle",
-      "type": "registry:block",
+      "type": "registry:component",
       "title": "Mode Toggle",
-      "description": "A dark/ligt toggle",
+      "description": "A dark/light color toggle",
       "files": [
         {
           "path": "src/resources/components/ModeToggle.tsx",

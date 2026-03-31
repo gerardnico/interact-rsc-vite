@@ -99,8 +99,9 @@ const BadFit: ImageErrorData = {
 const SharpError: ImageErrorData = {
     code: 1012,
     status: 500,
-    title: 'Sharp could not read the image file',
-    message: 'An unexpected error has occur while trying to read the file with sharp'
+    title: 'Sharp could not read the file as an image',
+    message: 'An unexpected error has occur while trying to read the file with sharp',
+    hint: 'The file is presumably not an image file or was corrupted. Check the file.'
 };
 
 export const ImageErrors = Object.freeze({

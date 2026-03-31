@@ -6,7 +6,8 @@ import {
     JsonConfigSchema,
     type FaviconSetSchemaType,
     type pluginsConfigType, type ComponentsSet, type pathsConfigType, type imageConfigType,
-    type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType, type PagesConfig
+    type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType, type PagesConfig,
+    type layoutConfigType
 } from "./configSchema.js";
 import fs from 'fs'
 import {readFileSync} from "node:fs";
@@ -290,6 +291,7 @@ export type InteractConfig = {
     pages: PagesConfig,
     images: imageConfigType,
     markdown: markdownConfigType,
+    layout: layoutConfigType,
     paths: pathsConfigType & {
         configFile: string
         // "The root path of the site project"

@@ -12,7 +12,7 @@ at the top of the file.
 
 ## Base UI Library
 
-Interactivity is based on [Base-UI](https://base-ui.com/), an unstyled UI components.
+Our own components add interactivity thanks to [Base-UI](https://base-ui.com/), an unstyled UI components.
 
 They made it easy to have an interactive flow such as opening and closing window that
 will always been well positioned (ie on screen)

@@ -250,6 +250,11 @@ let configStyleSchema = z.object({
 });
 export type styleConfigType = z.output<typeof configStyleSchema>;
 
+let configLayoutSchema = z.object({
+    atAliasResolution: z.enum(['cascade', 'standard']).describe("Resolve the @ alias with cascade or not (ie check the site first for the ui then interact)").default('standard'),
+});
+export type layoutConfigType = z.output<typeof configLayoutSchema>;
+
 /**
  * Components
  * Base schema shared by all components
@@ -347,6 +352,7 @@ export const JsonConfigSchema = z.object({
     pages: PagesConfigSchema.default(PagesConfigSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
+    layout: configLayoutSchema.default(configLayoutSchema.parse({})),
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})),
     markdown: MarkdownConfigSchema.default(MarkdownConfigSchema.parse({})),
 })
