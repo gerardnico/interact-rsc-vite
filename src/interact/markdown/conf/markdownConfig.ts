@@ -1,9 +1,15 @@
 import path from "node:path";
 import {getMandatoryUnifiedPlugins} from "./markdownPluginsMandatory.js";
-import {componentsProviderModuleName, type InteractCommand} from "../../cli/shared/vite.config.js";
+import {type InteractCommand} from "../../cli/shared/vite.config.js";
 import type {Options} from "@mdx-js/rollup";
 
 type MarkdownConfig = Awaited<ReturnType<typeof createMarkdownConfig>>
+
+/**
+ * The components provider name
+ * (for mdx)
+ */
+export const componentsProviderModuleName = "interact:components"
 
 const GLOBAL_KEY = "__interactMarkdownProcessor"
 

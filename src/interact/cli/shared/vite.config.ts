@@ -14,6 +14,7 @@ import svgReactPlugin from "vite-plugin-svgr";
 import viteStylingOutlineNumberingPlugin from "../../styles/viteStylingOutlineNumbering.js";
 import {viteMiddlewareRegistry} from "../../middlewareEngine/viteMiddlewareRegistry.js";
 import {
+    componentsProviderModuleName,
     createMarkdownConfig,
     getMarkdownConfig,
     setMarkdownConfigGlobally
@@ -48,11 +49,6 @@ export async function setGlobalsConf(confPath: string | undefined, force: boolea
     setMarkdownConfigGlobally(markdownConfig, force)
 }
 
-/**
- * The components provider name
- * (for mdx and layout)
- */
-export const componentsProviderModuleName = "interact:components"
 
 export async function resolveViteConfig(
     {
@@ -213,7 +209,7 @@ export async function resolveViteConfig(
                 },
             }),
             viteReloadOnConfChange(),
-            // Component provider (provide also the MdxComponent for mdx)
+            // Component provider (provide the MdxComponent for mdx)
             viteComponentProvider({moduleName: componentsProviderModuleName}),
             // Layout provider (provide the layouts dynamically)
             viteLayoutProvider(),
