@@ -5,18 +5,18 @@ title: Git
 
 ## Adapt your .gitattributes to accept image
 
-```
+```gitattributes
+# all files LF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+* text eol=lf
+
 *.png binary
 *.jpg binary
 *.jpeg binary
 *.gif binary
 *.ico binary
 *.webp binary
-
-# all files LF
-*.cmd text eol=crlf
-*.bat text eol=crlf
-* text eol=lf
 ```
 
 ## Support
