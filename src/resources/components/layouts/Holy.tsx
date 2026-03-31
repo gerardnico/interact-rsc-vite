@@ -2,12 +2,12 @@ import type {ContextProps} from "@combostrap/interact/types";
 import styles from "./Holy.module.css"
 import clsx from "clsx";
 import {getInteractConfig} from "@combostrap/interact/config";
-import Header from "@/components/partials/Header";
-import Body from "@/components/partials/Body";
-import Html from "@/components/partials/Html";
-import Head from "@/components/partials/Head";
-import Aside from "@/components/partials/Aside";
-import Hero from "@/components/partials/Hero";
+import Header from "@combostrap/interact/components/partials/Header";
+import Body from "@combostrap/interact/components/partials/Body";
+import Html from "@combostrap/interact/components/partials/Html";
+import Head from "@combostrap/interact/components/partials/Head";
+import Aside from "@combostrap/interact/components/partials/Aside";
+import Hero from "@combostrap/interact/components/partials/Hero";
 import Toc from "../partials/Toc.js";
 
 /**

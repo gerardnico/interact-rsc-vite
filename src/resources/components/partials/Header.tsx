@@ -1,8 +1,8 @@
-import NavBar from "@/components/interact/NavBar";
-import NavBarCollapse from "@/components/interact/NavBarCollapse";
+import NavBar from "@combostrap/interact/components/NavBar";
+import NavBarCollapse from "@combostrap/interact/components/NavBarCollapse";
 import {getInteractConfig} from "@combostrap/interact/config";
-import Image from "@/components/interact/Image";
-import {ModeToggle} from "@/components/interact/ModeToggle";
+import Image from "@combostrap/interact/components/Image";
+import ModeToggle from "@combostrap/interact/components/ModeToggle";
 import type {ContextProps} from "@combostrap/interact/types";
 
 

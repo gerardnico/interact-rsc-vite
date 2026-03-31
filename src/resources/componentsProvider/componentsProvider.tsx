@@ -5,10 +5,6 @@
  */
 import type {MDXComponents} from 'mdx/types.js'
 import Code from "@combostrap/interact/components/Code";
-import Holy from "@combostrap/interact/components/Holy";
-import Landing from "@combostrap/interact/components/Landing";
-import Html from "@combostrap/interact/components/Html";
-import Head from "@combostrap/interact/components/Head";
 import Svg from "@combostrap/interact/components/Svg";
 
 
@@ -31,7 +27,7 @@ export function useMDXComponents(): MDXComponents {
 }
 
 
-export {Code, Holy, Landing, Head, Html}
+export {Code}
 
 // to not return null
 const defaultComponent = () => "Don't use the default export";

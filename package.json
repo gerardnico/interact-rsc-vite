@@ -30,9 +30,10 @@
   ],
   "exports": {
     "./types": "./src/types/index.d.ts",
-    "./components/*": "./src/resources/components/interact/*.tsx",
     "./components/layouts/*": "./src/resources/components/layouts/*.tsx",
     "./components/partials/*": "./src/resources/components/partials/*.tsx",
+    "./components/pages/*": "./src/resources/components/pages/*.tsx",
+    "./components/*": "./src/resources/components/interact/*.tsx",
     "./markdown": "./src/resources/markdown/interactMarkdownProcessor.tsx",
     "./config": "./src/interact/config/interactConfig.ts"
   },

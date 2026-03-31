@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import Holy from "@/components/layouts/Holy";
+import Holy from "@combostrap/interact/components/layouts/Holy";
 
 import getPageModule from 'interact:page-modules';
 import {getInteractConfig} from "@combostrap/interact/config";

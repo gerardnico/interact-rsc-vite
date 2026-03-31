@@ -24,7 +24,6 @@ import {createInteractConfig} from "../../config/interactConfigHandler.js";
 import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
 import tailwindcss from "@tailwindcss/vite"
 import viteStylingGlobalStylesheet from "../../styles/viteStylingGlobalStylesheet.js";
-import {viteAtSrcAliasResolution} from "../../resolution/viteAtSrcAliasResolution.js";
 import {getInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
 
 
@@ -181,10 +180,10 @@ export async function resolveViteConfig(
         },
         plugins: [
             // Resolve the @/ in a cascading way
-            {
-                enforce: "pre", // should be first
-                ...viteAtSrcAliasResolution(),
-            },
+            // {
+            //     enforce: "pre", // should be first
+            //     ...viteAtSrcAliasResolution(),
+            // },
             viteImageService({
                 baseDir: interactConfigTyped.paths.imagesDirectory,
                 cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),

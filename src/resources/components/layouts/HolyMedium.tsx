@@ -3,12 +3,12 @@ import styles from "./holyMedium.module.css"
 import clsx from "clsx";
 
 import {getInteractConfig} from "@combostrap/interact/config";
-import Header from "@/components/partials/Header";
-import Html from "@/components/partials/Html";
-import Head from "@/components/partials/Head";
-import Body from "@/components/partials/Body";
-import Hero from "@/components/partials/Hero";
-import Toc from "@/components/partials/Toc";
+import Header from "../partials/Header";
+import Html from "../partials/Html";
+import Head from "../partials/Head";
+import Body from "../partials/Body";
+import Hero from "../partials/Hero";
+import Toc from "../partials/Toc";
 
 
 /**

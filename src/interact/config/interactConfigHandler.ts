@@ -22,7 +22,7 @@ const __dirname = path.dirname(__filename);
  * #components is declared in the package.json imports property
  */
 //const privateComponent = `#components`
-const atInteractComponentPath = "@/components/interact"
+const atInteractComponentPath = "@combostrap/interact/components"
 export const defaultComponentsValue: ComponentsSet = {
     "a": {
         importPath: `${atInteractComponentPath}/Anchor`,
@@ -77,7 +77,7 @@ export const defaultComponentsValue: ComponentsSet = {
     //     type: "content"
     // },
     "NotFound": {
-        importPath: `@/components/NotFound`,
+        importPath: `@combostrap/interact/pages/NotFound`,
         type: "page"
     },
     "Svg": {
@@ -228,9 +228,6 @@ function deepMerge(target: any, source: any) {
 }
 
 
-
-
-
 export function createInteractConfig(confPath?: string) {
     const confPathResolved = resolveInteractConfPath(confPath);
     return new InteractConfigHandler(confPathResolved).getConfig();
@@ -300,7 +297,9 @@ class InteractConfigHandler {
          */
         const atDirectories = [finalConfigData.paths.resourcesDirectory, finalConfigData.paths.atDirectory];
         const type = 'layout';
+        let i = 0;
         for (const atDirectory of atDirectories) {
+            i++;
             let atPath = `components/${type}s`;
             let layoutDirectory = `${atDirectory}/${atPath}`;
             if (!existsSync(layoutDirectory)) {
@@ -310,7 +309,7 @@ class InteractConfigHandler {
                 const {name, ext} = path.parse(file);
                 if (!/\.(jsx|tsx)$/.test(ext)) continue;
                 finalConfigData.components[name] = {
-                    importPath: `@/${atPath}/${name}`,
+                    importPath: (i == 1) ? `@combostrap/interact/components/${type}s/${name}` : `@/${atPath}/${name}`,
                     type: type
                 }
             }

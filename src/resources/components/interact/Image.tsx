@@ -1,5 +1,5 @@
-import Icon from "@/components/interact/Icon";
-import Raster from "@/components/interact/Raster";
+import Icon from "@combostrap/interact/components/Icon";
+import Raster from "@combostrap/interact/components/Raster";
 
 
 type ImageProps = {
