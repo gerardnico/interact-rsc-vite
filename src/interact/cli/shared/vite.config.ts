@@ -97,6 +97,9 @@ export async function resolveViteConfig(
                     // const { peerDependencies } = packageJson;
                 ]
             },
+            // for debugging ?
+            minify: command == "build",
+            sourcemap: command == "build",
         },
         // specify entry point for each environment.
         environments: {
@@ -107,7 +110,9 @@ export async function resolveViteConfig(
             rsc: {
                 build: {
                     rollupOptions: {
+                        // Main entry: https://rollupjs.org/configuration-options/#input
                         input: {
+                            // generated as index.js
                             index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/server/entry.rsc.tsx'),
                         },
                     },
@@ -123,7 +128,9 @@ export async function resolveViteConfig(
             ssr: {
                 build: {
                     rollupOptions: {
+                        // Main entry: https://rollupjs.org/configuration-options/#input
                         input: {
+                            // generated as index.js
                             index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/server/entry.ssr.tsx'),
                         },
                     },
@@ -141,7 +148,9 @@ export async function resolveViteConfig(
             client: {
                 build: {
                     rollupOptions: {
+                        // Main entry: https://rollupjs.org/configuration-options/#input
                         input: {
+                            // generated as index.js
                             index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/browser/entry.browser.tsx'),
                         }
                     },

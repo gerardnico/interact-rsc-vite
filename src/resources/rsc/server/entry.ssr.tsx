@@ -13,7 +13,7 @@ import type {RscPayload} from '../shared/types.js'
 import type {ReactFormState} from "react-dom/client";
 
 /**
- * Render HTML from a RSC Payload
+ * Render HTML from an RSC Payload
  */
 export async function renderHtml(
     rscStream: ReadableStream<Uint8Array>,
@@ -44,6 +44,9 @@ export async function renderHtml(
     const bootstrapScriptContent =
         await import.meta.viteRsc.loadBootstrapScriptContent('index')
 
+    /**
+     * Get stream response
+     */
     let htmlStream: ReadableStream<Uint8Array>
     let status: number | undefined
     if (options?.ssg) {
@@ -55,7 +58,7 @@ export async function renderHtml(
     } else {
         // for regular SSR, catch errors and fallback to CSR
         try {
-            htmlStream = await renderToReadableStream(<SsrRoot />, {
+            htmlStream = await renderToReadableStream(<SsrRoot/>, {
                 bootstrapScriptContent: options?.debugNojs
                     ? undefined
                     : bootstrapScriptContent,
@@ -82,16 +85,21 @@ export async function renderHtml(
         }
     }
 
+    /**
+     * initial RSC stream is injected in HTML stream as <script>...FLIGHT_DATA...</script>
+     * using utility made by devongovett https://github.com/devongovett/rsc-html-stream
+     */
     let responseStream: ReadableStream<Uint8Array> = htmlStream
     if (!options?.debugNojs) {
-        // initial RSC stream is injected in HTML stream as <script>...FLIGHT_DATA...</script>
-        // using utility made by devongovett https://github.com/devongovett/rsc-html-stream
+
         responseStream = responseStream.pipeThrough(
             injectRSCPayload(rscStream2, {
                 nonce: options?.nonce,
             }),
         )
+    } else {
+        responseStream = responseStream.pipeThrough(injectRSCPayload(rscStream2))
     }
-    responseStream = responseStream.pipeThrough(injectRSCPayload(rscStream2))
+
     return {stream: responseStream, status}
 }

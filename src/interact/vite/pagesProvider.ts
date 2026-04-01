@@ -44,7 +44,10 @@ export default getModulePage;
   `.trim();
 }
 
-export default function pageModulesPlugin( extensions: string[] = ['mdx', 'tsx', 'jsx']): Plugin {
+export default function pageModulesPlugin(extensions: string[] = ['mdx', 'tsx', 'jsx']): Plugin {
+    /**
+     * Don't touch or you need to rewrite all import
+     */
     const virtualModuleId = 'interact:page-modules';
 
     let interactConfig = getInteractConfig()
@@ -61,7 +64,7 @@ export default function pageModulesPlugin( extensions: string[] = ['mdx', 'tsx',
 
     let loadedEnv = "";
     return {
-        name: 'interact-vite-plugin-page-modules',
+        name: 'interact-pages-provider',
         // ResolveId Hook: https://rollupjs.org/plugin-development/#resolveid
         resolveId(id) {
             if (id === virtualModuleId) {

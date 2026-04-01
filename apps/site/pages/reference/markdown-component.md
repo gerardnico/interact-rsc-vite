@@ -17,6 +17,6 @@ All [default syntax with gfm](markdown-syntax.md) is supported
 
 You can also use:
 
-* [svg](../components/svg.md) to embed adn optimize SVG file
+* [svg](../components/svg.md) to embed and optimize SVG files
 * [image](../components/image.md) to process and transform Raster Image
 

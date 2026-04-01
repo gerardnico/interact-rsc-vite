@@ -13,7 +13,7 @@ import {
 import {parseRenderRequest} from '../shared/request.js'
 import type {RscPayload} from '../shared/types.js'
 import type {ReactFormState} from 'react-dom/client'
-import {getRootResponse, getStaticPaths} from "./pages.js";
+import {getRootResponse, getStaticPaths} from "./handler";
 
 /**
  * We export it so that static rendering (SSG)
@@ -24,8 +24,11 @@ export {getStaticPaths}
 
 
 /**
- * Handle a request against vite
- * @param request
+ * Handle the HTTP request
+ * * on the dev server, the request from the dev server,
+ * * on prod, this handler needs to be added as middleware
+ *
+ * @param request - Web Api Request
  */
 export default async function handler(request: Request): Promise<Response> {
 
@@ -37,7 +40,9 @@ export default async function handler(request: Request): Promise<Response> {
      */
     const renderRequest = parseRenderRequest(request)
 
-    // handle server function request
+    /**
+     * handle server/action function request
+     */
     let returnValue: RscPayload['returnValue'] | undefined
     let formState: ReactFormState | undefined
     let temporaryReferences: unknown | undefined
@@ -78,14 +83,17 @@ export default async function handler(request: Request): Promise<Response> {
         }
     }
 
-
     /**
-     * Serialize React VDOM to RSC stream
+     * Get the response (a page or a response)
      */
     let rootResponse = await getRootResponse(renderRequest.request)
     if (rootResponse instanceof Response) {
         return rootResponse
     }
+
+    /**
+     * Serialize React VDOM to RSC stream
+     */
     const rscPayload: RscPayload = {
         root: rootResponse.root,
         formState,
@@ -94,8 +102,8 @@ export default async function handler(request: Request): Promise<Response> {
     const rscStream = renderToReadableStream<RscPayload>(rscPayload)
 
     /**
-     * This is a request made our app that asks for (ie the RSC client {@see entry.browser.tsx}
-     * (ie as the {@link URL_POSTFIX} in the URL)
+     * This is a request made by our client (entry.browser.tsx)
+     * that asks for a Rsc format (ie by adding the {@link URL_POSTFIX} in the URL)
      * We send an RSC Payload: a compact binary representation of the rendered React Server Components tree.
      */
     if (renderRequest.isRsc) {
@@ -108,18 +116,28 @@ export default async function handler(request: Request): Promise<Response> {
     }
 
     /**
-     * This is not a request made by our client asking for a RSC stream
+     * This is not a request made by our client asking for an RSC stream
      * Rendering the stream as HTML
      */
-    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr.js')>('ssr', 'index')
+    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr')>('ssr', 'index')
     const ssrResult = await ssr.renderHtml(rscStream, {
         formState,
-        // allow quick simulation of javascript disabled browser
+        // allow quick simulation of JavaScript disabled browser
         debugNojs: renderRequest.url.searchParams.has('__nojs'),
     })
 
+    /**
+     * Status
+     * Getting the root page may return a status and the transformation as stream also
+     * We combine them
+     */
+    let combinedStatus = rootResponse.status != null && rootResponse.status != 200 ? rootResponse.status : ssrResult.status;
+
+    /**
+     * Return
+     */
     return new Response(ssrResult.stream, {
-        status: rootResponse.status != null && rootResponse.status != 200 ? rootResponse.status : ssrResult.status,
+        status: combinedStatus,
         headers: {
             'content-type': 'text/html;charset=utf-8',
             ...rootResponse.headers,
@@ -144,12 +162,16 @@ export async function handleSsg(request: Request): Promise<{
     const rscStream = renderToReadableStream<RscPayload>(rscPayload)
     const [rscStream1, rscStream2] = rscStream.tee()
 
-    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr.js')>('ssr', 'index')
+    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr')>('ssr', 'index')
     const ssrResult = await ssr.renderHtml(rscStream1, {ssg: true})
 
     return {html: ssrResult.stream, rsc: rscStream2}
 }
 
+// https://vite.dev/guide/api-hmr#required-conditional-guard
 if (import.meta.hot) {
+    // HMR code
+    // https://vite.dev/guide/api-hmr#hot-accept-cb
+    // Empty accept callback is we want to accept, but we don't have to do anything.
     import.meta.hot.accept()
 }

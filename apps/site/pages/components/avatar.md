@@ -1,9 +1,9 @@
 ---
 title: Avatar
-description: An avatar is a content component that renders an image as an Avatar 
+description: An avatar is a component that renders an image as an Avatar 
 ---
 
-An `avatar` is a [content component](../reference/markdown-component.md) that renders an image as an `Avatar`.
+An `avatar` is a component that renders an [raster image](image.md) as an `Avatar`.
 
 ## Styling Properties
 
@@ -22,6 +22,8 @@ The same syntax can be applied as the [image component](image.md) with the addit
 <Avatar src="avatar.png" alt="Required Alt" size="150"/>
 ```
 
-Output:
+It is registered as a [markdown component](../reference/markdown-component.md) so you can use it in Markdown.
+
+Demo:
 
 <Avatar src="avatar.png" alt="Required Alt" size="150"/>

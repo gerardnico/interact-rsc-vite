@@ -19,7 +19,7 @@ import {
 } from '@vitejs/plugin-rsc/browser'
 import React from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
-import { rscStream } from 'rsc-html-stream/client'
+import { rscStream } from 'rsc-html-stream/client' // https://github.com/devongovett/rsc-html-stream
 import type { RscPayload } from '../shared/types'
 import { GlobalErrorBoundary } from './error-boundary'
 import { createRscRenderRequest } from '../shared/request'

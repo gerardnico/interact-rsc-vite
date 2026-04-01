@@ -28,10 +28,10 @@ export const defaultComponentsValue: ComponentsSet = {
         importPath: `${atInteractComponentPath}/Anchor`,
         type: "markdown"
     },
-    // "Block": {
-    //     importPath: `${atInteractComponentPath}/Block`,
-    //     type: "markdown"
-    // },
+    "Avatar": {
+        importPath: `${atInteractComponentPath}/Avatar`,
+        type: "markdown"
+    },
     "Code": {
         importPath: `${atInteractComponentPath}/Code`,
         type: "markdown"
