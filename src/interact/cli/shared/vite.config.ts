@@ -11,6 +11,7 @@ import viteSsgPlugin from "../../static-generation/vite-ssg-plugin.js";
 import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
 import viteComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
 import svgReactPlugin from "vite-plugin-svgr";
+import Inspect from 'vite-plugin-inspect'
 import viteStylingOutlineNumberingPlugin from "../../styles/viteStylingOutlineNumbering.js";
 import {viteMiddlewareRegistry} from "../../middlewareEngine/viteMiddlewareRegistry.js";
 import {
@@ -224,7 +225,7 @@ export async function resolveViteConfig(
             // At the end because the client entry import the virtual CSS (outline and global)
             // Note: you can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
             // to understand how "use client" and "use server" directives are transformed internally.
-            // import("vite-plugin-inspect").then(m => m.default()),
+            Inspect(),
             rsc(),
             viteSsgPlugin(),
         ],
