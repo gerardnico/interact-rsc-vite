@@ -7,11 +7,11 @@
   "components": {
     "Counter": {
       "importPath": "./components/Counter.tsx",
-      "type": "content"
+      "type": "markdown"
     },
     "Planet": {
       "importPath": "./components/Planet.js",
-      "type": "content"
+      "type": "markdown"
     },
     "NotFound": {
       "importPath": "./pages/404.tsx",

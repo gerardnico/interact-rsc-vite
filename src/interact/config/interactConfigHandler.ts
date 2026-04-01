@@ -26,55 +26,55 @@ const atInteractComponentPath = "@combostrap/interact/components"
 export const defaultComponentsValue: ComponentsSet = {
     "a": {
         importPath: `${atInteractComponentPath}/Anchor`,
-        type: "content"
+        type: "markdown"
     },
     // "Block": {
     //     importPath: `${atInteractComponentPath}/Block`,
-    //     type: "content"
+    //     type: "markdown"
     // },
     "Code": {
         importPath: `${atInteractComponentPath}/Code`,
-        type: "content"
+        type: "markdown"
     },
     "code": {
         importPath: `${atInteractComponentPath}/Mark`,
-        type: "content"
+        type: "markdown"
     },
     // "Grid": {
     //     importPath: `${atInteractComponentPath}/Grid`,
-    //     type: "content"
+    //     type: "markdown"
     // },
     // "GridCell": {
     //     importPath: `${atInteractComponentPath}/GridCell`,
-    //     type: "content"
+    //     type: "markdown"
     // },
     "Image": {
         importPath: `${atInteractComponentPath}/Image`,
-        type: "content"
+        type: "markdown"
     },
     // "Para": {
     //     importPath: `${atInteractComponentPath}/Para`,
-    //     type: "content"
+    //     type: "markdown"
     // },
     "pre": {
         importPath: `${atInteractComponentPath}/Code`,
-        type: "content"
+        type: "markdown"
     },
     // "RufflePlayer": {
     //     importPath: `${atInteractComponentPath}/RufflePlayer`,
-    //     type: "content"
+    //     type: "markdown"
     // },
     // "StarRating": {
     //     importPath: `${atInteractComponentPath}/StarRating`,
-    //     type: "content"
+    //     type: "markdown"
     // },
     "table": {
         importPath: `${atInteractComponentPath}/Table`,
-        type: "content"
+        type: "markdown"
     },
     // "Text": {
     //     importPath: `${atInteractComponentPath}/Text`,
-    //     type: "content"
+    //     type: "markdown"
     // },
     "NotFound": {
         importPath: `@combostrap/interact/pages/NotFound`,
@@ -82,7 +82,7 @@ export const defaultComponentsValue: ComponentsSet = {
     },
     "Svg": {
         importPath: `${atInteractComponentPath}/Svg`,
-        type: "content"
+        type: "markdown"
     }
 }
 

@@ -51,6 +51,6 @@ yield:
 
 ## Registration
 
-The code component is [registered](../howto/add-a-content-component.md#register-it) to the `pre` html element.
+The code component is [registered](../howto/add-a-markdown-component.md#register-it) to the `pre` html element.
 
 Therefore, it will pretty print the code enclosed by `<pre>` element and [Markdown fence](#markdown).

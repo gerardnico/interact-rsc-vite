@@ -48,7 +48,7 @@ Example of configuration module with the actual config applied:
 ```typescript
 // ./config/markdown.config.ts
 import remarkGfm from "remark-gfm";
-import type {InteractMarkdownConfigType} from "@interact/markdown-config";
+import type {InteractMarkdownConfigType} from "@combostrap/interact/types";
 
 export const markdownConfig: InteractMarkdownConfigType = {
     remarkPlugins: [

@@ -5,7 +5,7 @@ import Holy from "@combostrap/interact/components/layouts/Holy";
 
 import getPageModule from 'interact:page-modules';
 import {getInteractConfig} from "@combostrap/interact/config";
-import {NotFound} from "interact:components";
+import {NotFound} from "interact:mdx-components";
 import createMiddlewarePipeline from "./middlewareHandlerPipeline";
 import {middlewares} from "interact:middleware-registry"
 import type {ReactNodeResponse} from "../../../interact/middlewareEngine/interactMiddleware.js";

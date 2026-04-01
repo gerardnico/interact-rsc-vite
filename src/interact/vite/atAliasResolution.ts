@@ -16,7 +16,7 @@ let alias = "@"
  * A plugin to resolve the at sign alias from our code or the code of the site
  * Shadcn alias: https://ui.shadcn.com/docs/installation/vite#update-viteconfigts
  */
-export function viteAtSrcAliasResolution(): Plugin {
+export function atAliasResolution(): Plugin {
     let interactConfig = getInteractConfig()
     console.log("at alias resolution plugin loaded")
     return {

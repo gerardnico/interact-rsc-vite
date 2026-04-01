@@ -1,9 +1,9 @@
 ---
-title: How to create a custom component for a Markdown or Mdx page?
+title: How to create a component for your Markdown pages?
 ---
 
 
-This example shows you how to add a simple `Planet` component that yields the word `Pluto`.
+This example shows you how to add a simple `Planet` [Markdown component](../reference/markdown-component.md) that yields the word `Pluto`.
 
 ## Steps
 
@@ -22,21 +22,21 @@ Rules:
 
 * The component should be exported as default (ie `export default`).
 * If it's a interactive component that relies on Browser event (for click), you need to add
-  the [use  client directive](https://react.dev/reference/rsc/server-components#adding-interactivity-to-server-components)
+  the [use client directive](https://react.dev/reference/rsc/server-components#adding-interactivity-to-server-components)
 
 ### Register it
 
 You can register it by:
 
 * adding it in the `components` section of the [configuration file](../reference/conf.md)
-* and setting the [type](../reference/component.md#type) to `content`
+* and setting the [type](../reference/component.md#type) to `markdown`
 
 ```json
 {
   "components": {
     "Pluto": {
       "importPath": "src/components/Planet.js",
-      "type": "content"
+      "type": "markdown"
     }
   }
 }

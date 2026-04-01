@@ -1,31 +1,27 @@
+/**
+ * The vite config.
+ * For debugging purpose, a user should be able to make this config again in a standalone vite config file.
+ * So make sure that the vite plugin are in vite
+ */
 import path from "node:path";
-import mdx from "@mdx-js/rollup";
+
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
-import pageModulesPlugin from "../../pages/viteVirtualPagesModules.js";
-import viteReloadOnConfChange from "../../config/viteReloadOnConfChange.js";
-import viteImageService from "../../images/imageViteDevMiddleware.js";
+import pagesProvider from "../../vite/pagesProvider.js";
+import confWatcher from "../../vite/confWatcher.js";
+import imageMiddleware from "../../vite/imageMiddleware.js";
 import type {InlineConfig} from "vite";
-import viteSsgPlugin from "../../static-generation/vite-ssg-plugin.js";
-
-import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
-import viteComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
+import ssg from "../../vite/ssg.js";
+import mdxComponentProvider from "../../vite/mdxComponentProvider.js";
 import svgReactPlugin from "vite-plugin-svgr";
 import Inspect from 'vite-plugin-inspect'
-import viteStylingOutlineNumberingPlugin from "../../styles/viteStylingOutlineNumbering.js";
-import {viteMiddlewareRegistry} from "../../middlewareEngine/viteMiddlewareRegistry.js";
-import {
-    componentsProviderModuleName,
-    createMarkdownConfig,
-    getMarkdownConfig,
-    setMarkdownConfigGlobally
-} from "../../markdown/conf/markdownConfig.js";
-// interactConfig should be a relative path and not the package.json export as this is used by the client
-import {createInteractConfig} from "../../config/interactConfigHandler.js";
-import viteLayoutProvider from "../../componentsProvider/viteVirtualLayoutProviders.js";
+import outlineNumberingStyleSheet from "../../vite/outlineNumberingStylesheet.js";
+import middlewareProvider from "../../vite/middlewareProvider.js";
+import layoutProvider from "../../vite/layoutProvider.js";
 import tailwindcss from "@tailwindcss/vite"
-import viteStylingGlobalStylesheet from "../../styles/viteStylingGlobalStylesheet.js";
-import {getInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
+import globalStylesheet from "../../vite/globalStylesheet.js";
+import {setGlobalsConf} from "../../vite/globalConf.js";
+import mdxRollup from "../../vite/mdxRollup.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -38,16 +34,7 @@ type InteractConfig = {
     logLevel?: LogLevel;
 };
 
-/**
- * Globals Conf are set and reused in each plugin
- * Why? If they change, we set them, and we restart the dev server
- */
-export async function setGlobalsConf(confPath: string | undefined, force: boolean = false) {
-    const interactConfigTyped = createInteractConfig(confPath);
-    setInteractConfigGlobally(interactConfigTyped, force);
-    const markdownConfig = await createMarkdownConfig()
-    setMarkdownConfigGlobally(markdownConfig, force)
-}
+
 
 
 export async function resolveViteConfig(
@@ -60,36 +47,15 @@ export async function resolveViteConfig(
     /**
      * Set the globals config
      */
-    await setGlobalsConf(confPath)
-
-    /**
-     * Use them
-     */
-    let interactConfigTyped = getInteractConfig();
-
-    // https://vite.dev/guide/build#public-base-path
-    let publicBasePath = interactConfigTyped.site.base;
-
-    let cachePath = path.resolve(interactConfigTyped.paths.cacheDirectory, "cache")
-
-    /**
-     * Use to generate image into the static build
-     */
-    process.env[imageViteOutDirEnvName] = interactConfigTyped.paths.buildDirectory;
-
-    /**
-     * Used to generate the URL in dev
-     * The endpoint of the local service endpoint ("/_images")
-     */
-    let imageMiddlewareEndPoint = "/_images";
-    process.env[imageEndPointEnvName] = imageMiddlewareEndPoint
+    let interactConfigTyped = await setGlobalsConf(confPath)
 
 
     return {
         mode: command == "build" ? "production" : "development",
         logLevel: 'info', // or 'warn' — try 'info' first
         root: interactConfigTyped.paths.rootDirectory,
-        base: publicBasePath,
+        // https://vite.dev/guide/build#public-base-path
+        base: interactConfigTyped.site.base,
         server: {
             port: port,
         },
@@ -106,7 +72,7 @@ export async function resolveViteConfig(
             // Trying to avoid hooks fatal error, already done by plugin-react
             // https://github.com/vitejs/vite/blob/f09299ce13b55d51456985b96d4c3b3a1f131acb/packages/plugin-react/src/index.ts#L339
             // does not work because of @base-ui/react
-            dedupe: ['react', 'react-dom', '@base-ui/react', 'lucide-react', '@vitejs/plugin-react', '@vitejs/plugin-rsc', '@babel', 'rsc-html-stream', 'class-variance-authority', 'clsx']
+            // dedupe: ['react', 'react-dom', '@base-ui/react', 'lucide-react', '@vitejs/plugin-react', '@vitejs/plugin-rsc', '@babel', 'rsc-html-stream', 'class-variance-authority', 'clsx']
         },
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
@@ -123,7 +89,12 @@ export async function resolveViteConfig(
                     // https://sharp.pixelplumbing.com/install/#vite
                     "sharp",
                     "mime",
-                    "etag"
+                    "etag",
+                    // Don't bundle node
+                    /^node:/,
+                    // Peer dependencies We don't have one for now
+                    // import packageJson  from '../../../../package.json' with { type: 'json' };
+                    // const { peerDependencies } = packageJson;
                 ]
             },
         },
@@ -185,15 +156,7 @@ export async function resolveViteConfig(
             //     enforce: "pre", // should be first
             //     ...viteAtSrcAliasResolution(),
             // },
-            viteImageService({
-                baseDir: interactConfigTyped.paths.imagesDirectory,
-                cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),
-                secret: process.env[imageSecretEnvName],
-                resourcesDir: interactConfigTyped.paths.resourcesDirectory,
-                endPoint: imageMiddlewareEndPoint
-            }),
-            // https://mdxjs.com/packages/mdx/#processoroptions
-            mdx(getMarkdownConfig().getMdxRollupConfig(command)),
+            imageMiddleware({command: command}),
             react(),
             // Tailwind
             tailwindcss(),
@@ -208,18 +171,19 @@ export async function resolveViteConfig(
                     },
                 },
             }),
-            viteReloadOnConfChange(),
+            confWatcher(),
+            mdxRollup({command}),
             // Component provider (provide the MdxComponent for mdx)
-            viteComponentProvider({moduleName: componentsProviderModuleName}),
+            mdxComponentProvider(),
             // Layout provider (provide the layouts dynamically)
-            viteLayoutProvider(),
+            layoutProvider(),
             // Pages (after layout)
-            pageModulesPlugin(['mdx', 'tsx', 'jsx']),
-            viteStylingGlobalStylesheet(),
-            viteStylingOutlineNumberingPlugin(),
+            pagesProvider(['mdx', 'tsx', 'jsx']),
+            globalStylesheet(),
+            outlineNumberingStyleSheet(),
             {
                 enforce: "post", // runs after as we depend on the component plugin
-                ...viteMiddlewareRegistry()
+                ...middlewareProvider()
             },
             // Rsc
             // At the end because the client entry import the virtual CSS (outline and global)
@@ -227,7 +191,7 @@ export async function resolveViteConfig(
             // to understand how "use client" and "use server" directives are transformed internally.
             Inspect(),
             rsc(),
-            viteSsgPlugin(),
+            ssg(),
         ],
     }
 }

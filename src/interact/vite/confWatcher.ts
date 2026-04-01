@@ -1,13 +1,13 @@
 import type {Plugin} from "vite";
 import {
     getInteractConfig
-} from "./interactConfig.js";
-import {setGlobalsConf} from "../cli/shared/vite.config.js";
+} from "../config/interactConfig.js";
+import {setGlobalsConf} from "./globalConf.js";
 
 /**
  * Reload on config change
  */
-export default function viteReloadOnConfChange(): Plugin {
+export default function confWatcher(): Plugin {
 
     let interactConfig = getInteractConfig()
     const configFile = interactConfig.paths.configFile;

@@ -1,6 +1,10 @@
+/**
+ * Module that provides the Markdown component
+ */
 import type {Plugin} from 'vite';
 import path from 'path';
 import {getInteractConfig, type InteractConfig} from "../config/interactConfig.js";
+import {componentsProviderModuleName} from "../markdown/conf/markdownConfig.js";
 
 /**
  * Print without any quote so that the object can be added to virtual module
@@ -51,12 +55,9 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
     for (const [key, value] of Object.entries(interactConfig.components)) {
 
         /**
-         * Layout, partials are not here
-         * because they import this virtual module
-         * to get the partials. It would then create a cycle
-         * They are in the layout virtual provider module
+         * Page is still here for the 404 page and will be refactored soon
          */
-        if (value.type != "content" && value.type != "page") {
+        if (value.type != "markdown" && value.type != "page") {
             continue
         }
 
@@ -101,7 +102,7 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
         /**
          * Markdown Function Providers get only the content component
          */
-        if (value.type == "content") {
+        if (value.type == "markdown") {
             mdxMappingElementNameComponentName[key] = importName
         }
 
@@ -131,11 +132,10 @@ export default dontUse
 `;
 }
 
-export default function viteComponentProvider({moduleName = 'interact:components'}: {
-    moduleName: string
-}): Plugin {
+export default function viteComponentProvider(): Plugin {
 
     let interactConfig = getInteractConfig()
+    let moduleName = componentsProviderModuleName;
     /**
      * We don't prefix with \0 as specified here:
      * https://vite.dev/guide/api-plugin#virtual-modules-convention

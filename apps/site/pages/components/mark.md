@@ -27,7 +27,7 @@ There are 2 [css variables](../reference/style.md#css-variables):
 It's used by default to hack the [Markdown backtick code span](https://spec.commonmark.org/0.31.2/#code-spans)
 into a mark element instead of a code one.
 
-This component was [mapped](../howto/add-a-content-component.md#register-it) to the `code` element
+This component was [mapped](../howto/add-a-markdown-component.md#register-it) to the `code` element
 in the components section of the [configuration file](../reference/conf.md)
 
 ```json

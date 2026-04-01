@@ -7,6 +7,11 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Project Pages */
+@source "../../../apps/site/pages";
+/* Project Components */
+@source "../../../apps/site/components";
+
 /*
 @source inline will add the class even if not used
   They are the container class default configuration
@@ -183,7 +188,7 @@
     main h6 {
         font-size: revert;
         font-weight: revert;
-        @apply mb-3;
+        @apply mb-3 mt-5;
     }
 
     main p {

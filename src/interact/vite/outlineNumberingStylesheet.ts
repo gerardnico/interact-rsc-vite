@@ -2,7 +2,7 @@ import type {Plugin} from 'vite';
 import {getInteractConfig} from "../config/interactConfig.js";
 
 
-export default function viteOutlineNumberingStylesPlugin(): Plugin {
+export default function outlineNumberingStylesheet(): Plugin {
     // The .css extension on the virtual module ID is the key — it tells Vite to handle the returned string as a CSS stylesheet rather than JavaScript.
     const moduleId = "interact:outline-numbering.css"
     //const resolvedId = "\0" + moduleId

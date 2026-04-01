@@ -7,7 +7,7 @@
   "bin": "src/interact/cli/run.js",
   "repository": "https://github.com/combostrap/interact",
   "scripts": {
-    "build": "tsx contrib/scripts/build.ts",
+    "build": "tsc -p src/interact/tsconfig.json --listEmittedFiles",
     "check:cli": "tsc -p src/interact/tsconfig.json",
     "check:contrib": "tsc -p contrib/scripts/tsconfig.json",
     "check:resources": "tsc -p src/resources/tsconfig.json",
@@ -29,6 +29,7 @@
     "./components/partials/*": "./src/resources/components/partials/*.tsx",
     "./components/pages/*": "./src/resources/components/pages/*.tsx",
     "./components/*": "./src/resources/components/interact/*.tsx",
+    "./vite/*": "./dist/interact/vite/*.js",
     "./markdown": "./src/resources/markdown/interactMarkdownProcessor.tsx",
     "./config": "./src/interact/config/interactConfig.ts"
   },

@@ -4,7 +4,7 @@ import {existsSync} from "fs";
 import path from "path";
 
 
-export default function viteStylingGlobalStylesheet(): Plugin {
+export default function globalStylesheet(): Plugin {
     // The .css extension on the virtual module ID is the key — it tells Vite to handle the returned string as a CSS stylesheet rather than JavaScript.
     const moduleId = "interact:global.css"
     //const resolvedId = "\0" + moduleId

@@ -6,7 +6,7 @@
  * Because the markdown config is used in vite, we must
  * create the module in 2 steps
  */
-import {useMDXComponents} from "interact:components";
+import {useMDXComponents} from "interact:mdx-components";
 import {unified} from "unified";
 import remarkParse from "remark-parse";
 import type {Root as MdastRoot} from "mdast";

@@ -277,7 +277,7 @@ const BaseComponentSchema = z.object({
     // No file system path, it's derived thanks to import, and it does not work well with vite and import
     // as they don't handle symlink well
     importPath: z.coerce.string<string>().optional(),
-    type: z.enum(["layout", "partial", "content", "page"]).default("content"),
+    type: z.enum(["layout", "partial", "markdown", "page"]),
     props: z.record(z.string(), z.unknown()).optional(),
 });
 

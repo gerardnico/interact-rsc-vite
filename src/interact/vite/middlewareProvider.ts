@@ -3,7 +3,7 @@ import type {MiddlewareConfig} from "../config/configSchema.js";
 import {getInteractConfig} from "../config/interactConfig.js";
 import path from "node:path";
 
-export function viteMiddlewareRegistry(): Plugin {
+export default function middlewareProvider(): Plugin {
     const virtualId = 'interact:middleware-registry';
 
     let interactConfig = getInteractConfig()

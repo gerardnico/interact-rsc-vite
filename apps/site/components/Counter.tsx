@@ -7,6 +7,6 @@ export default function Counter() {
     const [count, setCount] = React.useState(0)
 
     return (
-        <button className="btn btn-primary" onClick={() => setCount((c) => c + 1)}>Click me ! Count is {count}</button>
+        <button className="p-3 rounded-4xl bg-primary text-primary-foreground" onClick={() => setCount((c) => c + 1)}>Click me ! Count is {count}</button>
     )
 }

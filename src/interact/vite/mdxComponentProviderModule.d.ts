@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols - it's exported
 
-declare module 'interact:components' {
+declare module 'interact:mdx-components' {
 
     import type {Page} from "@combostrap/interact/types";
     import type {MDXComponents} from "mdx/types.js";

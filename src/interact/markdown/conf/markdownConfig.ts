@@ -9,7 +9,7 @@ type MarkdownConfig = Awaited<ReturnType<typeof createMarkdownConfig>>
  * The components provider name
  * (for mdx)
  */
-export const componentsProviderModuleName = "interact:components"
+export const componentsProviderModuleName = "interact:mdx-components"
 
 const GLOBAL_KEY = "__interactMarkdownProcessor"
 

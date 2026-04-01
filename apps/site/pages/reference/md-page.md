@@ -10,7 +10,7 @@ This page is about [pages](page.md) created with the [Markdown](markdown.md) ext
 The content of a `md` file may be configured to be one of the 3 options below.
 By default, we use the `mdr` format.
 
-| Format | Description    | [Accepts Content component ?](content-component.md) | HTML format           | Javascript                 |
+| Format | Description    | [Accepts Content component ?](markdown-component.md) | HTML format           | Javascript                 |
 |--------|----------------|-----------------------------------------------------|-----------------------|----------------------------|
 | `md`   | Markdown       | No                                                  | HTML                  | No                         |
 | `mdr`  | Markdown React | Yes                                                 | [XHTML](#xhtml-rules) | No                         |
@@ -18,7 +18,7 @@ By default, we use the `mdr` format.
 
 ### Mdr Rules
 
-For the support of [content component](content-component.md) like `<Foo />`, the following rules applies:
+For the support of [markdown component](markdown-component.md) like `<Foo />`, the following rules applies:
 
 * All elements should be closed. `<br>` is not valid `<br/>` is
 * The standard URL bracket syntax `<http://www.example.com>` is not valid

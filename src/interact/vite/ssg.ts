@@ -9,7 +9,7 @@ import {defaultComponentsValue} from "../config/interactConfigHandler.js";
 
 const RSC_POSTFIX = '_.rsc'
 
-export default function viteSsgPlugin(): Plugin[] {
+export default function ssg(): Plugin[] {
     return [
         {
             name: 'interact-rsc-ssg',

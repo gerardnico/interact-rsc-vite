@@ -3,7 +3,7 @@ title: Avatar
 description: An avatar is a content component that renders an image as an Avatar 
 ---
 
-An `avatar` is a [content component](../reference/content-component.md) that renders an image as an `Avatar`.
+An `avatar` is a [content component](../reference/markdown-component.md) that renders an image as an `Avatar`.
 
 ## Styling Properties
 

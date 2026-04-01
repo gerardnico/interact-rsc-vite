@@ -2,7 +2,7 @@
 title: Markdown Pages
 ---
 
-`Markdown` pages are [pages](page.md) that are written based on the [Markdown syntax](markdown-syntax.md)
+`Markdown` pages are [pages](page.md) that are written with the [Markdown syntax](markdown-syntax.md)
 
 ## File Types
 
@@ -21,11 +21,11 @@ Note that you can add support for more with [unified plugins](remark-rehype-unif
 By [default](remark-rehype-unified.md#default), we apply the [Remark Gfm](https://github.com/remarkjs/remark-gfm) plugin to add
 the [GitHub Syntax](https://github.github.com/gfm/)
 
-### Content components
+### Custom components
 
 You can create your own components to be used in Markdown content.
 
-We call them [content component](content-component.md).
+We call them [markdown component](markdown-component.md).
 
 They are recognized by the [2 Markdown file types](#file-types)
 
