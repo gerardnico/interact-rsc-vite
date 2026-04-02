@@ -22,7 +22,7 @@ export default function viteImageService({
     // if local there is no need to sign the URL
     let secret = process.env[imageSecretEnvName];
     // the directory of the resources (ie broken image)
-    let resourcesDir = interactConfig.paths.resourcesDirectory;
+    let resourcesDir = interactConfig.paths.interactResourcesDirectory;
 
 
     /**

@@ -41,7 +41,7 @@ export function atAliasResolution(): Plugin {
             // Just the import path is not enough
             let candidates = [];
             let resolution = interactConfig.layout.uiAliasResolution;
-            let interactPath = `${interactConfig.paths.resourcesDirectory}/${relative}`;
+            let interactPath = `${interactConfig.paths.interactResourcesDirectory}/${relative}`;
             let clientPath = `${interactConfig.paths.atDirectory}/${relative}`;
             // https://ui.shadcn.com/docs/components-json#aliasesui
             let interactAlias = "@/components/ui";

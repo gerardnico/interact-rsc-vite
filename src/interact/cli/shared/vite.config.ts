@@ -22,9 +22,12 @@ import tailwindcss from "@tailwindcss/vite"
 import globalStylesheet from "../../vite/globalStylesheet.js";
 import {setGlobalsConf} from "../../vite/globalConf.js";
 import mdxRollup from "../../vite/mdxRollup.js";
+import confResolved from "../../vite/confResolved.js";
+import {crawlFrameworkPkgs} from "vitefu";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
+// same log level as vite
 type LogLevel = 'info' | 'warn' | 'error' | 'silent';
 type InteractConfig = {
     confPath?: string,
@@ -32,16 +35,17 @@ type InteractConfig = {
     port?: number,
     outDir?: string;
     logLevel?: LogLevel;
+    inspect?: boolean;
 };
-
-
 
 
 export async function resolveViteConfig(
     {
         confPath,
         port,
-        command
+        command,
+        logLevel,
+        inspect,
     }: InteractConfig): Promise<InlineConfig> {
 
     /**
@@ -49,10 +53,59 @@ export async function resolveViteConfig(
      */
     let interactConfigTyped = await setGlobalsConf(confPath)
 
+    /**
+     * In case, we get a config from the user
+     */
+    let viteUserConfig = {};
+    /**
+     * All react library that may use rsc directive (use client) needs to be processed by Vite
+     * (ie needs to be in noExternal)
+     * We scan the package to do that. By default, rsc vite plugin checks only that react is in peerDependencies
+     * to add it
+     * By default, Dependencies are "externalized" from Vite's SSR transform module system when running SSR.
+     * If a dependency needs to be transformed by Vite's pipeline, they need to be added to ssr.noExternal.
+     *
+     * Module that should be processed by Vite: ie
+     * * all react module because the RSC bundler needs to find any potential "use client" and "use server".
+     * * CSS that need to be processed
+     * ...
+     * See why here: https://github.com/vitejs/vite-plugin-react/issues/894
+     * otherwise you get: Invalid hook call due to 2 react instances
+     * Adapted from https://github.com/vitejs/vite-plugin-react/issues/894#issuecomment-3368037728
+     */
+    let INTERACT_PKG_NAME = "@combostrap/interact";
+    const reactPkgsConfig = await crawlFrameworkPkgs({
+        root: interactConfigTyped.paths.rootDirectory,
+        isBuild: command === 'build',
+        viteUserConfig: viteUserConfig,
+        /**
+         * Called first, then isFrameworkPkgByJson is called if undefined is returned
+         */
+        isFrameworkPkgByName(pkgName) {
+            if (pkgName == INTERACT_PKG_NAME) {
+                return true;
+            }
+            return undefined;
+        },
+        isFrameworkPkgByJson(pkgJson) {
+            let pkgName = pkgJson['name'];
+            if (['@vitejs/plugin-rsc', 'react-dom'].includes(pkgName)) {
+                return
+            }
+            let dependencies = pkgJson['dependencies'] || [];
+            let peerDependencies = pkgJson['peerDependencies'] || [];
+            let reactPackage = 'react' in peerDependencies || 'react' in dependencies;
+            let interactPackage = INTERACT_PKG_NAME in peerDependencies || INTERACT_PKG_NAME in dependencies;
+            return peerDependencies && (reactPackage || interactPackage)
+        }
+    });
 
+    /**
+     * The vite config
+     */
     return {
         mode: command == "build" ? "production" : "development",
-        logLevel: 'info', // or 'warn' — try 'info' first
+        logLevel: logLevel, // or 'warn' — try 'info' first
         root: interactConfigTyped.paths.rootDirectory,
         // https://vite.dev/guide/build#public-base-path
         base: interactConfigTyped.site.base,
@@ -104,18 +157,22 @@ export async function resolveViteConfig(
         // specify entry point for each environment.
         environments: {
             // `rsc` environment loads modules with `react-server` condition.
-            // this environment is responsible for:
+            // This environment is responsible for:
             // - RSC stream serialization (React VDOM -> RSC stream)
             // - server functions handling
             rsc: {
+                resolve: {
+                    noExternal: reactPkgsConfig.ssr.noExternal,
+                },
                 build: {
                     rollupOptions: {
                         // Main entry: https://rollupjs.org/configuration-options/#input
                         input: {
                             // generated as index.js
-                            index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/server/entry.rsc.tsx'),
+                            index: path.resolve(interactConfigTyped.paths.interactResourcesDirectory, 'rsc/server/entry.rsc.tsx'),
                         },
                     },
+
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "rsc"),
                     emptyOutDir: true
                 },
@@ -126,12 +183,15 @@ export async function resolveViteConfig(
             // - RSC stream deserialization (RSC stream -> React VDOM)
             // - traditional SSR (React VDOM -> HTML string/stream)
             ssr: {
+                resolve: {
+                    noExternal: reactPkgsConfig.ssr.noExternal,
+                },
                 build: {
                     rollupOptions: {
                         // Main entry: https://rollupjs.org/configuration-options/#input
                         input: {
                             // generated as index.js
-                            index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/server/entry.ssr.tsx'),
+                            index: path.resolve(interactConfigTyped.paths.interactResourcesDirectory, 'rsc/server/entry.ssr.tsx'),
                         },
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "ssr"),
@@ -151,7 +211,7 @@ export async function resolveViteConfig(
                         // Main entry: https://rollupjs.org/configuration-options/#input
                         input: {
                             // generated as index.js
-                            index: path.resolve(interactConfigTyped.paths.resourcesDirectory, 'rsc/browser/entry.browser.tsx'),
+                            index: path.resolve(interactConfigTyped.paths.interactResourcesDirectory, 'rsc/browser/entry.browser.tsx'),
                         }
                     },
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),
@@ -159,6 +219,8 @@ export async function resolveViteConfig(
                 },
             },
         },
+        // Order does not matter
+        // The first request made (ie to rsc entry) will start to load the module graph
         plugins: [
             // Resolve the @/ in a cascading way
             // {
@@ -194,13 +256,12 @@ export async function resolveViteConfig(
                 enforce: "post", // runs after as we depend on the component plugin
                 ...middlewareProvider()
             },
-            // Rsc
-            // At the end because the client entry import the virtual CSS (outline and global)
-            // Note: you can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
-            // to understand how "use client" and "use server" directives are transformed internally.
-            Inspect(),
             rsc(),
             ssg(),
+            // The vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
+            // to understand how "use client" and "use server" directives are transformed internally.
+            inspect && Inspect(),
+            logLevel == 'info' && confResolved()
         ],
     }
 }

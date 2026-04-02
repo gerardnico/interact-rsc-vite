@@ -14,7 +14,7 @@ import {type InteractConfig, setInteractConfigGlobally} from "../config/interact
  * Why? If they change, we set them again, and we restart the dev server
  * No need to restart the process (difficult to do programmatically)
  */
-export async function setGlobalsConf(confPath: string | undefined, force: boolean = false): Promise<InteractConfig> {
+export async function setGlobalsConf(confPath: string | undefined = undefined, force: boolean = false): Promise<InteractConfig> {
     const interactConfigTyped = createInteractConfig(confPath);
     setInteractConfigGlobally(interactConfigTyped, force);
     const markdownConfig = await createMarkdownConfig()

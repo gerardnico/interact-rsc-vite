@@ -12,7 +12,7 @@ export default function globalStylesheet(): Plugin {
     let interactConfig = getInteractConfig()
     let confCssFilePath = interactConfig.paths.cssFile
     if (!existsSync(confCssFilePath)) {
-        confCssFilePath = path.resolve(interactConfig.paths.resourcesDirectory, "styles", "global.css");
+        confCssFilePath = path.resolve(interactConfig.paths.interactResourcesDirectory, "styles", "global.css");
     }
     if (!existsSync(confCssFilePath)) {
         throw new Error(`A global CSS file should have been found`);

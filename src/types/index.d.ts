@@ -8,19 +8,22 @@
 /// <reference types="../interact/vite/middlewareProviderModule.js" />
 
 import type {InteractMarkdownConfig} from "./markdownConfig.js";
-import type {MiddlewareHandler, Middleware, MiddlewarePageResponse} from "../interact/middlewareEngine/interactMiddleware.d.ts"
+import type {MiddlewareHandler, Middleware, MiddlewarePageResponse, ReactNodeResponse} from "../interact/middlewareEngine/interactMiddleware.d.ts"
 import type {Page, Frontmatter, TocNode} from "../interact/pages/interactPage.js";
 import type {ContextProps} from "../interact/componentsProvider/contextProps.js";
 
 import {type InteractConfig} from "../interact/config/interactConfig.js"
 
+import type {InteractCommand} from "../cli/shared/vite.config.js";
 
 export {
     InteractConfig,
     InteractMarkdownConfig,
+    InteractCommand,
     MiddlewareHandler,
     Middleware,
     MiddlewarePageResponse,
+    ReactNodeResponse,
     Page,
     ContextProps,
     Frontmatter,

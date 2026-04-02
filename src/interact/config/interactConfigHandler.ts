@@ -250,6 +250,11 @@ class InteractConfigHandler {
 
     #addDefaultAndRuntime(finalConfigData: InteractConfig) {
 
+        /**
+         * Directory of the code with the `Interact` package.json,
+         * this module (interactConfigHandler) will be in src in dev and dist in prod (when distributed)
+         */
+        let interactRootDirectory = path.resolve(__dirname, '../../..');
 
         finalConfigData.paths = {
             configFile: this.configFile,
@@ -258,11 +263,7 @@ class InteractConfigHandler {
             publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
             imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
             cacheDirectory: this.#qualifiedDirectoryPath(".interact"),
-            /**
-             * Directory of the code, this module will be in src and dist when distributed so we go back until the root
-             * to find src again
-             */
-            resourcesDirectory: path.resolve(__dirname, '../../../src/resources'),
+            interactResourcesDirectory: path.resolve(interactRootDirectory, 'src/resources'),
             buildDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.buildDirectory),
             cssFile: this.#qualifiedDirectoryPath(finalConfigData.paths.cssFile),
             atDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.atDirectory)
@@ -295,7 +296,7 @@ class InteractConfigHandler {
         /**
          * Add layout (partials are not needed)
          */
-        const atDirectories = [finalConfigData.paths.resourcesDirectory, finalConfigData.paths.atDirectory];
+        const atDirectories = [finalConfigData.paths.interactResourcesDirectory, finalConfigData.paths.atDirectory];
         const type = 'layout';
         let i = 0;
         for (const atDirectory of atDirectories) {

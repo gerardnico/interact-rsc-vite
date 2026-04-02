@@ -33,8 +33,8 @@ export type InteractConfig = {
         // Example with vite
         // https://vite.dev/guide/dep-pre-bundling#file-system-cache
         cacheDirectory: string
-        // The path or the resources src directory
-        resourcesDirectory: string
+        // The path of the interact resources directory
+        interactResourcesDirectory: string
     }
 }
 
