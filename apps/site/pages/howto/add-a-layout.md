@@ -2,13 +2,19 @@
 title: How to create a layout?
 ---
 
+This page shows you how to create your own [layout](../reference/layout.md)
+so that you can define it in your [pages](../reference/page.md)
+
 ## Steps
 
 ### Create a layout component
 
-The layout should return the `html` element wrapping a [page component](../reference/page.md)
+A layout is a component that:
 
-Example of minimal implementations:
+* returns the root `html` element
+* and wraps a [page component](../reference/page.md)
+
+Example of minimal implementation:
 
 ```tsx
 import type {ContextProps} from "@combostrap/interact/types";
@@ -32,14 +38,29 @@ export function MyLayout(props: ContextProps) {
 
 ### Register it
 
-Interact expects all layout files to be stored in the directory `@/components/layouts` as `jsx` or `tsx` files
+Interact expects all custom layouts files to be stored in the [layouts directory](../reference/directory-layout.md) (
+default to `src/components/layouts`)
+as `jsx` or `tsx` files
 
-Store the previous layout at : `@/components/layouts/myLayout.tsx`
+Save your layout at: `src/components/layouts/myLayout.tsx`
+
+### Layout Name
+
+The file name normalized is the key.
+
+In our case, the layout name is `mylayout`
+
+Because we normalize the layout key, you can use casing in your file name and in the [layout meta](#use-it):
+
+* `MyLayout`: camel case
+* `my_layout`: snake case
+* `my-layout`: kebab-case
 
 ### Reuse a layout
 
 If you want to make a small changes, the easiest is to copy the actual interact layout.
-They are all under the [layouts components directory](https://github.com/combostrap/interact/tree/main/src/interact/components)
+They are all under
+the [layouts components directory](https://github.com/combostrap/interact/tree/main/src/interact/components)
 
 ### Use it
 

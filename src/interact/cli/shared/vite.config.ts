@@ -24,6 +24,7 @@ import {setGlobalsConf} from "../../vite/globalConf.js";
 import mdxRollup from "../../vite/mdxRollup.js";
 import confResolved from "../../vite/confResolved.js";
 import {crawlFrameworkPkgs} from "vitefu";
+import {atAliasResolution} from "../../vite/atAliasResolution.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -222,11 +223,11 @@ export async function resolveViteConfig(
         // Order does not matter
         // The first request made (ie to rsc entry) will start to load the module graph
         plugins: [
-            // Resolve the @/ in a cascading way
-            // {
-            //     enforce: "pre", // should be first
-            //     ...viteAtSrcAliasResolution(),
-            // },
+            //Resolve the @/ in a cascading way
+            {
+                enforce: "pre", // should be first
+                ...atAliasResolution(),
+            },
             imageMiddleware({command: command}),
             react(),
             // Tailwind

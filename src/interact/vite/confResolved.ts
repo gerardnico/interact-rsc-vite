@@ -1,17 +1,20 @@
 import path from "node:path";
 import fs from "fs";
 import type {Plugin} from "vite";
+// not @combostrap/interact
+import {getInteractConfig} from "../config/interactConfig.js";
 
 
 /**
  * Store a resolved conf for debugging purpose in dist
  */
 export default function confResolved(): Plugin {
+    let interact = getInteractConfig();
     return {
         name: 'resolved',
         configResolved(config) {
-            const outDir = config.build?.outDir ?? 'dist'
-            const outPath = path.resolve(config.root, outDir, 'vite-interact-config.json')
+            const outDir = interact.paths.buildDirectory;
+            const outPath = path.resolve(config.root, outDir, 'vite-resolved-config.json')
 
             /**
              * WeakMap/WeakSet tracking circular by reference (identity)

@@ -11,7 +11,7 @@ export default function confWatcher(): Plugin {
 
     let interactConfig = getInteractConfig()
     const configFile = interactConfig.paths.configFile;
-    const layoutDirectory = `${interactConfig.paths.atDirectory}/layouts`;
+    const layoutDirectory = interactConfig.paths.layoutsDirectory;
 
     return {
         name: 'interact-conf-watch',

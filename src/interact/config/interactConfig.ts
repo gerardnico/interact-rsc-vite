@@ -5,7 +5,7 @@
 import {
     type pluginsConfigType, type ComponentsSet, type pathsConfigType, type imageConfigType,
     type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType, type PagesConfig,
-    type layoutConfigType, type aliasesConfigType
+    type aliasesConfigType
 } from "./configSchema.js";
 
 /**
@@ -21,7 +21,6 @@ export type InteractConfig = {
     pages: PagesConfig,
     images: imageConfigType,
     markdown: markdownConfigType,
-    layout: layoutConfigType,
     aliases: aliasesConfigType,
     paths: pathsConfigType & {
         configFile: string

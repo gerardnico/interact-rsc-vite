@@ -5,11 +5,10 @@
  * via a flex grow in the {@link NavBarCollapse}
  */
 import React from "react";
-import {cn} from '../../lib/utils';
+import {cn} from '@/lib/utils';
 
 
 export default function NavBar({className, children, ...props}: React.HtmlHTMLAttributes<HTMLHtmlElement>) {
-
 
     return (
 

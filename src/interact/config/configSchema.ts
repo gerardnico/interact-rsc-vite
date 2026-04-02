@@ -84,21 +84,22 @@ const ImageSchema = z.object({
  * Path Schema
  */
 const PathsSchema = z.object({
-    pagesDirectory: z.coerce.string<string>().describe("The path of the pages directory").default("pages"),
+    pagesDirectory: z.coerce.string<string>().describe("The path of the pages directory").default("src/pages"),
     // https://vite.dev/guide/assets#the-public-directory
     publicDirectory: z.coerce.string<string>().describe("The path of the public directory").default("public"),
+    layoutsDirectory: z.coerce.string<string>().describe("The path of the layout directory").default("src/components/layouts"),
     imagesDirectory: z.coerce.string<string>().describe("The path of the image directory").default("images"),
     // https://vite.dev/config/build-options#build-outdir
     buildDirectory: z.coerce.string<string>().describe("The path of the output directory relative to the project root").default("dist"),
-    cssFile: z.coerce.string<string>().describe("The path to the global.css file").default("src/styles/global.css"),
-    atDirectory: z.coerce.string<string>().describe("The path of the at directory ").default("src"),
+    cssFile: z.coerce.string<string>().describe("The path to the global.css file").default("src/styles/global.css")
 })
 
 /**
  * Aliases Schema
  */
 const AliasesSchema = z.object({
-    ui: z.coerce.string<string>().describe("The alias to the shadcn component ui").default("@/components/ui"),
+    resolution: z.enum(['cascade', 'standard']).describe("Resolution mode: resolve the alias with cascade or not (with cascade, the resolution check the project directory then interact)").default('standard'),
+    atDirectory: z.coerce.string<string>().describe("The path of the at directory (@)").default("src"),
 })
 
 
@@ -258,10 +259,7 @@ let configStyleSchema = z.object({
 });
 export type styleConfigType = z.output<typeof configStyleSchema>;
 
-let configLayoutSchema = z.object({
-    uiAliasResolution: z.enum(['cascade', 'standard']).describe("Resolve the @/components/ui alias from an Interact components with cascade or not (with cascade, the resolution check the project directory then interact)").default('standard'),
-});
-export type layoutConfigType = z.output<typeof configLayoutSchema>;
+
 
 /**
  * Components
@@ -363,7 +361,6 @@ export const JsonConfigSchema = z.object({
     pages: PagesConfigSchema.default(PagesConfigSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
-    layout: configLayoutSchema.default(configLayoutSchema.parse({})),
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})),
     markdown: MarkdownConfigSchema.default(MarkdownConfigSchema.parse({})),
 })

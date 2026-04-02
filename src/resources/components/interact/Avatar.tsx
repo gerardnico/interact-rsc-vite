@@ -4,7 +4,7 @@
 // *  Covering the frame — `object-fit: cover` ensures the image fills the square without distortion, cropping from the center if needed.
 import Raster, {type ImageProps} from './Raster';
 import {InteractError, InteractErrorData} from "../../../interact/errors/index.js";
-import {cn} from "../../lib/utils";
+import {cn} from "@/lib/utils";
 
 // noinspection JSUnusedGlobalSymbols - exported at the package level
 export type AvatarType = ImageProps & {

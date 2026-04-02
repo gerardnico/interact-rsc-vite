@@ -1,7 +1,3 @@
-/**
- * We set it globally to avoid https://github.com/oclif/core/issues/997
- */
-
 import {
     JsonConfigSchema,
     type FaviconSetSchemaType,
@@ -262,12 +258,17 @@ class InteractConfigHandler {
             pagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.pagesDirectory),
             publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
             imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
+            layoutsDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.layoutsDirectory),
             cacheDirectory: this.#qualifiedDirectoryPath(".interact"),
             interactResourcesDirectory: path.resolve(interactRootDirectory, 'src/resources'),
             buildDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.buildDirectory),
             cssFile: this.#qualifiedDirectoryPath(finalConfigData.paths.cssFile),
-            atDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.atDirectory)
         }
+
+        /**
+         * At alias
+         */
+        finalConfigData.aliases.atDirectory = this.#qualifiedDirectoryPath(finalConfigData.aliases.atDirectory)
 
         finalConfigData.site.favicons = updateFavicon(
             {
@@ -296,21 +297,19 @@ class InteractConfigHandler {
         /**
          * Add layout (partials are not needed)
          */
-        const atDirectories = [finalConfigData.paths.interactResourcesDirectory, finalConfigData.paths.atDirectory];
         const type = 'layout';
+        const layoutDirectories = [`${finalConfigData.paths.interactResourcesDirectory}/components/${type}s`, finalConfigData.paths.layoutsDirectory];
         let i = 0;
-        for (const atDirectory of atDirectories) {
+        for (const layoutDirectory of layoutDirectories) {
             i++;
-            let atPath = `components/${type}s`;
-            let layoutDirectory = `${atDirectory}/${atPath}`;
-            if (!existsSync(layoutDirectory)) {
+            if (i == 2 && !existsSync(layoutDirectory)) {
                 continue
             }
             for (const file of readdirSync(layoutDirectory)) {
                 const {name, ext} = path.parse(file);
                 if (!/\.(jsx|tsx)$/.test(ext)) continue;
                 finalConfigData.components[name] = {
-                    importPath: (i == 1) ? `@combostrap/interact/components/${type}s/${name}` : `@/${atPath}/${name}`,
+                    importPath: (i == 1) ? `@combostrap/interact/components/${type}s/${name}` : file,
                     type: type
                 }
             }

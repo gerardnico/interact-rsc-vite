@@ -13,7 +13,7 @@ import {
 import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
 import fsPromises from "fs/promises";
 import crypto from "crypto";
-import {getInteractConfig} from "@combostrap/interact/config";
+import {getInteractConfig} from "../config/interactConfig.js";
 import {imageEndPointEnvName, imageViteOutDirEnvName} from "./imageMiddlewareHandler.js";
 import fs from "fs";
 

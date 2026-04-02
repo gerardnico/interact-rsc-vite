@@ -9,8 +9,10 @@ A typical interact project is composed of the following paths:
 * `pages`: a directory that contains [pages](page.md)
 * `images`: a directory that contains [raster image](../components/image.md) or [Svg](../components/svg.md)
 * `public`: a directory that contains other resources such as `pdf` that your pages may reference.
-* `components`: a directory that contains your custom [components](../reference/component.md#custom)
-* `config`: a directory that contains extra configuration such as the [markdown config](remark-rehype-unified.md#config) 
+* `layouts`: a directory that contains your custom [layouts](layout.md)
+* `config`: a directory that contains extra configuration such as the [markdown config](remark-rehype-unified.md#config)
+* `build`: a directory where the [build result](build.md) is stored
+* `cache`: a directory for runtime information
 
 They are all relative to the `root` directory which is the directory of your project.
 

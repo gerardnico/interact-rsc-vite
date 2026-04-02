@@ -25,6 +25,10 @@
       }
     }
   },
+  "paths": {
+    "pagesDirectory": "pages",
+    "imagesDirectory": "images"
+  },
   "pages": {
     "providers": [
       {
