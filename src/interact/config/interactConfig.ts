@@ -23,9 +23,8 @@ export type InteractConfig = {
     markdown: markdownConfigType,
     aliases: aliasesConfigType,
     paths: pathsConfigType & {
+        rootDirectory: string, // making it not null for typescript
         configFile: string
-        // "The root path of the site project"
-        rootDirectory: string
         // The runtime/tmp directory, image cache, ...
         // output dir such as dist does not work as it will be cleaned up
         // For runtime, I see also: './node_modules/.xxx'

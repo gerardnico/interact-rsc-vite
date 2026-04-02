@@ -77,62 +77,7 @@ Demo:
 
 <br/>
 
-## Custom
+## Custom Markdown Rendering
 
-### Add a Markdown component
-
-You can add a component to be used in Markdown by defining them as `markdown` component in the
-`components` section of the [configuration file](conf.md).
-
-See [How to add a content component](../howto/add-a-markdown-component.md)
-
-### Override the default with your own component
-
-You can override the [default html](markdown-syntax.md) to bring your own by defining them in the
-`components` section of the [configuration file](conf.md).
-
-Example on how to change the `pre` component (for code block syntax highlighting)
-
-```json
-{
-  "components": {
-    "pre": {
-      "importPath": "src/component/MyCodeComponent.js",
-      "type": "markdown"
-    }
-  }
-}
-```
-
-## Support
-
-### Expected component `xxx` to be defined
-
-If you get this error:
-
-```
-Error: Expected component `xxx` to be defined: you likely forgot to import, pass, or provide it.
-```
-
-The possible causes are:
-
-* the component is [not registered](../howto/add-a-markdown-component.md#register-it)
-* the component is not exported as `default`:
-
-Example:
-
-* Bad
-
-```javascript
-export async function Svg({}) {
-    // body
-}
-```
-
-* Good
-
-```javascript
-export default async function Svg({}) {
-    // body
-}
-```
+You can set or add a component to be used in Markdown
+See [How to map or add a Markdown component](markdown-component.md#how-to)

@@ -84,22 +84,25 @@ const ImageSchema = z.object({
  * Path Schema
  */
 const PathsSchema = z.object({
+    rootDirectory: z.coerce.string<string>().describe("The path of the project root directory").optional(),
     pagesDirectory: z.coerce.string<string>().describe("The path of the pages directory").default("src/pages"),
     // https://vite.dev/guide/assets#the-public-directory
     publicDirectory: z.coerce.string<string>().describe("The path of the public directory").default("public"),
     layoutsDirectory: z.coerce.string<string>().describe("The path of the layout directory").default("src/components/layouts"),
+    mdComponentsDirectory: z.coerce.string<string>().describe("The path of the markdown components directory").default("src/components/markdowns"),
+    configDirectory: z.coerce.string<string>().describe("The path of the config directory").default("config"),
     imagesDirectory: z.coerce.string<string>().describe("The path of the image directory").default("images"),
     // https://vite.dev/config/build-options#build-outdir
     buildDirectory: z.coerce.string<string>().describe("The path of the output directory relative to the project root").default("dist"),
-    cssFile: z.coerce.string<string>().describe("The path to the global.css file").default("src/styles/global.css")
+    cssFile: z.coerce.string<string>().describe("The path to the global.css file").default("src/styles/global.css"),
+    atDirectory: z.coerce.string<string>().describe("The path of the at alias directory (@)").default("src"),
 })
 
 /**
  * Aliases Schema
  */
 const AliasesSchema = z.object({
-    resolution: z.enum(['cascade', 'standard']).describe("Resolution mode: resolve the alias with cascade or not (with cascade, the resolution check the project directory then interact)").default('standard'),
-    atDirectory: z.coerce.string<string>().describe("The path of the at directory (@)").default("src"),
+    resolution: z.enum(['cascade', 'standard']).describe("Resolution mode: resolve the alias with cascade or not (with cascade, the resolution check the project directory then interact)").default('standard')
 })
 
 

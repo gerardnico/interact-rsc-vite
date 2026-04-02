@@ -1,4 +1,4 @@
-import Svg, {type SvgComponentProps} from "./Svg.js";
+import Svg, {type SvgComponentProps} from "./Svg";
 import clsx from "clsx";
 
 /**

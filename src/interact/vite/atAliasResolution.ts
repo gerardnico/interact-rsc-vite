@@ -11,7 +11,7 @@ function isInteractAlias(importer: string) {
     return importer?.includes("combostrap/interact") || importer?.includes("interact/interact");
 }
 
-let alias = "@"
+export const atAliasCharacter = "@"
 
 /**
  * A plugin to resolve the at sign alias from interact code or the code of a project
@@ -29,11 +29,11 @@ export function atAliasResolution(): Plugin {
          * importer: the absolute path of the file that contains the import.
          */
         resolveId(source, importer) {
-            if (!source.startsWith(`${alias}/`)) return null
+            if (!source.startsWith(`${atAliasCharacter}/`)) return null
             if (importer == null) return null;
 
             // strip `@/`
-            let relative = source.slice(alias.length + 1)
+            let relative = source.slice(atAliasCharacter.length + 1)
             // delete extension if any
             let lastPoint = relative.lastIndexOf(".")
             if (lastPoint != -1) {
@@ -43,7 +43,7 @@ export function atAliasResolution(): Plugin {
             let candidates = [];
             let resolution = interactConfig.aliases.resolution;
             let interactPath = `${interactConfig.paths.interactResourcesDirectory}/${relative}`;
-            let clientPath = `${interactConfig.aliases.atDirectory}/${relative}`;
+            let clientPath = `${interactConfig.paths.atDirectory}/${relative}`;
             if (resolution == 'standard') {
                 if (isInteractAlias(importer)) {
                     candidates.push(interactPath)

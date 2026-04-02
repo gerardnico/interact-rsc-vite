@@ -8,6 +8,7 @@ import {readdirSync, readFileSync} from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
 import type {InteractConfig} from "./interactConfig.js";
+import {atAliasCharacter} from "../vite/atAliasResolution.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -158,33 +159,6 @@ function updateManifest({manifestFileName, publicDirectory}: {
 
 const configFileName = 'interact.config.json'
 
-export interface ConfPathResolvedType {
-    rootDirectory: string;
-    filePath: string;
-}
-
-/**
- * The interact conf path may be the config file or a directory
- * @param confPath
- */
-function resolveInteractConfPath(confPath: string | undefined): ConfPathResolvedType {
-
-    // resolve to get an absolute path
-    const finalConfPath = path.resolve(confPath || process.env['INTERACT_CONF_PATH'] || process.cwd());
-
-    if (finalConfPath.endsWith(configFileName)) {
-        return {
-            rootDirectory: path.dirname(finalConfPath),
-            filePath: finalConfPath
-        }
-    }
-    return {
-        rootDirectory: finalConfPath,
-        filePath: path.join(finalConfPath, `${configFileName}`)
-    }
-
-}
-
 
 /**
  * Deep merge two objects
@@ -225,8 +199,7 @@ function deepMerge(target: any, source: any) {
 
 
 export function createInteractConfig(confPath?: string) {
-    const confPathResolved = resolveInteractConfPath(confPath);
-    return new InteractConfigHandler(confPathResolved).getConfig();
+    return new InteractConfigHandler(confPath).getConfig();
 }
 
 /**
@@ -235,12 +208,16 @@ export function createInteractConfig(confPath?: string) {
 class InteractConfigHandler {
 
     private readonly configFile: string;
-    private readonly rootDirectory: string;
     private readonly interactConfig: InteractConfig;
 
-    constructor(confPathResolved: ConfPathResolvedType) {
-        this.configFile = confPathResolved.filePath;
-        this.rootDirectory = confPathResolved.rootDirectory;
+    constructor(confPath: string | undefined) {
+        // resolve to get an absolute path
+        const finalConfPath = path.resolve(confPath || process.env['INTERACT_CONF_PATH'] || process.cwd());
+        if (finalConfPath.endsWith(configFileName)) {
+            this.configFile = finalConfPath;
+        } else {
+            this.configFile = path.resolve(finalConfPath, configFileName);
+        }
         this.interactConfig = this.#process()
     }
 
@@ -252,23 +229,25 @@ class InteractConfigHandler {
          */
         let interactRootDirectory = path.resolve(__dirname, '../../..');
 
+        let rootDirectory = path.dirname(this.configFile);
+        if (finalConfigData.paths.rootDirectory != null) {
+            rootDirectory = finalConfigData.paths.rootDirectory;
+        }
         finalConfigData.paths = {
             configFile: this.configFile,
-            rootDirectory: this.rootDirectory,
-            pagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.pagesDirectory),
-            publicDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.publicDirectory),
-            imagesDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.imagesDirectory),
-            layoutsDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.layoutsDirectory),
-            cacheDirectory: this.#qualifiedDirectoryPath(".interact"),
-            interactResourcesDirectory: path.resolve(interactRootDirectory, 'src/resources'),
-            buildDirectory: this.#qualifiedDirectoryPath(finalConfigData.paths.buildDirectory),
-            cssFile: this.#qualifiedDirectoryPath(finalConfigData.paths.cssFile),
+            rootDirectory: rootDirectory,
+            pagesDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.pagesDirectory),
+            publicDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.publicDirectory),
+            imagesDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.imagesDirectory),
+            layoutsDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.layoutsDirectory),
+            mdComponentsDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.mdComponentsDirectory),
+            configDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.configDirectory),
+            cacheDirectory: this.#qualifiedDirectoryPath(rootDirectory, ".interact"),
+            interactResourcesDirectory: path.resolve(rootDirectory, interactRootDirectory, 'src/resources'),
+            buildDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.buildDirectory),
+            cssFile: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.cssFile),
+            atDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.atDirectory)
         }
-
-        /**
-         * At alias
-         */
-        finalConfigData.aliases.atDirectory = this.#qualifiedDirectoryPath(finalConfigData.aliases.atDirectory)
 
         finalConfigData.site.favicons = updateFavicon(
             {
@@ -297,20 +276,38 @@ class InteractConfigHandler {
         /**
          * Add layout (partials are not needed)
          */
-        const type = 'layout';
-        const layoutDirectories = [`${finalConfigData.paths.interactResourcesDirectory}/components/${type}s`, finalConfigData.paths.layoutsDirectory];
-        let i = 0;
-        for (const layoutDirectory of layoutDirectories) {
-            i++;
-            if (i == 2 && !existsSync(layoutDirectory)) {
-                continue
+        const types: ('layout' | 'markdown')[] = ['layout', 'markdown'];
+        for (const type of types) {
+            let projectPath;
+            if (type === 'layout') {
+                projectPath = finalConfigData.paths.layoutsDirectory
+            } else {
+                projectPath = finalConfigData.paths.mdComponentsDirectory
             }
-            for (const file of readdirSync(layoutDirectory)) {
-                const {name, ext} = path.parse(file);
-                if (!/\.(jsx|tsx)$/.test(ext)) continue;
-                finalConfigData.components[name] = {
-                    importPath: (i == 1) ? `@combostrap/interact/components/${type}s/${name}` : file,
-                    type: type
+            const layoutDirectories = [`${finalConfigData.paths.interactResourcesDirectory}/components/${type}s`, projectPath];
+
+            for (const [i, layoutDirectory] of layoutDirectories.entries()) {
+                let isProjectDir = i == 1
+
+                if (isProjectDir && !existsSync(layoutDirectory)) {
+                    // interact dir should exist, we don't check
+                    // it will fail at readDir
+                    continue
+                }
+
+                for (const fileName of readdirSync(layoutDirectory)) {
+                    const {name, ext} = path.parse(fileName);
+                    if (!/\.(jsx|tsx|js)$/.test(ext)) continue;
+                    let importPath = path.resolve(layoutDirectory, fileName);
+                    if (isProjectDir) {
+                        importPath = importPath.replace(finalConfigData.paths.atDirectory, atAliasCharacter);
+                    } else {
+                        importPath = `@combostrap/interact/components/${type}s/${name}`;
+                    }
+                    finalConfigData.components[name] = {
+                        importPath: importPath,
+                        type: type
+                    }
                 }
             }
         }
@@ -321,7 +318,7 @@ class InteractConfigHandler {
         if (finalConfigData.markdown.configImportPath == null) {
             const extensions = [".js", ".ts"]
             for (const extension of extensions) {
-                const markdownConfig = path.resolve(this.rootDirectory, `config/markdown.config${extension}`);
+                const markdownConfig = path.resolve(rootDirectory, `markdown.config${extension}`);
                 if (fs.existsSync(markdownConfig)) {
                     finalConfigData.markdown.configImportPath = markdownConfig
                     break;
@@ -331,10 +328,10 @@ class InteractConfigHandler {
 
     }
 
-    #qualifiedDirectoryPath(basePath: string
+    #qualifiedDirectoryPath(rootDirectory: string, basePath: string
     ) {
         if (!basePath.startsWith("/")) {
-            return path.resolve(this.rootDirectory, basePath);
+            return path.resolve(rootDirectory, basePath);
         }
         return path.resolve(basePath);
 

@@ -3,7 +3,7 @@
 // * Making it round: `border-radius: 50%` or `rounded-circle` class in bs turns it into a circle. This only works well when width and height are equal (a square).
 // *  Covering the frame — `object-fit: cover` ensures the image fills the square without distortion, cropping from the center if needed.
 import Raster, {type ImageProps} from './Raster';
-import {InteractError, InteractErrorData} from "../../../interact/errors/index.js";
+import {InteractError, InteractErrorData} from "../../../interact/errors";
 import {cn} from "@/lib/utils";
 
 // noinspection JSUnusedGlobalSymbols - exported at the package level

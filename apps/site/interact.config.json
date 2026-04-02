@@ -5,14 +5,6 @@
     "title": "Interact Documentation (that feels like an App)"
   },
   "components": {
-    "Counter": {
-      "importPath": "./components/Counter.tsx",
-      "type": "markdown"
-    },
-    "Planet": {
-      "importPath": "./components/Planet.js",
-      "type": "markdown"
-    },
     "NotFound": {
       "importPath": "./pages/404.tsx",
       "type": "page"
@@ -27,7 +19,9 @@
   },
   "paths": {
     "pagesDirectory": "pages",
-    "imagesDirectory": "images"
+    "imagesDirectory": "images",
+    "atDirectory": ".",
+    "mdComponentsDirectory": "components/markdowns"
   },
   "pages": {
     "providers": [
