@@ -123,10 +123,10 @@ export async function resolveViteConfig(
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
             alias: {},
-            // Trying to avoid hooks fatal error, already done by plugin-react
+            // Trying to avoid React hooks fatal error on client that uses the yarn portal protocol in dependencies
             // https://github.com/vitejs/vite/blob/f09299ce13b55d51456985b96d4c3b3a1f131acb/packages/plugin-react/src/index.ts#L339
-            // does not work because of @base-ui/react
-            // dedupe: ['react', 'react-dom', '@base-ui/react', 'lucide-react', '@vitejs/plugin-react', '@vitejs/plugin-rsc', '@babel', 'rsc-html-stream', 'class-variance-authority', 'clsx']
+            // And it works until now
+            dedupe: reactPkgsConfig.ssr.noExternal
         },
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,

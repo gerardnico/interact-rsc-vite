@@ -69,7 +69,7 @@ This error is mostly due because an imported component has the value `null`.
 Example, the imported `NavBar` value below is `null`
 
 ```javascript
-import {NavBar} from "interact:components";
+import {NavBar} from "interact:partials";
 ```
 
 Why? Here are the possible reasons:
@@ -77,4 +77,27 @@ Why? Here are the possible reasons:
 * the component does not exist in the imported module.
 * The imported component from the `interact:components` module was not registered in
   the [component section of the configuration file](conf.md)
-* your [layout component](layout.md) is a [client component](#use-client) and it should not. 
+* your [layout component](layout.md) is a [client component](#use-client) and it should not.
+
+### Invalid Hook Call Warning in Rsc environment
+
+In React, you may get the injurious [invalid hook call warning](https://react.dev/warnings/invalid-hook-call-warning).
+
+In Rsc, this problem may occur because you might have more than one copy of React due to bad splitting.
+
+Why? The bundler needs to parse every file that have the [use client directive](#use-client) in order
+to split correctly the code between the client and the servers environments (rsc/ssr).
+
+By default, in SSR, all dependencies are externalized and are not processed (except for linked dependencies for HMR).
+Therefore, the React library dependency needs to be listed in
+the [noExternal properties](https://vite.dev/config/ssr-options#ssr-noexternal).
+
+We do it for you by scanning your `package.json` in search of library with `react` in their `dependencies` and
+`peerDependencies` properties.
+
+If the incriminated dependency is a React library, you can:
+
+* add react as  `peerDependencies`
+* or create your [vite configuration](vite.md) and adding the library in
+  the [noExternal properties](https://vite.dev/config/ssr-options#ssr-noexternal) for the server environments (`ssr` and
+  `rsc`)

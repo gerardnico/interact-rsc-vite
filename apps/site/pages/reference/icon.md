@@ -6,9 +6,31 @@ This page shows you how you can add icons to your [pages](page.md)
 
 ## List
 
-### Svg Element
+### Markdown
 
-You can add raw svg file as icon with the [SVG](../components/svg.md) element.
+You can add a raw svg file in the [image directory](directory-layout.md) and use it
+in a [markdown](markdown.md) page with the [Icon](../components/icon.md) element.
+
+```markdown
+<Icon src="favicon.svg"/>
+```
+
+<Icon src="favicon.svg"/>
+
+### Programmatic Page
+
+#### Import
+
+In a [programmatic page](page-module.md), you can import:
+* from a raw svg file
+
+```javascript
+import Envelope from "../img/bi-envelope-fill.svg"
+```
+* from a React icon library
+```javascript
+import {ChevronDownIcon} from "lucide-react";
+```
 
 ### CSS font
 

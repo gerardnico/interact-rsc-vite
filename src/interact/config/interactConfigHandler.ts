@@ -45,6 +45,10 @@ export const defaultComponentsValue: ComponentsSet = {
     //     importPath: `${atInteractComponentPath}/GridCell`,
     //     type: "markdown"
     // },
+    "Icon": {
+        importPath: `${atInteractComponentPath}/Icon`,
+        type: "markdown"
+    },
     "Image": {
         importPath: `${atInteractComponentPath}/Image`,
         type: "markdown"
