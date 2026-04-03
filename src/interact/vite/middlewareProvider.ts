@@ -1,5 +1,4 @@
 import type {Plugin} from 'vite';
-import type {MiddlewareConfig} from "../config/configSchema.js";
 import {getInteractConfig} from "../config/interactConfig.js";
 import path from "node:path";
 
@@ -8,18 +7,10 @@ export default function middlewareProvider(): Plugin {
 
     let interactConfig = getInteractConfig()
 
-    let middlewareConfigs: MiddlewareConfig[] = [
-        ...interactConfig.pages.providers || [],
-        {
-            importPath: path.resolve(interactConfig.paths.interactResourcesDirectory, 'middleware/localPagesMiddleware'),
-            props: {
-                pagesDirectory: interactConfig.paths.pagesDirectory
-            }
-        }]
     //const resolvedId = '\0' + virtualId;
     const resolvedId = virtualId;
     return {
-        name: 'interact-middleware-registry',
+        name: 'interact:middlewares',
         resolveId(id: string) {
             if (id === virtualId) return resolvedId;
         },
@@ -28,7 +19,7 @@ export default function middlewareProvider(): Plugin {
 
             let imports: string[] = [];
             let middlewares: string[] = []
-            for (const [i, middleware] of middlewareConfigs.entries()) {
+            for (const [i, middleware] of interactConfig.middlewares.entries()) {
                 let importPath = middleware.importPath;
                 if (importPath.startsWith("./")) {
                     importPath = path.resolve(interactConfig.paths.rootDirectory, importPath);

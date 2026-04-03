@@ -1,7 +1,7 @@
 import {
     JsonConfigSchema,
     type FaviconSetSchemaType,
-    type pluginsConfigType, type ComponentsSet
+    type ComponentsSet
 } from "./configSchema.js";
 import fs, {existsSync} from 'fs'
 import {readdirSync, readFileSync} from "node:fs";
@@ -87,15 +87,6 @@ export const defaultComponentsValue: ComponentsSet = {
     }
 }
 
-const defaultMarkdownUnifiedPlugins: pluginsConfigType = {
-    "rehype-github-alerts": {},
-    "rehype-href-rewrite": {},
-    "remark-link-checker": {
-        props: {strict: true}
-    },
-    "remark-layout": {},
-    "remark-frontmatter-modified-time": {}
-}
 
 // Based on https://realfavicongenerator.net
 let defaultFavicons: FaviconSetSchemaType = {
@@ -237,6 +228,7 @@ class InteractConfigHandler {
         if (finalConfigData.paths.rootDirectory != null) {
             rootDirectory = finalConfigData.paths.rootDirectory;
         }
+
         finalConfigData.paths = {
             configFile: this.configFile,
             rootDirectory: rootDirectory,
@@ -245,6 +237,7 @@ class InteractConfigHandler {
             imagesDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.imagesDirectory),
             layoutsDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.layoutsDirectory),
             mdComponentsDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.mdComponentsDirectory),
+            middlewaresDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.middlewaresDirectory),
             configDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.configDirectory),
             cacheDirectory: this.#qualifiedDirectoryPath(rootDirectory, ".interact"),
             interactResourcesDirectory: path.resolve(rootDirectory, interactRootDirectory, 'src/resources'),
@@ -266,11 +259,6 @@ class InteractConfigHandler {
             }
         );
 
-
-        /**
-         * Default plugins
-         */
-        finalConfigData.plugins = deepMerge(defaultMarkdownUnifiedPlugins, finalConfigData.plugins)
 
         /**
          * Default ui components
@@ -313,6 +301,37 @@ class InteractConfigHandler {
                         type: type
                     }
                 }
+            }
+        }
+
+        /**
+         * Middlewares
+         */
+        const middlewareDirectories = [`${finalConfigData.paths.interactResourcesDirectory}/middlewares`, finalConfigData.paths.middlewaresDirectory];
+        for (const [i, middlewaresDirectory] of middlewareDirectories.entries()) {
+            let isProjectDir = i == 1
+            if (isProjectDir && !existsSync(middlewaresDirectory)) {
+                // interact dir should exist, we don't check
+                // it will fail at readDir
+                continue
+            }
+
+            const filesNaturalSort = fs
+                .readdirSync(middlewaresDirectory)
+                .sort((a, b) => a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'}));
+
+            for (const fileName of filesNaturalSort) {
+                const {name,ext} = path.parse(fileName);
+                if (!/\.(jsx|tsx|js)$/.test(ext)) continue;
+                let importPath = path.resolve(middlewaresDirectory, fileName);
+                if (isProjectDir) {
+                    importPath = importPath.replace(finalConfigData.paths.atDirectory, atAliasCharacter);
+                } else {
+                    importPath = `@combostrap/interact/middlewares/${name}`;
+                }
+                finalConfigData.middlewares.push({
+                    importPath: importPath,
+                })
             }
         }
 

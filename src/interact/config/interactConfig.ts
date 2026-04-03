@@ -3,9 +3,9 @@
  * so it has no import/export expect for type
  */
 import {
-    type pluginsConfigType, type ComponentsSet, type pathsConfigType, type imageConfigType,
-    type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType, type PagesConfig,
-    type aliasesConfigType
+    type ComponentsSet, type pathsConfigType, type imageConfigType,
+    type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType,
+    type aliasesConfigType, type MiddlewareConfig
 } from "./configSchema.js";
 
 /**
@@ -15,10 +15,9 @@ import {
 export type InteractConfig = {
     style: styleConfigType,
     site: siteConfigType
-    plugins: pluginsConfigType,
     outline: outlineConfigType,
     components: ComponentsSet,
-    pages: PagesConfig,
+    middlewares: MiddlewareConfig,
     images: imageConfigType,
     markdown: markdownConfigType,
     aliases: aliasesConfigType,

@@ -90,6 +90,7 @@ const PathsSchema = z.object({
     publicDirectory: z.coerce.string<string>().describe("The path of the public directory").default("public"),
     layoutsDirectory: z.coerce.string<string>().describe("The path of the layout directory").default("src/components/layouts"),
     mdComponentsDirectory: z.coerce.string<string>().describe("The path of the markdown components directory").default("src/components/markdowns"),
+    middlewaresDirectory: z.coerce.string<string>().describe("The path of the middlewares directory").default("src/middlewares"),
     configDirectory: z.coerce.string<string>().describe("The path of the config directory").default("config"),
     imagesDirectory: z.coerce.string<string>().describe("The path of the image directory").default("images"),
     // https://vite.dev/config/build-options#build-outdir
@@ -263,7 +264,6 @@ let configStyleSchema = z.object({
 export type styleConfigType = z.output<typeof configStyleSchema>;
 
 
-
 /**
  * Components
  * Base schema shared by all components
@@ -318,27 +318,9 @@ const MiddlewareConfigSchema = z.object({
     importPath: z.coerce.string<string>(),
     props: z.record(z.string(), z.unknown()).optional(),
 }).describe("Provider Properties");
-const PagesConfigSchema = z.object({
-    providers: z.array(MiddlewareConfigSchema).optional(),
-});
 
-export type MiddlewareConfig = z.output<typeof MiddlewareConfigSchema>;
-export type PagesConfig = z.output<typeof PagesConfigSchema>;
+const MiddlewaresSchema = z.array(MiddlewareConfigSchema).default([]);
 
-export type ComponentsSet = z.output<typeof ComponentsConfigSetSchema>;
-
-
-/**
- * Plugins
- */
-const PluginConfigSchema = z.object({
-    path: z.coerce.string<string>().optional(),
-    props: z.record(z.coerce.string<string>(), z.any()).optional(),
-    type: z.enum(['remark', 'rehype']).optional(),
-});
-
-const PluginConfigSetSchema = z.record(z.coerce.string<string>(), PluginConfigSchema.nullable());
-export type pluginsConfigType = z.output<typeof PluginConfigSetSchema>;
 
 const OutlineSchema = z.object({
     numbering: outlineNumberingSchema.default(outlineNumberingSchema.parse({})),
@@ -353,7 +335,7 @@ let MarkdownConfigSchema = z.object({
 });
 
 /**
- * The JSON Schema used to parse the Json file
+ * The JSON Schema used to parse the JSON file
  */
 export const JsonConfigSchema = z.object({
     $schema: z.coerce.string().optional(),
@@ -361,7 +343,7 @@ export const JsonConfigSchema = z.object({
     outline: OutlineSchema.default(OutlineSchema.parse({})),
     paths: PathsSchema.default(PathsSchema.parse({})),
     aliases: AliasesSchema.default(AliasesSchema.parse({})),
-    pages: PagesConfigSchema.default(PagesConfigSchema.parse({})),
+    middlewares: MiddlewaresSchema.default([]),
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})),
@@ -375,4 +357,5 @@ export type aliasesConfigType = z.output<typeof AliasesSchema>;
 export type siteConfigType = z.output<typeof SiteSchema>;
 export type outlineConfigType = z.output<typeof OutlineSchema>;
 export type markdownConfigType = z.output<typeof MarkdownConfigSchema>;
-
+export type MiddlewareConfig = z.output<typeof MiddlewaresSchema>;
+export type ComponentsSet = z.output<typeof ComponentsConfigSetSchema>;

@@ -1,14 +1,12 @@
 ---
-title: Page Provider and CMS Binding
+title: CMS Integration
 ---
 
-A page provider is a middleware function that returns a [page](page.md).
+A `CMS` is integrated as a [middleware](middleware.md) that returns a [page](page.md).
 
-All CMS would be implemented as a page provider.
+## How to create a CMS middleware
 
-## How to create a page Provider
-
-You can create a provider plugin with a module:
+You can create a middleware by writing a JavaScript module:
 
 * that exports a handler function that accepts optionally, a props object (only data, no functions)
 * and returns a function that accepts a web api request and returns a [page](page.md) as object:
@@ -17,8 +15,7 @@ You can create a provider plugin with a module:
 
 ```tsx
 // ./src/cms/my-provider.js
-import {ContextProps} from "@combostrap/interact/types";
-import {MiddlewareHandler} from "./interactMiddleware";
+import {ContextProps, MiddlewareHandler} from "@combostrap/interact/types";
 
 export async function handler(props): Promise<MiddlewareHandler> {
     return async (context: ContextProps) => {
@@ -30,9 +27,14 @@ export async function handler(props): Promise<MiddlewareHandler> {
             return
         }
 
+        // Modify the context if needed
+        // context.response.status = 400
+        // context.response.headers
+
         // Fetch your data
         const data = await fetch(new URL(request.url).pathname)
 
+        // Return your page
         return {
             frontmatter: {
                 layout: "holy"
@@ -50,32 +52,7 @@ export async function handler(props): Promise<MiddlewareHandler> {
 
 ## Example
 
-* You can take a look to the `localPagesMiddleware.tsx` file, it's a CMS plugin that returns
+* You can take a look to the `local markdown middleware` file, it's a CMS plugin that returns
   local [Markdown file as page](md-page.md).
 * The [remote Markdown example](https://github.com/combostrap/interact/blob/main/apps/site/cms/remote-markdown.tsx) page
   provider that returns Markdown page from GitHub.
-
-## Registration
-
-You can register your page provider in the `pages.providers` node of the [configuration file](conf.md)
-
-Example:
-
-```json
-{
-  "pages": {
-    "providers": [
-      {
-        "importPath": "./cms/my-provider.js",
-        "props": {
-          "uri": "",
-          "timeout": 1
-        }
-      }
-    ]
-  }
-}
-```
-
-* They are executed in order.
-* The import path is relative to the [root directory](directory-layout.md)

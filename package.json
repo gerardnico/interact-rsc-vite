@@ -31,6 +31,7 @@
     "./components/*": "./src/resources/components/interact/*.tsx",
     "./vite/*": "./dist/interact/vite/*.js",
     "./markdown": "./src/resources/markdown/interactMarkdownProcessor.tsx",
+    "./middlewares/*": "./src/resources/middlewares/*.tsx",
     "./config": "./src/interact/config/interactConfig.ts"
   },
   "dependencies": {

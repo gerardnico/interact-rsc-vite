@@ -3,7 +3,6 @@ import path from "path";
 
 import Holy from "@combostrap/interact/components/layouts/Holy";
 
-import getModuleFromPageProvider from 'interact:page-modules';
 import {getInteractConfig} from "@combostrap/interact/config";
 import {NotFound} from "interact:mdx-components";
 import createMiddlewarePipeline from "./handlerPipeline";
@@ -19,8 +18,8 @@ export interface PageFile {
     name: string;
 }
 
-const pageProviderPipeline = createMiddlewarePipeline();
-middlewares.forEach(middleware => pageProviderPipeline.use(middleware))
+const middlewarePipeline = createMiddlewarePipeline();
+middlewares.forEach(middleware => middlewarePipeline.use(middleware))
 
 export function getPagesRecursively(dir: string, startDir: string = dir): Record<string, PageFile> {
     const results: Record<string, PageFile> = {};
@@ -51,24 +50,6 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
 }
 
 
-async function getPageResponse(contextProps: ContextProps): Promise<Page | Response | null | undefined> {
-
-
-    /**
-     * Get a page module (jsx, tsx, ts, js, mdx)
-     */
-    let page = getModuleFromPageProvider({path: contextProps.url.pathname});
-    if (page != null) {
-        return page
-    }
-
-    /**
-     * Object Page Provider Module?
-     */
-    return await pageProviderPipeline.run(contextProps);
-
-}
-
 /**
  * The root component should return the entire document including the root <html> tag.
  * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
@@ -76,8 +57,7 @@ async function getPageResponse(contextProps: ContextProps): Promise<Page | Respo
  */
 export async function getRootResponse(contextProps: ContextProps): Promise<ReactNode | Response> {
 
-
-    let middlewareResponse = await getPageResponse(contextProps);
+    let middlewareResponse = await middlewarePipeline.run(contextProps);
     if (middlewareResponse instanceof Response) {
         return middlewareResponse;
     }
