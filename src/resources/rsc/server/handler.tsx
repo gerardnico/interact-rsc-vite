@@ -8,9 +8,11 @@ import {getInteractConfig} from "@combostrap/interact/config";
 import {NotFound} from "interact:mdx-components";
 import createMiddlewarePipeline from "./handlerPipeline";
 import {middlewares} from "interact:middleware-registry"
-import type {ReactNodeResponse} from "../../../interact/middlewareEngine/interactMiddleware.js";
 import {InteractErrorData, InteractError} from "../../../interact/errors"
 import {getLayoutComponent} from "interact:layouts";
+import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
+import type {ReactNode} from "react";
+import type {Page} from "../../../interact/pages/interactPage";
 
 export interface PageFile {
     path: string;
@@ -49,52 +51,49 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
 }
 
 
-async function getPageResponse(normalizedRequest: Request) {
+async function getPageResponse(contextProps: ContextProps): Promise<Page | Response | null | undefined> {
 
-    let url = new URL(normalizedRequest.url)
 
     /**
      * Get a page module (jsx, tsx, ts, js, mdx)
      */
-    let page = getModuleFromPageProvider({path: url.pathname});
+    let page = getModuleFromPageProvider({path: contextProps.url.pathname});
     if (page != null) {
-        return {
-            page: page
-        }
+        return page
     }
 
     /**
      * Object Page Provider Module?
      */
-    return await pageProviderPipeline.run(normalizedRequest);
+    return await pageProviderPipeline.run(contextProps);
 
 }
 
 /**
  * The root component should return the entire document including the root <html> tag.
  * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
- * @param normalizedRequest - the request with the URL without the rsc suffix
+ * @param contextProps - the context
  */
-export async function getRootResponse(normalizedRequest: Request): Promise<ReactNodeResponse | Response> {
+export async function getRootResponse(contextProps: ContextProps): Promise<ReactNode | Response> {
 
 
-    let middlewareResponse = await getPageResponse(normalizedRequest);
+    let middlewareResponse = await getPageResponse(contextProps);
     if (middlewareResponse instanceof Response) {
         return middlewareResponse;
     }
-    let pageResponse = middlewareResponse;
+    let pageResponse: Page;
 
-    if (pageResponse == null) {
-        pageResponse = {
-            status: 404,
-            page: NotFound
-        };
+    if (middlewareResponse == null) {
+        contextProps.response.status = 404;
+        pageResponse = NotFound;
+    } else {
+        pageResponse = middlewareResponse
     }
 
     /**
      * Check that the default export is not null
      */
-    if (pageResponse.page.default == null) {
+    if (pageResponse.default == null) {
         throw new InteractError(InteractErrorData.PageWithNullAsDefault)
     }
 
@@ -102,7 +101,7 @@ export async function getRootResponse(normalizedRequest: Request): Promise<React
      * Layout
      */
     let layout = "holy"
-    let frontMatterLayout = pageResponse.page?.frontmatter?.layout;
+    let frontMatterLayout = pageResponse.frontmatter?.layout;
     if (frontMatterLayout) {
         layout = frontMatterLayout
     }
@@ -112,12 +111,8 @@ export async function getRootResponse(normalizedRequest: Request): Promise<React
      * No layout at all, the page returns the HTML root tag
      */
     if (layout === "none") {
-        const InteractPageComponent = pageResponse.page.default
-        return {
-            status: pageResponse.status,
-            headers: pageResponse.headers,
-            root: <InteractPageComponent request={normalizedRequest}/>
-        }
+        const InteractPageComponent = pageResponse.default
+        return <InteractPageComponent {...contextProps}/>
     }
 
     let Layout = getLayoutComponent(normalizedLayout);
@@ -125,11 +120,7 @@ export async function getRootResponse(normalizedRequest: Request): Promise<React
         Layout = Holy;
         console.error(`Frontmatter layout ${layout} not found, holy layout was used instead`)
     }
-    return {
-        status: pageResponse.status,
-        headers: pageResponse.headers,
-        root: <Layout page={pageResponse.page} request={normalizedRequest}/>
-    }
+    return <Layout page={pageResponse} context={contextProps}/>
 
 }
 

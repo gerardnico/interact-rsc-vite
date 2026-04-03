@@ -1,12 +1,12 @@
-import type {ContextProps} from "@combostrap/interact/types";
+import type {LayoutProps} from "@combostrap/interact/types";
 import {PAGE_CONTAINER_CLASS_NAME} from "../classNames.js";
 import {getInteractConfig} from "@combostrap/interact/config";
 import React from "react";
 
-export type HeadProps = React.HTMLAttributes<HTMLHeadElement> & ContextProps;
+export type HeadProps = React.HTMLAttributes<HTMLHeadElement> & LayoutProps;
 
 // noinspection JSUnusedGlobalSymbols - imported via package.json export
-export default function Head({page, request, ...props}: HeadProps) {
+export default function Head({page, context, ...props}: HeadProps) {
 
     let frontmatter = page?.frontmatter;
     let title = frontmatter?.title;
@@ -38,9 +38,8 @@ export default function Head({page, request, ...props}: HeadProps) {
     /**
      * Page Title
      */
-    const url = new URL(request.url);
     const base = interactConfig.site.base
-    const isBrowserPathRoot = url.pathname === base || url.pathname === `${base}index`;
+    const isBrowserPathRoot = context.url.pathname === base || context.url.pathname === `${base}index`;
     let headPageTitle = title ? title : "";
     if (!headPageTitle && isBrowserPathRoot) {
         headPageTitle = interactConfig.site.title || 'Default'
@@ -58,7 +57,7 @@ export default function Head({page, request, ...props}: HeadProps) {
      * ie <base href="/reference/component/">
      * works across domains because it's domain-agnostic — it always resolves relative to wherever the site is hosted.
      */
-    let baseHeadURL = (interactConfig.site.base != "/" ? interactConfig.site.base : "") + url.pathname;
+    let baseHeadURL = (interactConfig.site.base != "/" ? interactConfig.site.base : "") + context.url.pathname;
     /**
      * The below IF got deleted when a production build is done
      */

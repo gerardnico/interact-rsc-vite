@@ -1,26 +1,18 @@
 import type {Page} from "../pages/interactPage.js";
 import type {ReactNode} from "react";
+import type {ContextProps} from "../componentsProvider/contextProps.js";
 
-export type MiddlewarePageResponse = {
-    status?: number;
-    headers?: HeadersInit;
-    page: Page
-}
 
-export type ReactNodeResponse = {
-    status?: number;
-    headers?: HeadersInit;
-    root: ReactNode
-}
+
 
 
 type MiddlewareResponseValue =
     | Response
     | (() => Response)
     | (() => Promise<Response>)
-    | MiddlewarePageResponse
-    | (() => MiddlewarePageResponse)
-    | (() => Promise<MiddlewarePageResponse>)
+    | Page
+    | (() => Page)
+    | (() => Promise<Page>)
 
 type MiddlewareResult =
     | MiddlewareResponseValue  // short-circuit with a response
@@ -33,5 +25,5 @@ export type Middleware = {
     handler: MiddlewareHandler
 }
 
-export type MiddlewareHandler = (request: Request) => MiddlewareResult | Promise<MiddlewareResult>;
+export type MiddlewareHandler = (context: ContextProps) => MiddlewareResult | Promise<MiddlewareResult>;
 

@@ -14,7 +14,6 @@ import {parseRenderRequest} from '../shared/request.js'
 import type {RscPayload} from '../shared/types.js'
 import type {ReactFormState} from 'react-dom/client'
 import {getRootResponse, getStaticPaths} from "./handler";
-
 /**
  * We export it so that static rendering (SSG)
  * can use it to render each page after the build
@@ -38,7 +37,7 @@ export default async function handler(request: Request): Promise<Response> {
      * * and an initial request (SSR)
      * thanks to a prefix added to the URL by the client
      */
-    const renderRequest = parseRenderRequest(request)
+    const contextProps = parseRenderRequest(request)
 
     /**
      * handle server/action function request
@@ -47,8 +46,8 @@ export default async function handler(request: Request): Promise<Response> {
     let formState: ReactFormState | undefined
     let temporaryReferences: unknown | undefined
     let actionStatus: number | undefined
-    if (renderRequest.isAction) {
-        if (renderRequest.actionId) {
+    if (contextProps.rsc.isAction) {
+        if (contextProps.rsc.actionId) {
             // action is called via `ReactClient.setServerCallback`.
             const contentType = request.headers.get('content-type')
             const body = contentType?.startsWith('multipart/form-data')
@@ -56,7 +55,7 @@ export default async function handler(request: Request): Promise<Response> {
                 : await request.text()
             temporaryReferences = createTemporaryReferenceSet()
             const args = await decodeReply(body, {temporaryReferences})
-            const action = await loadServerAction(renderRequest.actionId)
+            const action = await loadServerAction(contextProps.rsc.actionId)
             try {
                 const data = await action.apply(null, args)
                 returnValue = {ok: true, data}
@@ -86,7 +85,7 @@ export default async function handler(request: Request): Promise<Response> {
     /**
      * Get the response (a page or a response)
      */
-    let rootResponse = await getRootResponse(renderRequest.request)
+    let rootResponse = await getRootResponse(contextProps)
     if (rootResponse instanceof Response) {
         return rootResponse
     }
@@ -95,7 +94,7 @@ export default async function handler(request: Request): Promise<Response> {
      * Serialize React VDOM to RSC stream
      */
     const rscPayload: RscPayload = {
-        root: rootResponse.root,
+        root: rootResponse,
         formState,
         returnValue,
     }
@@ -106,7 +105,7 @@ export default async function handler(request: Request): Promise<Response> {
      * that asks for a Rsc format (ie by adding the {@link URL_POSTFIX} in the URL)
      * We send an RSC Payload: a compact binary representation of the rendered React Server Components tree.
      */
-    if (renderRequest.isRsc) {
+    if (contextProps.rsc.isRsc) {
         return new Response(rscStream, {
             status: actionStatus,
             headers: {
@@ -119,11 +118,11 @@ export default async function handler(request: Request): Promise<Response> {
      * This is not a request made by our client asking for an RSC stream
      * Rendering the stream as HTML
      */
-    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr')>('ssr', 'index')
+    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr.tsx')>('ssr', 'index')
     const ssrResult = await ssr.renderHtml(rscStream, {
         formState,
         // allow quick simulation of JavaScript disabled browser
-        debugNojs: renderRequest.url.searchParams.has('__nojs'),
+        debugNojs: contextProps.url.searchParams.has('__nojs'),
     })
 
     /**
@@ -131,7 +130,7 @@ export default async function handler(request: Request): Promise<Response> {
      * Getting the root page may return a status and the transformation as stream also
      * We combine them
      */
-    let combinedStatus = rootResponse.status != null && rootResponse.status != 200 ? rootResponse.status : ssrResult.status;
+    let combinedStatus = contextProps.response.status != null && contextProps.response.status != 200 ? contextProps.response.status : ssrResult.status;
 
     /**
      * Return
@@ -140,7 +139,7 @@ export default async function handler(request: Request): Promise<Response> {
         status: combinedStatus,
         headers: {
             'content-type': 'text/html;charset=utf-8',
-            ...rootResponse.headers,
+            ...contextProps.response.headers,
         },
     })
 }
@@ -154,11 +153,19 @@ export async function handleSsg(request: Request): Promise<{
     rsc: ReadableStream<Uint8Array>
 }> {
 
-    let rootResponse = await getRootResponse(request)
+    let rootResponse = await getRootResponse({
+        request: request,
+        url: new URL(request.url),
+        response: {},
+        rsc: {
+            isRsc: false,
+            isAction: false
+        }
+    })
     if (rootResponse instanceof Response) {
         throw new Error("A page request should not return a Web Fetch API Response")
     }
-    const rscPayload: RscPayload = {root: rootResponse.root}
+    const rscPayload: RscPayload = {root: rootResponse}
     const rscStream = renderToReadableStream<RscPayload>(rscPayload)
     const [rscStream1, rscStream2] = rscStream.tee()
 

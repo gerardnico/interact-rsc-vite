@@ -1,8 +1,13 @@
-import type {MiddlewareResult, MiddlewarePageResponse, Middleware} from "../../../interact/middlewareEngine/interactMiddleware";
+import type {
+    MiddlewareResult,
+    Middleware
+} from "../../../interact/middlewareEngine/interactMiddleware";
+import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
+import type {Page} from "../../../interact/pages/interactPage";
 
 type middlewarePipelineType = {
     use: (middleWare: Middleware) => middlewarePipelineType
-    run: (ctx: Request) => Promise<MiddlewarePageResponse | Response | undefined | null>
+    run: (ctx: ContextProps) => Promise<Response | Page | undefined | null>
 }
 
 export default function createMiddlewarePipeline(): middlewarePipelineType {
@@ -13,22 +18,22 @@ export default function createMiddlewarePipeline(): middlewarePipelineType {
         return this; // chainable
     }
 
-    async function resolveResponse(response: MiddlewareResult): Promise<Response | MiddlewarePageResponse | null | undefined> {
+    async function resolveResponse(response: MiddlewareResult): Promise<Response | Page | null | undefined> {
         return typeof response === "function" ? await (response)() : response;
     }
 
-    async function run(request: Request) {
+    async function run(context: ContextProps) {
 
         for (const middleware of middlewares) {
             let result;
             try {
-                result = await middleware.handler(request);
+                result = await middleware.handler(context);
             } catch (e) {
+                context.response.status = 500;
                 // Error
                 return {
-                    status: 500,
-                    page: {
-                        default: () => {
+                    default:
+                        () => {
                             return (
                                 <>
                                     <p>Error while running the Middleware {middleware.name}:</p>
@@ -36,22 +41,20 @@ export default function createMiddlewarePipeline(): middlewarePipelineType {
                                 </>
                             )
                         }
-                    }
-                } satisfies MiddlewarePageResponse
+                }
             }
             let response = await resolveResponse(result);
             if (response != null) {
                 if (!(response instanceof Response)) {
-                    if (!("page" in response)) {
+                    if (!("default" in response)) {
+                        context.response.status = 500;
                         return {
-                            status: 500,
-                            page: {
-                                default: () => {
-                                    return (
-                                        <p>Error the middleware handler {middleware.name} has not returned a valid page response. The page
-                                            property is missing</p>
-                                    )
-                                }
+                            default: () => {
+                                return (
+                                    <p>Error the middleware handler {middleware.name} has not returned a valid page
+                                        response. The default
+                                        property is missing</p>
+                                )
                             }
                         }
                     }

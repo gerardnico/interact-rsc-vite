@@ -1,22 +1,20 @@
-import type {ContextProps} from "@combostrap/interact/types";
+import type {LayoutProps} from "@combostrap/interact/types";
 import Html from "../partials/Html";
 import Head from "../partials/Head";
 import Body from "../partials/Body";
-
-
 
 /**
  * Landing Layout
  */
 // noinspection JSUnusedGlobalSymbols - imported dynamically
-export default function Landing(contextProps: ContextProps) {
-    let Component = contextProps.page.default
+export default function Landing(layoutProps: LayoutProps) {
+    let Component = layoutProps.page.default
     return (
-        <Html {...contextProps}>
-            <Head {...contextProps}/>
-            <Body {...contextProps}>
+        <Html {...layoutProps}>
+            <Head {...layoutProps}/>
+            <Body  {...layoutProps}>
                 <main>
-                    <Component request={contextProps.request}/>
+                    <Component {...layoutProps.context}/>
                 </main>
             </Body>
         </Html>

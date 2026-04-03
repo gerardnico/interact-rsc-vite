@@ -1,12 +1,14 @@
 import path from "node:path";
 
-import type {MiddlewareHandler, MiddlewarePageResponse} from "../../interact/middlewareEngine/interactMiddleware";
+import type {MiddlewareHandler} from "../../interact/middlewareEngine/interactMiddleware";
 import {VFile} from "vfile";
 import {markdownToPageSync} from "../markdown/interactMarkdownProcessor";
 
-import { readFile } from "fs/promises";
+import {readFile} from "fs/promises";
+import type {ContextProps} from "../../interact/componentsProvider/contextProps";
+import type {Page} from "../../interact/pages/interactPage";
 
-export async function fsGetTextAsync(path:string) {
+export async function fsGetTextAsync(path: string) {
     try {
         return await readFile(path, "utf8");
     } catch (error) {
@@ -27,12 +29,11 @@ export async function handler({pagesDirectory}: {
 }): Promise<MiddlewareHandler> {
     const pagesDir = pagesDirectory;
 
-    return async function (request: Request): Promise<MiddlewarePageResponse | undefined> {
+    return async function (context: ContextProps): Promise<Page | undefined> {
 
-        let url = new URL(request.url)
         // it's path.join and not path.resolve because pathname is an absolute path
         // resolve will return the second path untouched if it's an absolute path
-        let filePath = url.pathname
+        let filePath = context.url.pathname
         if (filePath.endsWith("/")) {
             filePath += "index";
         }
@@ -45,9 +46,7 @@ export async function handler({pagesDirectory}: {
             path: page,
             value: content,
         })
-        return {
-            page: markdownToPageSync(file)
-        };
+        return markdownToPageSync(file);
 
     }
 }

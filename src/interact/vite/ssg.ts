@@ -43,7 +43,7 @@ async function renderStatic(config: ResolvedConfig) {
      * Import the created rsc build
      */
     const rscIndexFilePath = path.join(rscEnv.build.outDir, 'index.js')
-    // @ts-ignore - error TS6142: Module 'entry.rsc.js' was resolved to entry.rsc.tsx', but '--jsx' is not set.
+    // @ts-ignore - argh we need jsx and if it follows, it will need explicit file extensions - we need a bundler or just start with tsx
     const entryRscModule: typeof import('../../resources/rsc/server/entry.rsc.tsx') = await import(/* @vite-ignore */ pathToFileURL(rscIndexFilePath).href)
 
     // entry provides a list of static paths

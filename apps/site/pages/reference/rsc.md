@@ -78,6 +78,27 @@ Why? Here are the possible reasons:
 * The imported component from the `interact:components` module was not registered in
   the [component section of the configuration file](conf.md)
 * your [layout component](layout.md) is a [client component](#use-client) and it should not.
+* you are passing to the context to a page component as props
+
+Example: This [partial](layout.md#partials) is passing explicitly the context to the `html` tag that has a null value
+
+```tsx
+export default async function Html({page, ...props}: LayoutProps) {
+
+    return (
+        <html {...props}>
+        {props.children}
+        </html>
+    )
+}
+```
+
+The correct fix is:
+
+```tsx
+export default async function Html({page, context, ...props}: LayoutProps) {
+}
+```
 
 ### Invalid Hook Call Warning in Rsc environment
 

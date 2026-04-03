@@ -3,8 +3,9 @@
  */
 
 import type {ComponentType} from "react";
+import type {ContextProps} from "../componentsProvider/contextProps.js";
 
-export type PageComponent = ComponentType<{ request: Request }>
+export type PageComponent = ComponentType<ContextProps>
 
 export interface TocNode {
     value: string;

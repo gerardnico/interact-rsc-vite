@@ -1,6 +1,5 @@
-import type {ContextProps} from "@combostrap/interact/types";
+import type {LayoutProps} from "@combostrap/interact/types";
 import styles from "./Holy.module.css"
-import clsx from "clsx";
 import {getInteractConfig} from "@combostrap/interact/config";
 import Header from "@combostrap/interact/components/partials/Header";
 import Body from "@combostrap/interact/components/partials/Body";
@@ -9,45 +8,45 @@ import Head from "@combostrap/interact/components/partials/Head";
 import Aside from "@combostrap/interact/components/partials/Aside";
 import Hero from "@combostrap/interact/components/partials/Hero";
 import Toc from "../partials/Toc.js";
+import {cn} from "@/lib/utils";
 
 /**
  * Holy Layout Components
  */
 // noinspection JSUnusedGlobalSymbols - dynamically imported
-export default function Holy(contextProps: ContextProps) {
-
-    const PageComponent = contextProps.page.default;
+export default function Holy(layoutProps: LayoutProps) {
+    const PageComponent = layoutProps.page.default;
     return (
-        <Html {...contextProps}>
-            <Head {...contextProps}/>
-            <Body {...contextProps}>
-                <Header {...contextProps} />
+        <Html {...layoutProps}>
+            <Head {...layoutProps}/>
+            <Body {...layoutProps}>
+                <Header {...layoutProps} />
         <div id="page-core" className={
-            clsx(styles['pageCore'],
+            cn(styles['pageCore'],
                 getInteractConfig().style.container.containerClass,
                 "position-relative mt-3"
             )}>
-            <aside id="page-side" className={clsx(styles['pageSide'], "print:hidden")}>
-                <Aside {...contextProps}/>
+            <aside id="page-side" className={cn(styles['pageSide'], "print:hidden")}>
+                <Aside {...layoutProps}/>
             </aside>
             <main id="page-main" className={styles['pageMain']}>
                 <div id="main-header" className={styles['mainHeader']}>
-                    <Hero {...contextProps} />
+                    <Hero {...layoutProps} />
                 </div>
                 <div id="main-toc" className={styles['mainToc']}>
-                    <Toc {...contextProps} />
+                    <Toc {...layoutProps} />
                 </div>
                 <div id="main-content" className={styles['mainContent']}>
-                    {PageComponent && <PageComponent request={contextProps.request}/>}
+                    {PageComponent && <PageComponent {...layoutProps.context}/>}
                 </div>
                 <div id="main-side" className={
-                    clsx(
+                    cn(
                         styles['mainSide'],
                         "print:hidden"
                     )}>
                 </div>
                 <footer id="main-footer" className={
-                    clsx(
+                    cn(
                         styles['mainFooter'],
                         "print:hidden"
                     )}>

@@ -3,11 +3,11 @@ import NavBarCollapse from "@combostrap/interact/components/NavBarCollapse";
 import {getInteractConfig} from "@combostrap/interact/config";
 import Image from "@combostrap/interact/components/Image";
 import ModeToggle from "@combostrap/interact/components/ModeToggle";
-import type {ContextProps} from "@combostrap/interact/types";
+import type {LayoutProps} from "@combostrap/interact/types";
 
 
 // @ts-ignore - we don't use the request
-export default async function Header(layoutProps: ContextProps) {
+export default async function Header(layoutProps: LayoutProps) {
 
     const interactConfig = getInteractConfig();
     let homeUrl = interactConfig.site.base

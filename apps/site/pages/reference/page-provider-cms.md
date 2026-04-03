@@ -2,7 +2,7 @@
 title: Page Provider and CMS Binding
 ---
 
-A page provider is a handler function that returns a [page](page.md).
+A page provider is a middleware function that returns a [page](page.md).
 
 All CMS would be implemented as a page provider.
 
@@ -15,12 +15,15 @@ You can create a provider plugin with a module:
   * with as default, a mandatory React Element
   * and optionally, a [frontmatter](frontmatter.md) and a `toc`
 
-```javascript
+```tsx
 // ./src/cms/my-provider.js
-export async function handler(props) {
-    return async (request) => {
+import {ContextProps} from "@combostrap/interact/types";
+import {MiddlewareHandler} from "./interactMiddleware";
 
-        const pathname = new URL(request.url).pathname
+export async function handler(props): Promise<MiddlewareHandler> {
+    return async (context: ContextProps) => {
+
+        const pathname = context.url.pathname
 
         // check if you handle the request
         if (!pathname.startsWith("/my-provider")) {
@@ -49,7 +52,7 @@ export async function handler(props) {
 
 * You can take a look to the `localPagesMiddleware.tsx` file, it's a CMS plugin that returns
   local [Markdown file as page](md-page.md).
-* The [remote markdown example](https://github.com/combostrap/interact/blob/main/apps/site/cms/remote-markdown.tsx) page
+* The [remote Markdown example](https://github.com/combostrap/interact/blob/main/apps/site/cms/remote-markdown.tsx) page
   provider that returns Markdown page from GitHub.
 
 ## Registration

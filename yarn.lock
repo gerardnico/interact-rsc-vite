@@ -453,7 +453,7 @@ __metadata:
     vite: "npm:7.3.1"
     vite-plugin-inspect: "npm:11.3.3"
     vite-plugin-svgr: "npm:4.5.0"
-    vitefu: "npm:^1.1.3"
+    vitefu: "npm:1.1.3"
     vitest: "npm:4.1.0"
     zod: "npm:4.3.6"
   bin:
@@ -8598,6 +8598,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vitefu@npm:1.1.3":
+  version: 1.1.3
+  resolution: "vitefu@npm:1.1.3"
+  peerDependencies:
+    vite: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+  peerDependenciesMeta:
+    vite:
+      optional: true
+  checksum: 10/3da262088d8d5ea2ce03b9a29310d44d581141e8661937d06c50017b85f864e5559075247eafef478241a84c0cea4ac41959e3237bcc1f3d6499c371368b147c
+  languageName: node
+  linkType: hard
+
 "vitefu@npm:^1.1.1":
   version: 1.1.2
   resolution: "vitefu@npm:1.1.2"
@@ -8607,18 +8619,6 @@ __metadata:
     vite:
       optional: true
   checksum: 10/8347b86ebc9989c39c3a3b62cd1b5603a94982be5c7defe48ababed9b6c799caf859abb6a8bf7913aaa5033bda3197f748f29d25d786288e6bc8d7732c23a845
-  languageName: node
-  linkType: hard
-
-"vitefu@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "vitefu@npm:1.1.3"
-  peerDependencies:
-    vite: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
-  peerDependenciesMeta:
-    vite:
-      optional: true
-  checksum: 10/3da262088d8d5ea2ce03b9a29310d44d581141e8661937d06c50017b85f864e5559075247eafef478241a84c0cea4ac41959e3237bcc1f3d6499c371368b147c
   languageName: node
   linkType: hard
 

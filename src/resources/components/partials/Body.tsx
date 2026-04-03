@@ -1,11 +1,11 @@
-import type {ContextProps} from "@combostrap/interact/types";
 import React from "react";
+import type {LayoutProps} from "@combostrap/interact/types";
 
 
-export type BodyProps = React.HtmlHTMLAttributes<HTMLBodyElement> & ContextProps;
+export type BodyProps = React.HtmlHTMLAttributes<HTMLBodyElement> & LayoutProps;
 
 // noinspection JSUnusedGlobalSymbols - imported dynamically via virtual module
-export default function Body({request, page, ...props}: BodyProps) {
+export default function Body({context, page, ...props}: BodyProps) {
 
     return (
         <body {...props}>

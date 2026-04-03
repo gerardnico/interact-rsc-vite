@@ -1,11 +1,11 @@
-import type {ContextProps, TocNode} from "@combostrap/interact/types";
+import type {LayoutProps, TocNode} from "@combostrap/interact/types";
 import "./toc.css"
 import {getInteractConfig} from "@combostrap/interact/config";
 import React from "react";
 import clsx from "clsx";
 
 
-export type TocProps = React.HTMLAttributes<HTMLElement> & ContextProps & {
+export type TocProps = React.HTMLAttributes<HTMLElement> & LayoutProps & {
     maxDepth?: number;
 }
 
@@ -32,7 +32,7 @@ function TocItems({entries, maxDepth, currentDepth = 1}: {
     );
 }
 
-export default function Toc({maxDepth, page, request, className, ...navProps}: TocProps) {
+export default function Toc({maxDepth, page, context, className, ...navProps}: TocProps) {
     if (maxDepth == null) {
         maxDepth = getInteractConfig().components.Toc?.props?.maxDepth;
         if (maxDepth == null) {

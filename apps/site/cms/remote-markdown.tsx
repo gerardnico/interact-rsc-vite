@@ -1,14 +1,15 @@
-import type {MiddlewarePageResponse} from "@combostrap/interact/types";
+import type {Page} from "@combostrap/interact/types";
 import {markdownToPageSync} from "@combostrap/interact/markdown";
+import type {ContextProps, MiddlewareHandler} from "@combostrap/interact/types";
 
 // noinspection JSUnusedGlobalSymbols - loaded dynamically
 export async function handler({
                                   basePath = "https://raw.githubusercontent.com",
                                   prefix = "/github"
-                              }: { basePath: string, prefix: string }) {
-    return async (request: Request): Promise<MiddlewarePageResponse | undefined> => {
+                              }: { basePath: string, prefix: string }): Promise<MiddlewareHandler> {
+    return async (context: ContextProps): Promise<Page | undefined> => {
 
-        const pathname = new URL(request.url).pathname
+        const pathname = context.url.pathname
 
         // check if you handle the request
         if (!(pathname.startsWith(prefix) && pathname.endsWith(".md"))) {
@@ -22,25 +23,21 @@ export async function handler({
 
         // parse and return
         try {
-            return {
-                page: markdownToPageSync(markdown, {format: 'md'})
-            };
+            return markdownToPageSync(markdown, {format: 'md'})
         } catch (e) {
+            context.response.status = 500
             return {
-                status: 500,
-                page: {
-                    default:
-                        () => {
-                            return (
-                                <>
-                                    <p>An error has been seen while parsing:</p>
-                                    <p>{String(e)}</p>
-                                    <p>Content:</p>
-                                    <pre dangerouslySetInnerHTML={{__html: markdown}}></pre>
-                                </>
-                            )
-                        }
-                }
+                default:
+                    () => {
+                        return (
+                            <>
+                                <p>An error has been seen while parsing:</p>
+                                <p>{String(e)}</p>
+                                <p>Content:</p>
+                                <pre dangerouslySetInnerHTML={{__html: markdown}}></pre>
+                            </>
+                        )
+                    }
             }
         }
     }

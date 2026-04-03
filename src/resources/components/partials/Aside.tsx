@@ -1,4 +1,4 @@
-import type {Frontmatter, Page, ContextProps} from "@combostrap/interact/types";
+import type {Frontmatter, Page, LayoutProps} from "@combostrap/interact/types";
 import React from "react";
 
 const pages = import.meta.glob<Page<Frontmatter>>(
@@ -22,10 +22,10 @@ export const nav = Object.entries(pages)
     }))
     .sort((a, b) => a.order - b.order)
 
-export type AsideProps = React.HTMLAttributes<HTMLElement> & ContextProps
+export type AsideProps = React.HTMLAttributes<HTMLElement> & LayoutProps
 
 // @ts-ignore -- exported
-export default function Aside({page, request, ...props}: AsideProps) {
+export default function Aside({page, context, ...props}: AsideProps) {
     return (
         <div {...props}></div>
     )
