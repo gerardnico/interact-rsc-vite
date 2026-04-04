@@ -4,7 +4,6 @@ import path from "path";
 import Holy from "@combostrap/interact/components/layouts/Holy";
 
 import {getInteractConfig} from "@combostrap/interact/config";
-import {NotFound} from "interact:mdx-components";
 import createMiddlewarePipeline from "./handlerPipeline";
 import {middlewares} from "interact:middleware-registry"
 import {InteractErrorData, InteractError} from "../../../interact/errors"
@@ -13,6 +12,7 @@ import type {ContextProps} from "../../../interact/componentsProvider/contextPro
 import type {ReactNode} from "react";
 import type {FinalPage, Page} from "../../../interact/pages/interactPage";
 import {hoistHeadElements} from "@/rsc/server/headElementHoisting";
+import * as NotFound from "@/components/pages/NotFound";
 
 export interface PageFile {
     path: string;
