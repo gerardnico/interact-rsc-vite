@@ -11,7 +11,8 @@ import {InteractErrorData, InteractError} from "../../../interact/errors"
 import {getLayoutComponent} from "interact:layouts";
 import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
 import type {ReactNode} from "react";
-import type {Page} from "../../../interact/pages/interactPage";
+import type {FinalPage, Page} from "../../../interact/pages/interactPage";
+import {hoistHeadElements} from "@/rsc/server/headElementHoisting";
 
 export interface PageFile {
     path: string;
@@ -61,20 +62,42 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
     if (middlewareResponse instanceof Response) {
         return middlewareResponse;
     }
-    let pageResponse: Page;
 
     if (middlewareResponse == null) {
         contextProps.response.status = 404;
-        pageResponse = NotFound;
-    } else {
-        pageResponse = middlewareResponse
+        let interactConfig = getInteractConfig();
+        middlewareResponse = await middlewarePipeline.run({
+            ...contextProps,
+            url: new URL(interactConfig.middleware.notFoundPath, 'http://not-found.local'),
+        });
+        if (middlewareResponse instanceof Response) {
+            return middlewareResponse;
+        }
+        if (middlewareResponse == null) {
+            middlewareResponse = NotFound;
+        }
     }
+
+    let pageResponse: Page = middlewareResponse
 
     /**
      * Check that the default export is not null
      */
     if (pageResponse.default == null) {
         throw new InteractError(InteractErrorData.PageWithNullAsDefault)
+    }
+
+    /**
+     * Extract Meta, link and script element
+     */
+    const pageElements = hoistHeadElements(<pageResponse.default {...contextProps}/>);
+
+    let page: FinalPage = {
+        contentElement: pageElements.contentElement,
+        headElements: pageElements.headElements,
+        frontmatter: pageResponse.frontmatter,
+        toc: pageResponse.toc,
+        derived: pageResponse.derived,
     }
 
     /**
@@ -100,7 +123,7 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
         Layout = Holy;
         console.error(`Frontmatter layout ${layout} not found, holy layout was used instead`)
     }
-    return <Layout page={pageResponse} context={contextProps}/>
+    return <Layout page={page} context={contextProps}/>
 
 }
 

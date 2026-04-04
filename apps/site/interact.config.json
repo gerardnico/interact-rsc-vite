@@ -5,10 +5,6 @@
     "title": "Interact Documentation (that feels like an App)"
   },
   "components": {
-    "NotFound": {
-      "importPath": "./pages/404.tsx",
-      "type": "page"
-    },
     "Header": {
       "props": {
         "brandName": "nteract",
@@ -22,16 +18,5 @@
     "imagesDirectory": "images",
     "atDirectory": ".",
     "mdComponentsDirectory": "components/markdowns"
-  },
-  "pages": {
-    "providers": [
-      {
-        "importPath": "./cms/remote-markdown.tsx",
-        "props": {
-          "basePath": "https://raw.githubusercontent.com",
-          "prefix": "/github"
-        }
-      }
-    ]
   }
 }

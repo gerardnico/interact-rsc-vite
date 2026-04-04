@@ -37,14 +37,14 @@ export const defaultComponentsValue: ComponentsSet = {
         importPath: `${atInteractComponentPath}/Mark`,
         type: "markdown"
     },
-    // "Grid": {
-    //     importPath: `${atInteractComponentPath}/Grid`,
-    //     type: "markdown"
-    // },
-    // "GridCell": {
-    //     importPath: `${atInteractComponentPath}/GridCell`,
-    //     type: "markdown"
-    // },
+    "Grid": {
+        importPath: `${atInteractComponentPath}/Grid`,
+        type: "markdown"
+    },
+    "GridCell": {
+        importPath: `${atInteractComponentPath}/GridCell`,
+        type: "markdown"
+    },
     "Icon": {
         importPath: `${atInteractComponentPath}/Icon`,
         type: "markdown"
@@ -53,33 +53,13 @@ export const defaultComponentsValue: ComponentsSet = {
         importPath: `${atInteractComponentPath}/Image`,
         type: "markdown"
     },
-    // "Para": {
-    //     importPath: `${atInteractComponentPath}/Para`,
-    //     type: "markdown"
-    // },
     "pre": {
         importPath: `${atInteractComponentPath}/Code`,
         type: "markdown"
     },
-    // "RufflePlayer": {
-    //     importPath: `${atInteractComponentPath}/RufflePlayer`,
-    //     type: "markdown"
-    // },
-    // "StarRating": {
-    //     importPath: `${atInteractComponentPath}/StarRating`,
-    //     type: "markdown"
-    // },
     "table": {
         importPath: `${atInteractComponentPath}/Table`,
         type: "markdown"
-    },
-    // "Text": {
-    //     importPath: `${atInteractComponentPath}/Text`,
-    //     type: "markdown"
-    // },
-    "NotFound": {
-        importPath: `@combostrap/interact/pages/NotFound`,
-        type: "page"
     },
     "Svg": {
         importPath: `${atInteractComponentPath}/Svg`,
@@ -329,7 +309,7 @@ class InteractConfigHandler {
                 } else {
                     importPath = `@combostrap/interact/middlewares/${name}`;
                 }
-                finalConfigData.middlewares.push({
+                finalConfigData.middleware.pipeline.push({
                     importPath: importPath,
                 })
             }

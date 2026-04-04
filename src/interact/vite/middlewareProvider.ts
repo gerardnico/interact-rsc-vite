@@ -19,7 +19,7 @@ export default function middlewareProvider(): Plugin {
 
             let imports: string[] = [];
             let middlewares: string[] = []
-            for (const [i, middleware] of interactConfig.middlewares.entries()) {
+            for (const [i, middleware] of interactConfig.middleware.pipeline.entries()) {
                 let importPath = middleware.importPath;
                 if (importPath.startsWith("./")) {
                     importPath = path.resolve(interactConfig.paths.rootDirectory, importPath);

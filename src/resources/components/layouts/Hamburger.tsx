@@ -1,9 +1,9 @@
 import type {LayoutProps} from "@combostrap/interact/types";
 import {getInteractConfig} from "@combostrap/interact/config";
-import Header from "../partials/Header";
-import Body from "../partials/Body";
-import Html from "../partials/Html";
-import Head from "../partials/Head";
+import Header from "@/components/partials/Header";
+import Body from "@/components/partials/Body";
+import Html from "@/components/partials/Html";
+import Head from "@/components/partials/Head";
 import {cn} from "@/lib/utils";
 
 /**
@@ -11,7 +11,7 @@ import {cn} from "@/lib/utils";
  */
 // noinspection JSUnusedGlobalSymbols - imported dynamically
 export default function Hamburger(layoutProps: LayoutProps) {
-    let Component = layoutProps.page.default
+
     let interactConfig = getInteractConfig();
     return (
         <Html {...layoutProps}>
@@ -24,7 +24,7 @@ export default function Hamburger(layoutProps: LayoutProps) {
                         "position-relative",
                     )}>
                     <main>
-                        <Component {...layoutProps.context}/>
+                        {layoutProps.page.contentElement}
                     </main>
                 </div>
             </Body>

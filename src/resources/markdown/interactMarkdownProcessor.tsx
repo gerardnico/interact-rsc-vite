@@ -27,7 +27,7 @@ import * as jsxRuntime from 'react/jsx-runtime'
 import {getMarkdownConfig} from "../../interact/markdown/conf/markdownConfig";
 import type {markdownFormat} from "../../interact/config/configSchema";
 import {statSync} from "node:fs";
-import type {Frontmatter} from "../../interact/pages/interactPage";
+import type {Derived, Frontmatter} from "../../interact/pages/interactPage";
 
 
 // Markdown processing to react component via rehypeReact
@@ -168,13 +168,15 @@ function markdownReactProcessing(vFileCompatible: Compatible) {
         })
         .processSync(vFileCompatible);
 
+    let derived: Derived = {}
     if (vFile?.path != null) {
         const stat = statSync(vFile?.path);
-        frontmatter.lastModified = stat.mtime.toISOString()
+        derived.lastModified = stat.mtime.toISOString()
     }
 
     return {
         frontmatter: frontmatter,
+        derived: derived,
         toc: vFile.data?.toc as TocNode[] || [],
         default: () => {
             return vFile.result as ReactNode
@@ -218,7 +220,7 @@ function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx'}: 
 // noinspection JSUnusedGlobalSymbols - exported in package.json
 export function markdownToComponentSync(vFileCompatible: Compatible, options?: {
     format: markdownFormat
-}):ComponentType {
+}): ComponentType {
     return markdownToPageSync(vFileCompatible, options).default as ComponentType;
 }
 

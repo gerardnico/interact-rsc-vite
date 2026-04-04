@@ -15,7 +15,7 @@ import {cn} from "@/lib/utils";
  */
 // noinspection JSUnusedGlobalSymbols - dynamically imported
 export default function Holy(layoutProps: LayoutProps) {
-    const PageComponent = layoutProps.page.default;
+
     return (
         <Html {...layoutProps}>
             <Head {...layoutProps}/>
@@ -37,7 +37,7 @@ export default function Holy(layoutProps: LayoutProps) {
                     <Toc {...layoutProps} />
                 </div>
                 <div id="main-content" className={styles['mainContent']}>
-                    {PageComponent && <PageComponent {...layoutProps.context}/>}
+                    {layoutProps.page.contentElement}
                 </div>
                 <div id="main-side" className={
                     cn(

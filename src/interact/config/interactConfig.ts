@@ -17,7 +17,7 @@ export type InteractConfig = {
     site: siteConfigType
     outline: outlineConfigType,
     components: ComponentsSet,
-    middlewares: MiddlewareConfig,
+    middleware: MiddlewareConfig,
     images: imageConfigType,
     markdown: markdownConfigType,
     aliases: aliasesConfigType,

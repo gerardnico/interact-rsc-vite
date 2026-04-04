@@ -278,7 +278,7 @@ const BaseComponentSchema = z.object({
     // No file system path, it's derived thanks to import, and it does not work well with vite and import
     // as they don't handle symlink well
     importPath: z.coerce.string<string>().optional(),
-    type: z.enum(["layout", "partial", "markdown", "page"]),
+    type: z.enum(["layout", "partial", "markdown"]),
     props: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -313,14 +313,16 @@ const ComponentsConfigSetSchema = z.object({
 }).catchall(BaseComponentSchema); // unknown keys fall back to base schema
 
 
-const MiddlewareConfigSchema = z.object({
+const handlerConfigSchema = z.object({
     name: z.string().optional(),
     importPath: z.coerce.string<string>(),
     props: z.record(z.string(), z.unknown()).optional(),
-}).describe("Provider Properties");
+}).describe("Handler Properties");
 
-const MiddlewaresSchema = z.array(MiddlewareConfigSchema).default([]);
-
+const MiddlewaresSchema = z.object({
+    pipeline: z.array(handlerConfigSchema).describe("A list of middlewares").default([]),
+    notFoundPath: z.string().describe("The page returned if no middleware answers the request").default("/404"),
+}).describe("Middleware Properties");
 
 const OutlineSchema = z.object({
     numbering: outlineNumberingSchema.default(outlineNumberingSchema.parse({})),
@@ -343,7 +345,7 @@ export const JsonConfigSchema = z.object({
     outline: OutlineSchema.default(OutlineSchema.parse({})),
     paths: PathsSchema.default(PathsSchema.parse({})),
     aliases: AliasesSchema.default(AliasesSchema.parse({})),
-    middlewares: MiddlewaresSchema.default([]),
+    middleware: MiddlewaresSchema.default(MiddlewaresSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
     style: configStyleSchema.default(configStyleSchema.parse({})),
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})),

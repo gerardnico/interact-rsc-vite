@@ -1,5 +1,5 @@
 // don't use the relative path (not resolved)
-import type {Page} from "@combostrap/interact/types"
+import type {FinalPage} from "../pages/interactPage.js";
 
 // Parsed request information used to route between RSC/SSR rendering.
 // Created by parseRenderRequest() from incoming HTTP requests.
@@ -17,8 +17,9 @@ export type RscProps = {
  * Page is not in the context because it receives it as props
  */
 export type ContextProps = {
-    request: Request,
-    url: URL // normalized URL with _.rsc suffix removed
+    request: Request, // the original request
+    // the routing normalized URL (with _.rsc suffix removed, no base, rewrite url, host may be fake)
+    url: URL
     rsc: RscProps
     response: {
         status?: number
@@ -26,7 +27,8 @@ export type ContextProps = {
     }
 };
 
+
 export type LayoutProps = {
-    page: Page,
+    page: FinalPage
     context: ContextProps
 };

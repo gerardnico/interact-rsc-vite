@@ -17,19 +17,19 @@ A layout is a component that:
 Example of minimal implementation:
 
 ```tsx
-import type {ContextProps} from "@combostrap/interact/types";
+import type {LayoutProps} from "@combostrap/interact/types";
 import Head from "@combostrap/interact/components/partials/Head";
 import Html from "@combostrap/interact/components/partials/Html";
 import Body from "@combostrap/interact/components/partials/Body";
 
-export function MyLayout(props: ContextProps) {
-    const PageComponent = layoutProps.page.default;
-    const request = layoutProps.request;
+export function MinimalLayout(layoutProps: LayoutProps) {
     return (
-        <Html {...contextProps}>
-            <Head {...contextProps} />
-            <Body {...contextProps}>
-                {PageComponent && <PageComponent request={request}/>}
+        <Html {...layoutProps}>
+            <Head {...layoutProps} />
+            <Body {...layoutProps}>
+                <main>
+                    {layoutProps.page.contentElement}
+                </main>
             </Body>
         </Html>
     )
@@ -42,19 +42,19 @@ Interact expects all custom layouts files to be stored in the [layouts directory
 default to `src/components/layouts`)
 as `jsx` or `tsx` files
 
-Save your layout at: `src/components/layouts/myLayout.tsx`
+Save your layout at: `src/components/layouts/MinimalLayout.tsx`
 
 ### Layout Name
 
 The file name normalized is the key.
 
-In our case, the layout name is `mylayout`
+In our case, the layout name is `MinimalLayout`
 
 Because we normalize the layout key, you can use casing in your file name and in the [layout meta](#use-it):
 
-* `MyLayout`: camel case
-* `my_layout`: snake case
-* `my-layout`: kebab-case
+* `MinimalLayout`: camel case
+* `minimal_layout`: snake case
+* `minimal-layout`: kebab-case
 
 ### Reuse a layout
 
@@ -70,6 +70,6 @@ For instance, in a [markdown page](../reference/markdown.md)
 
 ```markdown
 ---
-layout: my-layout
+layout: minimal-layout
 ---
 ```

@@ -1,7 +1,6 @@
 import React from "react";
-import clsx from "clsx";
+import {cn} from "@/lib/utils";
 
-import Block, {type BlockType} from "./Block.js";
 
 /**
  * Number only values applied to all view port
@@ -40,12 +39,8 @@ export type BlockYAlignType =
     | "xl-center"
     | "xl-end";
 
-export type GridCellType = BlockType & {
-    size?: ColSizeType[],
-    // https://getbootstrap.com/docs/5.0/utilities/flex/#align-self
-    // blockXAlign comes from the BlockType.
-    // blockYAlign has no used on block. y center is needed only on adjacent block
-    blockYAlign?: BlockYAlignType[]
+export type GridCellType = React.HTMLAttributes<HTMLDivElement> & {
+    size?: ColSizeType[]
 }
 
 /**
@@ -56,22 +51,16 @@ export default function GridCell({
                                      children,
                                      size,
                                      className,
-                                     blockYAlign,
-                                     blockXAlign = ["center"], // we always want that mostly
                                      ...rest
                                  }: GridCellType): React.JSX.Element {
-    const alignArray: BlockYAlignType[] | undefined = Array.isArray(blockYAlign) ? blockYAlign : (blockYAlign != undefined ? ((blockYAlign as string).split(" ") as BlockYAlignType[]) : undefined);
-
     return (
-        <Block
-            className={clsx(
+        <div
+            className={cn(
                 size ? size.map((colSizeValue) => `col-${colSizeValue}`) : "col",
-                alignArray != undefined && alignArray.map((yAlignValue) => `align-self-${yAlignValue}`),
                 className
             )}
-            blockXAlign={blockXAlign}
             {...rest}>
             {children}
-        </Block>
+        </div>
     );
 }

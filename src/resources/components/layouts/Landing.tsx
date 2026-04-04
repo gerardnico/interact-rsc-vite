@@ -8,13 +8,13 @@ import Body from "../partials/Body";
  */
 // noinspection JSUnusedGlobalSymbols - imported dynamically
 export default function Landing(layoutProps: LayoutProps) {
-    let Component = layoutProps.page.default
+
     return (
         <Html {...layoutProps}>
             <Head {...layoutProps}/>
             <Body  {...layoutProps}>
                 <main>
-                    <Component {...layoutProps.context}/>
+                    {layoutProps.page.contentElement}
                 </main>
             </Body>
         </Html>

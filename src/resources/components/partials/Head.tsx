@@ -13,12 +13,13 @@ export default function Head({page, context, ...props}: HeadProps) {
     let description = frontmatter?.description;
     let keyWords = frontmatter?.keyWords;
     let robots = frontmatter?.robots;
+
     /**
      * Last modified
      */
     let lastModified;
-    if (frontmatter?.lastModified != null) {
-        lastModified = new Date(frontmatter.lastModified);
+    if (page.derived?.lastModified != null) {
+        lastModified = new Date(page.derived?.lastModified);
     }
     const interactConfig = getInteractConfig();
 
@@ -99,6 +100,7 @@ export default function Head({page, context, ...props}: HeadProps) {
             <meta name="robots" content={robots ? robots : "index, follow"}/>
             {keyWords && <meta name="keywords" content={keyWords}/>}
             {layoutStyle && (<style dangerouslySetInnerHTML={{__html: layoutStyle}}/>)}
+            {page.headElements}
         </head>
     )
 }

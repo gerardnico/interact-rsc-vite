@@ -54,10 +54,7 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
     let mdxMappingElementNameComponentName: Record<string, string> = {};
     for (const [key, value] of Object.entries(interactConfig.components)) {
 
-        /**
-         * Page is still here for the 404 page and will be refactored soon
-         */
-        if (value.type != "markdown" && value.type != "page") {
+        if (value.type != "markdown") {
             continue
         }
 
@@ -92,11 +89,7 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
             /**
              * Import statement
              */
-            if (value.type == "page") {
-                imports.push(`import * as ${importName} from ${JSON.stringify(importPath)};`);
-            } else {
-                imports.push(`import ${importName} from ${JSON.stringify(importPath)};`);
-            }
+            imports.push(`import ${importName} from ${JSON.stringify(importPath)};`);
 
         }
         /**

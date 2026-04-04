@@ -17,7 +17,6 @@ import {cn} from "@/lib/utils";
 // noinspection JSUnusedGlobalSymbols -
 export default function HolyMedium(layoutProps: LayoutProps) {
 
-    const PageComponent = layoutProps.page.default;
     return (
         <Html {...layoutProps}>
             <Head {...layoutProps} />
@@ -36,7 +35,7 @@ export default function HolyMedium(layoutProps: LayoutProps) {
                             <Toc {...layoutProps} />
                         </div>
                         <div id="main-content" className={styles['mainContent']}>
-                            {PageComponent && <PageComponent {...layoutProps.context}/>}
+                            {layoutProps.page.contentElement}
                         </div>
                     </main>
                 </div>

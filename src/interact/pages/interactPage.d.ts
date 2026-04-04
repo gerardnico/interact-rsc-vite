@@ -2,7 +2,7 @@
  * Type for a module that represents a page
  */
 
-import type {ComponentType} from "react";
+import type {ComponentType, ReactElement, ReactNode} from "react";
 import type {ContextProps} from "../componentsProvider/contextProps.js";
 
 export type PageComponent = ComponentType<ContextProps>
@@ -27,19 +27,49 @@ export type Frontmatter = {
     order?: number;
     // group in a list
     group?: string;
-    // iso string
-    lastModified?: string;
     // 2 letters lang
     lang?: string;
 } & Record<string, string | undefined>
 
 /**
- * A page module exports optionally a frontmatter and a toc
- * Frontmatter is generic
+ * Derived meta
  */
-type Page<F = unknown> = {
+export type Derived = {
+    // iso string
+    lastModified?: string;
+} & Record<string, string | undefined>
+
+/**
+ * The page meta
+ */
+export type PageMeta<F = unknown, D = unknow> = {
     frontmatter?: F & Frontmatter;
     toc?: TocNode[];
+    derived?: D & Derived
+};
+
+/**
+ * A page module that the middleware should return
+ * It exports optionally a frontmatter and a toc
+ * Frontmatter is generic
+ */
+export type Page<F = unknown, D = unknow> = PageMeta<F, D> & {
     default: PageComponent;
 };
+
+/**
+ * After receiving the page component, we split the content and head elements
+ * for head hoisting
+ */
+export type PageElements = {
+    /** The original tree with meta/script elements removed */
+    contentElement: ReactNode;
+    /** Collected meta and script elements to place in <head> */
+    headElements: ReactElement[];
+}
+
+/**
+ * The page pass to the layout
+ */
+type FinalPage<F = unknown, D = unknow> = PageMeta<F, D> & PageElements
 
