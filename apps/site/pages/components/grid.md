@@ -4,12 +4,22 @@ title: Grid System
 
 
 Grid system are notoriously difficult (even in [tailwind](../reference/styling.md#tailwind)).
-This component brings the nice [grid system of boostrap](https://getbootstrap.com/docs/5.3/layout/grid/) over.
+
+This component brings the nice [grid system of boostrap](https://getbootstrap.com/docs/5.3/layout/grid/)
+adapted to TailWind.
 
 ## Example
 
+### Grid with equal size by cells
+
+A grid of:
+
+* 1 cell in a `row` in mobile
+* 2 cells in a row from the `sm` breakpoint
+* 3 cells in a row from the `md` breakpoint
+
 ````jsx
-<Grid maxRowCells="1 sm:2 md:3">
+<Grid class="row-cols-1 sm:row-cols-2 md:row-cols-3">
     <GridCell>
         Cell
     </GridCell>
@@ -22,19 +32,21 @@ This component brings the nice [grid system of boostrap](https://getbootstrap.co
 </Grid>
 ````
 
-<Grid maxRowCells="1 sm:2 md:3">
+<Grid class="row-cols-1 sm:row-cols-2 md:row-cols-3">
   <GridCell>
-      Cell
+      Cell 1
   </GridCell>
   <GridCell>
-      Cell
+      Cell 2
   </GridCell>
   <GridCell>
-      Cell
+      Cell 2
   </GridCell>
 </Grid>
 
 ## Syntax
 
-* `Grid` wraps a `row` and accepts a `maxRowCells` attribute to set the maximum number of cells in a row. 
-* `GridCell` wraps a `col`
+* `Grid` wraps a `row` class name and accepts:
+  * `row-cols-x` class to define the number of cells in a row
+* `GridCell` wraps a `col` class name and accepts:
+  * `col-x` class to define the size of a cell on a scale from `1` to `12`

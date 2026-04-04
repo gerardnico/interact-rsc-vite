@@ -1,0 +1,89 @@
+/**
+ * Bootstrap grid system
+ * https://getbootstrap.com/docs/5.3/layout/grid/
+ */
+@utility row {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: calc(-1 * var(--bs-gutter-y));
+    margin-right: calc(-.5 * var(--bs-gutter-x));
+    margin-left: calc(-.5 * var(--bs-gutter-x));
+
+    & > * {
+        box-sizing: border-box;
+        flex-shrink: 0;
+        width: 100%;
+        max-width: 100%;
+        padding-right: calc(var(--bs-gutter-x) * .5);
+        padding-left: calc(var(--bs-gutter-x) * .5);
+        margin-top: var(--bs-gutter-y);
+    }
+}
+
+@utility col {
+    flex: 1 0 0;
+}
+
+@utility col-auto {
+    flex: 0 0 auto;
+    width: auto;
+}
+
+@utility col-1  { flex: 0 0 auto; width: 8.33333333%; }
+@utility col-2  { flex: 0 0 auto; width: 16.66666667%; }
+@utility col-3  { flex: 0 0 auto; width: 25%; }
+@utility col-4  { flex: 0 0 auto; width: 33.33333333%; }
+@utility col-5  { flex: 0 0 auto; width: 41.66666667%; }
+@utility col-6  { flex: 0 0 auto; width: 50%; }
+@utility col-7  { flex: 0 0 auto; width: 58.33333333%; }
+@utility col-8  { flex: 0 0 auto; width: 66.66666667%; }
+@utility col-9  { flex: 0 0 auto; width: 75%; }
+@utility col-10 { flex: 0 0 auto; width: 83.33333333%; }
+@utility col-11 { flex: 0 0 auto; width: 91.66666667%; }
+@utility col-12 { flex: 0 0 auto; width: 100%; }
+
+@utility row-cols-auto { & > * { flex: 0 0 auto; width: auto; } }
+@utility row-cols-1    { & > * { flex: 0 0 auto; width: 100%; } }
+@utility row-cols-2    { & > * { flex: 0 0 auto; width: 50%; } }
+@utility row-cols-3    { & > * { flex: 0 0 auto; width: 33.33333333%; } }
+@utility row-cols-4    { & > * { flex: 0 0 auto; width: 25%; } }
+@utility row-cols-5    { & > * { flex: 0 0 auto; width: 20%; } }
+@utility row-cols-6    { & > * { flex: 0 0 auto; width: 16.66666667%; } }
+
+@utility offset-1  { margin-left: 8.33333333%; }
+@utility offset-2  { margin-left: 16.66666667%; }
+@utility offset-3  { margin-left: 25%; }
+@utility offset-4  { margin-left: 33.33333333%; }
+@utility offset-5  { margin-left: 41.66666667%; }
+@utility offset-6  { margin-left: 50%; }
+@utility offset-7  { margin-left: 58.33333333%; }
+@utility offset-8  { margin-left: 66.66666667%; }
+@utility offset-9  { margin-left: 75%; }
+@utility offset-10 { margin-left: 83.33333333%; }
+@utility offset-11 { margin-left: 91.66666667%; }
+
+@utility g-0  { --bs-gutter-x: 0;      --bs-gutter-y: 0; }
+@utility gx-0 { --bs-gutter-x: 0; }
+@utility gy-0 { --bs-gutter-y: 0; }
+
+@utility g-1  { --bs-gutter-x: 0.25rem; --bs-gutter-y: 0.25rem; }
+@utility gx-1 { --bs-gutter-x: 0.25rem; }
+@utility gy-1 { --bs-gutter-y: 0.25rem; }
+
+@utility g-2  { --bs-gutter-x: 0.5rem; --bs-gutter-y: 0.5rem; }
+@utility gx-2 { --bs-gutter-x: 0.5rem; }
+@utility gy-2 { --bs-gutter-y: 0.5rem; }
+
+@utility g-3  { --bs-gutter-x: 1rem; --bs-gutter-y: 1rem; }
+@utility gx-3 { --bs-gutter-x: 1rem; }
+@utility gy-3 { --bs-gutter-y: 1rem; }
+
+@utility g-4  { --bs-gutter-x: 1.5rem; --bs-gutter-y: 1.5rem; }
+@utility gx-4 { --bs-gutter-x: 1.5rem; }
+@utility gy-4 { --bs-gutter-y: 1.5rem; }
+
+@utility g-5  { --bs-gutter-x: 3rem; --bs-gutter-y: 3rem; }
+@utility gx-5 { --bs-gutter-x: 3rem; }
+@utility gy-5 { --bs-gutter-y: 3rem; }
