@@ -101,6 +101,15 @@ export async function resolveViteConfig(
         }
     });
 
+    let dedupe = [
+        "react",
+        "react-dom",
+        "server-only",
+        "client-only",
+        "@vitejs/plugin-rsc",
+        ...reactPkgsConfig.ssr.noExternal
+    ]
+
     /**
      * The vite config
      */
@@ -126,7 +135,7 @@ export async function resolveViteConfig(
             // Trying to avoid React hooks fatal error on client that uses the yarn portal protocol in dependencies
             // https://github.com/vitejs/vite/blob/f09299ce13b55d51456985b96d4c3b3a1f131acb/packages/plugin-react/src/index.ts#L339
             // And it works until now
-            dedupe: reactPkgsConfig.ssr.noExternal
+            dedupe: dedupe
         },
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
@@ -173,7 +182,6 @@ export async function resolveViteConfig(
                             index: path.resolve(interactConfigTyped.paths.interactResourcesDirectory, 'rsc/server/entry.rsc.tsx'),
                         },
                     },
-
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "rsc"),
                     emptyOutDir: true
                 },
