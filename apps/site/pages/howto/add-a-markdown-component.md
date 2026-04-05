@@ -3,14 +3,22 @@ title: How to create a component for your Markdown pages?
 ---
 
 
-This example shows you how to add a simple `Planet` [Markdown component](../reference/markdown-component.md) that yields
-the word `Pluto`.
+This example shows you how to create a [component](../reference/markdown-component.md) that can be used as
+syntax in your [Markdown pages](../reference/markdown.md).
+
+## The goal
+
+The goal is to create a `Planet` component with the following syntax:
+```markdown
+<Planet/>
+```
+that would yield: <mark><Planet/></mark>
 
 ## Steps
 
 ### Create your component
 
-Below is a simple `Planet` React Component that returns `Pluto`
+Below is the `Planet` React Component that returns `Pluto`
 
 ```javascript
 // src/components/Planet.js
@@ -23,7 +31,7 @@ Rules:
 
 * The component should be exported as default (ie `export default`).
 * If it's an interactive component that relies on Browser event (for click), you need to add
-  the [use client directive](https://react.dev/reference/rsc/server-components#adding-interactivity-to-server-components)
+  the [use client directive](../reference/rsc.md#client-component)
 * The component file name should have the extension `jsx`, `tsx` or `js`.
 
 ### Register it

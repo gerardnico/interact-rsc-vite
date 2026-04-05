@@ -1,10 +1,14 @@
-# React Server Component (Rsc)
+---
+title: React Server Component (Rsc)
+---
 
 `Interact` is a [Rsc server](https://react.dev/reference/rsc/server-components).
 
 By default, all React components runs on the server and are [server components](#server-component).
 
-## Server Component
+## Component Types
+
+### Server Component
 
 By default, all React Components:
 
@@ -13,17 +17,18 @@ By default, all React Components:
 * but they don't have access to the Browser (no `window`, `click`, ...)
 
 If a component needs interactivity or the browser environment, you need
-to make it a client component with the [use client](#use-client) directive.
+to make it a client component with the [use client](#client-component) directive.
 
-## Use client
+### Client Component
 
-The `use client` directive when found at the top of a script
+The [React use client directive](https://react.dev/reference/rsc/server-components#adding-interactivity-to-server-components)
+when found at the top of a script
 makes it a `Client component` (ie [interactive component](interactive-component.md))
 
 A `React Client component` will:
 
 * be shipped to the browser
-* but it will also run on the server
+* but it will also run on the server in SSR mode
 
 Example: If you use the `window` global, you may:
 
@@ -64,23 +69,21 @@ Error: Only plain objects, and a few built-ins, can be passed to Client Componen
 message: "Only plain objects, and a few built-ins, can be pa…={Module} request={Request}>\n            ^^^^^^^^"}
 ```
 
-This error is mostly due because an imported component has the value `null`.
-
-Example, the imported `NavBar` value below is `null`
-
-```javascript
-import {NavBar} from "interact:partials";
-```
+This error is mostly due because a component or props in the React tree has the value `null`.
 
 Why? Here are the possible reasons:
 
-* the component does not exist in the imported module.
-* The imported component from the `interact:components` module was not registered in
-  the [component section of the configuration file](conf.md)
-* your [layout component](layout.md) is a [client component](#use-client) and it should not.
-* you are passing to the context to a page component as props
+* the component does not exist in the imported module. Example, the imported `NavBar` value below may be `null` if the
+  component is not exported by default.
 
-Example: This [partial](layout.md#partials) is passing explicitly the context to the `html` tag that has a null value
+```javascript
+import NavBar from "my-navbar";
+```
+
+* your [layout component](layout.md) is a [client component](#client-component) and it should not. The client component is in
+  the client bundle and will return null on the server.
+* you are passing a props with a null value. Example: This [partial](layout.md#partials) is passing the whole props but
+  the layout props have also the request context that contains null.
 
 ```tsx
 export default async function Html({page, ...props}: LayoutProps) {
@@ -106,7 +109,7 @@ In React, you may get the injurious [invalid hook call warning](https://react.de
 
 In Rsc, this problem may occur because you might have more than one copy of React due to bad splitting.
 
-Why? The bundler needs to parse every file that have the [use client directive](#use-client) in order
+Why? The bundler needs to parse every file that have the [use client directive](#client-component) in order
 to split correctly the code between the client and the servers environments (rsc/ssr).
 
 By default, in SSR, all dependencies are externalized and are not processed (except for linked dependencies for HMR).

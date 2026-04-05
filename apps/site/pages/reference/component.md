@@ -38,7 +38,7 @@ Interact is built on top of [React Server Components](rsc.md).
 
 By default, the components run on the server and are never included in a HTML document.
 If you want to make them interactive and ship them to the browser, you need to declare them as
-`client` component with the [client directive](rsc.md#use-client)
+`client` component with the [client directive](rsc.md#client-component)
 
 Example:
 

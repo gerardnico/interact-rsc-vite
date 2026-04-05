@@ -122,7 +122,12 @@ You can set the gutter on the `Grid` element with the following class utilities 
 
 In the bootstrap system, the gutter is created with the margin so that it does not interfere with the width calculation.
 
+### Center justified by default
+
+By default, the cells are justified in the center.
+You can change this behaviour by using any other [tailwind justify class](../reference/styling.md#tailwind)
+
 ## Markdown Support
 
-This component is registered as a [Markdown component](../reference/markdown-component.md) and can be used
+This component is [registered as a Markdown component](../howto/add-a-markdown-component.md#register-it) and can be used
 in [markdown pages](../reference/markdown.md).

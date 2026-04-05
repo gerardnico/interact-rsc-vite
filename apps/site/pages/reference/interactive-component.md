@@ -7,7 +7,7 @@ interact with it.
 
 ## use client directive
 
-Because they use the Browser (Browser API), they need to have the [use client directive](rsc.md#use-client)
+Because they use the Browser (Browser API), they need to have the [use client directive](rsc.md#client-component)
 at the top of the file.
 
 ## Base UI Library
