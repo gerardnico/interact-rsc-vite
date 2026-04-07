@@ -153,7 +153,7 @@ export default function viteComponentProvider(): Plugin {
                 return null;
             }
 
-            console.log(`${moduleName} module loaded with ${Object.keys(interactConfig.components).length} components`);
+            console.log(`${moduleName} - Module loaded with ${Object.keys(interactConfig.components).length} components`);
             let provider = generateComponentProvider(interactConfig);
             return provider;
         }

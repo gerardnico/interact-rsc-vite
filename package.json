@@ -32,7 +32,9 @@
     "./vite/*": "./dist/interact/vite/*.js",
     "./markdown": "./src/resources/markdown/interactMarkdownProcessor.tsx",
     "./middlewares/*": "./src/resources/middlewares/*.tsx",
-    "./config": "./src/interact/config/interactConfig.ts"
+    "./config": "./src/interact/config/interactConfig.ts",
+    "./global.css": "./src/resources/styles/global.css",
+    "./grid.css": "./src/resources/components/interact/grid.css"
   },
   "dependencies": {
     "@base-ui/react": "1.3.0",

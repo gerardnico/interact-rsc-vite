@@ -5,7 +5,7 @@ import Holy from "@combostrap/interact/components/layouts/Holy";
 
 import {getInteractConfig} from "@combostrap/interact/config";
 import createMiddlewarePipeline from "./handlerPipeline";
-import {middlewares} from "interact:middleware-registry"
+import {middlewares} from "interact:middlewares"
 import {InteractErrorData, InteractError} from "../../../interact/errors"
 import {getLayoutComponent} from "interact:layouts";
 import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
@@ -13,6 +13,7 @@ import type {ReactNode} from "react";
 import type {FinalPage, Page} from "../../../interact/pages/interactPage";
 import {hoistHeadElements} from "@/rsc/server/headElementHoisting";
 import * as NotFound from "@/components/pages/NotFound";
+import InteractApp from "@/rsc/server/InteractApp";
 
 export interface PageFile {
     path: string;
@@ -115,7 +116,11 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
      */
     if (layout === "none") {
         const InteractPageComponent = pageResponse.default
-        return <InteractPageComponent {...contextProps}/>
+        return (
+            <InteractApp>
+                <InteractPageComponent {...contextProps}/>
+            </InteractApp>
+        )
     }
 
     let Layout = getLayoutComponent(normalizedLayout);
@@ -123,7 +128,11 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
         Layout = Holy;
         console.error(`Frontmatter layout ${layout} not found, holy layout was used instead`)
     }
-    return <Layout page={page} context={contextProps}/>
+    return (
+        <InteractApp>
+            <Layout page={page} context={contextProps}/>
+        </InteractApp>
+    )
 
 }
 

@@ -1,5 +1,4 @@
-import "interact:outline-numbering.css"
-import "interact:global.css"
+// Css are in the Main Component
 
 /**
  * client module

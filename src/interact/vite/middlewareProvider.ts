@@ -3,16 +3,17 @@ import {getInteractConfig} from "../config/interactConfig.js";
 import path from "node:path";
 
 export default function middlewareProvider(): Plugin {
-    const virtualId = 'interact:middleware-registry';
 
+    let moduleName = 'interact:middlewares';
     let interactConfig = getInteractConfig()
 
     //const resolvedId = '\0' + virtualId;
-    const resolvedId = virtualId;
+    const resolvedId = moduleName;
+
     return {
-        name: 'interact:middlewares',
+        name: moduleName,
         resolveId(id: string) {
-            if (id === virtualId) return resolvedId;
+            if (id === moduleName) return resolvedId;
         },
         load(id: string) {
             if (id !== resolvedId) return;
@@ -35,7 +36,7 @@ export default function middlewareProvider(): Plugin {
                 }`)
             }
 
-
+            console.log(`${moduleName} - Loaded with ${middlewares.length} middlewares`);
             return `
 ${imports.join('\n')}
 export const middlewares = [${middlewares.join(",")}];

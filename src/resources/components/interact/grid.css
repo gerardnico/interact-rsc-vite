@@ -1,17 +1,21 @@
+
 /**
  * Bootstrap grid system
  * https://getbootstrap.com/docs/5.3/layout/grid/
  */
-@utility cells {
-    --cells-gutter-x: 1.5rem;
-    --cells-gutter-y: 0;
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: calc(-1 * var(--cells-gutter-y));
-    margin-right: calc(-.5 * var(--cells-gutter-x));
-    margin-left: calc(-.5 * var(--cells-gutter-x));
+@layer components {
 
-    & > * {
+    .cells {
+        --cells-gutter-x: 1.5rem;
+        --cells-gutter-y: 0;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: calc(-1 * var(--cells-gutter-y));
+        margin-right: calc(-.5 * var(--cells-gutter-x));
+        margin-left: calc(-.5 * var(--cells-gutter-x));
+    }
+
+    .cells > * {
         box-sizing: border-box;
         flex-shrink: 0;
         width: 100%;
@@ -20,11 +24,13 @@
         padding-left: calc(var(--cells-gutter-x) * .5);
         margin-top: var(--cells-gutter-y);
     }
+
+    .cell {
+        flex: 1 0 0;
+    }
+
 }
 
-@utility cell {
-    flex: 1 0 0;
-}
 
 @utility cell-auto {
     flex: 0 0 auto;

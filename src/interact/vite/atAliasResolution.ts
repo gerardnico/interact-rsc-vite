@@ -19,9 +19,10 @@ export const atAliasCharacter = "@"
  */
 export function atAliasResolution(): Plugin {
     let interactConfig = getInteractConfig()
-    console.log("Alias resolution plugin loaded")
+    let moduleName = 'interact:at-alias-resolution';
+    console.log(`${moduleName}: loaded`);
     return {
-        name: 'interact:at-alias-resolution',
+        name: moduleName,
         /**
          * https://github.com/rolldown/rolldown/blob/3e4eaa0a919bbd36db14ff6fffa448e28505e002/packages/rolldown/src/plugin/index.ts#L272
          * source example: @/lib/utils as seen in the import

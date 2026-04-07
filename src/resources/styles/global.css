@@ -6,14 +6,11 @@
 @import "tailwindcss" source("../components");
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "./grid.css";
+/* IDE bug as it does not resolve grid.css */
+/*noinspection CssUnknownTarget*/
+@import "@combostrap/interact/grid.css";
 @import "./headings.css";
 @import "./components.css";
-
-/* Project Pages */
-@source "../../../apps/site/pages";
-/* Project Components */
-@source "../../../apps/site/components";
 
 /*
 @source inline will add the class even if not used

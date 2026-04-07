@@ -236,10 +236,12 @@ export async function resolveViteConfig(
                 enforce: "pre", // should be first
                 ...atAliasResolution(),
             },
+            // Tailwind (it's an array of plugin)
+            tailwindcss(),
+            globalStylesheet(),
+            outlineNumberingStyleSheet(),
             imageMiddleware({command: command}),
             react(),
-            // Tailwind
-            tailwindcss(),
             // https://www.npmjs.com/package/vite-plugin-svgr
             svgReactPlugin({
                 // If the content needs to be imported as string add the `?raw` property
@@ -259,8 +261,6 @@ export async function resolveViteConfig(
             layoutProvider(),
             // Pages (after layout)
             pagesProvider(['mdx', 'tsx', 'jsx']),
-            globalStylesheet(),
-            outlineNumberingStyleSheet(),
             {
                 enforce: "post", // runs after as we depend on the component plugin
                 ...middlewareProvider()

@@ -24,7 +24,10 @@ export default function globalStylesheet(): Plugin {
             // file path is mandatory, we don't load the content in the load function
             // because the path in the file are relative to the file
             // This is equivalent to a redirect
-            if (id === resolvedId) return confCssFilePath
+            if (id === resolvedId) {
+                console.log(`${moduleId}: Global Css File loaded from ${confCssFilePath}`);
+                return confCssFilePath;
+            }
         },
         configureServer(server) {
 

@@ -11,7 +11,8 @@ the [shadcn convention](https://ui.shadcn.com/docs/theming).
 
 ### Tailwind
 
-We use [tailwind](https://tailwindcss.com/) as styling system.
+We use [tailwind](https://tailwindcss.com/) as styling system and
+the entry point is the [global css file](#global-css-file)
 
 So you can:
 
@@ -22,28 +23,31 @@ So you can:
 ### Global CSS File
 
 The global CSS file path is by default `src/styling/global.css` from the [root path](directory-layout.md) (You
-can [change it](#configuration)).
+can [change its path](#configuration)).
 
-If the file does not exist, we apply
-a [default one](https://github.com/combostrap/interact/tree/main/src/interact/styling/global.css).
+A default minimal implementation would be:
+
+```css
+@import "@combostrap/interact/global.css";
+
+/* Your Pages if you use tailwind class in them */
+@source "../pages";
+/* Components */
+@source "../components";
+```
+
+where the `@source` directive is a [tailwind directive  
+that will register](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources) your
+`components` and your [pages directory](directory-layout.md) so that Tailwind will scan them and discover classes.
 
 We follow the [shadcn convention with CSS Variable](https://ui.shadcn.com/docs/theming).
 
-Note that if you create your own global CSS file, you also need
-to [register as source](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources):
-
-* the `interact components`
-* and your [pages directory](directory-layout.md)
-
-Example:
+Note: `@import "@combostrap/interact/global.css"` imports the base interact CSS and particularly the following
 
 ```css
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-
-@source "../node_modules/@combostrap/interact/src/interact/components";
-@source "./src/pages";
 ```
 
 ### CSS Variables

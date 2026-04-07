@@ -1,3 +1,5 @@
+console.log("Entry rsc loaded")
+
 /**
  * Implement renderToReadableStream
  * https://react.dev/reference/react-dom/server/renderToReadableStream
