@@ -1,6 +1,7 @@
 import fs from "fs";
 import type {Plugin} from "vite";
 import {getInteractConfig} from "../config/interactConfig.js";
+import debug from 'debug'
 
 /**
  * Local Laptop: /home/user/code/combostrap/interact/src/lib/components/Avatar.tsx
@@ -21,6 +22,7 @@ export function atAliasResolution(): Plugin {
     let interactConfig = getInteractConfig()
     let moduleName = 'interact:at-alias-resolution';
     console.log(`${moduleName}: loaded`);
+    const debugLog = debug(moduleName);
     return {
         name: moduleName,
         /**
@@ -45,7 +47,9 @@ export function atAliasResolution(): Plugin {
             let resolution = interactConfig.aliases.resolution;
             let interactPath = `${interactConfig.paths.interactResourcesDirectory}/${relative}`;
             let clientPath = `${interactConfig.paths.atDirectory}/${relative}`;
-            if (resolution == 'standard') {
+            let isUiImport = source.includes("/ui");
+            debugger;
+            if (resolution == 'standard' && isUiImport) {
                 if (isInteractAlias(importer)) {
                     candidates.push(interactPath)
                 } else {
@@ -61,16 +65,18 @@ export function atAliasResolution(): Plugin {
                 for (const ext of ['', '.ts', '.tsx', '.js', '.jsx']) {
                     let candidateFull = candidate + ext;
                     if (fs.existsSync(candidateFull)) {
+                        debugLog(`%s was resolve to %s (Importer: %s)`, source, candidateFull, importer);
                         return candidateFull
                     }
                 }
             }
-            // let Vite handle it (will likely error)
-            let message = `The ${source} could not be resolved from the importer (${importer}) with the candidate (${candidates.join(', ')}) in ${resolution} resolution`;
+            // If we let Vite handle it will likely error
+            // so we do it to be more precise
+            let message = `Error: The ${source} could not be resolved from the importer (${importer}) with the candidate (${candidates.join(', ')}) in ${resolution} resolution`;
             if (process.env["NODE_ENV"] === 'development') {
                 throw new Error(message)
             }
-            console.error(message);
+            debugLog(message);
             return null
         }
     }

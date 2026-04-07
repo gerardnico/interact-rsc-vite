@@ -413,6 +413,7 @@ __metadata:
     "@svgr/plugin-jsx": "npm:8.1.0"
     "@svgr/plugin-svgo": "npm:8.1.0"
     "@tailwindcss/vite": "npm:4.2.2"
+    "@types/debug": "npm:^4"
     "@types/etag": "npm:1"
     "@types/hast": "npm:3.0.4"
     "@types/mdast": "npm:4.0.4"
@@ -424,6 +425,7 @@ __metadata:
     "@vitejs/plugin-rsc": "npm:0.5.21"
     class-variance-authority: "npm:0.7.1"
     clsx: "npm:2.1.1"
+    debug: "npm:^4.4.3"
     etag: "npm:1.8.1"
     glob: "npm:13.0.6"
     hastscript: "npm:9.0.1"
@@ -2331,6 +2333,15 @@ __metadata:
     "@types/deep-eql": "npm:*"
     assertion-error: "npm:^2.0.1"
   checksum: 10/e79947307dc235953622e65f83d2683835212357ca261389116ab90bed369ac862ba28b146b4fed08b503ae1e1a12cb93ce783f24bb8d562950469f4320e1c7c
+  languageName: node
+  linkType: hard
+
+"@types/debug@npm:^4":
+  version: 4.1.13
+  resolution: "@types/debug@npm:4.1.13"
+  dependencies:
+    "@types/ms": "npm:*"
+  checksum: 10/5091d4ebda85236e6f4a6ecea552860e521e11d1d388d3f6255b40726f5a4a7cf1baa0d09f60853838e4cac6c12a13b14114d5f422ccecaee4d1d07dab349900
   languageName: node
   linkType: hard
 

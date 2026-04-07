@@ -9,6 +9,7 @@ import Aside from "@combostrap/interact/components/partials/Aside";
 import Hero from "@combostrap/interact/components/partials/Hero";
 import Toc from "../partials/Toc.js";
 import {cn} from "@/lib/utils";
+import Footer from "@/components/partials/Footer";
 
 /**
  * Holy Layout Components
@@ -21,38 +22,39 @@ export default function Holy(layoutProps: LayoutProps) {
             <Head {...layoutProps}/>
             <Body {...layoutProps}>
                 <Header {...layoutProps} />
-        <div id="page-core" className={
-            cn(styles['pageCore'],
-                getInteractConfig().style.container.containerClass,
-                "position-relative mt-3"
-            )}>
-            <aside id="page-side" className={cn(styles['pageSide'], "print:hidden")}>
-                <Aside {...layoutProps}/>
-            </aside>
-            <main id="page-main" className={styles['pageMain']}>
-                <div id="main-header" className={styles['mainHeader']}>
-                    <Hero {...layoutProps} />
-                </div>
-                <div id="main-toc" className={styles['mainToc']}>
-                    <Toc {...layoutProps} />
-                </div>
-                <div id="main-content" className={styles['mainContent']}>
-                    {layoutProps.page.contentElement}
-                </div>
-                <div id="main-side" className={
-                    cn(
-                        styles['mainSide'],
-                        "print:hidden"
+                <div id="page-core" className={
+                    cn(styles['pageCore'],
+                        getInteractConfig().style.container.containerClass,
+                        "position-relative mt-3"
                     )}>
+                    <aside id="page-side" className={cn(styles['pageSide'], "print:hidden")}>
+                        <Aside {...layoutProps}/>
+                    </aside>
+                    <main id="page-main" className={styles['pageMain']}>
+                        <div id="main-header" className={styles['mainHeader']}>
+                            <Hero {...layoutProps} />
+                        </div>
+                        <div id="main-toc" className={styles['mainToc']}>
+                            <Toc {...layoutProps} />
+                        </div>
+                        <div id="main-content" className={styles['mainContent']}>
+                            {layoutProps.page.contentElement}
+                        </div>
+                        <div id="main-side" className={
+                            cn(
+                                styles['mainSide'],
+                                "print:hidden"
+                            )}>
+                        </div>
+                        <footer id="main-footer" className={
+                            cn(
+                                styles['mainFooter'],
+                                "print:hidden"
+                            )}>
+                        </footer>
+                    </main>
                 </div>
-                <footer id="main-footer" className={
-                    cn(
-                        styles['mainFooter'],
-                        "print:hidden"
-                    )}>
-                </footer>
-            </main>
-        </div>
+                <Footer {...layoutProps} />
             </Body>
         </Html>
     )

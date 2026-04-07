@@ -51,6 +51,7 @@
     "@vitejs/plugin-rsc": "0.5.21",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "debug": "^4.4.3",
     "etag": "1.8.1",
     "glob": "13.0.6",
     "hastscript": "9.0.1",
@@ -82,6 +83,7 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@types/debug": "^4",
     "@types/etag": "1",
     "@types/hast": "3.0.4",
     "@types/mdast": "4.0.4",

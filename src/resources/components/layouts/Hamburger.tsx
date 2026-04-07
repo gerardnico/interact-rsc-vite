@@ -5,6 +5,7 @@ import Body from "@/components/partials/Body";
 import Html from "@/components/partials/Html";
 import Head from "@/components/partials/Head";
 import {cn} from "@/lib/utils";
+import Footer from "@/components/partials/Footer";
 
 /**
  * Hamburger Layout
@@ -27,6 +28,7 @@ export default function Hamburger(layoutProps: LayoutProps) {
                         {layoutProps.page.contentElement}
                     </main>
                 </div>
+                <Footer {...layoutProps} />
             </Body>
         </Html>
     )
