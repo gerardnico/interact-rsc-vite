@@ -8,6 +8,7 @@
 @import "shadcn/tailwind.css";
 @import "./grid.css";
 @import "./headings.css";
+@import "./components.css";
 
 /* Project Pages */
 @source "../../../apps/site/pages";

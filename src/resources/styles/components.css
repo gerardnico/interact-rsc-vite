@@ -1,0 +1,9 @@
+
+/* https://tailwindcss.com/docs/adding-custom-styles#adding-component-classes */
+@layer components {
+    .card {
+        background-color: var(--color-white);
+        border-radius: var(--radius-2xl);
+        padding: --spacing(3);
+    }
+}
