@@ -118,14 +118,21 @@ You can set the gutter on the `Grid` element with the following class utilities 
 
 * `cells-gap-n`: for horizontal and vertical gutter
 * `cells-gap-x-n`: for horizontal gutter
-* `cells-gap-n`: for vertical gutter
+* `cells-gap-y-n`: for vertical gutter
 
 In the bootstrap system, the gutter is created with the margin so that it does not interfere with the width calculation.
 
-### Center justified by default
+### Default: Center justified and Gap
 
-By default, the cells are justified in the center.
-You can change this behaviour by using any other [tailwind justify class](../reference/styling.md#tailwind)
+By default, the grid has:
+
+* cells justified in the center (`justify-center`)
+* a gap of 10 (`cells-gap-10`)
+
+You can change this behavior by setting any other:
+
+* [tailwind justify class](../reference/styling.md#tailwind))
+* and [cells gap](#gutter--gap)
 
 ## Markdown Support
 

@@ -13,6 +13,7 @@ export default function Grid({
             cn(
                 "cells",
                 !className?.includes("justify") && "justify-center",
+                !className?.includes("cells-gap") && "cells-gap-10",
                 className
             )
         }{...rest}>

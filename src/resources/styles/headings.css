@@ -8,34 +8,34 @@
 }
 
 @utility h1 {
-  font-size: calc(1.375rem + 1.5vw) !important;
+  font-size: calc(1.375rem + 1.5vw);
   @apply heading;
 }
 
 
 @utility h2 {
-  font-size: calc(1.325rem + .9vw) !important;
+  font-size: calc(1.325rem + .9vw);
   @apply heading;
 }
 
 
 @utility h3 {
-  font-size: calc(1.3rem + .6vw) !important;
+  font-size: calc(1.3rem + .6vw);
   @apply heading;
 }
 
 @utility h4 {
-  font-size: calc(1.275rem + .3vw) !important;
+  font-size: calc(1.275rem + .3vw);
   @apply heading;
 }
 
 @utility h5 {
-  font-size: 1.25rem !important;
+  font-size: 1.25rem;
   @apply heading;
 }
 
 @utility h6 {
-  font-size: 1rem !important;
+  font-size: 1rem;
   @apply heading;
 }
 

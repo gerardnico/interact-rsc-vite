@@ -1,4 +1,5 @@
 import React from "react";
+import {cn} from "@/lib/utils";
 
 
 /**
@@ -13,7 +14,7 @@ export default function GridCell({
                                  }: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
     return (
         <div
-            className={className ? className : "cell"}
+            className={cn("cell", className)}
             {...rest}>
             {children}
         </div>
