@@ -1,59 +1,62 @@
 /* Headings based on Bootstrap */
 
 /* Fighting the Preflight reset  */
-.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
-    margin-top: 0;
-    margin-bottom: .5rem;
-    font-weight: 500;
-    line-height: 1.2;
-    @apply mb-3 mt-5;
+@utility heading {
+  font-weight: 500;
+  line-height: 1.2;
+  @apply mb-3 mt-5;
 }
 
 @utility h1 {
-    font-size: calc(1.375rem + 1.5vw)!important;
+  font-size: calc(1.375rem + 1.5vw) !important;
+  @apply heading;
 }
 
-h1 {
-    @apply h1 xl:text-5xl
-}
 
 @utility h2 {
-    font-size: calc(1.325rem + .9vw)!important;
-}
-
-h2 {
-    @apply h2 xl:text-4xl
+  font-size: calc(1.325rem + .9vw) !important;
+  @apply heading;
 }
 
 
 @utility h3 {
-    font-size: calc(1.3rem + .6vw)!important;
-}
-
-h3 {
-    @apply h3 xl:text-3xl
+  font-size: calc(1.3rem + .6vw) !important;
+  @apply heading;
 }
 
 @utility h4 {
-    font-size: calc(1.275rem + .3vw)!important;
-}
-
-h4 {
-    @apply h4 xl:text-2xl
+  font-size: calc(1.275rem + .3vw) !important;
+  @apply heading;
 }
 
 @utility h5 {
-    font-size: 1.25rem!important;
-}
-
-h5 {
-    @apply h5 xl:text-xl
+  font-size: 1.25rem !important;
+  @apply heading;
 }
 
 @utility h6 {
-    font-size: 1rem!important;
+  font-size: 1rem !important;
+  @apply heading;
 }
 
 @utility lead {
-    @apply text-xl text-muted-foreground;
+  @apply text-xl text-muted-foreground;
+}
+
+@layer base {
+  h1 {
+    @apply h1 xl:text-5xl
+  }
+  h2 {
+    @apply h2 xl:text-4xl
+  }
+  h3 {
+    @apply h3 xl:text-3xl
+  }
+  h4 {
+    @apply h4 xl:text-2xl
+  }
+  h5 {
+    @apply h5 xl:text-xl
+  }
 }
