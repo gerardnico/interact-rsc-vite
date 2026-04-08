@@ -20,6 +20,47 @@
       "registryDependencies": [
         "button"
       ]
+    },
+    {
+      "name": "Grid",
+      "type": "registry:ui",
+      "title": "Grid Cells System",
+      "description": "Flex Grid based on the bootstrap system",
+      "files": [
+        {
+          "path": "src/resources/components/interact/Grid.tsx",
+          "type": "registry:ui",
+          "categories": [
+            "grid"
+          ],
+          "meta": {
+            "interact": {
+              "type": "markdown"
+            }
+          }
+        },
+        {
+          "path": "src/resources/components/interact/GridCell.tsx",
+          "type": "registry:ui",
+          "categories": [
+            "grid"
+          ],
+          "meta": {
+            "interact": {
+              "type": "markdown"
+            }
+          }
+        },
+        {
+          "path": "src/resources/components/interact/grid.css",
+          "type": "registry:file",
+          "target": "src/styles/grid.css",
+          "docs": "You need to import manually the grid.css file in your global.css file",
+          "categories": [
+            "grid"
+          ]
+        }
+      ]
     }
   ]
 }

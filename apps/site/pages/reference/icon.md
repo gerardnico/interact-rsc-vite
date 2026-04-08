@@ -27,8 +27,11 @@ In a [programmatic page](page-module.md), you can import:
 ```javascript
 import Envelope from "../img/bi-envelope-fill.svg"
 ```
-* from a React icon library
+* from a icon library
 ```javascript
+// that delivers raw svg file
+import OpenAiIcon from "bootstrap-icons/icons/openai.svg"
+// or React component
 import {ChevronDownIcon} from "lucide-react";
 ```
 
