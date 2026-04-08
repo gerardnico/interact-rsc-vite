@@ -4,11 +4,9 @@ title: Svg Component
 
 ## Usage
 
-### Markdown Page
+You can use the `Svg` component to:
 
-Within a Markdown page, you can use the `Svg` component to:
-
-* [optimize](#optimization)
+* [optimize](../reference/svg.md#optimization)
 * and include your svg in your document
 
 The `src` attribute indicates the relative path to the file in the [images directory](../reference/directory-layout.md).
@@ -21,35 +19,14 @@ Output example:
 
 <Svg src="arrow-right-circle.svg" width="40" />
 
-### Programmatic Page
+### Props
 
-In a [programmatic page](../reference/page-module.md), importing a svg will return
-an [optimized](#optimization) [React Svg Component](https://react-svgr.com/docs/what-is-svgr/)
-
-Example:
-
-````javascript
-import Arrow from "./arrow-right-circle.svg"
-
-export default function svgPage() {
-    return (
-        <Arrow width={10}/>
-    )
-}
-````
-
-## Props
-
-Because icons render as SVG elements, all standard SVG attributes
-can also be applied as props.
-
-See the list of SVG Presentation Attributes
+All standard SVG attributes
+can be applied as props. See the list of SVG Presentation Attributes
 on [MDN](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation).
 
-## Optimization
+## Markdown Support
 
-The `svg` are optimized with the [svgo preset](https://svgo.dev/docs/preset-default/)
+This component is [registered as Markdown component](../reference/markdown-component.md) and can be used in
+a [markdown page](../reference/markdown.md)
 
-## Icon
-
-If you want your SVG to be seen as a text character, uses the [Icon component](icon.md)

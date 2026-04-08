@@ -21,7 +21,7 @@ in a [markdown](markdown.md) page with the [Icon](../components/icon.md) element
 
 #### Import
 
-In a [programmatic page](page-module.md), you can import:
+In a [programmatic page (jsx, mdx)](page-module.md), you can import:
 
 * from a raw svg file
 
@@ -38,13 +38,16 @@ import OpenAiIcon from "bootstrap-icons/icons/openai.svg"
 import {ChevronDownIcon} from "lucide-react";
 ```
 
+On [svg file import](svg.md), the file is [optimized with Svg](../components/svg.md#optimization) and 
+[transformed as React component]()
+
 ### CSS font
 
 You can also use a icon stylesheet font.
 
 Example with [Bootstrap Icons](https://icons.getbootstrap.com/)
 
-* Add the stylesheet
+* Add the [stylesheet](head.md#hoisting)
 
 ```html
 

@@ -60,10 +60,22 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
 export async function getRootResponse(contextProps: ContextProps): Promise<ReactNode | Response> {
 
     let middlewareResponse = await middlewarePipeline.run(contextProps);
-    if (middlewareResponse instanceof Response) {
-        return middlewareResponse;
+
+    /**
+     * Markdown Request with an extension
+     */
+    let markdownIndex = contextProps.url.pathname.indexOf('.md');
+    if (middlewareResponse == null && markdownIndex != -1) {
+        let pathWithoutExtension = contextProps.url.pathname.slice(0, markdownIndex)
+        middlewareResponse = await middlewarePipeline.run({
+            ...contextProps,
+            url: new URL(pathWithoutExtension, 'http://mardown.local'),
+        });
     }
 
+    /**
+     * Not found
+     */
     if (middlewareResponse == null) {
         contextProps.response.status = 404;
         let interactConfig = getInteractConfig();
@@ -71,14 +83,21 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
             ...contextProps,
             url: new URL(interactConfig.middleware.notFoundPath, 'http://not-found.local'),
         });
-        if (middlewareResponse instanceof Response) {
-            return middlewareResponse;
-        }
         if (middlewareResponse == null) {
             middlewareResponse = NotFound;
         }
     }
 
+    /**
+     * Return a Response
+     */
+    if (middlewareResponse instanceof Response) {
+        return middlewareResponse;
+    }
+
+    /**
+     * A React Page
+     */
     let pageResponse: Page = middlewareResponse
 
     /**
@@ -93,12 +112,24 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
      */
     const pageElements = hoistHeadElements(<pageResponse.default {...contextProps}/>);
 
+
+
     let page: FinalPage = {
         contentElement: pageElements.contentElement,
         headElements: pageElements.headElements,
         frontmatter: pageResponse.frontmatter,
         toc: pageResponse.toc,
         derived: pageResponse.derived,
+    }
+
+    /**
+     * Markdown ?
+     */
+    const accept = contextProps.request.headers.get('accept') // or req.headers['accept'] in Express
+    const wantsMarkdown = accept?.includes('text/markdown')
+    let isMarkdownRequest = wantsMarkdown || contextProps.request.url.endsWith('.md');
+    if (isMarkdownRequest) {
+        return page.contentElement;
     }
 
     /**
@@ -115,10 +146,9 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
      * No layout at all, the page returns the HTML root tag
      */
     if (layout === "none") {
-        const InteractPageComponent = pageResponse.default
         return (
             <InteractApp>
-                <InteractPageComponent {...contextProps}/>
+                {page.contentElement}
             </InteractApp>
         )
     }

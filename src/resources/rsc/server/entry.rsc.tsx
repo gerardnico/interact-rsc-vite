@@ -1,3 +1,5 @@
+import htmlToMarkdown from "@/markdown/htmlToMarkdown";
+
 console.log("Entry rsc loaded")
 
 /**
@@ -116,6 +118,7 @@ export default async function handler(request: Request): Promise<Response> {
         })
     }
 
+
     /**
      * This is not a request made by our client asking for an RSC stream
      * Rendering the stream as HTML
@@ -133,6 +136,25 @@ export default async function handler(request: Request): Promise<Response> {
      * We combine them
      */
     let combinedStatus = contextProps.response.status != null && contextProps.response.status != 200 ? contextProps.response.status : ssrResult.status;
+
+    /**
+     * react-dom/server is not supported in React Server Components environment
+     * We need to move that in entry.ssr.tsx SSR if we want to use react-dom/server
+     */
+    const accept = contextProps.request.headers.get('accept') // or req.headers['accept'] in Express
+    const wantsMarkdown = accept?.includes('text/markdown')
+    let isMarkdownRequest = wantsMarkdown || contextProps.request.url.endsWith('.md');
+    if (isMarkdownRequest) {
+        const html = await new Response(ssrResult.stream).text();
+        const mdString = htmlToMarkdown(html)
+        return new Response(mdString, {
+            status: combinedStatus,
+            headers: {
+                'Content-Type': 'text/markdown; charset=utf-8',
+                ...contextProps.response.headers,
+            }
+        })
+    }
 
     /**
      * Return
