@@ -8,7 +8,16 @@ import clsx from "clsx";
 // noinspection JSUnusedGlobalSymbols - imported dynamically
 export default async function Icon({
                                        className,
+                                       size = 24,
+                                       height,
+                                       width,
                                        ...svgProps
-                                   }: SvgComponentProps) {
-    return <Svg className={clsx("inline", className)} {...svgProps}/>
+                                   }: SvgComponentProps & { size?: number }) {
+    if (height == null) {
+        height = size;
+    }
+    if (width == null) {
+        width = size;
+    }
+    return <Svg className={clsx("inline", className)} width={width} height={height} {...svgProps}/>
 }
