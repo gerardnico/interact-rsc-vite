@@ -434,7 +434,7 @@ export default function Code({
                 {/* ── Toolbar ── */}
                 {toolbar && (
                     <>
-                        <div style={toolbarStyle}>
+                        <div className={"print:hidden"} style={toolbarStyle}>
                             {/* Traffic-light dots */}
                             <div style={dotStyle("#ff5f57")}/>
                             <div style={dotStyle("#febc2e")}/>
@@ -489,7 +489,7 @@ export default function Code({
                 )}
                 <div className={
                     clsx(
-                        "position-absolute top-0 end-0 p-2",
+                        "position-absolute top-0 end-0 p-2 print:hidden",
                         styles["showOnHover"]
                     )}
                 >

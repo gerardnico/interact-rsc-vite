@@ -113,23 +113,23 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
     const pageElements = hoistHeadElements(<pageResponse.default {...contextProps}/>);
 
 
-
     let page: FinalPage = {
         contentElement: pageElements.contentElement,
         headElements: pageElements.headElements,
         frontmatter: pageResponse.frontmatter,
-        toc: pageResponse.toc,
-        derived: pageResponse.derived,
+        toc: pageResponse.toc
     }
 
     /**
      * Markdown ?
      */
-    const accept = contextProps.request.headers.get('accept') // or req.headers['accept'] in Express
-    const wantsMarkdown = accept?.includes('text/markdown')
-    let isMarkdownRequest = wantsMarkdown || contextProps.request.url.endsWith('.md');
-    if (isMarkdownRequest) {
-        return page.contentElement;
+    if (contextProps.meta.isMarkdown) {
+        return (
+            <>
+                {page.frontmatter?.title && <h1>{page.frontmatter.title}</h1>}
+                {page.contentElement}
+            </>
+        );
     }
 
     /**
@@ -171,7 +171,7 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
  * can use it to render each page
  */
 export function getStaticPaths() {
-    return Object.keys(getPagesRecursively(getInteractConfig().paths.pagesDirectory))
+    return getPagesRecursively(getInteractConfig().paths.pagesDirectory)
 }
 
 
@@ -182,20 +182,8 @@ export function getPages() {
     /**
      * Delete the 404 pages if set
      */
-    let importPath = interactConfig.components?.NotFound?.importPath;
-    if (importPath != null) {
-        let pagesWord = "pages";
-        let indexOf = importPath.indexOf(pagesWord);
-        if (indexOf != -1) {
-            let notFoundPath = importPath.slice(indexOf + pagesWord.length);
-            const extensionIndex = notFoundPath.indexOf(".");
-            if (extensionIndex != -1) {
-                notFoundPath = notFoundPath.slice(0, extensionIndex);
-            }
-            delete pages[notFoundPath];
-        }
-    }
-
+    let notFoundPath = interactConfig.middleware.notFoundPath;
+    delete pages[notFoundPath];
 
     return pages
 }

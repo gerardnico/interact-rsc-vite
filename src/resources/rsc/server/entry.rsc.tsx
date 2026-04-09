@@ -17,7 +17,7 @@ import {
 import {parseRenderRequest} from '../shared/request.js'
 import type {RscPayload} from '../shared/types.js'
 import type {ReactFormState} from 'react-dom/client'
-import {getRootResponse, getStaticPaths} from "./handler";
+import {getRootResponse, getStaticPaths} from "./handler.js";
 /**
  * We export it so that static rendering (SSG)
  * can use it to render each page after the build
@@ -50,8 +50,8 @@ export default async function handler(request: Request): Promise<Response> {
     let formState: ReactFormState | undefined
     let temporaryReferences: unknown | undefined
     let actionStatus: number | undefined
-    if (contextProps.rsc.isAction) {
-        if (contextProps.rsc.actionId) {
+    if (contextProps.meta.isRscAction) {
+        if (contextProps.meta.rscActionId) {
             // action is called via `ReactClient.setServerCallback`.
             const contentType = request.headers.get('content-type')
             const body = contentType?.startsWith('multipart/form-data')
@@ -59,7 +59,7 @@ export default async function handler(request: Request): Promise<Response> {
                 : await request.text()
             temporaryReferences = createTemporaryReferenceSet()
             const args = await decodeReply(body, {temporaryReferences})
-            const action = await loadServerAction(contextProps.rsc.actionId)
+            const action = await loadServerAction(contextProps.meta.rscActionId)
             try {
                 const data = await action.apply(null, args)
                 returnValue = {ok: true, data}
@@ -109,7 +109,7 @@ export default async function handler(request: Request): Promise<Response> {
      * that asks for a Rsc format (ie by adding the {@link URL_POSTFIX} in the URL)
      * We send an RSC Payload: a compact binary representation of the rendered React Server Components tree.
      */
-    if (contextProps.rsc.isRsc) {
+    if (contextProps.meta.isRsc) {
         return new Response(rscStream, {
             status: actionStatus,
             headers: {
@@ -141,10 +141,7 @@ export default async function handler(request: Request): Promise<Response> {
      * react-dom/server is not supported in React Server Components environment
      * We need to move that in entry.ssr.tsx SSR if we want to use react-dom/server
      */
-    const accept = contextProps.request.headers.get('accept') // or req.headers['accept'] in Express
-    const wantsMarkdown = accept?.includes('text/markdown')
-    let isMarkdownRequest = wantsMarkdown || contextProps.request.url.endsWith('.md');
-    if (isMarkdownRequest) {
+    if (contextProps.meta.isMarkdown) {
         const html = await new Response(ssrResult.stream).text();
         const mdString = htmlToMarkdown(html)
         return new Response(mdString, {
@@ -175,17 +172,14 @@ export default async function handler(request: Request): Promise<Response> {
 export async function handleSsg(request: Request): Promise<{
     html: ReadableStream<Uint8Array>
     rsc: ReadableStream<Uint8Array>
+    md: string | undefined
 }> {
 
-    let rootResponse = await getRootResponse({
-        request: request,
-        url: new URL(request.url),
-        response: {},
-        rsc: {
-            isRsc: false,
-            isAction: false
-        }
-    })
+    /**
+     * HTML request
+     */
+    const contextProps = parseRenderRequest(request)
+    let rootResponse = await getRootResponse(contextProps)
     if (rootResponse instanceof Response) {
         throw new Error("A page request should not return a Web Fetch API Response")
     }
@@ -196,7 +190,32 @@ export async function handleSsg(request: Request): Promise<{
     const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr')>('ssr', 'index')
     const ssrResult = await ssr.renderHtml(rscStream1, {ssg: true})
 
-    return {html: ssrResult.stream, rsc: rscStream2}
+    /**
+     * Markdown
+     */
+    contextProps.meta.isMarkdown = true
+    contextProps.url = new URL(contextProps.url.pathname + ".md", "http://ssg-markdown.local")
+    let markdownRootResponse = await getRootResponse(contextProps)
+    if (markdownRootResponse instanceof Response) {
+        throw new Error("A markdown request should not return a Web Fetch API Response")
+    }
+    const markdownRscPayload: RscPayload = {root: markdownRootResponse}
+    const markdownRscStream = renderToReadableStream<RscPayload>(markdownRscPayload)
+
+    const markdownSsrResult = await ssr.renderHtml(markdownRscStream, {ssg: true})
+    const markdownHtml = await new Response(markdownSsrResult.stream).text();
+    let mdString
+    try {
+        mdString = htmlToMarkdown(markdownHtml)
+    } catch (e) {
+        // Error: Cannot handle unknown node `table`
+        console.error("Error generating the markdown file.", e)
+    }
+
+    /**
+     * Response
+     */
+    return {html: ssrResult.stream, rsc: rscStream2, md: mdString}
 }
 
 // https://vite.dev/guide/api-hmr#required-conditional-guard

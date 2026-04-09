@@ -31,13 +31,6 @@ export type Frontmatter = {
     lang?: string;
 } & Record<string, string | undefined>
 
-/**
- * Derived meta
- */
-export type Derived = {
-    // iso string
-    lastModified?: string;
-} & Record<string, string | undefined>
 
 /**
  * The page meta
@@ -45,7 +38,6 @@ export type Derived = {
 export type PageMeta<F = unknown, D = unknow> = {
     frontmatter?: F & Frontmatter;
     toc?: TocNode[];
-    derived?: D & Derived
 };
 
 /**

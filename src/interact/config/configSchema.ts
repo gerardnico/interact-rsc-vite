@@ -308,8 +308,7 @@ const Header = BaseComponentSchema.extend({
 
 const ComponentsConfigSetSchema = z.object({
     Header: Header.optional(),
-    Toc: TocSchema.optional(),
-    NotFound: BaseComponentSchema.optional(),
+    Toc: TocSchema.optional()
 }).catchall(BaseComponentSchema); // unknown keys fall back to base schema
 
 
@@ -321,6 +320,8 @@ const handlerConfigSchema = z.object({
 
 const MiddlewaresSchema = z.object({
     pipeline: z.array(handlerConfigSchema).describe("A list of middlewares").default([]),
+    // 404 is the default for GitHub
+    // https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-custom-404-page-for-your-github-pages-site
     notFoundPath: z.string().describe("The page returned if no middleware answers the request").default("/404"),
 }).describe("Middleware Properties");
 

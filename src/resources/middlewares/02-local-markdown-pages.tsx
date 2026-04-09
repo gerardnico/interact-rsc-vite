@@ -8,6 +8,7 @@ import {readFile} from "fs/promises";
 import type {ContextProps} from "../../interact/componentsProvider/contextProps";
 import type {Page} from "../../interact/pages/interactPage";
 import {getInteractConfig} from "../../interact/config/interactConfig";
+import {statSync} from "node:fs";
 
 export async function fsGetTextAsync(path: string) {
     try {
@@ -47,6 +48,11 @@ export async function handler(): Promise<MiddlewareHandler> {
             path: page,
             value: content,
         })
+
+
+        const stat = statSync(page);
+        context.meta.lastModified = stat.mtime.toISOString()
+
         return markdownToPageSync(file);
 
     }

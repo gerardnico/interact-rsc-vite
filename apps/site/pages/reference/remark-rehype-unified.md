@@ -72,3 +72,11 @@ To define the location of the configuration file, you can:
 * or set the value in the `markdown.configImportPath` of the [configuration file](conf.md). If the value starts with a
   `.`, it's considered a path from the [root directory](directory-layout.md) otherwise, it's considered a module name to
   be searched from `nodes_modules`
+
+## Usage
+
+They are used:
+
+* when reading [markdown page](markdown.md)
+* but also when writing [markdown page for agents](ai.md#markdown-format-for-all-pages)
+

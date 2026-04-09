@@ -41,13 +41,17 @@ export function createRscRenderRequest(
 export function parseRenderRequest(request: Request): ContextProps {
     const url = new URL(request.url)
     const isAction = request.method === 'POST'
+    const accept = request.headers.get('accept') // or req.headers['accept'] in Express
+    const wantsMarkdown = accept?.includes('text/markdown')
+    let isMarkdownRequest = wantsMarkdown || request.url.endsWith('.md');
 
     // Classic Static Rendering Request
     if (!url.pathname.endsWith(URL_POSTFIX)) {
         return {
-            rsc: {
+            meta: {
                 isRsc: false,
-                isAction,
+                isRscAction: isAction,
+                isMarkdown: isMarkdownRequest
             },
             request,
             url,
@@ -62,10 +66,11 @@ export function parseRenderRequest(request: Request): ContextProps {
         throw new Error('Missing action id header for RSC action request')
     }
     return {
-        rsc: {
-            isRsc: true,
-            isAction,
-            actionId
+        meta: {
+            isRsc: false,
+            isRscAction: isAction,
+            isMarkdown: isMarkdownRequest,
+            rscActionId: actionId
         },
         request: request,
         url,

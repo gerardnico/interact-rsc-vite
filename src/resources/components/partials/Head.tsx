@@ -18,8 +18,8 @@ export default function Head({page, context, ...props}: HeadProps) {
      * Last modified
      */
     let lastModified;
-    if (page.derived?.lastModified != null) {
-        lastModified = new Date(page.derived?.lastModified);
+    if (context.meta.lastModified != null) {
+        lastModified = new Date(context.meta.lastModified);
     }
     const interactConfig = getInteractConfig();
 
@@ -59,6 +59,12 @@ export default function Head({page, context, ...props}: HeadProps) {
      * works across domains because it's domain-agnostic — it always resolves relative to wherever the site is hosted.
      */
     let baseHeadURL = (interactConfig.site.base != "/" ? interactConfig.site.base : "") + context.url.pathname;
+
+    /**
+     * The markdown alternate version
+     * (URL Path name should have already the base)
+     */
+    let markdownAlternateHref = context.url.pathname.endsWith("/") ? context.url.pathname + "index.md" : context.url.pathname + ".md"
     /**
      * The below IF got deleted when a production build is done
      */
@@ -101,6 +107,7 @@ export default function Head({page, context, ...props}: HeadProps) {
             {keyWords && <meta name="keywords" content={keyWords}/>}
             {layoutStyle && (<style dangerouslySetInnerHTML={{__html: layoutStyle}}/>)}
             {page.headElements}
+            <link rel="alternate" type="text/markdown" href={markdownAlternateHref}/>
         </head>
     )
 }

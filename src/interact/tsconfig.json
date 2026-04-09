@@ -2,7 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "moduleResolution": "NodeNext",
-    "module": "NodeNext"
+    "module": "NodeNext",
+    // needed because ssg uses the type of the generated entry.rsc.tsx
+    // not needed otherwise it will check go into the resources directory
+    // "jsx": "react-jsx"
   },
   "include": [
     "**/*",

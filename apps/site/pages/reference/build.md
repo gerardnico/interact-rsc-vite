@@ -16,3 +16,9 @@ Example:
   }
 }
 ```
+
+## Static Server Generation
+
+On static server generation, an alternate markdown version
+is also generated for [AI agent consumption](ai.md#markdown-format-for-all-pages).
+
