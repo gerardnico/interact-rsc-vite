@@ -1,14 +1,16 @@
 import type {LayoutProps} from "@combostrap/interact/types";
 import React from "react";
-import Open, {
+import  {
     OpenAsMarkdown,
     OpenInChatGPT,
     OpenInClaude,
     OpenInCursor,
     OpenInScira,
     OpenInT3,
-    OpenInVo
+    OpenInVo,
+    OpenSplitButton
 } from "@/components/interact/Open";
+
 
 export type HeroProps = React.HTMLAttributes<HTMLElement> & LayoutProps
 
@@ -27,7 +29,7 @@ export default function Hero({page, context, ...htmlProps}: HeroProps) {
             {title &&
                 <h1 className="h1 outline-heading-cs heading-cs heading-h1-cs">{title}</h1>
             }
-            <Open>
+            <OpenSplitButton>
                 <OpenAsMarkdown>Open as Markdown</OpenAsMarkdown>
                 <OpenInClaude>Open in Claude</OpenInClaude>
                 <OpenInChatGPT>Open in ChatGpt</OpenInChatGPT>
@@ -35,7 +37,8 @@ export default function Hero({page, context, ...htmlProps}: HeroProps) {
                 <OpenInScira>Open in Scira</OpenInScira>
                 <OpenInT3>Open in T3</OpenInT3>
                 <OpenInVo>Open in Vo</OpenInVo>
-            </Open>
+            </OpenSplitButton>
+
         </header>
     )
 }

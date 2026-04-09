@@ -8,22 +8,26 @@ import GitHubIcon from "bootstrap-icons/icons/github.svg"
 import ChevronDown from "bootstrap-icons/icons/chevron-down.svg"
 
 
-import {type ComponentProps, createContext, useContext, useEffect, useMemo, useState} from "react";
+import React, {
+    type ComponentProps,
+    createContext,
+    useContext,
+    useEffect,
+    useMemo,
+    useState
+} from "react";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 
-export type OpenInContentProps = ComponentProps<typeof DropdownMenuContent>;
+
+export type OpenInContentProps = ComponentProps<typeof DropdownMenuContent>
+    & ComponentProps<typeof DropdownMenuTrigger>;
 
 export type openIn = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
     query?: string
 }
 
-export type OpenInTriggerProps = ComponentProps<typeof DropdownMenuTrigger>;
-export const OpenInTrigger = ({children, ...props}: OpenInTriggerProps) => (
-    <DropdownMenuTrigger
-        render={<Button type="button" variant="outline">Open <ChevronDown className="size-4"/></Button>} {...props}/>
-);
 export const OpenInContent = ({className, ...props}: OpenInContentProps) => {
     if (className == null) {
         className = "w-full"
@@ -49,16 +53,19 @@ export type OpenInProps = ComponentProps<typeof DropdownMenu> & {
     className?: string;
 };
 
-export const OpenIn = ({query: localQuery, ...props}: OpenInProps) => {
+export const OpenMenu = ({query: localQuery, ...props}: OpenInProps) => {
     const [query, setQuery] = useState(localQuery);
 
     // Client component runs also on the server
     // windows is not known
     useEffect(() => {
-        if (query == null) {
-            setQuery(`Read this page, I want to ask questions about it. ${window.location.href}`);
-        }
-    }, []);
+        // Window location href change for each page
+        // so use effect run each time
+        let actualPageLocation = new URL(window.location.href);
+        actualPageLocation.search = ''
+        actualPageLocation.hash = ''
+        setQuery(`Read this page, I want to ask questions about it. ${actualPageLocation.toString()}`);
+    });
 
     const contextValue = useMemo(() => ({query}), [query]);
 
@@ -69,14 +76,14 @@ export const OpenIn = ({query: localQuery, ...props}: OpenInProps) => {
     );
 };
 
-export const OpenItem = ({
-                               Icon, href, children,
-                               className,
-                               ...props
-                           }: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-                               Icon: React.ReactNode,
-                               href: string | undefined
-                           }
+export const OpenDropDownLinkItem = ({
+                                         Icon, href, children,
+                                         className,
+                                         ...props
+                                     }: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+                                         Icon: React.ReactNode,
+                                         href: string | undefined
+                                     }
 ) => {
     /* rel=no opener = Security setting*/
     return (
@@ -96,15 +103,16 @@ export const OpenItem = ({
 export const OpenInGitHub = ({href, children, ...props}: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
 
     return (
-        <OpenItem
-            {...props}
+        <OpenDropDownLinkItem
             Icon={<GitHubIcon/>}
             href={href}
+            {...props}
         >
             {children}
-        </OpenItem>
+        </OpenDropDownLinkItem>
     );
 };
+
 export const OpenInChatGPT = ({query: localQuery, children, ...props}: openIn) => {
     const {query} = useOpenInContext();
     let finalQuery = query;
@@ -120,12 +128,12 @@ export const OpenInChatGPT = ({query: localQuery, children, ...props}: openIn) =
             prompt,
         })}`;
     return (
-        <OpenItem
+        <OpenDropDownLinkItem
             {...props}
             Icon={<OpenAiIcon/>}
             href={createUrl(finalQuery)}>
             {children}
-        </OpenItem>
+        </OpenDropDownLinkItem>
     );
 };
 export const OpenInScira = ({query: localQuery, children, ...props}: openIn) => {
@@ -200,12 +208,12 @@ export const OpenInScira = ({query: localQuery, children, ...props}: openIn) => 
         </svg>
     );
     return (
-        <OpenItem
+        <OpenDropDownLinkItem
             {...props}
             Icon={sciraIcon}
             href={createUrl(finalQuery)}>
             {children}
-        </OpenItem>
+        </OpenDropDownLinkItem>
     );
 };
 export const OpenInVo = ({query: localQuery, children, ...props}: openIn) => {
@@ -235,12 +243,12 @@ export const OpenInVo = ({query: localQuery, children, ...props}: openIn) => {
         </svg>
     );
     return (
-        <OpenItem
+        <OpenDropDownLinkItem
             {...props}
             Icon={voIcon}
             href={createUrl(finalQuery)}>
             {children}
-        </OpenItem>
+        </OpenDropDownLinkItem>
     );
 };
 export const OpenInT3 = ({query: localQuery, children, ...props}: openIn) => {
@@ -257,12 +265,12 @@ export const OpenInT3 = ({query: localQuery, children, ...props}: openIn) => {
             q,
         })}`;
     return (
-        <OpenItem
+        <OpenDropDownLinkItem
             {...props}
             Icon={<ChatIcon/>}
             href={createUrl(finalQuery)}>
             {children}
-        </OpenItem>
+        </OpenDropDownLinkItem>
     );
 };
 export const OpenInCursor = ({query: localQuery, children, ...props}: openIn) => {
@@ -294,12 +302,12 @@ export const OpenInCursor = ({query: localQuery, children, ...props}: openIn) =>
     );
 
     return (
-        <OpenItem
+        <OpenDropDownLinkItem
             {...props}
             Icon={cursorIcon}
             href={createUrl(finalQuery)}>
             {children}
-        </OpenItem>
+        </OpenDropDownLinkItem>
     );
 };
 export const OpenAsMarkdown = ({children, href: hrefLocal, ...props}: openIn & { href?: string }) => {
@@ -309,18 +317,20 @@ export const OpenAsMarkdown = ({children, href: hrefLocal, ...props}: openIn & {
     // where windows is not known
     useEffect(() => {
         if (href == null) {
-            setHref(window.location.href);
+            let url = new URL(window.location.href)
+            url.pathname = url.pathname + ".md";
+            setHref(url.toString());
         }
     }, []);
 
     return (
-        <OpenItem
+        <OpenDropDownLinkItem
             Icon={<MarkdownIcon/>}
             href={href}
             {...props}
         >
             {children}
-        </OpenItem>
+        </OpenDropDownLinkItem>
     );
 
 }
@@ -338,37 +348,120 @@ export const OpenInClaude = ({query: localQuery, children, ...props}: openIn) =>
             q,
         })}`
     return (
-        <OpenItem {...props}
-                  href={createUrl(finalQuery)}
-                  Icon={<ClaudeIcon fill={"#d97757"}/>}
+        <OpenDropDownLinkItem {...props}
+                              href={createUrl(finalQuery)}
+                              Icon={<ClaudeIcon fill={"#d97757"}/>}
         >
             {children}
-        </OpenItem>
+        </OpenDropDownLinkItem>
     );
 };
 export const OpenAsPdf = ({children, href, ...props}: openIn & { href: string }) => {
 
     return (
-        <OpenItem
+        <OpenDropDownLinkItem
             Icon={<PdfIcon/>}
             href={href}
             {...props}
         >
             {children}
-        </OpenItem>
+        </OpenDropDownLinkItem>
     );
 };
 
 
-export default function Open({children, ...props}: OpenInContentProps
-) {
-
+export function OpenButton({children, render, ...props}: OpenInContentProps) {
+    let triggerRender = render;
+    if (triggerRender == null) {
+        triggerRender =
+            <Button type="button" variant="outline">Open As / Open In <ChevronDown className="size-4"/></Button>
+    }
     return (
-        <OpenIn>
-            <OpenInTrigger/>
+        <OpenMenu>
+            <DropdownMenuTrigger render={triggerRender}/>
             <OpenInContent {...props}>
                 {children}
             </OpenInContent>
-        </OpenIn>
+        </OpenMenu>
+    )
+}
+
+const STATES = {IDLE: "Idle", LOADING: "Loading", COPIED: "Copied", SUCCESS: "Success", ERROR: "Error"};
+
+export function CopyAsMarkdownButton({children, ...props}: ComponentProps<typeof Button>) {
+    const [status, setStatus] = useState(STATES.IDLE);
+    const [content, setContent] = useState("");
+    const [error, setError] = useState("");
+    const [markdownUrl, setMarkdownUrl] = useState("");
+
+    useEffect(() => {
+        let pageUrl = new URL(window.location.href)
+        pageUrl.pathname = pageUrl.pathname + ".md";
+        const finalUrl = pageUrl.toString();
+        if (finalUrl != markdownUrl) {
+            setMarkdownUrl(finalUrl);
+            setStatus(STATES.IDLE);
+            setContent("");
+            setError("");
+        }
+    });
+
+    const handleCopy = async () => {
+        setError("");
+        try {
+            let fetchedContent: string | undefined;
+            if (content == "") {
+                setStatus(STATES.LOADING);
+                const res = await fetch(markdownUrl);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                fetchedContent = await res.text();
+                if (!fetchedContent) throw new Error("Empty response from server");
+                setContent(fetchedContent);
+                setStatus(STATES.SUCCESS);
+            }
+            try {
+                await navigator.clipboard.writeText(fetchedContent || content);
+                setStatus(STATES.COPIED);
+            } catch {
+                setError("Clipboard access denied.");
+            }
+        } catch (err) {
+            setError((err as Error).message || "Failed to fetch URL");
+            setStatus(STATES.ERROR);
+        }
+    };
+    return (
+        <Button type="button" variant={"outline"} onClick={handleCopy} {...props}>
+            {children || 'Copy as Markdown'}
+            {status != STATES.IDLE ? ` (${status.toLowerCase()})` : ""}
+            {error != "" ? `Error: ${error}` : ""}
+        </Button>
+    )
+}
+
+export function OpenSplitButton({children, button}: {
+    children: React.ReactNode,
+    button?: React.ReactElement<{ className?: string }>
+}) {
+    if (button == null) {
+        button = <CopyAsMarkdownButton/>
+    }
+    const styledButton = React.cloneElement(button, {
+        className: [
+            button.props.className,   // keep original classes
+            "rounded-r-none border-r-0",
+        ].filter(Boolean).join(' '),
+    })
+    return (
+        <div className="flex">
+            {styledButton}
+            <OpenButton render={
+                <Button type="button" variant={"outline"} className={"rounded-l-none px-2"}>
+                    <ChevronDown className="size-4"/>
+                </Button>
+            }>
+                {children}
+            </OpenButton>
+        </div>
     )
 }
