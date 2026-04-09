@@ -67,7 +67,7 @@ export function parseRenderRequest(request: Request): ContextProps {
     }
     return {
         meta: {
-            isRsc: false,
+            isRsc: true,
             isRscAction: isAction,
             isMarkdown: isMarkdownRequest,
             rscActionId: actionId

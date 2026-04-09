@@ -8,7 +8,7 @@ export default function outlineNumberingStylesheet(): Plugin {
     //const resolvedId = "\0" + moduleId
     const resolvedId = moduleId;
     return {
-        name: "outline-numbering",
+        name: moduleId,
         resolveId(id) {
             if (id === moduleId) return resolvedId
         },

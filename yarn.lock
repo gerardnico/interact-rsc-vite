@@ -423,6 +423,7 @@ __metadata:
     "@types/react-dom": "npm:19.2.3"
     "@vitejs/plugin-react": "npm:5.1.4"
     "@vitejs/plugin-rsc": "npm:0.5.21"
+    bootstrap-icons: "npm:^1.13.1"
     class-variance-authority: "npm:0.7.1"
     clsx: "npm:2.1.1"
     debug: "npm:^4.4.3"
@@ -2871,6 +2872,13 @@ __metadata:
   version: 1.0.0
   resolution: "boolbase@npm:1.0.0"
   checksum: 10/3e25c80ef626c3a3487c73dbfc70ac322ec830666c9ad915d11b701142fab25ec1e63eff2c450c74347acfd2de854ccde865cd79ef4db1683f7c7b046ea43bb0
+  languageName: node
+  linkType: hard
+
+"bootstrap-icons@npm:^1.13.1":
+  version: 1.13.1
+  resolution: "bootstrap-icons@npm:1.13.1"
+  checksum: 10/d6a3bb69268c5132acd4b4a3ca40c46c4548f7c8cbb33154d2d5fa4668c42e0b60a2e55abcd08aca9b1e6871ce5b18ce5f7789031486e8807cc552cc52f88dee
   languageName: node
   linkType: hard
 

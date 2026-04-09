@@ -48,7 +48,6 @@ export function atAliasResolution(): Plugin {
             let interactPath = `${interactConfig.paths.interactResourcesDirectory}/${relative}`;
             let clientPath = `${interactConfig.paths.atDirectory}/${relative}`;
             let isUiImport = source.includes("/ui");
-            debugger;
             if (resolution == 'standard' && isUiImport) {
                 if (isInteractAlias(importer)) {
                     candidates.push(interactPath)

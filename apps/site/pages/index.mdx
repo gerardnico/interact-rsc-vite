@@ -1,12 +1,11 @@
 ---
+title: Create documentation that interacts with your reader
 layout: holy
 ---
 import {getPages} from "../../../src/resources/rsc/server/handler.tsx";
 
-## Index
 
 
-<p>Number of Pages: {Object.keys(getPages()).length - 1}</p>
 <Image src={"card_puncher_data_processing.jpg"}
        alt={"Card Puncher"}
        width={300}
@@ -17,6 +16,7 @@ import {getPages} from "../../../src/resources/rsc/server/handler.tsx";
 
 ## Pages
 
+<p>Number of Pages: {Object.keys(getPages()).length - 1}</p>
 <ul>
     {Object.entries(getPages()).map(([key, page]) => {
         if (key.startsWith("/index")) {
