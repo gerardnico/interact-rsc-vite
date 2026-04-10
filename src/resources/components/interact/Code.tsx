@@ -3,6 +3,7 @@
 import React, {useState, useEffect, useRef, useCallback} from "react";
 import clsx from "clsx";
 import styles from "./code.module.css"
+import {cn} from "@/lib/utils";
 
 declare global {
     interface Window {
@@ -227,7 +228,7 @@ export default function Code({
     const [lineNums, setLineNums] = useState(lineNumbers);
     const [wrap, setWrap] = useState(wordWrap);
     const [copied, setCopied] = useState(false);
-    const [ready, setReady] = useState(false);
+    const [ready, setReady] = useState(false); // loaded?
 
     const codeRef = useRef<HTMLElement>(null);
 
@@ -246,26 +247,29 @@ export default function Code({
 
     // Load Prism + plugins + language, then highlight
     const highlight = useCallback(async () => {
-        await loadPrismCore();
+        let prismLoaded = codeRef.current && window.Prism;
+        if (!prismLoaded) {
+            await loadPrismCore();
 
-        // autoloader is needed to load the language dependencies
-        // example: tsx depends on ts
-        await loadPrismPlugin("autoloader", false);
+            // autoloader is needed to load the language dependencies
+            // example: tsx depends on ts
+            await loadPrismPlugin("autoloader", false);
 
-        if (lineNums) await loadPrismPlugin("line-numbers");
-
-        if (codeRef.current && window.Prism) {
-            setReady(true);
-            // Small tick so DOM is painted with new class
-            requestAnimationFrame(() => {
-                if (codeRef.current) window.Prism.highlightElement(codeRef.current);
-            });
+            if (lineNums) await loadPrismPlugin("line-numbers");
         }
+
+        setReady(true);
+
+        // Small tick so DOM is painted with new class
+        requestAnimationFrame(() => {
+            if (codeRef.current) window.Prism.highlightElement(codeRef.current);
+        });
     }, [currentLang, lineNums]);
 
+    let currentHref = typeof window !== "undefined" ? window.location.href : undefined;
     useEffect(() => {
-        highlight();
-    }, [highlight]);
+        highlight().then(() => "");
+    }, [highlight, currentHref]); // should trigger for every new page
 
 
     let code: string | null = null;
@@ -298,7 +302,6 @@ export default function Code({
 
     const shell: React.CSSProperties = {
         fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
-        borderRadius: "12px",
         overflow: "hidden",
         border: isLight ? "1px solid #e2e8f0" : "1px solid rgba(255,255,255,0.07)",
         background: isLight ? "#f8fafc" : "#0d1117",
@@ -418,7 +421,7 @@ export default function Code({
         letterSpacing: "0.02em",
     };
 
-
+    let roundedValue = "xl"
     return (
         <>
             {/* Google Font for JetBrains Mono */}
@@ -428,7 +431,7 @@ export default function Code({
             />
 
             <div className={
-                clsx("position-relative",
+                cn("relative", `rounded-${roundedValue}`,
                     styles["shell"]
                 )} style={shell} {...rest}>
                 {/* ── Toolbar ── */}
@@ -487,29 +490,33 @@ export default function Code({
                         </div>
                     </>
                 )}
-                <div className={
-                    clsx(
-                        "position-absolute top-0 end-0 p-2 print:hidden",
-                        styles["showOnHover"]
-                    )}
-                >
-                    <span style={langBadge}>{currentLang}</span>
-                    <button style={copyBtnStyle} onClick={handleCopy}>{copied ? "✓ Copied" : "⎘ Copy"}</button>
-                </div>
                 {/* ── Code Block ── */}
                 <pre
                     className={clsx(
                         lineNums ?? "line-numbers",
-                        styles["preStyle"]
+                        styles["preStyle"],
+                        "relative",
                     )}
                 >
-                      <code
+                        <div className={
+                            cn(
+                                "absolute top-0 end-0 p-2 print:hidden bg-background",
+                                `rounded-tr-${roundedValue}`,
+                                `rounded-bl-${roundedValue}`,
+                                roundedValue,
+                                styles["showOnHover"],
+                            )}
+                        >
+                            <span style={langBadge}>{currentLang}</span>
+                            <button style={copyBtnStyle} onClick={handleCopy}>{copied ? "✓ Copied" : "⎘ Copy"}</button>
+                        </div>
+                        <code
                           ref={codeRef}
                           className={`language-${currentLang}`}
                           style={{opacity: ready ? 1 : 0.4, transition: "opacity 0.2s"}}
-                      >
+                        >
                         {code}
-                      </code>
+                        </code>
                 </pre>
             </div>
         </>

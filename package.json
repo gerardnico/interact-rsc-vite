@@ -17,7 +17,7 @@
     "site": "cd ../../gerardnico/com-gerardnico && node_modules/@combostrap/interact/src/interact/cli/dev.js start",
     "ssg": "src/interact/cli/dev.js build --confPath=apps/site",
     "preview": "src/interact/cli/dev.js preview --confPath=apps/site",
-    "registry:build": "shadcn build --output apps/site/public/r"
+    "registry": "shadcn build --output apps/site/public/r"
   },
   "files": [
     "dist/interact/**/*",

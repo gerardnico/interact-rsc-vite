@@ -67,7 +67,7 @@ jobs:
 
       - name: Build the components registry and website
         run: |
-          yarn registry:build
+          yarn registry
           ./node_modules/.bin/interact build --confPath=${{ env.APP_DIR }}
 
       # actions/deploy-pages expect a zip
