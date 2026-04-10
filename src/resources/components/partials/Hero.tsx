@@ -1,6 +1,7 @@
 import type {LayoutProps} from "@combostrap/interact/types";
 import React from "react";
-import  {
+import {
+    CopyAsMarkdownButton,
     OpenAsMarkdownAnchor,
     OpenInChatGPTAnchor,
     OpenInClaudeAnchor,
@@ -8,7 +9,7 @@ import  {
     OpenInSciraAnchor,
     OpenInT3Anchor,
     OpenInVoAnchor,
-    OpenSplitButton
+    OpenSplitButton, OpenSplitButtonMenu
 } from "@/components/interact/Open";
 
 
@@ -29,14 +30,16 @@ export default function Hero({page, context, ...htmlProps}: HeroProps) {
             {title &&
                 <h1 className="h1 outline-heading-cs heading-cs heading-h1-cs">{title}</h1>
             }
-            <OpenSplitButton>
-                <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
-                <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
-                <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
-                <OpenInCursor>Open in Cursor</OpenInCursor>
-                <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
-                <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
-                <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
+            <OpenSplitButton render={<CopyAsMarkdownButton>Copy As Markdown</CopyAsMarkdownButton>}>
+                <OpenSplitButtonMenu>
+                    <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
+                    <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
+                    <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
+                    <OpenInCursor>Open in Cursor</OpenInCursor>
+                    <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
+                    <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
+                    <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
+                </OpenSplitButtonMenu>
             </OpenSplitButton>
 
         </header>

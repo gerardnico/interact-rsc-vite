@@ -24,7 +24,11 @@ import {cn} from "@/lib/utils";
 export type OpenInContentProps = ComponentProps<typeof DropdownMenuContent>
     & ComponentProps<typeof DropdownMenuTrigger>;
 
-export type openInExternalAnchor = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+type OpenUiElement = {
+    hideSvg?: boolean
+}
+type OpenUiAnchorElement = React.AnchorHTMLAttributes<HTMLAnchorElement> & OpenUiElement
+export type OpenUiInExternalAnchor = OpenUiAnchorElement & {
     query?: string
 }
 
@@ -97,7 +101,9 @@ export const OpenDropDownItem = ({
         </DropdownMenuItem>
     )
 }
-export const OpenGitHubAnchor = ({href, children, ...props}: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+
+
+export const OpenGitHubAnchor = ({href, children, hideSvg = false, ...props}: OpenUiAnchorElement) => {
 
     return (
         <a
@@ -106,13 +112,18 @@ export const OpenGitHubAnchor = ({href, children, ...props}: React.AnchorHTMLAtt
             target="_blank"
             {...props}
         >
-            <GitHubIcon/>
+            {!hideSvg && <GitHubIcon/>}
             <span>{children}</span>
         </a>
     );
 };
 
-export const OpenInChatGPTAnchor = ({query: localQuery, children, ...props}: openInExternalAnchor) => {
+export const OpenInChatGPTAnchor = ({
+                                        query: localQuery,
+                                        hideSvg = false,
+                                        children,
+                                        ...props
+                                    }: OpenUiInExternalAnchor) => {
     const {query} = useOpenInContext();
     let finalQuery = query;
     if (!finalQuery) {
@@ -133,12 +144,12 @@ export const OpenInChatGPTAnchor = ({query: localQuery, children, ...props}: ope
             target="_blank"
             {...props}
         >
-            <OpenAiIcon fill={"#000000"}/>
+            {!hideSvg && <OpenAiIcon fill={"#000000"}/>}
             <span>{children}</span>
         </a>
     );
 };
-export const OpenInSciraAnchor = ({query: localQuery, children, ...props}: openInExternalAnchor) => {
+export const OpenInSciraAnchor = ({query: localQuery, hideSvg = false, children, ...props}: OpenUiInExternalAnchor) => {
     const {query} = useOpenInContext();
     let finalQuery = query;
     if (!finalQuery) {
@@ -203,13 +214,13 @@ export const OpenInSciraAnchor = ({query: localQuery, children, ...props}: openI
         <a
             href={createUrl(finalQuery)}
             {...props}>
-            {sciraIcon}
+            {!hideSvg && sciraIcon}
             <span>{children}</span>
         </a>
     );
 };
 
-export const OpenInVoAnchor = ({query: localQuery, children, ...props}: openInExternalAnchor) => {
+export const OpenInVoAnchor = ({query: localQuery, hideSvg = false, children, ...props}: OpenUiInExternalAnchor) => {
     const {query} = useOpenInContext();
     let finalQuery = query;
     if (!finalQuery) {
@@ -242,12 +253,12 @@ export const OpenInVoAnchor = ({query: localQuery, children, ...props}: openInEx
             target="_blank"
             {...props}
         >
-            {voIcon}
+            {!hideSvg && voIcon}
             <span>{children}</span>
         </a>
     );
 };
-export const OpenInT3Anchor = ({query: localQuery, children, ...props}: openInExternalAnchor) => {
+export const OpenInT3Anchor = ({query: localQuery, hideSvg = false, children, ...props}: OpenUiInExternalAnchor) => {
     const {query} = useOpenInContext();
     let finalQuery = query;
     if (!finalQuery) {
@@ -266,12 +277,12 @@ export const OpenInT3Anchor = ({query: localQuery, children, ...props}: openInEx
             target="_blank"
             rel="noopener"
             {...props}>
-            <ChatIcon fill={"#000000"}/>
+            {!hideSvg && <ChatIcon fill={"#000000"}/>}
             <span>{children}</span>
         </a>
     );
 };
-export const OpenInCursor = ({query: localQuery, children, ...props}: openInExternalAnchor) => {
+export const OpenInCursor = ({query: localQuery, hideSvg = false, children, ...props}: OpenUiInExternalAnchor) => {
     const {query} = useOpenInContext();
     let finalQuery = query;
     if (!finalQuery) {
@@ -306,12 +317,12 @@ export const OpenInCursor = ({query: localQuery, children, ...props}: openInExte
             target="_blank"
             {...props}
         >
-            {cursorIcon}
+            {!hideSvg && cursorIcon}
             <span>{children}</span>
         </a>
     );
 };
-export const OpenAsMarkdownAnchor = ({children, href: hrefLocal, ...props}: openInExternalAnchor & {
+export const OpenAsMarkdownAnchor = ({children, href: hrefLocal, hideSvg = false, ...props}: OpenUiInExternalAnchor & {
     href?: string
 }) => {
     const [href, setHref] = useState(hrefLocal);
@@ -335,13 +346,13 @@ export const OpenAsMarkdownAnchor = ({children, href: hrefLocal, ...props}: open
             target="_blank"
             {...props}
         >
-            <MarkdownIcon fill={"#000000"}/>
+            {!hideSvg && <MarkdownIcon fill={"#000000"}/>}
             <span>{children}</span>
         </a>
     );
 
 }
-export const OpenInClaudeAnchor = ({query: localQuery, children, ...props}: openInExternalAnchor) => {
+export const OpenInClaudeAnchor = ({query: localQuery, hideSvg, children, ...props}: OpenUiInExternalAnchor) => {
     const {query} = useOpenInContext();
     let finalQuery = query;
     if (!finalQuery) {
@@ -361,12 +372,14 @@ export const OpenInClaudeAnchor = ({query: localQuery, children, ...props}: open
             target="_blank"
             {...props}
         >
-            <ClaudeIcon fill={"#d97757"}/>
+            {!hideSvg && <ClaudeIcon fill={"#d97757"}/>}
             <span>{children || "Open In Claude"}</span>
         </a>
     );
 };
-export const OpenAsPdfAnchor = ({children, href, ...props}: openInExternalAnchor & { href: string }) => {
+export const OpenAsPdfAnchor = ({children, href, hideSvg = false, ...props}: OpenUiInExternalAnchor & {
+    href: string
+}) => {
     return (
         <a
             href={href}
@@ -374,7 +387,7 @@ export const OpenAsPdfAnchor = ({children, href, ...props}: openInExternalAnchor
             target="_blank"
             {...props}
         >
-            <PdfIcon fill={"#000000"}/>
+            {!hideSvg && <PdfIcon fill={"#000000"}/>}
             <span>{children || "Open as Pdf"}</span>
         </a>
     );
@@ -401,7 +414,11 @@ export function OpenButton({children, render, ...props}: OpenInContentProps) {
 
 const STATES = {IDLE: "Idle", LOADING: "Loading", COPIED: "Copied", SUCCESS: "Success", ERROR: "Error"};
 
-export function CopyAsMarkdownButton({children, ...props}: ComponentProps<typeof Button>) {
+export function CopyAsMarkdownButton({
+                                         children,
+                                         hideSvg = false,
+                                         ...props
+                                     }: ComponentProps<typeof Button> & OpenUiElement) {
     const [status, setStatus] = useState(STATES.IDLE);
     const [content, setContent] = useState("");
     const [error, setError] = useState("");
@@ -445,26 +462,19 @@ export function CopyAsMarkdownButton({children, ...props}: ComponentProps<typeof
     };
     return (
         <Button type="button" variant={"outline"} onClick={handleCopy} {...props}>
-            {children || 'Copy as Markdown'}
-            {status != STATES.IDLE ? ` (${status.toLowerCase()})` : ""}
-            {error != "" ? `Error: ${error}` : ""}
+            {!hideSvg && <PdfIcon fill={"#000000"}/>}
+            <span>
+                {children || 'Copy as Markdown'}
+                {status != STATES.IDLE ? ` (${status.toLowerCase()})` : ""}
+                {error != "" ? `Error: ${error}` : ""}
+            </span>
         </Button>
     )
 }
 
-export function OpenSplitButton({children, button}: {
+export function OpenSplitButtonMenu({children}: {
     children: React.ReactNode,
-    button?: React.ReactElement<{ className?: string }>
 }) {
-    if (button == null) {
-        button = <CopyAsMarkdownButton/>
-    }
-    const styledButton = React.cloneElement(button, {
-        className: [
-            button.props.className,   // keep original classes
-            "rounded-r-none border-r-0",
-        ].filter(Boolean).join(' '),
-    })
     /**
      * Children are expected to be an anchor or a button with a svg and a span
      * We style them
@@ -477,6 +487,7 @@ export function OpenSplitButton({children, button}: {
         const anchorOrButtonChild = child as React.ReactElement<
             React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
         >;
+
         // Walk the anchor's children and style <svg> + <span>
         const styledAnchorChildren = React.Children.map(
             anchorOrButtonChild.props.children,
@@ -502,7 +513,7 @@ export function OpenSplitButton({children, button}: {
             }
         );
         const childStyled = React.cloneElement(anchorOrButtonChild, {
-            className: cn("flex items-center gap-2", anchorOrButtonChild.props.className),
+            className: "flex items-center gap-2 no-underline text-black bg-white border-0 font-normal btn-link px-0 rounded-none h-auto",
             children: styledAnchorChildren,
         })
         return (
@@ -511,19 +522,40 @@ export function OpenSplitButton({children, button}: {
             </DropdownMenuItem>
         )
     })
+    let triggerRender = (
+        <Button type="button" variant={"outline"} className={"rounded-l-none px-2"}>
+            <ChevronDown className="size-4"/>
+        </Button>);
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger render={triggerRender}/>
+            <OpenInContent>
+                {styledChildren}
+            </OpenInContent>
+        </DropdownMenu>
+    )
+}
+
+export function OpenSplitButton({children, render}: {
+    children: React.ReactNode,
+    render?: React.ReactElement<
+        React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
+    >;
+}) {
+    if (render == null) {
+        render = <CopyAsMarkdownButton/>
+    }
+
+    let styledButton = React.cloneElement(render, {
+        className: cn("group/button inline-flex shrink-0 px-2 items-center justify-center rounded-lg no-underline h-8 text-black border rounded-r-none border-r-0", render.props.className),
+        hideSvg: true
+    } as any)
+
     return (
         <OpenContext>
             <div className="flex">
                 {styledButton}
-                <DropdownMenu>
-                    <DropdownMenuTrigger
-                        render={<Button type="button" variant={"outline"} className={"rounded-l-none px-2"}>
-                            <ChevronDown className="size-4"/>
-                        </Button>}/>
-                    <OpenInContent>
-                        {styledChildren}
-                    </OpenInContent>
-                </DropdownMenu>
+                {children}
             </div>
         </OpenContext>
     )
