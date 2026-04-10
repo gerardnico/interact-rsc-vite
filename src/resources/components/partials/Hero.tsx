@@ -1,13 +1,13 @@
 import type {LayoutProps} from "@combostrap/interact/types";
 import React from "react";
 import  {
-    OpenAsMarkdown,
-    OpenInChatGPT,
-    OpenInClaude,
+    OpenAsMarkdownAnchor,
+    OpenInChatGPTAnchor,
+    OpenInClaudeAnchor,
     OpenInCursor,
-    OpenInScira,
-    OpenInT3,
-    OpenInVo,
+    OpenInSciraAnchor,
+    OpenInT3Anchor,
+    OpenInVoAnchor,
     OpenSplitButton
 } from "@/components/interact/Open";
 
@@ -30,13 +30,13 @@ export default function Hero({page, context, ...htmlProps}: HeroProps) {
                 <h1 className="h1 outline-heading-cs heading-cs heading-h1-cs">{title}</h1>
             }
             <OpenSplitButton>
-                <OpenAsMarkdown>Open as Markdown</OpenAsMarkdown>
-                <OpenInClaude>Open in Claude</OpenInClaude>
-                <OpenInChatGPT>Open in ChatGpt</OpenInChatGPT>
+                <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
+                <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
+                <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
                 <OpenInCursor>Open in Cursor</OpenInCursor>
-                <OpenInScira>Open in Scira</OpenInScira>
-                <OpenInT3>Open in T3</OpenInT3>
-                <OpenInVo>Open in Vo</OpenInVo>
+                <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
+                <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
+                <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
             </OpenSplitButton>
 
         </header>
