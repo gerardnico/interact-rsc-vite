@@ -54,6 +54,7 @@ Default layouts are composed of the following partials:
 * Head - the head tag
 * Body - the body tag
 * Header - the page header
+* Hero - the page content header
 * Aside - the sidebar
 * Toc - the toc
 * Footer - the page footer

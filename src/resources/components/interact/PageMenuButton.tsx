@@ -21,9 +21,6 @@ import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 
 
-export type OpenInContentProps = ComponentProps<typeof DropdownMenuContent>
-    & ComponentProps<typeof DropdownMenuTrigger>;
-
 type OpenUiElement = {
     hideSvg?: boolean
 }
@@ -31,7 +28,8 @@ type OpenUiAnchorElement = React.AnchorHTMLAttributes<HTMLAnchorElement> & OpenU
 export type OpenUiInExternalAnchor = OpenUiAnchorElement & {
     query?: string
 }
-
+export type OpenInContentProps = ComponentProps<typeof DropdownMenuContent>
+    & ComponentProps<typeof DropdownMenuTrigger>
 export const OpenInContent = ({className, ...props}: OpenInContentProps) => {
     if (className == null) {
         className = "w-full"
@@ -57,7 +55,7 @@ export type OpenContextProps = {
     children: React.ReactNode,
 };
 
-export const OpenContext = ({query: localQuery, children}: OpenContextProps) => {
+export const PageButtonContext = ({query: localQuery, children}: OpenContextProps) => {
     const [query, setQuery] = useState(localQuery);
 
     // Client component runs also on the server
@@ -282,7 +280,12 @@ export const OpenInT3Anchor = ({query: localQuery, hideSvg = false, children, ..
         </a>
     );
 };
-export const OpenInCursor = ({query: localQuery, hideSvg = false, children, ...props}: OpenUiInExternalAnchor) => {
+export const OpenInCursorAnchor = ({
+                                       query: localQuery,
+                                       hideSvg = false,
+                                       children,
+                                       ...props
+                                   }: OpenUiInExternalAnchor) => {
     const {query} = useOpenInContext();
     let finalQuery = query;
     if (!finalQuery) {
@@ -394,21 +397,53 @@ export const OpenAsPdfAnchor = ({children, href, hideSvg = false, ...props}: Ope
 };
 
 
-export function OpenButton({children, render, ...props}: OpenInContentProps) {
-    let triggerRender = render;
-    if (triggerRender == null) {
-        triggerRender =
-            <Button type="button" variant="outline">Open As / Open In <ChevronDown className="size-4"/></Button>
-    }
-    return (
-        <OpenContext>
-            <DropdownMenu>
-                <DropdownMenuTrigger render={triggerRender}/>
-                <OpenInContent {...props}>
+// noinspection JSUnusedGlobalSymbols
+export function PageMenuButton({children, variant = "default", query, render, ...props}: OpenInContentProps &
+    {
+        render?: RenderNodeType,
+        variant?: 'default' | 'split',
+        query?: string,
+    }) {
+
+
+    if (variant == "default") {
+        if (render == null) {
+            render = (
+                <Button type="button" variant="outline">
+                    Copy / Open <ChevronDown className="size-4"/>
+                </Button>
+            )
+        }
+        return (
+            <PageButtonContext query={query}>
+                <PageMenuDropDown render={render as any} {...props}>
                     {children}
-                </OpenInContent>
-            </DropdownMenu>
-        </OpenContext>
+                </PageMenuDropDown>
+            </PageButtonContext>
+        )
+    }
+    if (render == null) {
+        render = <CopyAsMarkdownButton/>
+    }
+
+    let styledButton = React.cloneElement(render, {
+        className: cn("group/button inline-flex shrink-0 px-2 items-center justify-center rounded-lg no-underline h-8 text-black border rounded-r-none border-r-0", render.props.className),
+        hideSvg: true
+    } as any)
+
+    let leftRender = (<Button type="button" variant={"outline"} className={"rounded-l-none px-2"}>
+        <ChevronDown className="size-4"/>
+    </Button>)
+
+    return (
+        <PageButtonContext query={query}>
+            <div className="flex">
+                {styledButton}
+                <PageMenuDropDown render={leftRender}>
+                    {children}
+                </PageMenuDropDown>
+            </div>
+        </PageButtonContext>
     )
 }
 
@@ -472,8 +507,9 @@ export function CopyAsMarkdownButton({
     )
 }
 
-export function OpenSplitButtonMenu({children}: {
+function PageMenuDropDown({children, render}: {
     children: React.ReactNode,
+    render?: RenderNodeType;
 }) {
     /**
      * Children are expected to be an anchor or a button with a svg and a span
@@ -522,13 +558,16 @@ export function OpenSplitButtonMenu({children}: {
             </DropdownMenuItem>
         )
     })
-    let triggerRender = (
-        <Button type="button" variant={"outline"} className={"rounded-l-none px-2"}>
-            <ChevronDown className="size-4"/>
-        </Button>);
+    if (render == null) {
+        render = (
+            <Button type="button" variant={"outline"}>
+                <ChevronDown className="size-4"/>
+            </Button>
+        );
+    }
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger render={triggerRender}/>
+            <DropdownMenuTrigger render={render}/>
             <OpenInContent>
                 {styledChildren}
             </OpenInContent>
@@ -536,27 +575,7 @@ export function OpenSplitButtonMenu({children}: {
     )
 }
 
-export function OpenSplitButton({children, render}: {
-    children: React.ReactNode,
-    render?: React.ReactElement<
-        React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
-    >;
-}) {
-    if (render == null) {
-        render = <CopyAsMarkdownButton/>
-    }
+type RenderNodeType = React.ReactElement<
+    React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
+>
 
-    let styledButton = React.cloneElement(render, {
-        className: cn("group/button inline-flex shrink-0 px-2 items-center justify-center rounded-lg no-underline h-8 text-black border rounded-r-none border-r-0", render.props.className),
-        hideSvg: true
-    } as any)
-
-    return (
-        <OpenContext>
-            <div className="flex">
-                {styledButton}
-                {children}
-            </div>
-        </OpenContext>
-    )
-}

@@ -1,0 +1,100 @@
+---
+title: Page Menu Button Component (Open/Copy)
+---
+import {
+    PageMenuButton,
+    CopyAsMarkdownButton,
+    OpenAsMarkdownAnchor,
+    OpenInClaudeAnchor,
+    OpenInChatGPTAnchor,
+    OpenInCursorAnchor,
+    OpenInSciraAnchor,
+    OpenInVoAnchor,
+    OpenInT3Anchor
+} from "@combostrap/interact/components/PageMenuButton";
+import ChevronDown from "bootstrap-icons/icons/chevron-down.svg";
+import {Button} from "@/components/ui/button";
+
+The `PageMenuButton` component is a component that permits to:
+
+* show or copy an alternate version of your pages such as [Markdown](../reference/ai.md#markdown-format-for-all-pages)
+* open your page in a [AI chatbot](../reference/ai.md)
+
+This component is used by default in the [Hero partial](../reference/layout.md#partials).
+
+## Variants
+
+### Default button
+
+In the default button, clicking on it open a menu of actions.
+
+```jsx
+<PageMenuButton render={<Button type="button" variant="outline">Open As / Open In <ChevronDown className="size-4"/></Button>}>
+    <CopyAsMarkdownButton>Copy as Markdown</CopyAsMarkdownButton>
+    <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
+    <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
+    <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
+    <OpenInCursorAnchor>Open in Cursor</OpenInCursorAnchor>
+    <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
+    <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
+    <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
+</PageMenuButton>
+```
+Output:
+<PageMenuButton
+    render={<Button type="button" variant="outline">Open As / Open In <ChevronDown className="size-4"/></Button>}>
+    <CopyAsMarkdownButton>Copy as Markdown</CopyAsMarkdownButton>
+    <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
+    <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
+    <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
+    <OpenInCursorAnchor>Open in Cursor</OpenInCursorAnchor>
+    <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
+    <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
+    <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
+</PageMenuButton>
+
+### Split button
+
+In the split button, the left side permits an action while the right side opens the menu.
+
+```jsx
+<PageMenuButton variant="split" render={<CopyAsMarkdownButton>Copy As Markdown</CopyAsMarkdownButton>}>
+    <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
+    <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
+    <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
+    <OpenInCursorAnchor>Open in Cursor</OpenInCursorAnchor>
+    <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
+    <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
+    <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
+</PageMenuButton>
+```
+Output:
+<PageMenuButton variant="split" render={<CopyAsMarkdownButton>Copy As Markdown</CopyAsMarkdownButton>}>
+    <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
+    <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
+    <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
+    <OpenInCursorAnchor>Open in Cursor</OpenInCursorAnchor>
+    <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
+    <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
+    <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
+</PageMenuButton>
+
+
+## How it works
+
+For each open button variant, you can pass:
+
+* a `render` element to customize the output of the trigger element
+* `children` that represents each menu item. Each menu item should be an anchor or a button that have as children:
+  * a svg icon
+  * a span element for the label
+
+An action component to be used as trigger or menu item should accepts the `hideSvg` to delete the icon if `true`.
+
+### Page Button Props
+
+| Prop      | Description                                    |
+|-----------|------------------------------------------------|
+| `render`  | A anchor or button element to render as button |
+| `query`   | The query to send to the chatbot               |
+| `variant` | The variant (`default` or `split`)             |

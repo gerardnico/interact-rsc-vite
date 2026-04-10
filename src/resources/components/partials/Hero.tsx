@@ -5,12 +5,12 @@ import {
     OpenAsMarkdownAnchor,
     OpenInChatGPTAnchor,
     OpenInClaudeAnchor,
-    OpenInCursor,
+    OpenInCursorAnchor,
     OpenInSciraAnchor,
     OpenInT3Anchor,
     OpenInVoAnchor,
-    OpenSplitButton, OpenSplitButtonMenu
-} from "@/components/interact/Open";
+    PageMenuButton
+} from "@/components/interact/PageMenuButton";
 
 
 export type HeroProps = React.HTMLAttributes<HTMLElement> & LayoutProps
@@ -30,17 +30,16 @@ export default function Hero({page, context, ...htmlProps}: HeroProps) {
             {title &&
                 <h1 className="h1 outline-heading-cs heading-cs heading-h1-cs">{title}</h1>
             }
-            <OpenSplitButton render={<CopyAsMarkdownButton>Copy As Markdown</CopyAsMarkdownButton>}>
-                <OpenSplitButtonMenu>
-                    <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
-                    <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
-                    <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
-                    <OpenInCursor>Open in Cursor</OpenInCursor>
-                    <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
-                    <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
-                    <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
-                </OpenSplitButtonMenu>
-            </OpenSplitButton>
+            <PageMenuButton>
+                <CopyAsMarkdownButton>Copy As Markdown</CopyAsMarkdownButton>
+                <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
+                <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
+                <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
+                <OpenInCursorAnchor>Open in Cursor</OpenInCursorAnchor>
+                <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
+                <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
+                <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
+            </PageMenuButton>
 
         </header>
     )
