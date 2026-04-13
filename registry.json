@@ -73,6 +73,13 @@
           "target": "components/interact/PageMenuButton.tsx",
           "type": "registry:component"
         }
+      ],
+      "dependencies": [
+        "bootstrap-icons"
+      ],
+      "registryDependencies": [
+        "button",
+        "dropdown-menu"
       ]
     }
   ]

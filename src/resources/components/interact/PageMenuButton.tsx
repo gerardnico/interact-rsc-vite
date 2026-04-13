@@ -58,12 +58,16 @@ export type OpenContextProps = {
 export const PageButtonContext = ({query: localQuery, children}: OpenContextProps) => {
     const [query, setQuery] = useState(localQuery);
 
+    const currentHref = typeof window !== "undefined" ? window.location.href : undefined
     // Client component runs also on the server
     // windows is not known
     useEffect(() => {
+        if (currentHref == null) {
+            return;
+        }
         // Window location href change for each page
         // so use effect run each time
-        let actualPageLocation = new URL(window.location.href);
+        let actualPageLocation = new URL(currentHref);
         actualPageLocation.search = ''
         actualPageLocation.hash = ''
         if (actualPageLocation.pathname.endsWith("/")) {
@@ -72,7 +76,7 @@ export const PageButtonContext = ({query: localQuery, children}: OpenContextProp
             actualPageLocation.pathname = actualPageLocation.pathname + ".md"
         }
         setQuery(`Read this markdown page, I want to ask questions about it. ${actualPageLocation.toString()}`);
-    });
+    }, [currentHref]);
 
     const contextValue = useMemo(() => ({query}), [query]);
 
@@ -83,25 +87,7 @@ export const PageButtonContext = ({query: localQuery, children}: OpenContextProp
     );
 };
 
-export const OpenDropDownItem = ({
-                                     Icon,
-                                     children,
-                                     ...props
-                                 }: React.HTMLAttributes<HTMLSpanElement> & {
-                                     Icon: React.ReactNode
-                                 }
-) => {
-    /* rel=no opener = Security setting*/
-    return (
-        <DropdownMenuItem render={<div className={"flex items-center gap-2"}/>}>
-            <span className="shrink-0">{Icon}</span>
-            <span className={"flex-1 text-foreground"} {...props}>{children}</span>
-        </DropdownMenuItem>
-    )
-}
-
-
-export const OpenGitHubAnchor = ({href, children, hideSvg = false, ...props}: OpenUiAnchorElement) => {
+export const OpenInGitHubAnchor = ({href, children, hideSvg = false, ...props}: OpenUiAnchorElement) => {
 
     return (
         <a
@@ -497,7 +483,7 @@ export function CopyAsMarkdownButton({
     };
     return (
         <Button type="button" variant={"outline"} onClick={handleCopy} {...props}>
-            {!hideSvg && <PdfIcon fill={"#000000"}/>}
+            {!hideSvg && <MarkdownIcon fill={"#000000"}/>}
             <span>
                 {children || 'Copy as Markdown'}
                 {status != STATES.IDLE ? ` (${status.toLowerCase()})` : ""}
