@@ -26,13 +26,13 @@ import {compileSync, runSync} from '@mdx-js/mdx'
 import * as jsxRuntime from 'react/jsx-runtime'
 import {getMarkdownConfig} from "../../interact/markdown/conf/markdownConfig";
 import type {markdownFormat} from "../../interact/config/configSchema";
-import type { Frontmatter} from "../../interact/pages/interactPage";
+import type {Frontmatter} from "../../interact/pages/interactPage";
 
 
 // Markdown processing to react component via rehypeReact
 // Why?
-// because Mdx use rehypeRecma as compiler (ie the hast goes to the JavaScript Tree)
-function markdownReactProcessing(vFileCompatible: Compatible) {
+// because Mdx use rehypeRecma as compiler (ie the hast goes to the JavaScript Tree and not to a React tree)
+function markdownReactProcessing(vFileCompatible: Compatible, options?: markdownOptions) {
 
     let strictYamlParsing = false
     if (process.env['NODE_ENV'] !== "production") {
@@ -160,6 +160,7 @@ function markdownReactProcessing(vFileCompatible: Compatible) {
         // !!! and it turns custom element name in lowercase !!!
         //.use(rehypeRaw)
         .use(getMarkdownConfig().getMdConfig().rehypePlugins || [])
+        .use(options?.rehypePlugins || [])
         .use(rehypeReact, {         // hast → React element tree
             ...jsxRuntime,
             Fragment: Fragment,
@@ -176,6 +177,8 @@ function markdownReactProcessing(vFileCompatible: Compatible) {
     }
 }
 
+import type {PluggableList} from "unified";
+import {rehypeUpdateRootTagName} from "../../interact/markdown/plugins/rehypeUpdateRootTagName";
 
 /**
  * ie on demand processing
@@ -184,14 +187,15 @@ function markdownReactProcessing(vFileCompatible: Compatible) {
  * @param options
  * @param options.format
  */
-function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx'}: {
-    format?: 'mdx' | 'md'
+function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx', rehypePlugins = []}: {
+    format?: 'mdx' | 'md',
+    rehypePlugins?: PluggableList
 }): Page {
     // Source: https://mdxjs.com/packages/mdx/#example
     const code = String(compileSync(vFileCompatible, {
         outputFormat: 'function-body',
         remarkPlugins: getMarkdownConfig().getMdxConfig().remarkPlugins,
-        rehypePlugins: getMarkdownConfig().getMdxConfig().rehypePlugins,
+        rehypePlugins: [...getMarkdownConfig().getMdxConfig().rehypePlugins, ...rehypePlugins],
         format: format,
         // providerImportSource: '@mdx-js/react', // mandatory to use useMDXComponents below
         // @mdx-js/mdx expects a providerImportSource to have been set at compile time in order for useMDXComponents to be used at runtime.
@@ -207,26 +211,47 @@ function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx'}: 
 
 
 /**
- * From a markdown fragment to a React component
+ * @param options.format - the Markdown format
+ * @param vFileCompatible - the markdown virtual file (string or file)
+ * @param options - the options
+ * @param options.rehypePlugins - extra rehype plugins to apply
+ * @param options.rootTagName - the tag name of the root (by default p if the markdown string does not start with a tag, you may set span for instance)
  */
 // noinspection JSUnusedGlobalSymbols - exported in package.json
 export function markdownToComponentSync(vFileCompatible: Compatible, options?: {
-    format: markdownFormat
+    format?: markdownFormat,
+    rehypePlugins?: PluggableList,
+    rootTagName?: string
 }): ComponentType {
-    return markdownToPageSync(vFileCompatible, options).default as ComponentType;
+    if(options==null){
+        options = {
+            rehypePlugins:[],
+        }
+    }
+    let rehypePlugins = options.rehypePlugins || []
+    if (options.rootTagName) {
+        rehypePlugins = [...rehypePlugins, [rehypeUpdateRootTagName,{rootTagName: options.rootTagName}]]
+    }
+    return markdownToPageSync(vFileCompatible, {
+        format: options.format,
+        rehypePlugins: rehypePlugins,
+    }).default as ComponentType;
 }
 
 // Sync because this is on the server
+export type markdownOptions = {
+    format?: markdownFormat,
+    rehypePlugins?: PluggableList
+};
+
 // See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
-export function markdownToPageSync(vFileCompatible: Compatible, options?: {
-    format: markdownFormat
-}): Page {
+export function markdownToPageSync(vFileCompatible: Compatible, options?: markdownOptions): Page {
     const format: markdownFormat = options?.format || getMarkdownConfig().getDefaultMarkdownFormat();
     try {
         if (format == 'mdx' || format == 'md') {
-            return mdxProcessing(vFileCompatible, {format: format});
+            return mdxProcessing(vFileCompatible, {format: format, rehypePlugins: options?.rehypePlugins});
         }
-        return markdownReactProcessing(vFileCompatible);
+        return markdownReactProcessing(vFileCompatible, options);
     } catch (e) {
         return {
             default: () => {
