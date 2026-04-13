@@ -36,6 +36,11 @@ import Envelope from "../img/bi-envelope-fill.svg"
 import OpenAiIcon from "bootstrap-icons/icons/openai.svg"
 // or React component
 import {ChevronDownIcon} from "lucide-react";
+
+export default function myIcon() {
+    // The interact icon tailwind utility class made it an inline block, baseline aligned  
+    return <OpenAiIcon className="icon"/>
+} 
 ```
 
 On [svg file import](svg.md), the file is [optimized with Svg](../components/svg.md#optimization) and 
@@ -59,3 +64,8 @@ Usage:
 ```jsx
 <i className="bi bi-linkedin text-primary"></i>
 ```
+
+### Styling
+
+We also add the `icon` [tailwind utility](../reference/tailwind.md)
+to style an imported svg as icon

@@ -28,6 +28,11 @@
     height: auto;
     line-height: inherit;
 }
+/* svg icon */
+@utility icon {
+    display: inline-block;
+    vertical-align: baseline;
+}
 
 /*
 @source inline will add the class even if not used

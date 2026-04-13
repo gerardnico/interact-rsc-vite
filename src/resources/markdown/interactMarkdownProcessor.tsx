@@ -223,14 +223,14 @@ export function markdownToComponentSync(vFileCompatible: Compatible, options?: {
     rehypePlugins?: PluggableList,
     rootTagName?: string
 }): ComponentType {
-    if(options==null){
+    if (options == null) {
         options = {
-            rehypePlugins:[],
+            rehypePlugins: [],
         }
     }
     let rehypePlugins = options.rehypePlugins || []
     if (options.rootTagName) {
-        rehypePlugins = [...rehypePlugins, [rehypeUpdateRootTagName,{rootTagName: options.rootTagName}]]
+        rehypePlugins = [...rehypePlugins, [rehypeUpdateRootTagName, {rootTagName: options.rootTagName}]]
     }
     return markdownToPageSync(vFileCompatible, {
         format: options.format,
