@@ -16,8 +16,11 @@ function removeMarkdownExtensionAndIndex(url: string) {
     const search = searchIndex !== -1 ? url.slice(searchIndex) : '';
     const pathname = searchIndex !== -1 ? url.slice(0, searchIndex) : url;
 
-    // Remove .md extension from pathname
-    let cleanPathname = pathname.replace(/(\.mdx?|\/index\.mdx?)$/, "");
+    // Remove .mdx and .md extension from pathname
+    let cleanPathname = pathname.replace(/(\.mdx?)$/, "");
+
+    // Remove index name
+    cleanPathname = cleanPathname.replace(/(\/index)$/, "/");
 
     return `${cleanPathname}${search}${hash}`;
 
@@ -30,8 +33,8 @@ function removeMarkdownExtensionAndIndex(url: string) {
  * Example:
  * * /docs/getting-started.md → /docs/getting-started
  * * /docs/getting-started.mdx → /docs/getting-started
- * * /docs/index.md → /docs
- * * /docs/index.mdx → /docs
+ * * /docs/index.md → /docs/
+ * * /docs/index.mdx → /docs/
  * * Leaves external links untouched
  *
  * Remove also the public

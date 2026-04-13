@@ -27,7 +27,10 @@ The default global CSS file import:
 @import "shadcn/tailwind.css";
 ```
 
-* and our utilities classes (for instance, for the [grid system](../components/grid.md))
+* and our utilities classes:
+  * for the [grid system](../components/grid.md)
+  * `icon`
+* and default publishing style for headings, list, ...
 
 We follow the [shadcn convention with CSS Variable](https://ui.shadcn.com/docs/theming).
 
