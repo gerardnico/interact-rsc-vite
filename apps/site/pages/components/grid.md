@@ -124,12 +124,13 @@ In the bootstrap system, the gutter is created with the margin so that it does n
 
 ### Default: Center justified and Gap
 
-By default, the grid has:
+By default:
+* the grid has:
+  * cells justified in the center (`justify-center`)
+  * a gap of 10 (`cells-gap-10`)
+* the grid cells are center justified (`flex justify-center`)
 
-* cells justified in the center (`justify-center`)
-* a gap of 10 (`cells-gap-10`)
-
-You can change this behavior by setting any other:
+You can change this behavior by setting any other class:
 
 * [tailwind justify class](../reference/styling.md#tailwind))
 * and [cells gap](#gutter--gap)

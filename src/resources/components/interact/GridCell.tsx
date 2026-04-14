@@ -14,7 +14,10 @@ export default function GridCell({
                                  }: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
     return (
         <div
-            className={cn("cell", className)}
+            className={
+                cn("cell",
+                    className == null ? "flex justify-center" : className
+                )}
             {...rest}>
             {children}
         </div>
