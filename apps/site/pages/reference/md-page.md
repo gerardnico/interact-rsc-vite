@@ -11,10 +11,10 @@ The content of a `md` file may be configured to be one of the 3 options below.
 By default, we use the `mdr` format.
 
 | Format | Description    | [Accepts Content component ?](markdown-component.md) | HTML format           | Javascript                 |
-|--------|----------------|-----------------------------------------------------|-----------------------|----------------------------|
-| `md`   | Markdown       | No                                                  | HTML                  | No                         |
-| `mdr`  | Markdown React | Yes                                                 | [XHTML](#xhtml-rules) | No                         |
-| `mdx`  | Mardown Jsx    | Yes                                                 | [Mdx](#mdx-rules)     | Yes, without import/export |
+|--------|----------------|------------------------------------------------------|-----------------------|----------------------------|
+| `md`   | Markdown       | No                                                   | HTML                  | No                         |
+| `mdr`  | Markdown React | Yes                                                  | [XHTML](#xhtml-rules) | No                         |
+| `mdx`  | Mardown Jsx    | Yes                                                  | [Mdx](#mdx-rules)     | Yes, without import/export |
 
 ### Mdr Rules
 
@@ -66,6 +66,31 @@ For example:
 
 * this is not correct `style="margin-right=2em;"`
 * this is correct: `style={{marginRight: '2em'}}`
+
+## Transform programmatically Markdown to React
+
+We export 2 functions so that you can use as server Markdown processing programmatically:
+
+| Name                      | Usage                                                                         | 
+|---------------------------|-------------------------------------------------------------------------------|
+| `markdownToPageSync`      | Transform a markdown Vfile (string or path) to a [page](../reference/page.md) |
+| `markdownToComponentSync` | Transform a markdown Vfile (string or path) to a react component              |
+
+Example:
+
+```javascript
+import {markdownToPageSync, markdownToComponentSync} from "@combostrap/interact/markdown";
+
+let component = markdownToComponentSync("**Hello World**", {rootTagName: "span"});
+let page = markdownToPageSync("## Hello World", {format: 'md'})
+```
+
+For a real examples, check the following [middleware](middleware.md) source code:
+
+* `local-markdown-pages.tsx` - local fetch
+* `github-markdown.tsx` - remote fetch
+
+These 2 transformations functions includes all [registered unifed plugins (remark and rehype)](remark-rehype-unified.md)
 
 ## Configuration
 

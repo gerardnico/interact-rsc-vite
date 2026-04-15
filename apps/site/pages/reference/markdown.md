@@ -38,5 +38,5 @@ The plugins are applied to all Markdown files.
 
 ### AI Agent Support
 
-We also create Markdown version of every pages for consumption by [Ai Agent](ai.md#markdown-format-for-all-pages).
+We also create Markdown version of every page for consumption by [Ai Agent](ai.md#markdown-format-for-all-pages).
 
