@@ -13,7 +13,9 @@
 @import "./components.css";
 
 /* Transform a button as link */
+/* ie btn-to-link same name as bootstrap */
 @utility btn-link {
+    display: inline-block;
     appearance: none;
     background: transparent;
     border: none;

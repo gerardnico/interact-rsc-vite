@@ -85,7 +85,7 @@ let component = markdownToComponentSync("**Hello World**", {rootTagName: "span"}
 let page = markdownToPageSync("## Hello World", {format: 'md'})
 ```
 
-For a real examples, check the following [middleware](middleware.md) source code:
+For a real examples, check the following [middlewares](middleware.md) source code:
 
 * `local-markdown-pages.tsx` - local fetch
 * `github-markdown.tsx` - remote fetch
