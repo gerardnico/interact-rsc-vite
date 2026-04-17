@@ -1,8 +1,10 @@
+# Last win
 # all files LF
-*.cmd text eol=crlf
-*.bat text eol=crlf
 * text eol=lf
 
+
+*.cmd text eol=crlf
+*.bat text eol=crlf
 
 *.png binary
 *.jpg binary
@@ -10,3 +12,8 @@
 *.gif binary
 *.ico binary
 *.webp binary
+
+
+
+
+

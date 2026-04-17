@@ -1,8 +1,3 @@
-/**
- * Based on
- * https://github.com/svg/svgo
- */
-
 import {type SVGProps} from "react";
 import {optimize, type Config} from "svgo";
 import {getInteractConfig} from "@combostrap/interact/config";
@@ -28,6 +23,10 @@ function spanElementError(error: string, label: string = "SVG error") {
       </span>);
 }
 
+/**
+ * This is a server only component as it needs to read the svg file
+ * Optimized with https://github.com/svg/svgo
+ */
 export default async function Svg({
                                       src,
                                       svgoOptions,
