@@ -8,15 +8,15 @@ This page is about [pages](page.md) created with the [Markdown](markdown.md) ext
 ## Format
 
 The content of a `md` file may be configured to be one of the 3 options below.
-By default, we use the `mdr` format.
+By default, we use the `mdc` format.
 
-| Format | Description    | [Accepts Content component ?](markdown-component.md) | HTML format           | Javascript                 |
-|--------|----------------|------------------------------------------------------|-----------------------|----------------------------|
-| `md`   | Markdown       | No                                                   | HTML                  | No                         |
-| `mdr`  | Markdown React | Yes                                                  | [XHTML](#xhtml-rules) | No                         |
-| `mdx`  | Mardown Jsx    | Yes                                                  | [Mdx](#mdx-rules)     | Yes, without import/export |
+| Format | Description        | [Accepts Content component ?](markdown-component.md) | HTML format           | Javascript                 |
+|--------|--------------------|------------------------------------------------------|-----------------------|----------------------------|
+| `md`   | Markdown           | No                                                   | HTML                  | No                         |
+| `mdc`  | Markdown Component | Yes                                                  | [XHTML](#xhtml-rules) | No                         |
+| `mdx`  | Mardown Jsx        | Yes                                                  | [Mdx](#mdx-rules)     | Yes, without import/export |
 
-### Mdr Rules
+### Mdc Rules
 
 For the support of [markdown component](markdown-component.md) like `<Foo />`, the following rules applies:
 
@@ -60,7 +60,7 @@ You need to write the tag in its own line. The correct way is:
 
 ### Mdx Rules
 
-`Mdx` follows the [mdr rules](#xhtml-rules) and the `style` prop expects a object of style properties, not a string.
+`Mdx` follows the [mdc rules](#mdc-rules) and the `style` prop expects a object of style properties, not a string.
 
 For example:
 

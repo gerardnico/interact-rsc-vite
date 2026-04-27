@@ -8,7 +8,7 @@ A typical interact project is composed of the following paths:
 |----------------------------------------------|---------------------------|--------------------------------------------------------------------------------------------------------------|
 | [@ alias](at-alias.md)                       | `src`                     | A directory that is mapped to the [@ alias](at-alias.md)                                                     |
 | `config`                                     | `config`                  | a directory that contains extra configuration such as the [markdown config](remark-rehype-unified.md#config) |
-| `cache`                                      | `.interact`               | A directory that contains temporary runtime information                                                      |
+| [runtime](runtime-directory.md)              | `.interact`               | A directory that contains temporary runtime information such as cache, schema                                |
 | [build](build.md)                            | `dist`                    | A directory where the [build result](build.md) is stored (static website and handler)                        |
 | [config file](conf.md)                       | `interact.config.json`    | the [configuration file](conf.md)                                                                            |
 | `images`                                     | `src/images`              | a directory that contains [raster image](../components/image.md)  or [Svg](../components/svg.md)             |
@@ -24,13 +24,10 @@ directory of your project.
 
 ## Configuration
 
-The config file path is defined in order of precedence as being the value of:
+The location of the [config file](conf.md)
+can only be [set via flag or environment variable](conf.md#configuration)
 
-* the `confPath` [cli flag](cli.md)
-* the `INTERACT_CONF_PATH` environment variable if defined
-* the current directory with `interact.config.json` as default
-
-You may configure the other paths in the `paths` node of the [configuration file](conf.md)
+All other paths may be configured in the `paths` node of the [configuration file](conf.md)
 
 ## How to check the actual values?
 

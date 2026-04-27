@@ -246,7 +246,9 @@ class InteractConfigHandler {
         finalConfigData.components = deepMerge(defaultComponentsValue, finalConfigData.components)
 
         /**
-         * Add layout (partials are not needed)
+         * Add layout
+         * (partials are not needed as the user import them from layout component)
+         * Ie: import Header from "@/components/partials/Header";
          */
         const types: ('layout' | 'markdown')[] = ['layout', 'markdown'];
         for (const type of types) {

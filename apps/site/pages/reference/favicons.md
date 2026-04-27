@@ -12,13 +12,13 @@ Favicons and Site Manifest may be generated:
 
 The [following configurations](conf.md) are used
 
-| Conf                 | Manifest Property | Description                                                                                |
-|----------------------|-------------------|--------------------------------------------------------------------------------------------|
-| `site.faviconMaster` | `icons`           | The SVG file name in the [image directory](directory-layout.md) (default to `favicon.svg`) |
-| `site.name`          | `shortName`       | The site name                                                                              |
-| `site.title`         | `name`            | The site long name (description)                                                           |
-| `site.colorPrimary`  | `themeColor`      | The primary color                                                                          |
-| `site.base`          |                   | base path added to the Icons path                                                          |
+| Conf                | Manifest Property | Description                                                                                |
+|---------------------|-------------------|--------------------------------------------------------------------------------------------|
+| `site.favicon`      | `icons`           | The SVG file name in the [image directory](directory-layout.md) (default to `favicon.svg`) |
+| `site.name`         | `shortName`       | The site name                                                                              |
+| `site.title`        | `name`            | The site long name (description)                                                           |
+| `site.colorPrimary` | `themeColor`      | The primary color                                                                          |
+| `site.base`         |                   | base path added to the Icons path                                                          |
 
 ## List of generated files
 

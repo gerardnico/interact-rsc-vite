@@ -26,7 +26,7 @@ export default function Head({page, context, ...props}: HeadProps) {
     /**
      * Layout
      */
-    let containerMaxWidth = interactConfig.style.container.containerMaxWidth;
+    let containerMaxWidth = interactConfig.layout.container.containerMaxWidth;
     let layoutStyle;
     if (containerMaxWidth != undefined) {
         layoutStyle = `

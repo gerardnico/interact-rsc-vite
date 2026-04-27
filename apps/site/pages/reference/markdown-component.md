@@ -5,7 +5,7 @@ title: Markdown Component
 Markdown component are [components](component.md#type) that can be used:
 
 * in [mdx pages](mdx.md)
-* in [md pages](md-page.md) if the chosen format is `mdr` or `mdx`
+* in [md pages](md-page.md) if the chosen format is `mdc` or `mdx`
 
 ## How to
 

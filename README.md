@@ -13,7 +13,7 @@ We create documentation where users can log in and interact with it.
 * Declarative: Support frontmatter in Markdown but also in programmatic page (jsx, tsx)
 * Full Markdown support:
   * Mdx: Markdown with Jsx
-  * Mdr: Markdown with React Element
+  * Mdc: Markdown with Component
   * Md: Markdown with HTML
 * Middleware and CMS support to bring remote pages
 * Deploy everywhere:

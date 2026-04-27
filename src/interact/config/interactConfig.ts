@@ -4,7 +4,7 @@
  */
 import {
     type ComponentsSet, type pathsConfigType, type imageConfigType,
-    type siteConfigType, type styleConfigType, type outlineConfigType, type markdownConfigType,
+    type siteConfigType, type partialsConfigType, type outlineConfigType, type markdownConfigType,
     type aliasesConfigType, type MiddlewareConfig
 } from "./configSchema.js";
 
@@ -13,7 +13,7 @@ import {
  * (no schema field and configFile and Root directory)
  */
 export type InteractConfig = {
-    style: styleConfigType,
+    partials: partialsConfigType,
     site: siteConfigType
     outline: outlineConfigType,
     components: ComponentsSet,
@@ -22,7 +22,7 @@ export type InteractConfig = {
     markdown: markdownConfigType,
     aliases: aliasesConfigType,
     paths: pathsConfigType & {
-        rootDirectory: string, // making it not null for typescript
+        rootDirectory: string, // making it not null for TypeScript
         configFile: string
         // The runtime/tmp directory, image cache, ...
         // output dir such as dist does not work as it will be cleaned up

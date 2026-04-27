@@ -141,7 +141,7 @@ export default class Favicon extends BaseCommand<typeof Favicon> {
         const {args, flags} = await this.parse(Favicon)
 
         const interactConfigTyped = createInteractConfig(flags.confPath);
-        const filePath = args.filePath || path.resolve(interactConfigTyped.paths.imagesDirectory, interactConfigTyped.site.faviconMaster);
+        const filePath = args.filePath || path.resolve(interactConfigTyped.paths.imagesDirectory, interactConfigTyped.site.favicon);
         const dryRun = flags.dryRun
         const outputDirectory = flags.outputDirectory || interactConfigTyped.paths.publicDirectory
         await generateImage({interactConfig: interactConfigTyped, masterFilePath: filePath, dryRun, outputDirectory})
