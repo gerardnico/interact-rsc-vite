@@ -24,7 +24,6 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
             description: 'The output directory',
             default: "dist",
         }),
-
     }
 
     protected flags!: Flags<T>

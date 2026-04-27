@@ -136,23 +136,26 @@ let outlineNumberingSchema = z.object({
 });
 
 
+let header = z.object({
+    brandName: z.string().nullable().optional(),
+    logoWidth: z.number().optional(),
+    logoHeight: z.number().optional(),
+    logoSrc: z.coerce.string().default("favicon.svg"),
+    logoAlt: z.string().optional(),
+});
+let toc = z.object({
+    maxDepth: z.coerce.number<number>().describe("The maximum level printed").default(3),
+});
+
 /**
  * Configuration for layout and partials
  */
-let partials = z.object({
+let templateType = z.object({
     container: container.default(container.parse({})),
-    header: z.object({
-        brandName: z.string().nullable().optional(),
-        logoWidth: z.number().optional(),
-        logoHeight: z.number().optional(),
-        logoSrc: z.coerce.string().default("favicon.svg"),
-        logoAlt: z.string().optional(),
-    }),
-    toc: z.object({
-        maxDepth: z.coerce.number<number>().describe("The maximum level printed").default(3),
-    })
-}).describe("Free form configuration for partials");
-export type partialsConfigType = z.output<typeof partials>;
+    header: header.default(header.parse({})),
+    toc: toc.default(toc.parse({})),
+}).describe("Configuration for server component, mostly layout and partials components");
+export type templateConfig = z.output<typeof templateType>;
 
 
 /**
@@ -214,7 +217,7 @@ export const JsonConfigSchema = z.object({
     aliases: AliasesSchema.default(AliasesSchema.parse({})),
     middleware: MiddlewaresSchema.default(MiddlewaresSchema.parse({})),
     images: ImageSchema.default(ImageSchema.parse({})),
-    partials: partials.default(partials.parse({})),
+    template: templateType.default(templateType.parse({})),
     components: ComponentsConfigSetSchema.default(ComponentsConfigSetSchema.parse({})),
     markdown: MarkdownConfigSchema.default(MarkdownConfigSchema.parse({})),
 })

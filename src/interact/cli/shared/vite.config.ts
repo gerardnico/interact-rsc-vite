@@ -140,7 +140,7 @@ export async function resolveViteConfig(
         // https://vite.dev/config/shared-options#publicdir
         publicDir: interactConfigTyped.paths.publicDirectory,
         // https://vite.dev/config/shared-options#cachedir
-        cacheDir: path.resolve(interactConfigTyped.paths.cacheDirectory, ".vite"),
+        cacheDir: path.resolve(interactConfigTyped.paths.runtimeDirectory, ".vite"),
         build: {
             // https://vite.dev/config/build-options#build-outdir
             outDir: interactConfigTyped.paths.buildDirectory,

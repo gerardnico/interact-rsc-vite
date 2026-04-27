@@ -5,6 +5,6 @@ import {getInteractConfig} from "@combostrap/interact/config";
 export default async function Footer(layoutProps: LayoutProps) {
     let interactConfig = getInteractConfig();
     return (
-        <div className={interactConfig.style.container.containerClass}/>
+        <div className={interactConfig.template.container.containerClass}/>
     )
 }

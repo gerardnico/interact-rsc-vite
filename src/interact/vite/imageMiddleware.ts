@@ -18,7 +18,7 @@ export default function viteImageService({
 
     let interactConfig = getInteractConfig()
     let baseDir = interactConfig.paths.imagesDirectory;
-    let cacheDir = command === 'start' ? undefined : path.resolve(interactConfig.paths.cacheDirectory, "img");
+    let cacheDir = command === 'start' ? undefined : path.resolve(interactConfig.paths.runtimeDirectory, "img");
     // if local there is no need to sign the URL
     let secret = process.env[imageSecretEnvName];
     // the directory of the resources (ie broken image)

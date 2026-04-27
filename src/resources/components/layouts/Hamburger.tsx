@@ -21,7 +21,7 @@ export default function Hamburger(layoutProps: LayoutProps) {
                 <Header {...layoutProps} />
                 <div className={
                     cn(
-                        interactConfig.style.container.containerClass,
+                        interactConfig.template.container.containerClass,
                         "position-relative",
                     )}>
                     <main>

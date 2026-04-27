@@ -1,12 +1,12 @@
 ---
-title: Image
+title: Raster
 ---
 
 
-<Image src="card_puncher_data_processing.jpg" alt="Card Puncher" height="300" ratio="16:9"/>
+<Raster src="card_puncher_data_processing.jpg" alt="Card Puncher" height="300" ratio="16:9"/>
 
 
-## Image Component
+## Raster Component
 
 | Name   | Default | Possible values  | Description                                                    |
 |--------|---------|------------------|----------------------------------------------------------------|
@@ -50,7 +50,7 @@ In case of a bad input in the image component:
 Example of Image that will show an error:
 
 ```markdown
-<Image src="card_puncher_data_processing.jpg"
+<Raster src="card_puncher_data_processing.jpg"
 alt="Card Puncher"
 width="-1"
 />

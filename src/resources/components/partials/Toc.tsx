@@ -34,7 +34,7 @@ function TocItems({entries, maxDepth, currentDepth = 1}: {
 
 export default function Toc({maxDepth, page, context, className, ...navProps}: TocProps) {
     if (maxDepth == null) {
-        maxDepth = getInteractConfig().components.Toc?.props?.maxDepth;
+        maxDepth = getInteractConfig().template.toc?.maxDepth;
         if (maxDepth == null) {
             maxDepth = 3
         }

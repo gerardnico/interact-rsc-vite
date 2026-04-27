@@ -57,6 +57,10 @@ export const defaultComponentsValue: ComponentsSet = {
         importPath: `${atInteractComponentPath}/Code`,
         type: "markdown"
     },
+    "Raster": {
+        importPath: `${atInteractComponentPath}/Raster`,
+        type: "markdown"
+    },
     "table": {
         importPath: `${atInteractComponentPath}/Table`,
         type: "markdown"
@@ -219,7 +223,7 @@ class InteractConfigHandler {
             mdComponentsDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.mdComponentsDirectory),
             middlewaresDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.middlewaresDirectory),
             configDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.configDirectory),
-            cacheDirectory: this.#qualifiedDirectoryPath(rootDirectory, ".interact"),
+            runtimeDirectory: this.#qualifiedDirectoryPath(rootDirectory, ".interact"),
             interactResourcesDirectory: path.resolve(rootDirectory, interactRootDirectory, 'src/resources'),
             buildDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.buildDirectory),
             cssFile: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.cssFile),

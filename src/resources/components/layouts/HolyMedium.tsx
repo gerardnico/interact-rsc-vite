@@ -24,7 +24,7 @@ export default function HolyMedium(layoutProps: LayoutProps) {
                 <Header {...layoutProps} />
                 <div id="page-core" className={
                     cn(styles['pageCore'],
-                        getInteractConfig().style.container.containerClass,
+                        getInteractConfig().template.container.containerClass,
                         "position-relative mt-3"
                     )}>
                     <main id="page-main" className={styles["pageMain"]}>

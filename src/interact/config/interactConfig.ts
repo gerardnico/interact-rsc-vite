@@ -4,7 +4,7 @@
  */
 import {
     type ComponentsSet, type pathsConfigType, type imageConfigType,
-    type siteConfigType, type partialsConfigType, type outlineConfigType, type markdownConfigType,
+    type siteConfigType, type templateConfig, type outlineConfigType, type markdownConfigType,
     type aliasesConfigType, type MiddlewareConfig
 } from "./configSchema.js";
 
@@ -13,7 +13,7 @@ import {
  * (no schema field and configFile and Root directory)
  */
 export type InteractConfig = {
-    partials: partialsConfigType,
+    template: templateConfig,
     site: siteConfigType
     outline: outlineConfigType,
     components: ComponentsSet,
@@ -29,7 +29,7 @@ export type InteractConfig = {
         // For runtime, I see also: './node_modules/.xxx'
         // Example with vite
         // https://vite.dev/guide/dep-pre-bundling#file-system-cache
-        cacheDirectory: string
+        runtimeDirectory: string
         // The path of the interact resources directory
         interactResourcesDirectory: string
     }

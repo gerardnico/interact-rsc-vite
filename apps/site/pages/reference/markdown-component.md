@@ -39,7 +39,8 @@ You can also use:
 
 * [svg](../components/svg.md) to embed and optimize SVG files
 * [icon](../components/icon.md) to embed and optimize SVG files as icon
-* [image](../components/image.md) to process and transform Raster Image
+* [raster](../components/raster.md) to process and transform Raster Image
+* `image` to pass a svg or raster image
 
 
 ## Support

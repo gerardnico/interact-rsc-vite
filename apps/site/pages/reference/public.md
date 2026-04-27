@@ -5,7 +5,7 @@ title: Public directory
 `public` is a [directory](directory-layout.md) that contains files that are not processed.
 
 Basically, all files
-that references your pages except [raster image](../components/image.md) and [svg](../components/svg.md).
+that references your pages except [raster image](../components/raster.md) and [svg](../components/svg.md).
 
 ## Example
 

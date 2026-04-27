@@ -15,18 +15,18 @@ export default async function Header(layoutProps: LayoutProps) {
     let logoSrc: string | undefined;
     let logoAlt: string | undefined;
     let logoClass: string | undefined;
-    let headerConfig = interactConfig.components.Header;
-    logoSrc = headerConfig?.props?.logoSrc;
+    let headerConfig = interactConfig.template.header;
+    logoSrc = headerConfig?.logoSrc;
     let logo;
     if (logoSrc != null) {
-        if (interactConfig.site.base != "/") {
-            logoSrc = `${interactConfig.site.base}${logoSrc}`
-        } else {
-            logoSrc = `${logoSrc}`
-        }
+        // if (interactConfig.site.base != "/") {
+        //     logoSrc = `${interactConfig.site.base}${logoSrc}`
+        // } else {
+        //     logoSrc = `${logoSrc}`
+        // }
 
         logoClass = "align-middle"
-        logoAlt = headerConfig?.props?.logoAlt;
+        logoAlt = headerConfig?.logoAlt;
         if (typeof logoAlt == 'undefined') {
             logoAlt = interactConfig.site.name;
         }
@@ -34,13 +34,13 @@ export default async function Header(layoutProps: LayoutProps) {
             src: logoSrc,
             alt: logoAlt,
             className: logoClass,
-            width: headerConfig?.props?.logoWidth || 24,
-            height: headerConfig?.props?.logoHeight || 24
+            width: headerConfig?.logoWidth, // no default on width as this is not relevant for the template
+            height: headerConfig?.logoHeight || 24
         }
         logo = <Image {...imageProps}/>
 
     }
-    const containerClass = interactConfig.style.container.containerClass
+    const containerClass = interactConfig.template.container.containerClass
 
     // pb-0 is for the alignment with the brand text and logo
     // @ts-ignore
@@ -54,9 +54,9 @@ export default async function Header(layoutProps: LayoutProps) {
                    title={logoAlt}
                    accessKey="h" style={{fontWeight: 700}}>
                     {logo}
-                    {headerConfig?.props?.brandName != null &&
+                    {headerConfig?.brandName != null &&
                         <span
-                            className="text-xl font-semibold text-primary">{headerConfig?.props?.brandName}</span>}
+                            className="text-xl font-semibold text-primary">{headerConfig?.brandName}</span>}
                 </a>
 
                 {/* Toggle (it is a client component) */}
