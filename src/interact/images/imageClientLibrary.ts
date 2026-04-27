@@ -122,6 +122,13 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
     await fsPromises.mkdir(path.dirname(buildTargetFile), {recursive: true});
     await fsPromises.writeFile(buildTargetFile, imageBuffer);
 
+    /**
+     * base
+     */
+    let base = interactConfig.site.base;
+    if (base!="/"){
+        return `${base}${buildUri}`;
+    }
     return buildUri
 
 }

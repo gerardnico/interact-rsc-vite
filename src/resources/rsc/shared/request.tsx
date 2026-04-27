@@ -1,8 +1,9 @@
 // Framework conventions (arbitrary choices for this demo):
 // - The `_.rsc` URL suffix is used to differentiate RSC requests from SSR requests
 import type {ContextProps} from "@combostrap/interact/types";
+import {getInteractConfig} from "../../../interact/config/interactConfig.js";
 
-export const URL_POSTFIX = '_.rsc'
+export const URL_RSC_POSTFIX = '_.rsc'
 // On a form, add the `x-rsc-action` header to pass server action ID
 const HEADER_ACTION_ID = 'x-rsc-action'
 
@@ -22,7 +23,7 @@ export function createRscRenderRequest(
         urlString += INDEX_NAME
     }
     const url = new URL(urlString)
-    url.pathname += URL_POSTFIX
+    url.pathname += URL_RSC_POSTFIX
     const headers = new Headers()
     if (action) {
         headers.set(HEADER_ACTION_ID, action.id)
@@ -45,8 +46,19 @@ export function parseRenderRequest(request: Request): ContextProps {
     const wantsMarkdown = accept?.includes('text/markdown')
     let isMarkdownRequest = wantsMarkdown || request.url.endsWith('.md');
 
+    // base set
+    let base = getInteractConfig().site.base
+    if (base != "/") {
+        let pathname = url.pathname.slice(base.length)
+        if (pathname == null) {
+            // root
+            pathname = "/"
+        }
+        url.pathname = pathname
+    }
+
     // Classic Static Rendering Request
-    if (!url.pathname.endsWith(URL_POSTFIX)) {
+    if (!url.pathname.endsWith(URL_RSC_POSTFIX)) {
         return {
             meta: {
                 isRsc: false,
@@ -60,11 +72,14 @@ export function parseRenderRequest(request: Request): ContextProps {
     }
 
     // Rsc Request
-    url.pathname = url.pathname.slice(0, -URL_POSTFIX.length)
     const actionId = request.headers.get(HEADER_ACTION_ID) || undefined
     if (request.method === 'POST' && !actionId) {
         throw new Error('Missing action id header for RSC action request')
     }
+
+    // Delete Rsc Postfix
+    url.pathname = url.pathname.slice(0, -URL_RSC_POSTFIX.length)
+
     return {
         meta: {
             isRsc: true,
