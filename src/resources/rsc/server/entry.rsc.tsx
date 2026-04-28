@@ -14,10 +14,13 @@ import {
     loadServerAction,
     renderToReadableStream
 } from '@vitejs/plugin-rsc/rsc'
-import {parseRenderRequest} from '../shared/request.js'
+
 import type {RscPayload} from '../shared/types.js'
 import type {ReactFormState} from 'react-dom/client'
 import {getRootResponse, getStaticPaths} from "./handler.js";
+import {getInteractConfig} from "../../../interact/config/interactConfig";
+import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
+import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const";
 /**
  * We export it so that static rendering (SSG)
  * can use it to render each page after the build
@@ -25,6 +28,66 @@ import {getRootResponse, getStaticPaths} from "./handler.js";
  */
 export {getStaticPaths}
 
+
+/**
+ * Returns if the request is an SRC request or a classic request
+ * @param request
+ */
+export function parseRenderRequest(request: Request): ContextProps {
+    const url = new URL(request.url)
+    const isAction = request.method === 'POST'
+    const accept = request.headers.get('accept') // or req.headers['accept'] in Express
+    const wantsMarkdown = accept?.includes('text/markdown')
+    let isMarkdownRequest = wantsMarkdown || request.url.endsWith('.md');
+
+    // base set
+    let base = getInteractConfig().site.base
+    if (base != "/") {
+        let pathname = url.pathname.slice(base.length)
+        if (pathname == null) {
+            // root
+            pathname = "/"
+        }
+        url.pathname = pathname
+    }
+
+    // Classic Static Rendering Request
+    if (!url.pathname.endsWith(URL_RSC_POSTFIX)) {
+        return {
+            meta: {
+                isRsc: false,
+                isRscAction: isAction,
+                isMarkdown: isMarkdownRequest
+            },
+            request,
+            url,
+            response: {}
+        }
+    }
+
+    // Rsc Request
+    const actionId = request.headers.get(HEADER_ACTION_ID) || undefined
+    if (request.method === 'POST' && !actionId) {
+        throw new Error('Missing action id header for RSC action request')
+    }
+
+    // Delete Rsc Postfix
+    url.pathname = url.pathname.slice(0, -URL_RSC_POSTFIX.length)
+
+    return {
+        meta: {
+            isRsc: true,
+            isRscAction: isAction,
+            isMarkdown: isMarkdownRequest,
+            rscActionId: actionId
+        },
+        request: request,
+        url,
+        response: {}
+    }
+
+
+}
 
 /**
  * Handle the HTTP request

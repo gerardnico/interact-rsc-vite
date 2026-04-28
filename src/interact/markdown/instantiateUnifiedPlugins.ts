@@ -1,5 +1,5 @@
 // Instantiate the unified plugins
-import {z} from "zod/v4"
+import {z} from "zod"
 import path from 'path';
 import {fileURLToPath} from "node:url";
 

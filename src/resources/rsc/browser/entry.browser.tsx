@@ -21,7 +21,36 @@ import { createRoot, hydrateRoot } from 'react-dom/client'
 import { rscStream } from 'rsc-html-stream/client' // https://github.com/devongovett/rsc-html-stream
 import type { RscPayload } from '../shared/types'
 import { GlobalErrorBoundary } from './error-boundary'
-import { createRscRenderRequest } from '../shared/request'
+import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const";
+
+/**
+ * The name of the index page
+ */
+export const INDEX_NAME = "index"
+
+
+export function createRscRenderRequest(
+    urlString: string,
+    action?: { id: string; body: BodyInit },
+): Request {
+  if (!urlString) {
+    urlString = INDEX_NAME
+  } else if (urlString.endsWith("/")) {
+    urlString += INDEX_NAME
+  }
+  const url = new URL(urlString)
+  url.pathname += URL_RSC_POSTFIX
+  const headers = new Headers()
+  if (action) {
+    headers.set(HEADER_ACTION_ID, action.id)
+  }
+  return new Request(url.toString(), {
+    method: action ? 'POST' : 'GET',
+    headers,
+    body: action?.body,
+  })
+}
+
 
 async function main() {
   // stash `setPayload` function to trigger re-rendering

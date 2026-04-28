@@ -1,7 +1,7 @@
 /**
  * Shared code between client and server (handler)
  */
-import {z} from "zod/v4";
+import {z} from "zod";
 import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
 import {ImageFitSchema} from "../config/configSchema.js";
 import sharp, {type FitEnum, type FormatEnum} from "sharp";

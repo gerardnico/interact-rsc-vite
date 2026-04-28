@@ -226,6 +226,8 @@ export async function resolveViteConfig(
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),
                     emptyOutDir: true
                 },
+                // don't bundle sharp in the client
+                optimizeDeps: { exclude: ['sharp'] },
             },
         },
         // Order does not matter
