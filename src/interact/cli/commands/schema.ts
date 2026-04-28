@@ -1,4 +1,4 @@
-import {z} from 'zod/v4';
+import {z} from 'zod';
 
 import {writeFileSync, mkdirSync} from 'fs'
 import {join, resolve} from 'path'

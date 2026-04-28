@@ -5,7 +5,7 @@
  * this file is initialized first
  * Otherwise you get: Cannot access 'ImageFitSet' before initialization
  */
-import {z} from 'zod/v4';
+import {z} from 'zod';
 
 import {ImageCompressionSchema} from "../images/imageCompressionType.js";
 
