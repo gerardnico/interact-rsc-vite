@@ -1,5 +1,5 @@
 import sharp, {type FormatEnum} from 'sharp';
-import {z} from "zod";
+import {z} from "zod/v4";
 
 export const ImageCompressionSet = z.enum(['low', 'mid', 'high', 'max', 'none']);
 export const ImageCompressionSchema = ImageCompressionSet

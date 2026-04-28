@@ -1,4 +1,4 @@
-import {z} from 'zod';
+import {z} from 'zod/v4';
 
 const RatingSchema = z.object({
     score: z.number().int().min(1, 'The StarRating score must be at least 1').max(5, 'The StarRating Score must be at least 1').describe("The score of the rating"),
