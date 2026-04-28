@@ -16,7 +16,10 @@ import crypto from "crypto";
 import {getInteractConfig} from "../config/interactConfig.js";
 import {imageEndPointEnvName, imageViteOutDirEnvName} from "./imageMiddlewareHandler.js";
 import fs from "fs";
+import debug from 'debug'
 
+let moduleName = 'interact:image';
+const debugLog = debug(moduleName);
 
 export type HtmlImageAttributes = {
     src: string,
@@ -95,14 +98,20 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
     /**
      * In static generation mode
      */
-    const imageBuffer = await processImageWithSharp({
-        sharpPipeline,
-        targetWidth: Number(serviceProperties.width),
-        targetHeight: Number(serviceProperties.height),
-        requestedFit: serviceProperties.fit as keyof FitEnum,
-        requestedFormat: 'webp',
-        requestedCompression: serviceProperties.compression as ImageCompressionType
-    })
+    let imageBuffer;
+    try {
+        imageBuffer = await processImageWithSharp({
+            sharpPipeline,
+            targetWidth: Number(serviceProperties.width),
+            targetHeight: Number(serviceProperties.height),
+            requestedFit: serviceProperties.fit as keyof FitEnum,
+            requestedFormat: 'webp',
+            requestedCompression: serviceProperties.compression as ImageCompressionType
+        })
+    } catch (e) {
+        debugLog(`Error while processing the image ${src} with sharp with the following properties ${JSON.stringify(serviceProperties)}`)
+        throw e
+    }
     const normalizedProperties = JSON.stringify(serviceProperties, Object.keys(serviceProperties).sort());
     const hash = crypto.createHash('sha256').update(normalizedProperties).digest('hex').slice(0, 16);
 
@@ -126,7 +135,7 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
      * base
      */
     let base = interactConfig.site.base;
-    if (base!="/"){
+    if (base != "/") {
         return `${base}${buildUri}`;
     }
     return buildUri
@@ -249,6 +258,18 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
             || isAspectRatioRequest
         ) {
             serviceProperties.width = String(breakpointWidthWithoutMargin)
+            if (isSsg) {
+                // in ssg, the dimensions are mandatory
+                // for the image generation, sharp will throw an error if width or height is missing
+                let breakpointHeightDimensionHelper = new ImageDimensionHelper({
+                    requestedWidth: castWidthToNumber(serviceProperties.width),
+                    requestedHeight: null,
+                    requestedRatio: originalRequestDimensionHelper.getTargetRatio(),
+                    intrinsicWidth,
+                    intrinsicHeight
+                });
+                serviceProperties.height = String(breakpointHeightDimensionHelper.getTargetDimensions().targetHeight);
+            }
         }
 
         /**
@@ -261,6 +282,18 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         ) {
             breakpointHeight = ImageDimensionHelper.round((breakpointWidthWithoutMargin) / originalRequestDimensionHelper.getTargetRatio())
             serviceProperties.height = String(breakpointHeight)
+            if (isSsg) {
+                // in ssg, the dimensions are mandatory
+                // for the image generation, sharp will throw an error if width or height is missing
+                let breakpointHeightDimensionHelper = new ImageDimensionHelper({
+                    requestedWidth: null,
+                    requestedHeight: breakpointHeight,
+                    requestedRatio: originalRequestDimensionHelper.getTargetRatio(),
+                    intrinsicWidth,
+                    intrinsicHeight
+                });
+                serviceProperties.width = String(breakpointHeightDimensionHelper.getTargetDimensions().targetWidth);
+            }
         }
 
         srcSet.push(await toImageServiceUri(props.src, serviceProperties, sharpPipeline) + ` ${breakpointWidthWithoutMargin}w`);
