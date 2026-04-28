@@ -18,6 +18,7 @@ export interface TocNode {
 export type Frontmatter = {
     name?: string;
     title?: string;
+    lead?: string;
     description?: string;
     layout?: string;
     // keywords for search

@@ -25,10 +25,15 @@ export default function Hero({page, context, ...htmlProps}: HeroProps) {
     if (!title) {
         title = context.url.pathname.slice(1);
     }
+    let lead = page?.frontmatter?.lead;
     return (
         <header {...htmlProps}>
             {title &&
                 <h1 className="h1 outline-heading-cs heading-cs heading-h1-cs">{title}</h1>
+            }
+            {lead && (
+                <p className={"lead mb-4"} style={{fontSize: "1.5rem"}}>{lead}</p>
+            )
             }
             <PageMenuButton>
                 <CopyAsMarkdownButton>Copy As Markdown</CopyAsMarkdownButton>
