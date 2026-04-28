@@ -19,6 +19,8 @@ export type Frontmatter = {
     name?: string;
     title?: string;
     lead?: string;
+    // do we show an hero
+    hero?: boolean;
     description?: string;
     layout?: string;
     // keywords for search

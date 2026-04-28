@@ -1,5 +1,5 @@
 import type {LayoutProps} from "@combostrap/interact/types";
-import styles from "./holyMedium.module.css"
+import styles from "./holyProse.module.css"
 
 import {getInteractConfig} from "@combostrap/interact/config";
 import Header from "../partials/Header";
@@ -15,7 +15,7 @@ import {cn} from "@/lib/utils";
  * Holy Layout Components without the sidebar
  */
 // noinspection JSUnusedGlobalSymbols -
-export default function HolyMedium(layoutProps: LayoutProps) {
+export default function HolyProse(layoutProps: LayoutProps) {
 
     return (
         <Html {...layoutProps}>
@@ -29,7 +29,7 @@ export default function HolyMedium(layoutProps: LayoutProps) {
                     )}>
                     <main id="page-main" className={styles["pageMain"]}>
                         <div id="main-header" className={styles['mainHeader']}>
-                            <Hero {...layoutProps} />
+                            {layoutProps.page?.frontmatter?.hero != false && <Hero {...layoutProps} />}
                         </div>
                         <div id="main-toc" className={styles['mainToc']}>
                             <Toc {...layoutProps} />
