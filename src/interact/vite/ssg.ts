@@ -65,6 +65,10 @@ async function renderStatic(config: ResolvedConfig) {
     }
 
     for (const staticPatch of staticPaths) {
+
+        /**
+         * Request needs to take into account the base
+         */
         let staticRequestPath = staticPatch;
         if (interactConfig.site.base != "/") {
             staticRequestPath = `${interactConfig.site.base}${staticRequestPath}`;
@@ -72,14 +76,18 @@ async function renderStatic(config: ResolvedConfig) {
         config.logger.info('[vite-rsc:ssg] -> ' + staticRequestPath)
         let fakeRequest = new Request(new URL(staticRequestPath, 'http://ssg.local'));
         const {html, rsc, md} = await entryRscModule.handleSsg(fakeRequest)
+
+        /**
+         * Final file still needs to be written at the normal path
+         */
         await writeFileStream(
-            path.join(baseDir, normalizeFilePath(staticRequestPath, ".html")),
+            path.join(baseDir, normalizeFilePath(staticPatch, ".html")),
             html,
         )
-        await writeFileStream(path.join(baseDir, staticRequestPath + RSC_POSTFIX), rsc)
+        await writeFileStream(path.join(baseDir, staticPatch + RSC_POSTFIX), rsc)
         if (md != null) {
             writeFileSync(
-                path.join(baseDir, normalizeFilePath(staticRequestPath, ".md")),
+                path.join(baseDir, normalizeFilePath(staticPatch, ".md")),
                 md
             )
         }
