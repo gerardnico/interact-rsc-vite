@@ -55,26 +55,31 @@ async function renderStatic(config: ResolvedConfig) {
     }
     const baseDir = clientEnv.build.outDir
     let staticPaths = Object.keys(staticPathsObject)
+    let interactConfig = getInteractConfig();
     /**
      * Add the 404 if not set
      */
-    const notFoundPath = getInteractConfig().middleware.notFoundPath;
+    const notFoundPath = interactConfig.middleware.notFoundPath;
     if (!(notFoundPath in staticPathsObject)) {
         staticPaths.push(notFoundPath)
     }
 
     for (const staticPatch of staticPaths) {
-        config.logger.info('[vite-rsc:ssg] -> ' + staticPatch)
-        let fakeRequest = new Request(new URL(staticPatch, 'http://ssg.local'));
+        let staticRequestPath = staticPatch;
+        if (interactConfig.site.base != "/") {
+            staticRequestPath = `${interactConfig.site.base}${staticRequestPath}`;
+        }
+        config.logger.info('[vite-rsc:ssg] -> ' + staticRequestPath)
+        let fakeRequest = new Request(new URL(staticRequestPath, 'http://ssg.local'));
         const {html, rsc, md} = await entryRscModule.handleSsg(fakeRequest)
         await writeFileStream(
-            path.join(baseDir, normalizeFilePath(staticPatch, ".html")),
+            path.join(baseDir, normalizeFilePath(staticRequestPath, ".html")),
             html,
         )
-        await writeFileStream(path.join(baseDir, staticPatch + RSC_POSTFIX), rsc)
+        await writeFileStream(path.join(baseDir, staticRequestPath + RSC_POSTFIX), rsc)
         if (md != null) {
             writeFileSync(
-                path.join(baseDir, normalizeFilePath(staticPatch, ".md")),
+                path.join(baseDir, normalizeFilePath(staticRequestPath, ".md")),
                 md
             )
         }
