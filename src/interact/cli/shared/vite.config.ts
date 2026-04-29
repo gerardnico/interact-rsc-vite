@@ -227,7 +227,7 @@ export async function resolveViteConfig(
                     emptyOutDir: true
                 },
                 // don't bundle sharp in the client
-                optimizeDeps: { exclude: ['sharp'] },
+                optimizeDeps: {exclude: ['sharp']},
             },
         },
         // Order does not matter
@@ -250,9 +250,7 @@ export async function resolveViteConfig(
                 include: '**/*.svg',
                 svgrOptions: {
                     plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx'],
-                    svgoConfig: {
-                        plugins: ['preset-default', 'removeTitle', 'removeDesc', 'removeDoctype', 'cleanupIds'],
-                    },
+                    svgoConfig: interactConfigTyped.svg.svgo
                 },
             }),
             confWatcher(),

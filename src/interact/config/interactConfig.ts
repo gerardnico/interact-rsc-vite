@@ -7,6 +7,7 @@ import {
     type siteConfigType, type templateConfig, type outlineConfigType, type markdownConfigType,
     type aliasesConfigType, type MiddlewareConfig
 } from "./configSchema.js";
+import type {Config} from "svgo";
 
 /**
  * The config seen by the client
@@ -32,6 +33,9 @@ export type InteractConfig = {
         runtimeDirectory: string
         // The path of the interact resources directory
         interactResourcesDirectory: string
+    }
+    svg: {
+        svgo: Config
     }
 }
 

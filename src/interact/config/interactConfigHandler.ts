@@ -307,7 +307,7 @@ class InteractConfigHandler {
                 .sort((a, b) => a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'}));
 
             for (const fileName of filesNaturalSort) {
-                const {name,ext} = path.parse(fileName);
+                const {name, ext} = path.parse(fileName);
                 if (!/\.(jsx|tsx|js)$/.test(ext)) continue;
                 let importPath = path.resolve(middlewaresDirectory, fileName);
                 if (isProjectDir) {
@@ -332,6 +332,21 @@ class InteractConfigHandler {
                     finalConfigData.markdown.configImportPath = markdownConfig
                     break;
                 }
+            }
+        }
+
+        /**
+         * Svg
+         */
+        finalConfigData.svg = {
+            svgo: {
+                plugins: [
+                    {name: "preset-default"},
+                    {name: 'removeTitle'},
+                    {name: 'removeDesc'},
+                    {name: 'removeDoctype'},
+                    {name: "removeDimensions"} // strip width and dimension and add viewBox if missing
+                ],
             }
         }
 

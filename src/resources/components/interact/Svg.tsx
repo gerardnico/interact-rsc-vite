@@ -38,7 +38,8 @@ export default async function Svg({
         if (src.startsWith("/")) {
             src = src.slice(1);
         }
-        const svgFile = getInteractConfig().paths.imagesDirectory + "/" + src;
+        let interactConfig = getInteractConfig();
+        const svgFile = interactConfig.paths.imagesDirectory + "/" + src;
         let svgCode
         try {
             svgCode = await readFile(svgFile, "utf-8");
@@ -55,12 +56,9 @@ export default async function Svg({
         }
         // https://svgo.dev/docs/preset-default/
         // https://svgo.dev/docs/plugins/
+        let defaultSvgoConfig = interactConfig.svg.svgo;
         const {data: optimisedSvg} = optimize(svgCode, {
-            plugins: [
-                {name: "removeViewBox", active: false},   // keep viewBox
-                {name: "removeDimensions", active: true},  // strip width/height attrs
-            ],
-            ...((svgoOptions as any)?.svgoConfig ?? {}),
+            ...((svgoOptions as any)?.svgoConfig ?? defaultSvgoConfig),
         });
 
         // 2. Pull the outer <svg> attributes and inner content apart so we can

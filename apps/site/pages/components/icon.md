@@ -4,8 +4,8 @@ title: Icon Component
 
 An `icon` component is an [SVG component](svg.md) that:
 
-* is [styled to be seen as a character](#why-another-styling).
-* has a default size of `24`
+* is [styled to be seen as a character](#why-another-styling) with our `icon` class.
+* accept a `size` attribute to set the `width` and `height` at once
 
 And it's one way of [rendering an icon](../reference/icon.md).
 
@@ -33,9 +33,30 @@ on [MDN](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/Presentation
 This component is [registered as Markdown component](../reference/markdown-component.md) and can be used in
 a [markdown page](../reference/markdown.md)
 
+## Vertical Alignement
+
+By default, the vertical alignment is set to [baseline](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/vertical-align#baseline)
+but you can change it with any [vertical-align tailwind class](https://tailwindcss.com/docs/vertical-align)
+
+```markdown
+Bottom Aligned Arrow  <Icon src="arrow-right-circle.svg" class="align-bottom" size="20"/>
+```
+
+Output:
+
+Bottom Aligned Arrow <Icon src="arrow-right-circle.svg" class="align-bottom" size="20"/>
+
 ## Why another styling?
 
 By default, styling systems set the `svg` as being a block image and not as a character.
-The icon component makes it a character.
+Example with [preflight preset](https://tailwindcss.com/docs/preflight#images-are-block-level)
 
-Example with [preflight](https://tailwindcss.com/docs/preflight#images-are-block-level)
+The icon component makes it a character by applying the following properties:
+
+```css
+.icon {
+    display: inline-block;
+    vertical-align: baseline;
+}
+```
+

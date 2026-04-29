@@ -7,7 +7,7 @@ title: Svg Component
 You can use the `Svg` component to:
 
 * [optimize](../reference/svg.md#optimization)
-* and include your svg in your document
+* and include a svg in your document
 
 The `src` attribute indicates the relative path to the file in the [images directory](../reference/directory-layout.md).
 

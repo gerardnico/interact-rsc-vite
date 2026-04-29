@@ -4,8 +4,9 @@
     "name": "Interact",
     "title": "Interact Documentation (that feels like an App)"
   },
-  "components": {
-    "Header": {
+
+  "template": {
+    "header": {
       "props": {
         "brandName": "nteract",
         "logoWidth": 24,
@@ -17,6 +18,7 @@
     "pagesDirectory": "pages",
     "imagesDirectory": "images",
     "atDirectory": ".",
-    "mdComponentsDirectory": "components/markdowns"
+    "mdComponentsDirectory": "components/markdowns",
+    "cssFile": "styles/global.css"
   }
 }

@@ -426,7 +426,7 @@ __metadata:
     bootstrap-icons: "npm:1.13.1"
     class-variance-authority: "npm:0.7.1"
     clsx: "npm:2.1.1"
-    debug: "npm:^4.4.3"
+    debug: "npm:4.4.3"
     etag: "npm:1.8.1"
     glob: "npm:13.0.6"
     hastscript: "npm:9.0.1"
@@ -448,6 +448,7 @@ __metadata:
     rsc-html-stream: "npm:0.0.7"
     shadcn: "npm:4.1.0"
     sharp: "npm:0.34.5"
+    srvx: "npm:*"
     svgo: "npm:4.0.1"
     tailwind-merge: "npm:3.5.0"
     tailwindcss: "npm:4.2.2"
@@ -462,7 +463,7 @@ __metadata:
     vitest: "npm:4.1.0"
     zod: "npm:4.3.6"
   bin:
-    interact: src/interact/cli/run.js
+    interact: src/interact/cli/dev.js
   languageName: unknown
   linkType: soft
 
@@ -3375,7 +3376,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.3.1, debug@npm:^4.3.4, debug@npm:^4.4.0, debug@npm:^4.4.1, debug@npm:^4.4.3":
+"debug@npm:4, debug@npm:4.4.3, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.3.1, debug@npm:^4.3.4, debug@npm:^4.4.0, debug@npm:^4.4.1, debug@npm:^4.4.3":
   version: 4.4.3
   resolution: "debug@npm:4.4.3"
   dependencies:
@@ -7871,6 +7872,15 @@ __metadata:
   version: 2.0.2
   resolution: "space-separated-tokens@npm:2.0.2"
   checksum: 10/202e97d7ca1ba0758a0aa4fe226ff98142073bcceeff2da3aad037968878552c3bbce3b3231970025375bbba5aee00c5b8206eda408da837ab2dc9c0f26be990
+  languageName: node
+  linkType: hard
+
+"srvx@npm:*":
+  version: 0.11.15
+  resolution: "srvx@npm:0.11.15"
+  bin:
+    srvx: bin/srvx.mjs
+  checksum: 10/db7952c8400e154b4e122b7236e165d3ef9d1db7b7abdfb45f914e3035792fe2fdd6ea3923d4907b18513ed1a851d5b381dde5ae290eb0b0b97c421236899db5
   languageName: node
   linkType: hard
 

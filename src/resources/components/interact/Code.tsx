@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useState, useEffect, useRef, useCallback} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import clsx from "clsx";
 import styles from "./code.module.css"
 import {cn} from "@/lib/utils";
@@ -8,9 +8,10 @@ import {cn} from "@/lib/utils";
 declare global {
     interface Window {
         Prism: {
-            highlightElement: (el: Element) => void;
+            highlightElement: (el: Element, async: boolean | undefined, callback: ((element: Element) => void) | undefined) => void;
             highlightAll: () => void;
             languages: Record<string, unknown>;
+            plugins: Record<string, unknown>;
         };
     }
 }
@@ -76,30 +77,6 @@ const THEME_CDN: Record<PrismTheme, string> = {
     funky: "prism-funky.min.css",
     twilight: "prism-twilight.min.css",
 };
-
-const SUPPORTED_LANGUAGES = [
-    "javascript",
-    "typescript",
-    "jsx",
-    "tsx",
-    "python",
-    "rust",
-    "go",
-    "java",
-    "cpp",
-    "c",
-    "csharp",
-    "css",
-    "html",
-    "bash",
-    "json",
-    "yaml",
-    "markdown",
-    "sql",
-    "graphql",
-    "swift",
-    "kotlin",
-];
 
 
 let prismCoreLoaded = false;
@@ -224,7 +201,16 @@ export default function Code({
         themeProp ?? (currentMode === "dark" ? "okaidia" : "default")
     );
 
-    const [currentLang, setCurrentLang] = useState(lang ? lang : getLanguageFromChildren(children) || "txt");
+    /**
+     * Hack, if we use a state for the lang,
+     * the first page is good but when navigating away with rsc to another page
+     * React keeps the lang in positional order of the first loaded page
+     * after rsc reconciliation.
+     * So if Markdown is the first Markdown lang in a code block, all other pages will have Markdown
+     * as language for the first block
+     */
+    const currentLang = lang ? lang : getLanguageFromChildren(children) || "txt";
+
     const [lineNums, setLineNums] = useState(lineNumbers);
     const [wrap, setWrap] = useState(wordWrap);
     const [copied, setCopied] = useState(false);
@@ -245,32 +231,52 @@ export default function Code({
         loadStylesheet(`${cdnBase}/themes/${THEME_CDN[currentTheme]}`, "prism-theme");
     }, [currentTheme]);
 
-    // Load Prism + plugins + language, then highlight
-    const highlight = useCallback(async () => {
-        let prismLoaded = codeRef.current && window.Prism;
-        if (!prismLoaded) {
-            await loadPrismCore();
-
-            // autoloader is needed to load the language dependencies
-            // example: tsx depends on ts
-            await loadPrismPlugin("autoloader", false);
-
-            if (lineNums) await loadPrismPlugin("line-numbers");
-        }
-
-        setReady(true);
-
-        // Small tick so DOM is painted with new class
-        requestAnimationFrame(() => {
-            if (codeRef.current) window.Prism.highlightElement(codeRef.current);
-        });
-    }, [currentLang, lineNums]);
 
     let currentHref = typeof window !== "undefined" ? window.location.href : undefined;
+    // Load Prism + plugins
     useEffect(() => {
-        highlight().then(() => "");
-    }, [highlight, currentHref]); // should trigger for every new page
 
+        const loadPrism = async () => {
+            await loadPrismCore();
+        }
+        let prismLoaded = window.Prism && window.Prism.plugins && window.Prism.plugins['autoloader'];
+        if (!prismLoaded) {
+            loadPrism()
+                // autoloader is needed to load the language dependencies
+                // example: tsx depends on ts
+                .then(() => loadPrismPlugin("autoloader", false))
+                .then(() => {
+                    if (lineNums) loadPrismPlugin("line-numbers")
+                })
+                .then(() => setReady(true));
+        } else {
+            setReady(true)
+        }
+    }, [lineNums, currentHref]); // currentHref because it should trigger for every new page
+
+    useEffect(() => {
+
+        // autoloader object init is done asynchronously
+        // so we need to retry if it's not yet loaded
+        const tryHighlight = async () => {
+            if (window.Prism?.plugins['autoloader'] == null) {
+                setTimeout(tryHighlight, 50);
+            } else {
+                // @ts-ignore
+                await window.Prism.plugins.autoloader.loadLanguages(currentLang)
+                // https://prismjs.com/docs/prism#.highlightElement
+                if (codeRef.current) { // TypeScript guard
+                    // @ts-ignore
+                    window.Prism.highlightElement(codeRef.current)
+                }
+            }
+        }
+
+        if (ready) {
+            tryHighlight().then(() => "");
+        }
+
+    }, [ready, codeRef.current, currentLang, currentHref]); // currentHref because it should trigger for every new page
 
     let code: string | null = null;
     if (typeof children === "string") {
@@ -466,19 +472,6 @@ export default function Code({
                                 ))}
                             </select>
 
-                            {/* Language picker */}
-                            <select
-                                style={selectStyle}
-                                value={currentLang}
-                                onChange={(e) => setCurrentLang(e.target.value)}
-                            >
-                                {SUPPORTED_LANGUAGES.map((l) => (
-                                    <option key={l} value={l}>
-                                        {l}
-                                    </option>
-                                ))}
-                            </select>
-
                             {/* Options */}
                             <button style={toggleBtn(lineNums)} onClick={() => setLineNums((v) => !v)}>
                                 # Lines
@@ -511,9 +504,9 @@ export default function Code({
                             <button style={copyBtnStyle} onClick={handleCopy}>{copied ? "✓ Copied" : "⎘ Copy"}</button>
                         </div>
                         <code
-                          ref={codeRef}
-                          className={`language-${currentLang}`}
-                          style={{opacity: ready ? 1 : 0.4, transition: "opacity 0.2s"}}
+                            ref={codeRef}
+                            className={`language-${currentLang}`}
+                            style={{opacity: ready ? 1 : 0.4, transition: "opacity 0.2s"}}
                         >
                         {code}
                         </code>

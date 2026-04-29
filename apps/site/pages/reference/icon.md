@@ -11,11 +11,15 @@ This page shows you how you can add icons to your [pages](page.md)
 You can add a raw svg file in the [image directory](directory-layout.md) and use it
 in a [markdown](markdown.md) page with the [Icon](../components/icon.md) element.
 
+Example:
+
 ```markdown
-<Icon src="favicon.svg"/>
+<Icon src="favicon.svg" size="24"/>
 ```
 
-<Icon src="favicon.svg"/>
+Output:
+
+<Icon src="favicon.svg" size="24"/>
 
 ### Programmatic Page
 
@@ -43,7 +47,7 @@ export default function myIcon() {
 } 
 ```
 
-On [svg file import](svg.md), the file is [optimized with Svg](../components/svg.md#optimization) and 
+On [svg file import](svg.md), the file is [optimized with Svg](../reference/svg.md#optimization) and
 [transformed as React component]()
 
 ### CSS font

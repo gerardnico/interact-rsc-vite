@@ -30,6 +30,7 @@
     height: auto;
     line-height: inherit;
 }
+
 /* svg icon */
 @utility icon {
     display: inline-block;
