@@ -341,9 +341,21 @@ class InteractConfigHandler {
         finalConfigData.svg = {
             svgo: {
                 plugins: [
-                    {name: "preset-default"},
+                    {
+                        name: "preset-default",
+                        params: {
+                            overrides: {
+                                removeUselessStrokeAndFill: {
+                                    stroke: true,
+                                    fill: true,
+                                    // Don't remove the fill:None value, by default, it will be black,
+                                    // user may also use transparent as value
+                                    removeNone: false
+                                },
+                            },
+                        },
+                    },
                     {name: 'removeTitle'},
-                    {name: 'removeDesc'},
                     {name: 'removeDoctype'},
                     {name: "removeDimensions"} // strip width and dimension and add viewBox if missing
                 ],
