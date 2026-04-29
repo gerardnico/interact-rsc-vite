@@ -3,12 +3,32 @@ import {optimize, type Config} from "svgo";
 import {getInteractConfig} from "@combostrap/interact/config";
 import {readFile} from "node:fs/promises";
 import favicon from "../../images/letter-i-3-colors.svg?raw"
+import {cn} from "@/lib/utils";
 
 export type SvgComponentProps = SVGProps<SVGSVGElement> & {
     /** SVG file path from the img directory */
     src: string;
     /** Optional SVGR config overrides */
     svgoOptions?: Config
+}
+
+function rawAttrToReact(attrString:string|undefined) {
+
+    const result:Record<string, any> = {};
+    if (attrString == null){
+        return result;
+    }
+    const regex = /(\w[\w-]*)="([^"]*)"/g;
+    for (const [, key, value] of attrString.matchAll(regex)) {
+        if (key==null){
+            continue;
+        }
+        const reactKey = key === 'class' ? 'className'
+            : key === 'for' ? 'htmlFor'
+                : key.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+        result[reactKey] = value;
+    }
+    return result;
 }
 
 function spanElementError(error: string, label: string = "SVG error") {
@@ -54,43 +74,32 @@ export default async function Svg({
             }
             svgCode = favicon;
         }
-        // https://svgo.dev/docs/preset-default/
-        // https://svgo.dev/docs/plugins/
         let defaultSvgoConfig = interactConfig.svg.svgo;
         const {data: optimisedSvg} = optimize(svgCode, {
             ...((svgoOptions as any)?.svgoConfig ?? defaultSvgoConfig),
         });
 
-        // 2. Pull the outer <svg> attributes and inner content apart so we can
-        //    render the element ourselves and forward any extra props cleanly.
+        // Pull the outer <svg> attributes and inner content apart
         const match = optimisedSvg.match(/<svg([^>]*)>([\s\S]*?)<\/svg>\s*$/i);
         if (!match) {
             return spanElementError(`SvgComponent: failed to parse SVG source in ${src}`, 'Bad Svg Syntax');
         }
 
-        const [, rawAttrs, innerContent] = match;
-        if (innerContent == null) {
+        const [, rawSvgRootAttrs, rawInnerContent] = match;
+        if (rawInnerContent == null) {
             return spanElementError(`SvgComponent: no svg content found in ${src}`, 'No content');
         }
 
-        // Extract the attributes we want to preserve from the original SVG tag.
-        let viewBox
-        let xmlns
-        if (rawAttrs != null) {
-            viewBox = rawAttrs.match(/viewBox="([^"]*)"/)?.[1];
-            xmlns = rawAttrs.match(/xmlns="([^"]*)"/)?.[1] ?? "http://www.w3.org/2000/svg";
-        }
+        // Transform the svg root attributes string in react attributes
+        let reactRawAttrs = rawAttrToReact(rawSvgRootAttrs);
 
-        // 3. Render as a plain <svg> RSC — no client bundle, no hydration.
-        //    Caller props (width, height, fill, className, etc.) override defaults.
         return (
             <svg
-                xmlns={xmlns}
-                viewBox={viewBox}
-                aria-hidden="true"
+                {...reactRawAttrs}
                 {...svgProps}
+                className={cn(reactRawAttrs['className'],svgProps['className'])}
                 // Safe: source is always a file from the server's own filesystem.
-                dangerouslySetInnerHTML={{__html: innerContent}}
+                dangerouslySetInnerHTML={{__html: rawInnerContent}}
             />
         );
 

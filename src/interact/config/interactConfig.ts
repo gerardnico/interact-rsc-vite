@@ -35,6 +35,8 @@ export type InteractConfig = {
         interactResourcesDirectory: string
     }
     svg: {
+        // https://svgo.dev/docs/preset-default/
+        // https://svgo.dev/docs/plugins/
         svgo: Config
     }
 }
