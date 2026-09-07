@@ -7,8 +7,15 @@ import {Button} from "@/components/ui/button.tsx"
 import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {useSearchOpenState, useSearchProvider} from "@/components/contexts/SearchContext.tsx";
 import type {SearchResult} from "@combostrap/interact/types";
+import type {ButtonHTMLAttributes} from "react";
+import {cn} from "@/lib/utils.ts";
 
-export default function SearchBox() {
+export interface SearchBoxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+
+    placeholder?: string;
+}
+
+export default function SearchBox({className, children, ...props}: SearchBoxProps) {
     /**
      * Global open state so that we can see if there is already a search box open
      * so that a ctrl+k binding will open the dialogue only once
@@ -95,12 +102,13 @@ export default function SearchBox() {
                 render={
                     <Button
                         variant="outline"
-                        className="relative w-full max-w-sm justify-start text-muted-foreground cursor-pointer"
+                        className={cn("relative w-full max-w-64 justify-start text-muted-foreground cursor-pointer", className)}
+                        {...props}
                     >
                         <Search className="mr-2 h-4 w-4"/>
-                        Search docs...
+                        Search ...
                         <kbd
-                            className="pointer-events-none absolute right-2 top-2 hidden h-5 select-none items-center gap-1 rounded px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                            className="pointer-events-none absolute right-2 top-2 h-5 select-none items-center gap-1 rounded px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
                             <span className="text-xs">⌘</span>K
                         </kbd>
                     </Button>
@@ -156,7 +164,7 @@ export default function SearchBox() {
                                             value={r.url}
                                             onSelect={() => {
                                                 history.pushState(null, '', r.url)
-                                                setOpen(false)
+                                                onOpenChange()
                                             }}
                                             className="flex flex-col items-start gap-1"
                                         >
