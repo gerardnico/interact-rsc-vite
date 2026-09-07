@@ -6,6 +6,7 @@ description: The outline is the structure of the document represented by the `he
 The outline is the structure of the document represented by the `headings`.
 
 It helps:
+
 * creating the [Table of Content](#table-of-content)
 * and [styling the content heading and table of content entries](#numbering-style)
 
@@ -23,13 +24,15 @@ The numbering is applied:
 * on the headings (`h1` to `h6`)
 * and on the [Table of Content (Toc)](../components/toc.md)
 
-| Name               | Default   | Desc                               |                               
-|--------------------|-----------|------------------------------------|
-| enabled            | `true`    | Is outline numbering enabled       |
-| suffix             | ` - `     | The suffix of the numbering        |
-| counterSeparator   | `.`       | The separator between each counter |
-| counterStyleLevel2 | `decimal` | The style of the level 2 counter   | 
-| counterStyleLevel3 | `decimal` | The style of the level 3 counter   | 
-| counterStyleLevel4 | `decimal` | The style of the level 4 counter   | 
-| counterStyleLevel5 | `decimal` | The style of the level 5 counter   | 
-| counterStyleLevel6 | `decimal` | The style of the level 6 counter   | 
+| Name               | Default   | Desc                                    |                               
+|--------------------|-----------|-----------------------------------------|
+| enabled            | `true`    | Is outline numbering enabled            |
+| suffix             | ` - `     | The suffix of the numbering             |
+| counterSeparator   | `.`       | The separator between each counter      |
+| counterStyleLevel2 | `decimal` | The style of the level 2 counter        | 
+| counterStyleLevel3 | `decimal` | The style of the level 3 counter        | 
+| counterStyleLevel4 | `decimal` | The style of the level 4 counter        | 
+| counterStyleLevel5 | `decimal` | The style of the level 5 counter        | 
+| counterStyleLevel6 | `decimal` | The style of the level 6 counter        |
+| contentSelector    | `main`    | The CSS selector where the headings are |
+| tocSelector        | `.toc`    | The CSS selector to select the toc      |

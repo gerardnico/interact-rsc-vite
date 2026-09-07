@@ -69,9 +69,9 @@ Because we normalize the layout key, you can use casing in your file name and in
 
 ### Reuse a layout
 
-If you want to make a small changes, the easiest is to copy the actual interact layout.
+If you want to make a small changes, the easiest way is to copy the actual interact layout.
 They are all under
-the [layouts components directory](https://github.com/combostrap/interact/tree/main/src/interact/components)
+the [layouts components directory (./src/resources/components/layouts)](https://github.com/combostrap/interact/tree/main/packages/interact/src/resources/components/layouts)
 
 ### Use it
 

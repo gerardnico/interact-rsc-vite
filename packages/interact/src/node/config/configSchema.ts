@@ -130,6 +130,8 @@ const container = z.object({
 const counterStyleSchema = z.enum(['decimal', 'decimal-leading-zero', 'arabic-indic', 'upper-armenian', 'lower-armenian', 'bengali', 'cambodian/khmer', 'cjk-decimal', 'devanagari', 'georgian', 'gujarati', 'gurmukhi', 'hebrew', 'kannada', 'lao', 'malayalam', 'mongolian', 'myanmar', 'oriya', 'persian', 'lower-roman', 'upper-roman', 'tamil', 'telugu', 'thai', 'tibetan', 'lower-alpha', 'upper-alpha', 'lower-greek', 'hiragana', 'hiragana-iroha', 'katakana', 'katakana-iroha']);
 const outlineNumberingSchema = z.object({
     enabled: z.boolean().describe("Is outline numbering enabled").default(true),
+    contentSelector: z.string().describe("The css selector used to select the main content").default("main"),
+    tocSelector: z.string().describe("The css selector used to select the toc").default(".toc"),
     suffix: z.string().describe("The suffix of the numbering").default(" - "),
     counterSeparator: z.string().describe("The separator for each counter").default("."),
     counterStyleLevel2: counterStyleSchema.describe("The style of the level 2 counter").default("decimal"),
