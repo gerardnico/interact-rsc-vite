@@ -4,6 +4,6 @@ declare module 'interact:client-contexts' {
 
     import type {ComponentType} from "react";
 
-    export function getContextComponents(): ComponentType<{ children: ReactNode }>[]
+    export function getContextComponents(): Record<string,ComponentType<{ children: ReactNode }>>
 
 }

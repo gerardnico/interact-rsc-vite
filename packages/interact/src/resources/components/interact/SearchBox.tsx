@@ -5,52 +5,20 @@ import {Search} from "lucide-react"
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,} from "@/components/ui/command.tsx"
 import {Button} from "@/components/ui/button.tsx"
 import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog.tsx";
-import type {PagefindInstance} from "../../../node/search/pagefind-search";
+import {useSearchProvider} from "@/components/contexts/SearchContext.tsx";
+import type {SearchResult} from "@combostrap/interact/types";
 
 
-type ResultItem = {
-    id: string
-    url: string
-    title: string
-    excerpt: string
-}
 
-let pagefind: PagefindInstance | null = null
-
-// ie .interact/search
-declare const __SEARCH_RELATIVE_BASE_URL__: string;
-
-async function loadPagefind(): Promise<PagefindInstance> {
-
-    if (pagefind == null) {
-        let baseurl = import.meta.env.BASE_URL;
-        let relativeBasePath = `${__SEARCH_RELATIVE_BASE_URL__}/pagefind.js`;
-        let pagefindUrl
-        if (baseurl != "/") {
-            pagefindUrl = `${baseurl}/${relativeBasePath}`
-        } else {
-            pagefindUrl = `${baseurl}${relativeBasePath}`
-        }
-        pagefind = await import(/* @vite-ignore */ pagefindUrl) as PagefindInstance;
-        await pagefind.options({
-            highlightParam: "highlight",
-            baseUrl: baseurl,
-        });
-    }
-    return pagefind
-}
 
 export function SearchBox() {
     const [open, setOpen] = React.useState(false)
     const [query, setQuery] = React.useState("")
-    const [results, setResults] = React.useState<ResultItem[]>([])
+    const [results, setResults] = React.useState<SearchResult[]>([])
     const [loading, setLoading] = React.useState(false)
     const [activeValue, setActiveValue] = React.useState<string>('')
     const inputRef = React.useRef<HTMLInputElement>(null)
-
-    React.useEffect(() => {
-        if (open) loadPagefind().then(() => null)
-    }, [open])
+    const searchProvider = useSearchProvider();
 
     React.useEffect(() => {
         if (!query) {
@@ -62,31 +30,15 @@ export function SearchBox() {
         setLoading(true)
 
         const run = async () => {
-            const pagefind = await loadPagefind()
-            const search = await pagefind.search(query)
-            if (cancelled) return
+            if (searchProvider == null) {
+                return;
+            }
 
-            const items = await Promise.all(
-                search.results.slice(0, 8).map(async (r) => {
-                    const data = await r.data()
-                    function removeHtmlExtension(input:string) {
-                        const [pathAndQuery = '', hash] = input.split('#');
-                        const [path = '', query] = pathAndQuery.split('?');
-                        const newPath = path.replace(/\.html$/i, '');
-                        return newPath + (query ? '?' + query : '') + (hash ? '#' + hash : '');
-                    }
-                    let url = removeHtmlExtension(data.url);
-                    return {
-                        id: r.id,
-                        url: url,
-                        title: data.meta?.["title"] ?? data.url,
-                        excerpt: data.excerpt,
-                    }
-                })
-            )
-
+            const items = await searchProvider.search(query,{
+                limit: 8
+            })
             if (!cancelled) {
-                setResults(items)
+                setResults(items.results)
                 setLoading(false)
             }
         }

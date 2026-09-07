@@ -1,5 +1,5 @@
 /**
- * Entry point of the App
+ * Entry point of the App on the server side
  * so that this CSS are first and loaded before any components
  * Because in Rsc environment, the imported CSS are loaded first
  * and may interfere with the CSS layer if seen first

@@ -113,7 +113,14 @@ async function main() {
      * Context wrapping
      */
     let root = (<BrowserRoot/>)
-    for (const ContextComponent of Object.values(getContextComponents())) {
+    const contextComponents = getContextComponents();
+    // Sort in descending order so that the components that are first in ascending order becomes the root of the tree
+    const contextKeysDescendingOrder = Object.keys(contextComponents).sort((a, b) => b.localeCompare(a));
+    for (const contextComponentKey of contextKeysDescendingOrder) {
+        const ContextComponent = contextComponents[contextComponentKey];
+        if (ContextComponent == undefined) {
+            continue
+        }
         root = (
             <ContextComponent>
                 {root}

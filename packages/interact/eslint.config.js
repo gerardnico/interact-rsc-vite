@@ -18,7 +18,8 @@ export default [
             '@typescript-eslint/no-explicit-any': 'off', // or 'warn' to keep visibility without failing
             'prefer-const': 'warn',
             'prefer-spread': 'warn',
-            '@typescript-eslint/no-unused-vars': 'warn',
+            // ignoreRestSiblings: avoid warning on `page` or `context` variable in this expression: `{page, context, ...props}: AsideProps`
+            '@typescript-eslint/no-unused-vars': ['warn', { ignoreRestSiblings: true }],
             '@typescript-eslint/ban-ts-comment': 'warn',
             '@typescript-eslint/no-this-alias': 'warn',
             '@typescript-eslint/no-unsafe-function-type': 'warn',

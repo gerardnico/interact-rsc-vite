@@ -30,7 +30,7 @@ export const nav = Object.entries(pages)
 
 export type AsideProps = React.HTMLAttributes<HTMLElement> & LayoutProps
 
-// @ts-ignore -- exported
+
 export default function Aside({page, context, ...props}: AsideProps) {
     const interactConfig = getInteractConfig();
     const data = getPagesTree(interactConfig.paths.pagesDirectory).children ?? []

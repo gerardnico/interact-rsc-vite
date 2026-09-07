@@ -22,14 +22,16 @@ export interface SearchResult {
      * (Generally with the mark element to highlight the
      * found words)
      */
-    excerpt?: string;
+    excerpt: string;
     /**
      * Relative URL so that the search can be tested
      * on localhost (May have an anchor to a section)
      */
-    url?: string;
-    /** Relevance score */
-    score?: number;
+    url: string;
+    /**
+     * Relevance score
+     */
+    score: number;
 }
 
 export interface SearchResponse {

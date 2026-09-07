@@ -11,7 +11,7 @@
 /// <reference types="../node/pages/interactPageModules.d.ts" />
 /// <reference types="../node/vite/middlewareProviderModule" />
 
-import type {SearchProvider} from "./searchProvider";
+import type {SearchOptions, SearchResult, SearchResponse, SearchProvider } from "./searchProvider";
 import type {InteractMarkdownConfig} from "../node/markdown/conf/markdownConfig";
 import type {MiddlewareHandler, Middleware} from "../node/middlewareEngine/interactMiddleware.d.ts"
 import type {Page, Frontmatter, TocNode} from "../node/pages/interactPage";
@@ -34,7 +34,10 @@ export {
     Frontmatter,
     TocNode,
     PageNode,
-    SearchProvider
+    SearchOptions,
+    SearchResult,
+    SearchResponse,
+    SearchProvider,
 }
 
 

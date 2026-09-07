@@ -3,19 +3,46 @@ title: Context components
 description: A context component is a component that wraps the Browser React Application
 ---
 
-A `context` is server or client component that wraps the Interact server or client Application.
+`context` component that wraps the
+
+
+Interact server or client Application.
 
 The following React component may be defined as `context` component:
 
-* [Context Provider](https://react.dev/learn/passing-data-deeply-with-context) (ie tracker, url state manager, ...)
-* Search Provider
+* [Client Context Provider](https://react.dev/learn/passing-data-deeply-with-context) (ie tracker, url state
+  manager, ...)
 * [Error Boundaries](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary)
 
-## Example
+## Example: Client Tracker
 
-### Default Client Error Boundary
+With the [Posthog Tracker](https://posthog.com/docs/error-tracking/installation/react), you would create the following
+file `PostHogContext.tsx` in the [contexts directory](directory-layout.md#configuration) - default to
+`src/components/contexts`
 
-This is the minimal `InteractContext` component used by [default](#default)
+```tsx
+import {PostHogProvider} from '@posthog/react'
+
+export default function PostHogContext({children}: { children: ReactNode }) {
+    let apiKey = import.meta.env.INTERACT_POSTHOG_API_KEY
+    if (apiKey == null || apiKey == '') {
+        console.error("The INTERACT_POSTHOG_API_KEY env is not defined.")
+        return children;
+    }
+    return (
+        <PostHogProvider apiKey={"xxx"}>
+            {children}
+        </PostHogProvider>
+    )
+}
+```
+
+## Default
+
+The default one can be seen in
+the [main/src/resources/components/contexts directory](https://github.com/combostrap/interact/tree/main/src/resources/components/contexts)
+
+This is the minimal `InteractContext` component
 
 ```tsx
 export default function InteractContext({children}: { children: ReactNode }) {
@@ -29,31 +56,6 @@ export default function InteractContext({children}: { children: ReactNode }) {
 }
 ```
 
-### Example Client Tracker
-
-With the [Posthog tracker](https://posthog.com/docs/error-tracking/installation/react), you would create the following
-file `PostHogContext.tsx` in the [contexts directory](directory-layout.md#configuration) - default to
-`src/components/contexts`
-
-```tsx
-import {PostHogProvider} from '@posthog/react'
-
-// noinspection JSUnusedGlobalSymbols
-export default function PostHogContext({children}: { children: ReactNode }) {
-    return (
-        <PostHogProvider apiKey={"xxx"}>
-            {children}
-        </PostHogProvider>
-    )
-}
-```
-
-
-## Default
-
-The default one can be seen in
-the [main/src/resources/components/contexts directory](https://github.com/combostrap/interact/tree/main/src/resources/components/contexts)
-
 We provide a standard `InteractContext` with an error boundary that you may override.
 For instance, you would override it by creating your own `InteractContext` component at
 `@/components/contexts/InteractContext.tsx`
@@ -64,8 +66,12 @@ They:
 
 * are considered a [client component unless their name include server](#server-vs-client-context)
 * accepts no props (but you can [inject env](env.md#env-value-injection-with-importmetaenv))
-* should export the component as default
+* should export the component as `default`
 
+```javascript
+export default function MyContextProvider({children}: { children: ReactNode }) {
+}
+```
 
 ## Server vs Client Context
 
@@ -82,7 +88,7 @@ They are considered a [client component](rsc.md#client-component) unless their n
 
 ```bash
 interact config -f components
-# to select only the head component with yq
+# to select only the context component with yq
 interact config -f components | yq 'to_entries | map(select(.value.type == "context")) | from_entries'
 ```
 
@@ -96,8 +102,8 @@ InteractContext:
 
 ## Registration / Default Directory
 
-
-To register a context component automatically, you can save it in the [contexts directory](../reference/directory-layout.md)
+To register a context component automatically, you can save it in
+the [contexts directory](../reference/directory-layout.md)
 (By default, `src/components/contexts`)
 
 You can also register it manually by:

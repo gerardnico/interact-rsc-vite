@@ -3,7 +3,7 @@
  * It works, but you need to import/load the bundle each time
  */
 import path from "node:path";
-import type {PagefindInstance} from "./pagefind-search.js";
+import type {PagefindInstance} from "./pagefind-search";
 
 import {readFile} from "node:fs/promises";
 import {fileURLToPath} from "node:url";
@@ -29,7 +29,7 @@ globalThis.fetch = async (input, init) => {
 
 // Point directly at the generated bundle on disk
 const bundlePath = path.resolve("./sites/interact/.interact/html-cache/.interact/search");
-const pagefind: PagefindInstance = await import(`file://${bundlePath}/pagefind.js`);
+const pagefindNode: PagefindInstance = await import(`file://${bundlePath}/pagefind.js`);
 
 
 // noinspection UnnecessaryLocalVariableJS
@@ -39,7 +39,7 @@ const pagefind: PagefindInstance = await import(`file://${bundlePath}/pagefind.j
  * Check loadEntry in the pagefind.js bundle
  */
 const basePath = bundlePath;
-await pagefind.options({
+await pagefindNode.options({
     basePath: `file://${basePath}/`,
     noWorker: true
 });
@@ -48,9 +48,9 @@ await pagefind.options({
  * Load the data, index
  * found in the pagefind-entry.json file (hard coded)
  */
-await pagefind.init();
+await pagefindNode.init();
 
-const search = await pagefind.search("getting started", {
+const search = await pagefindNode.search("getting started", {
     verbose: true
 });
 const results = await Promise.all(

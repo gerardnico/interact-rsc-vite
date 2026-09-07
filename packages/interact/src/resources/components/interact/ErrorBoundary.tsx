@@ -1,86 +1,48 @@
-'use client'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
 
-import React from 'react'
-
-// ErrorBoundary to handle errors globally on browser
-// noinspection JSUnusedGlobalSymbols - imported via virtual module
-export default function ErrorBoundary(props: { children?: React.ReactNode }) {
-  return (
-    <ErrorBoundaryClass errorComponent={DefaultGlobalErrorPage}>
-      {props.children}
-    </ErrorBoundaryClass>
-  )
-}
-
-// https://github.com/vercel/next.js/blob/33f8428f7066bf8b2ec61f025427ceb2a54c4bdf/packages/next/src/client/components/error-boundary.tsx
-// https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
-class ErrorBoundaryClass extends React.Component<{
-  children?: React.ReactNode
-  errorComponent: React.FC<{
-    error: Error
+export type FallBackProps = {
+    error: object,
     reset: () => void
-  }>
-}> {
-  state: { error?: Error } = {}
-
-  static getDerivedStateFromError(error: Error) {
-    return { error }
-  }
-
-  reset = () => {
-    this.setState({ error: null })
-  }
-
-  render() {
-    const error = this.state.error
-    if (error) {
-      return <this.props.errorComponent error={error} reset={this.reset} />
-    }
-    return this.props.children
-  }
+}
+type ErrorBoundaryProps = {
+    fallback: React.FC<FallBackProps>,
+    children: React.ReactNode
 }
 
-// https://github.com/vercel/next.js/blob/677c9b372faef680d17e9ba224743f44e1107661/packages/next/src/build/webpack/loaders/next-app-loader.ts#L73
-// https://github.com/vercel/next.js/blob/677c9b372faef680d17e9ba224743f44e1107661/packages/next/src/client/components/error-boundary.tsx#L145
-// https://github.com/vercel/next.js/blob/473ae4b70dd781cc8b2620c95766f827296e689a/packages/next/src/client/components/builtin/global-error.tsx
-function DefaultGlobalErrorPage(props: { error: Error; reset: () => void }) {
-  return (
-    <html>
-      <head>
-        <title>Interact Unexpected Error</title>
-      </head>
-      <body
-        style={{
-          fontFamily:
-            'system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"',
-          height: '100vh',
-          margin: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          placeContent: 'center',
-          placeItems: 'center',
-          fontSize: '16px',
-          fontWeight: 400,
-          lineHeight: '28px',
-        }}
-      >
-        <div>Interact Caught an unexpected error</div>
-        <pre>
-          Error:{' '}
-          {import.meta.env.DEV && 'message' in props.error
-            ? props.error.message
-            : '(Unknown)'}
-        </pre>
-        <button
-          onClick={() => {
-            React.startTransition(() => {
-              props.reset()
-            })
-          }}
-        >
-          Reset
-        </button>
-      </body>
-    </html>
-  )
+type ErrorBoundaryState = { error?: object };
+
+export default class ErrorBoundary extends React.Component<ErrorBoundaryProps> {
+    constructor(props: ErrorBoundaryProps) {
+        super(props);
+        this.state = {} as ErrorBoundaryState;
+    }
+    state: { error?: object } = {}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static getDerivedStateFromError(error: any) {
+        // Update state so the next render will show the fallback UI.
+        return {error: error};
+    }
+    reset = () => {
+        this.setState({ error: null })
+    }
+
+    componentDidCatch(error: Error, info: any) {
+        // Example "componentStack":
+        //   in ComponentThatThrows (created by App)
+        //   in ErrorBoundary (created by App)
+        //   in div (created by App)
+        //   in App
+        // logErrorToMyService(error, info.componentStack);
+        console.log(error.message, info.componentStack)
+    }
+
+    render() {
+        const state = this.state as ErrorBoundaryState;
+        const props = this.props as ErrorBoundaryProps;
+        if (state.error !== undefined) {
+            return <props.fallback error={state.error} reset={this.reset}/>;
+        }
+        return props.children;
+    }
 }
