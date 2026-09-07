@@ -1,17 +1,19 @@
 "use client"
 
 import * as React from "react"
-import {Search} from "lucide-react"
+import {Search, X} from "lucide-react"
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,} from "@/components/ui/command.tsx"
 import {Button} from "@/components/ui/button.tsx"
 import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog.tsx";
-import {useSearchProvider} from "@/components/contexts/SearchContext.tsx";
+import {useSearchOpenState, useSearchProvider} from "@/components/contexts/SearchContext.tsx";
 import type {SearchResult} from "@combostrap/interact/types";
 
-
-
-
-export function SearchBox() {
+export default function SearchBox() {
+    /**
+     * Global open state so that we can see if there is already a search box open
+     * so that a ctrl+k binding will open the dialogue only once
+     */
+    const [globalOpen, setGlobalOpen] = useSearchOpenState()
     const [open, setOpen] = React.useState(false)
     const [query, setQuery] = React.useState("")
     const [results, setResults] = React.useState<SearchResult[]>([])
@@ -21,32 +23,38 @@ export function SearchBox() {
     const searchProvider = useSearchProvider();
 
     React.useEffect(() => {
+
         if (!query) {
             setResults([])
             return
         }
 
-        let cancelled = false
+        const controller = new AbortController();
         setLoading(true)
 
+        /**
+         * Debounced run
+         */
         const run = async () => {
             if (searchProvider == null) {
                 return;
             }
-
-            const items = await searchProvider.search(query,{
-                limit: 8
+            const items = await searchProvider.search(query, {
+                limit: 8,
+                abortSignal: controller.signal,
             })
-            if (!cancelled) {
-                setResults(items.results)
-                setLoading(false)
-            }
+
+            setResults(items.results)
+            setLoading(false)
         }
 
-        const debounce = setTimeout(run, 150)
+        const debounce = setTimeout(run, 500)
+
+        // clean up the effect (when the component unmounts or the query value change)
+        // current fetch is then stop if the query is empty
         return () => {
-            cancelled = true
             clearTimeout(debounce)
+            controller.abort()
         }
     }, [query])
 
@@ -54,23 +62,40 @@ export function SearchBox() {
         const handler = (e: KeyboardEvent) => {
             if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault()
-                setOpen((o) => !o)
+                onOpenChange()
             }
         }
         document.addEventListener("keydown", handler)
         return () => document.removeEventListener("keydown", handler)
     }, [])
 
+    /**
+     * If there is 2 SearchBox in the tree, we avoid
+     * to open them twice
+     */
+    function onOpenChange() {
+        /**
+         * If the local open is not the same as the global,
+         * this is not the component that have opened it,
+         * we return
+         */
+        if (open != globalOpen) {
+            return
+        }
+        setOpen((o) => !o)
+        setGlobalOpen((o) => !o)
+    }
+
 
     const kbdClass = "inline-flex h-5 min-w-5 items-center justify-center rounded bg-muted px-1 font-mono text-xs"
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogTrigger
                 render={
                     <Button
                         variant="outline"
-                        className="relative w-full max-w-sm justify-start text-muted-foreground"
+                        className="relative w-full max-w-sm justify-start text-muted-foreground cursor-pointer"
                     >
                         <Search className="mr-2 h-4 w-4"/>
                         Search docs...
@@ -91,15 +116,26 @@ export function SearchBox() {
                     value={activeValue}
                     onValueChange={setActiveValue}
                 >
-                    <CommandInput
-                        ref={inputRef}
-                        placeholder="Search..."
-                        value={query}
-                        onValueChange={setQuery}
-                        className={"bg-none"}
-                    />
+                    <div className="relative">
+                        <CommandInput
+                            ref={inputRef}
+                            placeholder="Search..."
+                            value={query}
+                            onValueChange={setQuery}
+                            className={"bg-none pr-8"}
+                        />
+                        {query && (
+                            <button
+                                type="button"
+                                onClick={() => setQuery("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100"
+                            >
+                                <X className="h-4 w-4"/>
+                            </button>
+                        )}
+                    </div>
                     <CommandList>
-                        {loading && (
+                        {loading && query && (
                             <div className="py-6 text-center text-sm text-muted-foreground">
                                 Searching...
                             </div>

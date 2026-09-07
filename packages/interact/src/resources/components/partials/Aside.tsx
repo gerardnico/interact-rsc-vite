@@ -3,7 +3,7 @@ import React from "react";
 import {getInteractConfig} from "../../../node/config/interactConfig.ts";
 import {getPagesTree} from "../../rsc/server/handler.tsx";
 import AsideResponsive from "@/components/interact/AsideResponsive.tsx";
-import {SearchBox} from "@/components/interact/SearchBox.tsx";
+import SearchBox from "@combostrap/interact/components/SearchBox";
 import Tree from "@/components/interact/Tree.tsx";
 
 const pages = import.meta.glob<Page<Frontmatter>>(
