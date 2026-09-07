@@ -44,7 +44,7 @@ export default async function Header(layoutProps: LayoutProps) {
     // @ts-ignore
     return (
         <header className={"border-b border-gray-200 py-2 print:hidden"}>
-            <NavBar className={cn(containerClass,"relative h-8")}>
+            <NavBar className={cn(containerClass,"relative min-h-8")}>
                 {/* Brand - flex because otherwise, the brand name goes next line */}
                 <a className="link-primary flex no-underline"
                    href={homeUrl}

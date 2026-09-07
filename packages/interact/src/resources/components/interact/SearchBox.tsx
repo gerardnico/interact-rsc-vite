@@ -6,9 +6,10 @@ import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandL
 import {Button} from "@/components/ui/button.tsx"
 import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {useSearchOpenState, useSearchProvider} from "@/components/contexts/SearchContext.tsx";
-import type {SearchResult} from "@combostrap/interact/types";
+
 import type {ButtonHTMLAttributes} from "react";
 import {cn} from "@/lib/utils.ts";
+import type {SearchResult} from "interact:search-provider";
 
 export interface SearchBoxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
@@ -142,7 +143,7 @@ export default function SearchBox({className, children, ...props}: SearchBoxProp
                             </button>
                         )}
                     </div>
-                    <CommandList>
+                    <CommandList className={"scrollbar-thin max-h-[calc(100vh-(var(--spacing)*50))]"}>
                         {loading && query && (
                             <div className="py-6 text-center text-sm text-muted-foreground">
                                 Searching...

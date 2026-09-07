@@ -1,10 +1,11 @@
 'use client'
 
 import React, {createContext, type ReactNode, useContext} from "react";
-import type {SearchProvider} from "@combostrap/interact/types";
-import PageFind from "@/search/pagefind/pagefind-browser.ts";
+import type {SearchProviderInterface} from "interact:search-provider";
+import SearchProvider from "interact:search-provider";
 
-const SearchProviderContext = createContext<SearchProvider | null>(null);
+
+const SearchProviderContext = createContext<SearchProviderInterface | null>(null);
 type OpenState = [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 const SearchOpenContext = React.createContext<OpenState>([false, () => {
 }])
@@ -12,6 +13,9 @@ const SearchOpenContext = React.createContext<OpenState>([false, () => {
 export function useSearchOpenState(): OpenState {
     const ctx = React.useContext(SearchOpenContext)
     if (!ctx) {
+        /**
+         * In server rendering
+         */
         if (typeof window === 'undefined') {
             return [
                 false,
@@ -19,7 +23,7 @@ export function useSearchOpenState(): OpenState {
                 }
             ]
         }
-        throw new Error("useSearchOpen must be used within CommandListProvider")
+        throw new Error("useSearchOpenState must be used within SearchOpenContext")
     }
     return ctx
 }
@@ -27,6 +31,9 @@ export function useSearchOpenState(): OpenState {
 export function useSearchProvider() {
     const ctx = useContext(SearchProviderContext);
     if (!ctx) {
+        /**
+         * In server rendering
+         */
         if (typeof window === 'undefined') {
             return null
         }
@@ -41,7 +48,7 @@ export default function SearchContext({children}: {
     children: ReactNode
 }) {
     const openState = React.useState(false)
-    const provider = new PageFind();
+    const provider = new SearchProvider();
 
     return (
         <SearchProviderContext.Provider value={provider}>

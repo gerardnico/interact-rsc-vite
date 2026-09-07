@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added a [SearchBox](src/resources/components/interact/SearchBox.tsx) (URL preview, command box, ...)
 * Added eslint to check that the node directory does not import module via the `@combostrap` import syntax
 * Added CSS selectors options to select the content and toc in the [outline Numbering Stylesheet](./src/node/vite/outlineNumberingStylesheet.ts)
+* Created Search Provider (plugin and module)
 
 ## [0.1.1] - 2026-06-18
 

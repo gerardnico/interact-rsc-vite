@@ -30,7 +30,7 @@ export default function NavBarCollapse({children, className, ...props}: React.HT
             <button
                 id="nav-toggle"
                 style={toggleButton}
-                className="md:hidden flex flex-col"
+                className="md:hidden flex flex-col min-h-8"
                 aria-label="Toggle navigation"
                 onClick={() => setIsOpen(!isOpen)}
             >

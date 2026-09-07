@@ -1,7 +1,13 @@
 "use client"
 
-import type {SearchOptions, SearchProvider, SearchResponse, SearchResult,} from "../../../types";
+
 import type {PagefindInstance} from "./pagefind-search";
+import type {
+    SearchOptions,
+    SearchProviderInterface,
+    SearchResponse,
+    SearchResult
+} from "interact:search-provider";
 
 let pagefindBrowser: PagefindInstance | null = null
 
@@ -30,7 +36,7 @@ async function loadPagefind(): Promise<PagefindInstance> {
 
 
 // noinspection JSUnusedGlobalSymbols
-export default class PageFind implements SearchProvider {
+export default class PageFind implements SearchProviderInterface {
 
 
     search = async (query: string, opts?: SearchOptions): Promise<SearchResponse> => {

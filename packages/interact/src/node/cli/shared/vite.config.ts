@@ -33,6 +33,7 @@ import {publicHandler} from "../../vite/publicHandler.js";
 import viteContextServerComponentsProvider from "../../vite/contextServerProvider.js";
 import {debuglog} from "node:util";
 import vitePluginPagefind from "../../vite/vite-plugin-pagefind.js";
+import viteSearchProvider from "../../vite/vite-search-provider.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -392,7 +393,9 @@ export async function resolveViteConfig(
             // resources handling
             publicHandler({sourceDir: interactConfigTyped.paths.publicDirectory}),
             // site indexing
-            vitePluginPagefind({siteRelativeBase: searchRelativeBaseUrl})
+            vitePluginPagefind({siteRelativeBase: searchRelativeBaseUrl}),
+            // search provider
+            viteSearchProvider()
         ],
     }
 }
