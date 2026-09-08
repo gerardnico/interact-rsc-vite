@@ -34,7 +34,7 @@ async function generateImage({masterFilePath, dryRun, outputDirectory, interactC
     // This is the icon that will be transformed into the various favicon files
     console.log(`  * Loading master icon file`)
     const content = fs.readFileSync(masterFilePath, 'utf8');
-    let svg = stringToSvg(content, imageAdapter);
+    const svg = stringToSvg(content, imageAdapter);
 
     const masterIcon: MasterIcon = {icon: svg}
 
@@ -49,7 +49,7 @@ async function generateImage({masterFilePath, dryRun, outputDirectory, interactC
                     brightness: 1
                 },
                 darkIconType: "none",
-                // @ts-ignore
+                // @ts-expect-error
                 darkIconTransformation: null
             },
             touch: {

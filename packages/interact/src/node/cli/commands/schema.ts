@@ -15,7 +15,7 @@ export async function schema({confPath}: SchemaActionOptions): Promise<void> {
     try {
         const interactConfigTyped = createInteractConfig(confPath);
         outputDir = interactConfigTyped.paths.runtimeDirectory
-    } catch (e) {
+    } catch (_e) {
         // as of now, the configuration file may have an error
         outputDir = resolve(process.cwd(), ".interact")
     }

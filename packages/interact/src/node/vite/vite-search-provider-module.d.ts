@@ -42,11 +42,21 @@ declare module 'interact:search-provider' {
     }
 
     export interface SearchProviderInterface {
+        /**
+         * Hook that is executed when the dialogue open
+         * (to load a JavaScript module)
+         * It must be idempotent to not execute uit each time
+         */
+        onOpen: () => Promise<Void>;
+        /**
+         * A search
+         */
         search: (query: string, opts?: SearchOptions) => Promise<SearchResponse>;
     }
 
     // noinspection JSUnusedGlobalSymbols - used
     export default class SearchProvider implements SearchProviderInterface {
+        onOpen: () => Promise<Void>;
         search: (query: string, opts?: SearchOptions) => Promise<SearchResponse>;
     }
 

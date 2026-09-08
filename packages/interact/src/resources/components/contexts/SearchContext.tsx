@@ -47,12 +47,18 @@ export function useSearchProvider() {
 export default function SearchContext({children}: {
     children: ReactNode
 }) {
-    const openState = React.useState(false)
+    const [open, setOpen] = React.useState(false)
     const provider = new SearchProvider();
+
+    React.useEffect(() => {
+        if (open && ('onOpen' in provider)) {
+            provider.onOpen().then(() => null)
+        }
+    }, [open])
 
     return (
         <SearchProviderContext.Provider value={provider}>
-            <SearchOpenContext.Provider value={openState}>
+            <SearchOpenContext.Provider value={[open, setOpen]}>
                 {children}
             </SearchOpenContext.Provider>
         </SearchProviderContext.Provider>

@@ -38,6 +38,9 @@ async function loadPagefind(): Promise<PagefindInstance> {
 // noinspection JSUnusedGlobalSymbols
 export default class PageFind implements SearchProviderInterface {
 
+    onOpen() {
+        return loadPagefind();
+    }
 
     search = async (query: string, opts?: SearchOptions): Promise<SearchResponse> => {
         const {limit = 10, abortSignal} = opts ?? {};
