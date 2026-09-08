@@ -46,13 +46,17 @@ export default class PageFind implements SearchProviderInterface {
         const {limit = 10, abortSignal} = opts ?? {};
 
         if (abortSignal?.aborted) {
-            throw new DOMException("Search aborted", "AbortError");
+            return {
+                ok: false,
+                error: "Search aborted",
+                status: 400,
+            }
         }
 
         const trimmedQuery = query.trim();
 
         if (!trimmedQuery) {
-            return {results: []};
+            return {ok: true, data: []};
         }
         const pagefind = await loadPagefind()
         const search = await pagefind.search(query)
@@ -78,7 +82,7 @@ export default class PageFind implements SearchProviderInterface {
                 } as SearchResult;
             })
         );
-        return {results: items}
+        return {ok: true, data: items}
     };
 
 }

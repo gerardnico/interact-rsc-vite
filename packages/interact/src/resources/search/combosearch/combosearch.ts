@@ -9,16 +9,21 @@ export default class ComboSearch implements SearchProviderInterface {
 
     search = async (query: string, opts?: SearchOptions): Promise<SearchResponse> => {
         const {limit = 10, abortSignal} = opts ?? {};
-        
+
         if (abortSignal?.aborted) {
-            throw new DOMException("Search aborted", "AbortError");
+            return {
+                ok: false,
+                error: "Search aborted",
+                status: 400,
+            }
         }
 
         const trimmedQuery = query.trim();
 
         if (!trimmedQuery) {
-            return {results: []};
+            return {ok: true, data: []};
         }
+
         const url = new URL('http://localhost/search');
         url.searchParams.set('q', query);
         url.searchParams.set('limit', String(limit));
@@ -29,10 +34,17 @@ export default class ComboSearch implements SearchProviderInterface {
         });
 
         if (!response.ok) {
-            throw new Error(`Search request failed: ${response.status} ${response.statusText}`);
+            return {
+                ok: false,
+                error: response.statusText,
+                status: response.status,
+            }
         }
         const items: SearchResult[] = await response.json()
-        return {results: items}
+        return {
+            ok: true,
+            data: items
+        }
     }
 
 

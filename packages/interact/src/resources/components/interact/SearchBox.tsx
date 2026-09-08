@@ -9,14 +9,13 @@ import {useSearchOpenState, useSearchProvider} from "@/components/contexts/Searc
 
 import type {ButtonHTMLAttributes} from "react";
 import {cn} from "@/lib/utils.ts";
-import type {SearchResult} from "interact:search-provider";
+import type {SearchResponse, SearchResult} from "interact:search-provider";
 
 export interface SearchBoxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-
     placeholder?: string;
 }
 
-export default function SearchBox({className, children, ...props}: SearchBoxProps) {
+export default function SearchBox({className, children, placeholder = "Searching...", ...props}: SearchBoxProps) {
     /**
      * Global open state so that we can see if there is already a search box open
      * so that a ctrl+k binding will open the dialogue only once
@@ -24,6 +23,8 @@ export default function SearchBox({className, children, ...props}: SearchBoxProp
     const [globalOpen, setGlobalOpen] = useSearchOpenState()
     const [open, setOpen] = React.useState(false)
     const [query, setQuery] = React.useState("")
+    const [error, setError] = React.useState("")
+    const [status, setStatus] = React.useState(0)
     const [results, setResults] = React.useState<SearchResult[]>([])
     const [loading, setLoading] = React.useState(false)
     const [activeValue, setActiveValue] = React.useState<string>('')
@@ -47,12 +48,35 @@ export default function SearchBox({className, children, ...props}: SearchBoxProp
             if (searchProvider == null) {
                 return;
             }
-            const items = await searchProvider.search(query, {
-                limit: 8,
-                abortSignal: controller.signal,
-            })
+            let response: SearchResponse;
+            try {
+                response = await searchProvider.search(query, {
+                    limit: 8,
+                    abortSignal: controller.signal,
+                })
+            } catch (e) {
+                let message;
+                if (e instanceof Error) {
+                    message = e.message;
+                } else {
+                    message = String(e);
+                }
+                response = {
+                    ok: false,
+                    error: message,
+                    status: 500
+                }
+            }
 
-            setResults(items.results)
+            if (response.ok) {
+                setResults(response.data)
+                setError("")
+                setStatus(0)
+            } else {
+                setError(`${response.error} (${response.status}`)
+                setStatus(response.status)
+                setResults([])
+            }
             setLoading(false)
         }
 
@@ -143,43 +167,52 @@ export default function SearchBox({className, children, ...props}: SearchBoxProp
                             </button>
                         )}
                     </div>
-                    <CommandList className={"scrollbar-thin max-h-[calc(100vh-(var(--spacing)*50))]"}>
-                        {loading && query && (
-                            <div className="py-6 text-center text-sm text-muted-foreground">
-                                Searching...
+                    {error ? (
+                            <div className="py-6 text-center text-sm text-destructive">
+                                <p>Something went wrong while searching.</p>
+                                {status < 500 && <><p>Try again.</p><p>${error}</p></>}
+                                {status >= 500 && <p>Server error</p>}
                             </div>
+                        )
+                        : (
+                            <CommandList className={"scrollbar-thin max-h-[calc(100vh-(var(--spacing)*50))]"}>
+                                {loading && query && (
+                                    <div className="py-6 text-center text-sm text-muted-foreground">
+                                        {placeholder}
+                                    </div>
+                                )}
+                                {!loading && query && (
+                                    <CommandEmpty>
+                                        {results.length === 0
+                                            ? "No results found."
+                                            : `${results.length} results found.`}
+                                    </CommandEmpty>
+                                )}
+                                {results.length > 0 && (
+                                    <CommandGroup heading="Results">
+                                        {results.map((r) => {
+                                            return (
+                                                <CommandItem
+                                                    key={r.id}
+                                                    value={r.url}
+                                                    onSelect={() => {
+                                                        history.pushState(null, '', r.url)
+                                                        onOpenChange()
+                                                    }}
+                                                    className="flex flex-col items-start gap-1"
+                                                >
+                                                    <span className="font-medium">{r.title}</span>
+                                                    <span
+                                                        className="line-clamp-1 text-xs text-muted-foreground"
+                                                        dangerouslySetInnerHTML={{__html: r.excerpt}}
+                                                    />
+                                                </CommandItem>
+                                            )
+                                        })}
+                                    </CommandGroup>
+                                )}
+                            </CommandList>
                         )}
-                        {!loading && query && (
-                            <CommandEmpty>
-                                {results.length === 0
-                                    ? "No results found."
-                                    : `${results.length} results found.`}
-                            </CommandEmpty>
-                        )}
-                        {results.length > 0 && (
-                            <CommandGroup heading="Results">
-                                {results.map((r) => {
-                                    return (
-                                        <CommandItem
-                                            key={r.id}
-                                            value={r.url}
-                                            onSelect={() => {
-                                                history.pushState(null, '', r.url)
-                                                onOpenChange()
-                                            }}
-                                            className="flex flex-col items-start gap-1"
-                                        >
-                                            <span className="font-medium">{r.title}</span>
-                                            <span
-                                                className="line-clamp-1 text-xs text-muted-foreground"
-                                                dangerouslySetInnerHTML={{__html: r.excerpt}}
-                                            />
-                                        </CommandItem>
-                                    )
-                                })}
-                            </CommandGroup>
-                        )}
-                    </CommandList>
                 </Command>
                 {/* fake status bar */}
                 {activeValue && (

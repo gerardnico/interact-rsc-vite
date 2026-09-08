@@ -37,9 +37,10 @@ declare module 'interact:search-provider' {
         score: number;
     }
 
-    export interface SearchResponse {
-        results: SearchResult[];
-    }
+    // TypeScript discriminated unions to enoce an ok
+    export type SearchResponse =
+        | { ok: true; data: SearchResult[] }
+        | { ok: false; error: string; status: number };
 
     export interface SearchProviderInterface {
         /**

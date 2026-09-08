@@ -18,6 +18,7 @@ The `search box` is a client component that:
 * Query Debounce
 * Up and Down Arrow Keyboard Navigation
 * Singleton pattern (to show the dialog once globally)
+* Error handling (fatal vs request)
 
 ## Syntax
 
