@@ -42,7 +42,8 @@ declare module 'interact:search-provider' {
         | { ok: true; data: SearchResult[] }
         | { ok: false; error: string; status: number };
 
-    export interface SearchProviderInterface {
+    export interface SearchProvider {
+
         /**
          * Hook that is executed when the dialogue open
          * (to load a JavaScript module)
@@ -53,12 +54,11 @@ declare module 'interact:search-provider' {
          * A search
          */
         search: (query: string, opts?: SearchOptions) => Promise<SearchResponse>;
+
     }
 
-    // noinspection JSUnusedGlobalSymbols - used
-    export default class SearchProvider implements SearchProviderInterface {
-        onOpen: () => Promise<Void>;
-        search: (query: string, opts?: SearchOptions) => Promise<SearchResponse>;
-    }
+    export const searchProvider: SearchProvider;
+    // noinspection JSUnusedGlobalSymbols - used dynamically via virtual module
+    export default searchProvider;
 
 }

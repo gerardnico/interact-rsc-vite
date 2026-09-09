@@ -67,22 +67,22 @@ async function instantiatePlugins(plugins: PluginConfigSetSchemaType) {
         const plugin = pluginModule.default || pluginModule;
 
         // Instantiate the plugin with props
-        let astroPluginFormat;
+        let pluginFormat;
         if (pluginConfig.props != undefined) {
             console.log(`Set ${pluginType} plugin ${pluginName} with props`)
-            // instantiation is done by Astro (requires an array)
-            astroPluginFormat = [plugin, pluginConfig.props];
+            // unified instantiation requires an array
+            pluginFormat = [plugin, pluginConfig.props];
         } else {
             console.log(`Set ${pluginType} plugin ${pluginName}`)
-            astroPluginFormat = plugin
+            pluginFormat = plugin
         }
         switch (pluginType) {
             case remark: {
-                remarkPlugins.push(astroPluginFormat)
+                remarkPlugins.push(pluginFormat)
                 break
             }
             case rehype: {
-                reHypePlugins.push(astroPluginFormat)
+                reHypePlugins.push(pluginFormat)
                 break
             }
             default: {

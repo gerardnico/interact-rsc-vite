@@ -1,11 +1,11 @@
 'use client'
 
 import React, {createContext, type ReactNode, useContext} from "react";
-import type {SearchProviderInterface} from "interact:search-provider";
-import SearchProvider from "interact:search-provider";
+import type {SearchProvider} from "interact:search-provider";
+import SearchEngine from "interact:search-provider";
 
 
-const SearchProviderContext = createContext<SearchProviderInterface | null>(null);
+const SearchProviderContext = createContext<SearchProvider | null>(null);
 type OpenState = [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 const SearchOpenContext = React.createContext<OpenState>([false, () => {
 }])
@@ -48,7 +48,7 @@ export default function SearchContext({children}: {
     children: ReactNode
 }) {
     const [open, setOpen] = React.useState(false)
-    const provider = new SearchProvider();
+    const provider = SearchEngine;
 
     React.useEffect(() => {
         if (open && ('onOpen' in provider)) {

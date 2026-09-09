@@ -1,7 +1,7 @@
-import type {SearchOptions, SearchProviderInterface, SearchResponse, SearchResult} from "interact:search-provider";
+import type {SearchOptions, SearchProvider, SearchResponse, SearchResult} from "interact:search-provider";
 
-
-export default class ComboSearch implements SearchProviderInterface {
+// noinspection JSUnusedGlobalSymbols - used dynamically in a virtual module
+export default class ComboSearch implements SearchProvider {
 
     async onOpen() {
         return
