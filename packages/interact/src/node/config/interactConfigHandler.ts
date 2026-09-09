@@ -295,6 +295,13 @@ class InteractConfigHandler {
                     } else {
                         importPath = `@combostrap/interact/components/${type}s/${name}`;
                     }
+                    // skipping Interact Context
+                    // It's the file <InteractContext>
+                    // and is hard written in the entry.browser.tsx
+                    // We still let the InteractContext as registred so that the user can see it
+                    if (type === 'context' && !isProjectDir && name !== 'InteractContext') {
+                        continue;
+                    }
                     finalConfigData.components[name] = {
                         importPath: importPath,
                         type: type

@@ -1,7 +1,7 @@
 /**
  * The vite config.
  * For debugging purpose, a user should be able to make this config again in a standalone vite config file.
- * So make sure that the vite plugin are in vite
+ * So make sure that the vite plugins are in the vite directory as they are exposed in package.json export
  */
 import path from "node:path";
 
@@ -129,8 +129,7 @@ export async function resolveViteConfig(
         throw new Error(`The directory ${interactConfigTyped.paths.nodeDirectory} is not interact, nor a project with a package.json that contains interact as dependencies.`)
     }
 
-    // Hack because oclif dev.js set it
-    // and need it to allow debug
+    // To be sure
     if (command === "build") {
         process.env["NODE_ENV"] = "production"
     }

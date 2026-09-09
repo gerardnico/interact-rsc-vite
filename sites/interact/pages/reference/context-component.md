@@ -3,14 +3,11 @@ title: Context components
 description: A context component is a component that wraps the Browser React Application
 ---
 
-`context` component that wraps the
+`context components` are [components](component.md) that wraps the React tree.
 
+They provides:
 
-Interact server or client Application.
-
-The following React component may be defined as `context` component:
-
-* [Client Context Provider](https://react.dev/learn/passing-data-deeply-with-context) (ie tracker, url state
+* [a React Context](https://react.dev/learn/passing-data-deeply-with-context) (ie tracker, url state
   manager, ...)
 * [Error Boundaries](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary)
 
@@ -37,29 +34,6 @@ export default function PostHogContext({children}: { children: ReactNode }) {
 }
 ```
 
-## Default
-
-The default one can be seen in
-the [main/src/resources/components/contexts directory](https://github.com/combostrap/interact/tree/main/src/resources/components/contexts)
-
-This is the minimal `InteractContext` component
-
-```tsx
-export default function InteractContext({children}: { children: ReactNode }) {
-
-    return (
-        <ErrorBoundary>
-            {children}
-        </ErrorBoundary>
-    )
-
-}
-```
-
-We provide a standard `InteractContext` with an error boundary that you may override.
-For instance, you would override it by creating your own `InteractContext` component at
-`@/components/contexts/InteractContext.tsx`
-
 ## Syntax
 
 They:
@@ -72,15 +46,6 @@ They:
 export default function MyContextProvider({children}: { children: ReactNode }) {
 }
 ```
-
-## Server vs Client Context
-
-A context component can only be found:
-
-* in the browser
-* or in the server
-
-They are considered a [client component](rsc.md#client-component) unless their name include `server`
 
 ## How to list all context components
 
@@ -121,3 +86,19 @@ You can also register it manually by:
   }
 }
 ```
+
+## Interact Context
+
+The `InteractContext` provides:
+
+* an [error boundary](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary)
+* the [search engine](search.md)
+
+## Server vs Client Context
+
+A context component can only be found:
+
+* in the browser
+* or in the server
+
+They are considered a [client component](rsc.md#client-component) unless their name include `server`

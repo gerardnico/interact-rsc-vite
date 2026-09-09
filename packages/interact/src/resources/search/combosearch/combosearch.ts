@@ -8,7 +8,7 @@ export default class ComboSearch implements SearchProviderInterface {
     }
 
     search = async (query: string, opts?: SearchOptions): Promise<SearchResponse> => {
-        const {limit = 10, abortSignal} = opts ?? {};
+        const {limit = 8, abortSignal} = opts ?? {};
 
         if (abortSignal?.aborted) {
             return {

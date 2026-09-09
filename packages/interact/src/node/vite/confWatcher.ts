@@ -6,6 +6,13 @@ import {setGlobalsConf} from "./globalConf.js";
 
 /**
  * Reload on config change
+ * Note that the vite dev server reload only changes from a conf file, not from inline conf
+ * ie if we generate a vite config file `vite.config.ts`
+ * and that we pass it at creation time
+ * const server = await createServer({
+ *   configFile: './vite.config.ts',
+ * });
+ * It would be watched and reloaded
  */
 export default function confWatcher(): Plugin {
 

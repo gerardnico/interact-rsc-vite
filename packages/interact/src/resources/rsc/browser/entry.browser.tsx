@@ -24,6 +24,7 @@ import {getContextComponents} from "interact:client-contexts";
 import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const.tsx";
 // This stylesheet needs to be on the client side, it does not work on the server side InteractApp
 import "interact:outline-numbering.css"
+import InteractContext from "../../components/contexts/InteractContext.js";
 
 /**
  * The name of the index page
@@ -117,6 +118,10 @@ async function main() {
     // Sort in descending order so that the components that are first in ascending order becomes the root of the tree
     const contextKeysDescendingOrder = Object.keys(contextComponents).sort((a, b) => b.localeCompare(a));
     for (const contextComponentKey of contextKeysDescendingOrder) {
+        if (contextComponentKey == 'InteractContext') {
+            // added manually below
+            continue
+        }
         const ContextComponent = contextComponents[contextComponentKey];
         if (ContextComponent == undefined) {
             continue
@@ -131,7 +136,9 @@ async function main() {
     // hydration
     const browserRoot = (
         <React.StrictMode>
-            {root}
+            <InteractContext>
+                {root}
+            </InteractContext>
         </React.StrictMode>
     )
     if ('__NO_HYDRATE' in globalThis) {

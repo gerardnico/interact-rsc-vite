@@ -1,7 +1,7 @@
 /**
  * To be able to use Markdown on the client
  * we should be able to bundle this file
- * (ie the node path import should be deleted (ie we need to use a virtual module to distribute the config)
+ * (ie the node path import below should be deleted (ie we need to use a virtual module to distribute the config)
  */
 import path from "node:path";
 import {getMandatoryUnifiedPlugins} from "./markdownPluginsMandatory.js";
